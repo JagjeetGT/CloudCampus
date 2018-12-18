@@ -1,0 +1,141 @@
+﻿@using KRBAccounting.Web.Helpers
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.PrintMonthlyBillReportViewModel 
+@{
+    //var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/PrintImg/Billprint.jpg";
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/img/NoImage.jpg";
+    decimal Total = 0;
+}
+@foreach (var i in Model.BillStudents)
+{
+@*<img src="@url" width="420px"/>*@
+   
+
+    
+    <div style="float: left; width: 40%;">
+        <table style="font-size: 10px;" width="40%">
+            <tr>
+                <td width="10%">
+                    <img src="@Model.ReportHeader.Logo" height="40"/>
+                </td>
+                <td>
+                    <font style="font-weight: bold; text-align: center">@Model.ReportHeader.CompanyName</font>
+                    <br />
+                    <font style="font-weight: normal; text-align: center; font-size: 8px">@Model.ReportHeader.CompanyAddress</font>
+                    <br />
+                    <font style="font-weight: normal; font-size: 8px; text-align: center">Ph. No. @Model.ReportHeader.Phone</font>
+                    <br />
+                    <font style="font-weight: normal; font-size: 8px; text-align: center;">Email. @Model.ReportHeader.Email</font>
+                    <br />
+                </td>
+            </tr>
+            <tr>
+                <td align="left" width="25%">
+                    <font style="font-size: 8px">Pan No.:@Model.ReportHeader.PanNo</font>
+                </td>
+                <td>
+                    <font style="font-weight: bold; font-size: 13px; text-align: center"><span style="background-color: #000">
+                        Bill</span> </font>
+                </td>
+            </tr>
+        </table>
+        <br />
+        <div style="width: 50%; border-top: #000">
+        </div>
+        <table width="50%">
+            <tr>
+                <td width="50%">
+                    <font style="font-size: 8px">Name:@{
+    var Name = @UtilityService.FirstLetterToUpper(i.ScStudentinfo.StuDesc);
+                    }
+                        @Name</font>
+                </td>
+                <td>
+                    <font style="font-size: 8px">Bill No.: @i.BillNo</font>
+                </td>
+            </tr>
+            <tr>
+                <td width="10%">
+                    <font style="font-size: 8px">Class : @i.Class.Description
+                    </font>
+                </td>
+                <td>
+                    <font style="font-size: 8px">Section : </font>
+                </td>
+                <td>
+                    <font style="font-size: 8px;">Roll no. : </font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <font style="font-size: 8px;">Bill For : @NepaliDateService.LongMonth(i.MonthMiti)
+                        @i.YearMiti
+                    </font>
+                </td>
+                <td>
+                    <font style="font-size: 8px;">Bill Date: @DateTime.Now.ToShortDateString()</font>
+                </td>
+            </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0" width="50%" style="font-size: 10px;">
+            <thead>
+                <tr>
+                    <th>
+                        S.No
+                    </th>
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                </tr>
+            </thead>
+            @{
+    var sno = 1;
+            }
+            @foreach (var c in i.MonthlyBills.Where(x => x.FeeAmount != 0))
+            {
+
+                <tr>
+                    <td width="5">
+                        @sno
+                    </td>
+                    <td>
+                        @c.FeeItem.Description
+                    </td>
+                    <td>
+                        @c.FeeAmount
+                    </td>
+                </tr>
+                Total += c.FeeAmount;
+                sno++;
+            }
+            <tr>
+                <td colspan="2" align="left">
+                    Total
+                </td>
+                <td>
+                    @Total
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="left">
+                    Education Tax 1 %
+                </td>
+                <td>
+                    @i.MonthlyBills.Sum(x => x.EducationTaxAmount)
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="left">
+                    Grand Total
+                </td>
+                <td>
+                    @i.Amount
+                </td>
+            </tr>
+        </table>
+    </div>
+}

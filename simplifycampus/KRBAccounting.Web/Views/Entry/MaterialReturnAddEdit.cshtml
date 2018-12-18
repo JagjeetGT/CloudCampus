@@ -1,0 +1,116 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.MaterialReturnAddViewModel
+@using (Ajax.BeginForm("MaterialReturnAdd", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "mr-form" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div id="MsgError">
+    </div>
+    <div style="min-width: 740px; max-width: 785px; height: 240px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Return No.</label>
+                    <span class="field">
+                        @Html.TextBoxFor(x => x.Code, new { @class = "input-90  input" })
+                        @Html.ValidationMessageFor(m => m.Code)
+                    </span></span><span class="stack">
+                        <label class="label-60">
+                            Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.ReturnDate)
+                        </span></span><span class="stack">
+                            <label class="label-90">
+                                Ref. Issue No</label>
+                            <span class="field">
+                                @Html.HiddenFor(x => x.MaterialIssueId)
+                                @Html.TextBoxFor(m => m.MaterialIssue, new { @class = "input-235 modallink_custom input", displaytext = "IssueNo", href = "/Entry/GetMaterialIssueList", title = "Material Issue", valueid = "MaterialIssueId" })
+                            </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Cost Center</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.CostCenterId)
+                        @Html.TextBoxFor(m => m.CostCenter, new { @class = "input-160 modallink_custom input", href = "/Master/GetCostCenterList", title = "Material Issue", valueid = "MaterialIssueId" })
+                    </span></span><span class="stack">
+                        <label class="label-100">
+                            Ref. Issue Date</label>
+                        <span class="field">
+                            @Html.DateTextBoxFor(m => m.DisplayDate)
+                        </span></span>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" id="table-material-return-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="260px">
+                        Raw Material
+                    </th>
+                    @if (Model.EntryControl != null && Model.EntryControl.CostCenter)
+                    {
+                        <th width="50px">
+                            Cost Center
+                        </th>
+                    }
+                    @if (Model.EntryControl != null && Model.EntryControl.Godown)
+                    {
+                        <th width="50px">
+                            Godown
+                        </th>
+                    }
+                    <th width="50px">
+                        Unit
+                    </th>
+                    <th width="50px">
+                        Qty
+                    </th>
+                </tr>
+                <tbody id="body-material-return-detail">
+                    @if (Model.MaterialReturnDetailAddViewModels != null)
+                    {
+                        foreach (var item in Model.MaterialReturnDetailAddViewModels)
+                        {
+                            item.EntryControl = Model.EntryControl;   
+                        @Html.Partial("_PartialMRDetailEntry", item)
+                        }
+                    }
+                    else
+                    {
+                        var model = new KRBAccounting.Web.ViewModels.Entry.MaterialReturnDetailAddViewModel();
+                        model.UnitList = Model.UnitList;
+                        model.EntryControl = Model.EntryControl;
+                        @Html.Partial("_PartialMRDetailEntry", model)
+                    }
+                </tbody>
+            </table>
+        </div>
+        <span class="clearfix"></span>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-40">
+                        Short Name</label>
+                    @Html.TextBoxFor(x => x.ShortName, new { @class = "input-160 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Stock Qty</label>
+                    @Html.TextBoxFor(x => x.StockQty, new { @class = "input-160 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Total Qty</label>
+                    @Html.TextBoxFor(x => x.TotalQty, new { @class = "input-160 input", disabled = "disabled" })
+                </span>
+            </div>
+        </fieldset>
+        <div class="lag">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">
+                @Html.TextBoxFor(x => x.Remarks, new { @class = "input-370 input" })
+            </span>
+        </div>
+    </div>
+}

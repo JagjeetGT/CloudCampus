@@ -1,0 +1,82 @@
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+@model PagedList<KRBAccounting.Domain.Entities.PyPaymentSlip>
+              @{var i = Convert.ToInt32(ViewBag.SnStart);
+                var userRight = (UserRight)ViewBag.UserRight;}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th>S.N</th>
+                <th>
+                    Slip No
+                </th>
+                <th>
+                    Employee 
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Year
+                </th>
+                <th>
+                    Month
+                </th>
+                <th>
+                    CreatedOn
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            
+                <tr>
+                    <td>@i</td>
+                    <td>
+                        @item.SlipNo
+                    </td>
+                    <td>
+                        @if (item.EmployeeInfo != null)
+                        {
+                            @item.EmployeeInfo.Description
+                        }
+                    </td>
+                    <td>
+                        @item.NetAmount
+                    </td>
+                    <td>
+                        @item.YearMiti
+                    </td>
+                    <td>
+                        @NepaliDateService.LongMonth(item.MonthMiti)
+                       @* @if (ViewBag.DateType == 1)
+                        {
+                            item.
+                        }
+                        else
+                        {
+                            
+                        }*@
+                    </td>
+                   
+                    <td>@item.CreateDate.ToShortDateString()
+                    </td>
+                  @*  <td>
+                        <a href="javascript:void(0)" class="editScRoom icon-pencil" data-id="@item.Id" title="Edit">
+                        </a>
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="deleteClass icon-remove" data-id="@item.Id" title="Delete">
+                        </a>
+                    </td>*@
+                </tr>i++;
+               
+            } 
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "EmployeeSalaryMastersList", "Payroll", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Rooms-list" }))
+    </div>
+</div>

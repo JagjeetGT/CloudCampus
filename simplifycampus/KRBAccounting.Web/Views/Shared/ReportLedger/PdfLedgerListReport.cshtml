@@ -1,0 +1,210 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.LedgerListReportViewModel
+@using KRBAccounting.Service;
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@{
+    string head = "";
+    string title = "";
+    decimal TotalDr = 0;
+    decimal ToalCr = 0;
+}
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+        
+    @if (Model.InclideOpening)
+    {
+<table border="0.5" style="font-size: 7px;">
+            <thead>
+                <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                    <th>
+                        Account Name                   
+                    </th>
+                    <th>
+                        Short Name
+                    </th>
+                    <th>
+                        Account Type
+                    </th>                    
+                    <th>
+                        Debit
+                    </th>
+                    <th>
+                        Credit
+                    </th>
+                </tr>           
+            </thead>                      
+
+            @foreach (var item in Model.LedgerList)
+            {
+                if (Model.GroupBy == 1) { title = "A/C Group : "; }
+                if (Model.GroupBy == 2) { title = "Agent : "; }
+                if (Model.GroupBy == 3) { title = "Area : "; }
+                if (Model.GroupBy == 4) { title = "Account Group : "; }
+                if (Model.GroupBy == 5) { title = "Account Sub Group : "; }
+
+
+
+                if (head != item.Header)
+                {
+                    head = item.Header;  
+                    <tr>
+                        <td colspan="10" style="font-weight: bold">                
+                            @title @item.Header                                                
+                        </td>
+                    </tr>          
+                }
+
+                
+                if(@item.Amount>0)
+                 {
+                     <tr>
+                    <td>&nbsp;&nbsp;&nbsp;  @item.AccountName
+                    </td>
+                    <td>
+                        @item.ShortName
+                    </td>                                  
+                    <td>
+                        @item.LedgerType
+                    </td>
+                    
+                    <td class="numbericfield">
+                        @if (@item.AmountType == 1)
+                        {                       
+                            @item.Amount
+                            TotalDr=TotalDr+@item.Amount;
+                        }
+                        
+                    </td>
+                    <td class="numbericfield">
+                        @if (@item.AmountType == 2)
+                        {
+                            @item.Amount                   
+                           ToalCr = ToalCr + @item.Amount;                                                
+                        }
+                    </td>
+                </tr>
+                 }
+                
+                                                                                                                                                                                          
+            }
+
+            <tr>
+                     <td colspan="2">
+                    </td>
+                                                      
+                    <td class="numbericfield bold"> 
+                        Total :
+                    </td>
+                    <td class="numbericfield bold">
+                       @TotalDr
+                    </td>
+                    <td class="numbericfield bold">
+                        @ToalCr
+                    </td>
+                </tr>
+        </table>
+    }
+    else
+    {       
+      <table border="0.5" style="font-size: 7px;">
+        <thead>
+          <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Account Name                   
+                </th>
+                <th>
+                    Short Name
+                </th>
+                <th>
+                    Credit Limit
+                </th>
+                <th>
+                    Credit Days
+                </th>
+                <th>
+                    Rate Of Interest
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    City
+                </th>
+                <th>
+                    State
+                </th>
+                <th>
+                    Country
+                </th>
+                <th>
+                    Phone
+                </th>
+            </tr>
+        </thead>
+
+        @foreach (var item in Model.LedgerList)
+        {
+            if (Model.GroupBy == 1) { title = "A/C Group : "; }
+            if (Model.GroupBy == 2) { title = "Agent : "; }
+            if (Model.GroupBy == 3) { title = "Area : "; }
+            if (Model.GroupBy == 4) { title = "Account Group : "; }
+            if (Model.GroupBy == 5) { title = "Account Sub Group : "; }
+
+
+            if (head != item.Header)
+            {
+                head = item.Header;  
+                <tr>
+                    <td colspan="10" style="font-weight: bold">                
+                          @title @item.Header                                                
+                    </td>
+            </tr>          
+            }
+
+            
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;  @item.AccountName
+                </td>
+                <td>
+                    @item.ShortName
+                </td>
+                <td>
+                    @item.CreditLimit
+                </td>
+                <td>
+                    @item.CreditDays
+                </td>
+                
+                <td>
+                    @item.RateOfInterest
+                </td>
+                
+                <td>
+                    @item.Address
+                </td>
+                
+                <td>
+                    @item.City
+                </td>
+                
+                <td>
+                    @item.State
+                </td>
+                
+                <td>
+                    @item.Country
+                </td>
+                
+                <td>
+                    @item.PhoneO
+                </td>
+            </tr>                                              
+                                                                                           
+        }
+    </table>
+    }            
+</div>

@@ -1,0 +1,53 @@
+﻿
+@model IEnumerable<KRBAccounting.Domain.Entities.ScClassFeeRate>
+         <br/>
+<div id="loadpage">
+ 
+        <b>
+            @if (Model.Count() != 0)
+            {
+                   <p align="center"> @Model.FirstOrDefault().Classes.Description <br/>
+
+       @*   @Model.FirstOrDefault().FeeRateMaster.Studentinfo.StuDesc *@
+            </p>
+            }
+        </b>
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    S.No
+                </th>
+                <th>
+                   Fee Item
+                </th>
+                <th>
+                   Amount
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>
+                        @item.ScFeeItem.Description
+                    </td>
+                    <td>
+                        
+                            @item.FeeRate
+                        
+
+                    </td>
+                    
+                   
+                    
+                </tr>
+                i += 1;
+            }
+        </tbody>
+    </table>
+</div>

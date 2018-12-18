@@ -1,0 +1,133 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentMonthlyBillReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+    decimal totalOpening = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+      <table border="0.5" style="font-size: 8px;">
+        <thead>
+                       <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                <th colspan="3">
+                    Date
+                </th>
+                <th >
+                    Voucher No.
+                </th>
+                 <th colspan="2" >
+                   Month
+                </th>
+                <th colspan="2">
+                    Class
+                </th>
+                <th >
+                    Section 
+                </th>
+                <th>
+                    Std.Code
+                </th>
+                  <th colspan="2">
+                    Student Name
+                </th>
+                <th>
+                    Roll No
+                </th>
+                
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.BillStudents)
+        {
+            var month = new DateTime(item.Year, item.Month, 1).ToString("MMM", System.Globalization.CultureInfo.InvariantCulture);
+            var data = UtilityService.GetStudentRegistrationDetail(item.StudentId);
+            <tr>
+                <td colspan="3" style=" text-align:center">
+                    @item.CreatedDate.ToShortDateString() A.D. || @item.CreatedMiti B.S.
+                </td>
+                <td style=" text-align:center">
+                    @item.BillNo
+                </td>
+                <td colspan="2" style=" text-align:center">
+                    @item.YearMiti @Enum.GetName(typeof(KRBAccounting.Enums.NepaliMonth), item.MonthMiti) 
+                    (@item.Year @month)
+                    @*@{
+            var date = item.Month + "/1/" + item.Year;
+                   }
+                    @Convert.ToDateTime(date).ToString("MMMM")*@
+                </td>
+               
+               
+                <td style=" text-align:center" colspan="2">
+                    @if (data.StudentRegistration.Class != null)
+                    {
+                        @data.StudentRegistration.Class.Description
+                    }
+
+                </td>
+                <td style=" text-align:center">
+                    @if (data.Section != null)
+                    {
+                        @data.Section.Description
+                    }
+
+            </td>
+                <td style=" text-align:center">
+                    @if (item.ScStudentinfo != null)
+                    {
+                        @item.ScStudentinfo.StdCode
+                    }
+                </td>
+                <td colspan="2" style=" text-align:center">
+                    @if (item.ScStudentinfo != null)
+                    {
+                        @item.ScStudentinfo.StuDesc
+                    }
+
+                </td>
+                <td style=" text-align:center">
+                    @data.RollNo
+                </td>
+              
+                <td style=" text-align:center">
+                    @item.Amount
+
+                </td>
+                <td style=" text-align:center">
+                    @item.Remarks
+
+                </td>
+            </tr>
+                    grandTotalBalance += item.Amount;
+        }
+        @if (Model.BillStudents.Any())
+        {
+            <tr style="font-weight: bold">
+                <td colspan="8" align="center">
+                    Grand Total
+                </td>
+
+                <td>
+                    @grandTotalBalance
+                </td>
+                <td></td>
+            </tr>
+        }
+    </table>
+</div>

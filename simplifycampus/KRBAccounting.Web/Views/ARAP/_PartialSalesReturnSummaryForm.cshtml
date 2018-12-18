@@ -1,0 +1,172 @@
+﻿@model KRBAccounting.Web.ViewModels.ARAP.SalesReturnSummaryFormViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("SalesReturnSummary", "ARAP", new { controller = "ARAP" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "report", OnComplete = "$('#modalReportForm').modal('hide');$.unblockUI();" }, new { @class = "form-horizontal", id = "report-form" }))
+{
+    
+     <div class="lag startDate">
+        <label class="label-90">
+            Start Date</label>
+        <span class="field" style="width: 100px;">
+            @Html.TextBoxFor(m => m.StartDate)
+            @Html.ValidationMessageFor(m => m.StartDate)
+        </span>
+    </div>
+     <div class="lag">
+        <label class="label-90">
+            Remarks</label>
+        <span class="field">
+             @Html.CheckBoxFor(m => m.Remarks)
+        </span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag endDate">
+        <label class="label-90">
+            End Date</label>
+        <span class="field" style="width: 100px;">
+            @Html.TextBoxFor(m => m.EndDate)
+            @Html.ValidationMessageFor(m => m.EndDate)
+        </span>
+    </div>
+    <div class="lag">
+        @if (@Model.SystemControl.DateType == 1)
+        {
+            <label class="label-90">
+                Miti
+            </label>
+        }
+        else
+        {
+            <label class="label-90">
+                Date 
+            </label>
+        }
+                
+        <span class="field">
+            @Html.CheckBoxFor(x => x.DateShow)
+        </span>
+    </div>
+     <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Group By</label>
+        <span class="field" style="width: 300px;">
+            @Html.DropDownListFor(m => m.GroupBy, Model.GroupByList, new { @class = "input-100" })</span>
+    </div>
+    <div></div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Detail</label>
+        <span class="field">
+            @Html.EditorFor(m => m.Detail)
+        </span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag Godown" style="display: none">
+        <label class="label-90">
+            Godown</label>
+        <span class="field">
+            @Html.CheckBoxFor(m => m.Godown)
+        </span>
+   
+    <div class="lag GodownList" style="display: none">
+        <label class="label-90">
+            Godown List</label>
+        <span class="field">
+            @Html.DropDownListFor(m => m.GodownId, Model.GodownList.Select(g => new SelectListItem { Text = g.Name, Value = g.Id.ToString() }), new { Multiple = "multiple", style = "height:100px !important;" })
+        </span>
+    </div>
+     </div>
+ 
+     
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+         var dateType = @Model.SystemControl.DateType;
+     if(dateType=="1") {
+            $("#StartDate").mask("99/99/9999");
+            $("#StartDate").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#StartDate").mask("9999/99/99");
+            $("#StartDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+           var dateType = @Model.SystemControl.DateType;
+     if(dateType=="1") {
+            $("#EndDate").mask("99/99/9999");
+            $("#EndDate").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#EndDate").mask("9999/99/99");
+            $("#EndDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+         });
+//        $("#StartDate").nepDateTimePicker({
+//            dateFormat: "mm/dd/yy",
+//            defaultDate: "+1w",
+//            changeMonth: true,
+//            changeYear: true,
+//            numberOfMonths: 1,
+//            minDate: '@Model.FiscalYear.StartDate.ToShortDateString()',
+//            maxDate: '@Model.FiscalYear.EndDate.ToShortDateString()',
+//            onSelect: function () {
+
+//                $("#StartDate").datepicker("option", "minDate", '@Model.FiscalYear.StartDate.ToShortDateString()');
+//            }
+//        });
+
+//        $("#EndDate").nepDateTimePicker({
+//            dateFormat: "mm/dd/yy",
+//            defaultDate: "+1w",
+//            changeMonth: true,
+//            changeYear: true,
+//            numberOfMonths: 1,
+//            minDate: $("#StartDate").val(),
+//            maxDate: '@Model.FiscalYear.EndDate.ToShortDateString()',
+//            onSelect: function () {
+//                $("#EndDate").datepicker("option", "minDate", $("#StartDate").val());
+//            }
+//        });
+//    });
+
+</script>

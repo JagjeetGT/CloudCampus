@@ -1,0 +1,116 @@
+@model KRBAccounting.Domain.Entities.ScExamAttendanceMaster
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ExamAttendanceAdd", "Exam", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div class="span6" style="margin-left: 0px">
+        <div class="lag">
+            <div class="stack">
+                <label class="label-45">
+                    Class</label>
+                <div class="field">@Html.HiddenFor(x => x.ClassId)
+                    <input type="text" class = "modallink input-120 input" href="@Url.Action("GetClasses", "School")"  valueId="ClassId" id="feeitemledger" title="Classes" entermsg = "Press F1 for choosing existing cash/bank list." />
+                    @Html.ValidationMessageFor(m => m.ClassId)</div>
+            </div>
+            <div class="stack">
+                <label class="label-70">
+                    Section</label>
+                <div class="field">
+                    @Html.HiddenFor(x => x.SectionId)
+                    <input type="text" class = "modallink input-120 input" href="@Url.Action("GetSections", "School")" valueId="SectionId" id="houseSectionId" title="Section" entermsg = "Enter SectionId" />
+                    @Html.ValidationMessageFor(m => m.SectionId)
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <div class="stack">
+                <label class="label-45">
+                    Exam</label>
+                <div class="field">
+                    @Html.HiddenFor(x => x.ExamId)
+                    <input type="text" class = "modallink input-120 input" href="@Url.Action("GetExames", "Exam")" valueId="ExamId" id="ExamMasterId" title="Examination" entermsg = "Enter SectionId" />
+                    @Html.ValidationMessageFor(m => m.ExamId)
+                @*    <input id="examCode" type="text" style="margin-left: 5px;" class="input-90 input"
+                        readonly="readonly" />*@
+                </div>
+            </div>
+            <div class="stack">
+                <label class="label-70">
+                    Total Days</label>
+                <div class="field">
+                    @Html.TextBoxFor(x => x.TotalDays, new { @class = "input-120 input" })
+                    @Html.ValidationMessageFor(m => m.TotalDays)
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <fieldset>
+        <div class="lag">
+            <label class="label-70">
+                Entry Date</label>
+            <div class="field">
+                @Html.DateTextBoxFor(x => x.EntryDate, new { @class = "input-90 input" })
+                @Html.ValidationMessageFor(m => m.EntryDate)
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <label class="label-70">
+                Entry Miti</label>
+            <div class="field">
+                @Html.TextBoxFor(x => x.EntryMiti, new { @class = "input-90 input" })
+                @Html.ValidationMessageFor(m => m.EntryMiti)
+            </div>
+        </div>
+    </fieldset>
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 250px; width: 100%">
+        <table class="listpopup" id="table-class-fee-rate-detail">
+            <tr class="nodrop nodrag">
+                <th width="20px">
+                </th>
+                <th>
+                    Student
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Roll No
+                </th>
+                <th>
+                    Present Days
+                </th>
+                <th>
+                    Absent Days
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      //  $("#EntryDate").datepicker();
+       $("#EntryDate").mask('99/99/9999');
+      $("#EntryMiti").mask('9999/99/99');
+        if (!$("#EntryDate").hasClass("error") && $("#EntryDate").val() != "") {
+            var date = $("#EntryDate").val();
+            var nepDate = convertToNepaliNew(date);
+            $("#EntryMiti").val(nepDate);
+        }
+
+    });
+    
+
+   
+</script>

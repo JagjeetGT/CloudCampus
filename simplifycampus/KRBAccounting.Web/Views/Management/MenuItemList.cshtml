@@ -1,0 +1,45 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.MenuItem>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+               <th>
+                    Controller
+                </th>
+                <th>
+                    LinkText
+                </th>
+                <th>
+                    ModuleName
+                </th><th>
+                         Schedule
+                     </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="menulist" data-id="@item.Id">
+                    <td>@item.Controller
+                    </td>
+                    <td>@item.LinkText
+                    </td>
+                    <td>@if (item.ModuleList != null)
+                        {
+                            @item.ModuleList.Name
+                        }
+
+                    </td><td>@item.Schedule</td>
+                    <td>
+                        <a href="javascript:void(0)" class="editMenu icon-pencil" data-id="@item.Id" title="Edit"></a>
+                    </td>
+                    <td>
+                        <a href="#" class="deleteMenuItem icon-remove" data-id="@item.Id" title="Delete">
+                        </a>
+                    </td>
+                </tr>
+               
+            }
+        </tbody>
+    </table>
+</div>

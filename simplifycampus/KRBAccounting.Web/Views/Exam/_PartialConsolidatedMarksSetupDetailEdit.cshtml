@@ -1,0 +1,23 @@
+﻿@model KRBAccounting.Domain.Entities.ScConsolidatedMarksSetup
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("ConsolidatedEntry"))
+    {
+       
+        <td>
+            @Html.HiddenFor(x => x.ExamGrdId, new { @class = "hdn_examgrd_Id first-col" })
+            <input type="text" class="modallink text-exam input-100" href="@Url.Action("GetExames")"   value="@if (Model.ExamGrd != null)
+                                                                                                    {
+                                                                                                        @Model.ExamGrd.Description
+                                                                                                    }
+                                                                                                       " />
+        </td>
+        <td>@Html.TextBoxFor(x => x.ExamOrder, new { @class = "input input-90" })
+        </td>
+        <td>@Html.TextBoxFor(x => x.Percentage, new { @class = "input input-100 percentage last-col-custom", href = "/Exam/ConsolidatedMarksSetupDetail", tableid = "table-consolidate-detail" })
+        </td>
+         <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>

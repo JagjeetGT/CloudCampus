@@ -1,0 +1,63 @@
+@using KRBAccounting.Enums
+@model IEnumerable<KRBAccounting.Domain.Entities.ScBookIssued>
+@{
+    var i = 1;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-search">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Accession No
+                </th>
+                <th>
+                    Book Name
+                </th>
+                <th>
+                    Author
+                </th>
+                <th>
+                    Card No.
+                </th>
+                <th>
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@if(item.LibraryCard.LibraryMemberRegistration.StudentId !=0)
+                        {
+                            <text>    @item.LibraryCard.LibraryMemberRegistration.Studentinfo.StuDesc</text>
+                        }
+                        else
+                        {
+                            <text>    @item.LibraryCard.LibraryMemberRegistration.StaffMaster.Description</text>
+                        }
+                    </td>
+                    <td>@item.BookReceivedDetails.AccessionNo
+                    </td>
+                    <td>@item.BookReceivedDetails.BookReceived.Book.Name
+                    </td>
+                    <td>@item.BookReceivedDetails.BookReceived.Book.PersonalAuthor
+                    </td>
+                    <td>@item.LibraryCard.CardNo
+                    </td>
+                    <td>@Enum.GetName(typeof(LibraryBookStatus), item.BookReceivedDetails.Status)
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

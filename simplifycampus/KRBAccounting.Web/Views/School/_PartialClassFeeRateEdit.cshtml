@@ -1,0 +1,107 @@
+@model KRBAccounting.Web.ViewModels.Academy.AdcademicsClassFeeRateViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ClassFeeRateEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.ClassId) @Html.HiddenFor(x => x.ShiftId)@Html.HiddenFor(x => x.BoaderId)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-70">
+                Class</label>
+            <span class="field">
+                @Html.HiddenFor(x => x.ClassFeeRate.ClassId)
+                <input type="text" class = "modallink input-120" href="@Url.Action("GetClasses", "School")" value="@if (Model.ClassFeeRate.Classes != null)
+                                                                                                                   {
+                                                                                                                       @Model.ClassFeeRate.Classes.Description
+                                                                                                                   }
+                                                                                                                      " valueId="ClassFeeRate_ClassId" id="feeitemledger" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassFeeRate.ClassId)
+            </span></span>
+        
+
+        <span class="stack">
+            <label class="label-70">
+                Shift</label>
+            <span class="field">
+                @Html.HiddenFor(m => m.ClassFeeRate.ShiftId)
+                <input type="text" class = "modallink input-120" href="@Url.Action("GetShifts", "School")" value="@if (Model.ClassFeeRate.Shifts != null)
+                                                                                                                  {
+                                                                                                                      @Model.ClassFeeRate.Shifts.Description
+                                                                                                                  }
+                                                                                                                     " valueId="ClassFeeRate_ShiftId" id="Shift-id" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassFeeRate.ShiftId)
+            </span></span>
+  
+        <span class="stack">
+            <label class="label-70">
+                Boarder</label>
+            <span class="field">
+                @Html.HiddenFor(m => m.ClassFeeRate.BoaderId)
+                <input type="text" class = "modallink input-120" href="@Url.Action("GetBoaders", "School")" value="@if (Model.ClassFeeRate.Boaders != null)
+                                                                                                                   {
+                                                                                                                       @Model.ClassFeeRate.Boaders.Description
+                                                                                                                   }
+                                                                                                                      " valueId="ClassFeeRate_BoaderId" id="Boader-id" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassFeeRate.BoaderId)
+            </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <hr />
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 400px;">
+        <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 615px">
+            <tr class="nodrop nodrag">
+                <th width="20px">
+                </th>
+                <th>
+                    Fee Item
+                </th>
+                <th>
+                    Fee Rate
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+            @foreach (var item in Model.ClassFeeRates)
+            {
+                @Html.Partial("_PartialClassFeeRateDetailEdit", item)
+            }
+        </table>
+    </div>
+    <div class="clearfix">
+    </div>
+    <hr />
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.ClassFeeRate.Remarks, new { @class = "input-305 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.ClassFeeRate.Remarks)
+            </span></span><span class="stack">
+                <label class="label-90">
+                    Total Amount</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.TotalAmount, new { @class = "input-100 input", entermsg = "Enter Remarks" })
+                </span></span>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+        $.each(ledgerElement, function (index) {
+            var element = $(this).closest("tr");
+            element.attr("id", "tr_" + index);
+
+            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+            element.find(".text_subject").attr({
+                "valueId": Subject_valueid,
+                "id": "text_subject_" + index
+            });
+        });
+    })
+</script>

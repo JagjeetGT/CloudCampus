@@ -1,0 +1,1636 @@
+﻿
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.PartyLedgerViewModel
+@{
+    decimal drLedgerTotal = 0;
+    decimal crLedgerTotal = 0;
+    decimal LedgerTotalBalance = 0;
+
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+
+    decimal drgrpTotal = 0;
+    decimal crgrpTotal = 0;
+    decimal grpTotalBalance = 0;
+
+    decimal drSubgrpTotal = 0;
+    decimal crSubgrpTotal = 0;
+    decimal grpSubTotalBalance = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+
+<br />
+<div class="ReportList">
+    <table border="0.5" style="font-size: 7px;">
+        <thead>
+          <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Account Description
+                </th>
+                <th>
+                    Dr Amount
+                </th>
+                <th>
+                    Cr Amount
+                </th>
+                <th>
+                    Balance
+                </th>
+            </tr>
+        </thead>
+       
+     @* ------- Start Group By Agent         ---------*@
+        @if (Model.GroupBy == 2)
+        {
+            var DspsubLedger = 0;
+            if (Model.DisplaySubledger)
+            {
+                DspsubLedger = 1;
+            }
+
+            string groupbyname = "";
+            foreach (var item in Model.LedgerList)
+            {
+                if (groupbyname != @item.GroupByName)
+                {
+                    if (grpTotalBalance > 0 || grpTotalBalance < 0)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                Agent Total :
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @drgrpTotal.ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(crgrpTotal).ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(grpTotalBalance).ToString("f2")
+                                @if (grpTotalBalance > 0)
+                                {
+                                    <text>Dr</text>
+                                }
+                                else
+                                {
+                                    <text>Cr</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    drgrpTotal = 0;
+                    crgrpTotal = 0;
+                    grpTotalBalance = 0;
+                    groupbyname = @item.GroupByName;
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold">
+                           Agent : @item.GroupByName
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>
+                    </td>
+                    <td style="font-weight: bold; padding-left: 20px">
+                        A/C : @item.AccountName
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+
+                
+                var subLedgers = UtilityService.GetSubLedgers(item.Id, Model.StartDate, Model.EndDate, Model.FYId, Model.SubLedgers,Model.BranchId);
+                if (Model.DisplaySubledger && subLedgers.Count != 0)
+                {
+                    foreach (var subLedger in subLedgers)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 30px">
+                                SubLedger :
+                                @if (Model.DisplaySubledger == true && subLedger.Description != null)
+                                {<text>@subLedger.Description</text>
+                                }
+                                else
+                                {
+                                    <text>No Sub Ledger</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                                var subLedgerId = 0;
+                                if (subLedger.Id != null)
+                                {
+                                    subLedgerId = Convert.ToInt32(subLedger.Id);
+                                }
+                                var openingBalance = UtilityService.GetSubLedgerOpeningBalance(item.Id, subLedgerId, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+                                decimal balance = openingBalance;
+                                decimal drTotal = 0;
+                                decimal crTotal = 0;
+
+
+                                if (groupbyname != @item.GroupByName)
+                                {
+                                    if (grpTotalBalance > 0 || grpTotalBalance < 0)
+                                    {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Agent Total :
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @drgrpTotal.ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(crgrpTotal).ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(grpTotalBalance).ToString("f2")
+                                        @if (grpTotalBalance > 0)
+                                        {
+                                            <text>Dr</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Cr</text>
+                                        }
+                                    </td>
+                                </tr>
+                                    }
+                                    drgrpTotal = 0;
+                                    crgrpTotal = 0;
+                                    grpTotalBalance = 0;
+
+                                }
+
+                                if (openingBalance != 0)
+                                {
+                            <tr>
+                                <td>
+                                </td>
+                                <td style="padding-left: 30px">
+                                    Opening Balance
+                                </td>
+                                <td style="text-align: right">
+                                    @if (openingBalance > 0)
+                                    {
+                                        drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (openingBalance < 0)
+                                    {
+                                        crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                                    //drgrpTotal += drTotal;
+                                    //crgrpTotal += crTotal;
+                                    drGrandTotal += drTotal;
+                                    crGrandTotal += crTotal;
+                                }
+
+
+                                int ProductDetails = 0;
+                                if (Model.DisplayProductDetails == true)
+                                {
+                                    ProductDetails = 1;
+                                }
+                                var TermDetails = 0;
+
+                                var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger,Model.BranchId, subLedgerId);
+                                string date = "";
+                                foreach (var ledger in partyLedgers)
+                                {
+                                    var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                                    balance += ledger.Amount;
+                            <tr>
+                                <td>
+                                    @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                                </td>
+                                <td style="padding-left: 40px">
+                                    @description #:@ledger.VNo
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount > 0)
+                                    {
+                                        drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount < 0)
+                                    {
+                                        crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @Math.Abs(balance).ToString("f2")
+                                    @if (balance > 0)
+                                    {
+                                        <text>Dr</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Cr</text>
+                                    }
+                                </td>
+                            </tr>
+                                    date = ledger.VDate.ToString("MM/dd/yyyy");
+
+                                    if (Model.DisplayProductDetails == true && ledger.ProductDetails != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                ProductDetails :
+                            </td>
+                            <td colspan="4">
+                                @Html.Raw(@ledger.ProductDetails)
+                            </td>
+                        </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Narration != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                Narration :
+                            </td>
+                            <td colspan="4">
+                                @ledger.Narration
+                            </td>
+                        </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Remarks != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                Remarks :
+                            </td>
+                            <td colspan="4">
+                                @ledger.Remarks
+                            </td>
+                        </tr>
+                                    }
+
+
+                                }
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Total:
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @drTotal.ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(crTotal).ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+                            drgrpTotal += drTotal;
+                            crgrpTotal += crTotal;
+                            drGrandTotal += drTotal;
+                            crGrandTotal += crTotal;
+
+                    }
+
+                    grpTotalBalance = Math.Abs(drgrpTotal) - Math.Abs(crgrpTotal);
+                    grandTotalBalance = Math.Abs(drGrandTotal) - Math.Abs(crGrandTotal);
+                }
+                else
+                {
+                    var openingBalance = UtilityService.GetLedgerOpeningBalance(item.Id, 0, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+                    decimal balance = openingBalance;
+
+                    decimal drTotal = 0;
+                    decimal crTotal = 0;
+                    if (openingBalance != 0)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 30px">
+                                Opening Balance
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance > 0)
+                                {
+                                    drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance < 0)
+                                {
+                                    crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                             
+                    }
+                    int ProductDetails = 0;
+                    if (Model.DisplayProductDetails == true)
+                    {
+                        ProductDetails = 1;
+                    }
+                    var TermDetails = 0;
+
+                    var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger,Model.BranchId,0);
+
+                    string date = "";
+                    foreach (var ledger in partyLedgers)
+                    {
+                        var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                        balance += ledger.Amount;
+                    <tr>
+                        <td>
+                            @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                        </td>
+                        <td style="padding-left: 30px">
+                            @description #:@ledger.VNo
+                        </td>
+                        <td style="text-align: right">
+                            @if (ledger.Amount > 0)
+                            {
+                                drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (ledger.Amount < 0)
+                            {
+                                crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+                            date = ledger.VDate.ToString("MM/dd/yyyy");
+                    }
+                     
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Ledger Total :
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @drTotal.ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(crTotal).ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+
+                            drGrandTotal += drTotal;
+                            crGrandTotal += crTotal;
+                            drgrpTotal += drTotal;
+                            crgrpTotal += crTotal;
+                            grpTotalBalance = Math.Abs(drgrpTotal) - Math.Abs(crgrpTotal);
+                            grandTotalBalance = Math.Abs(drGrandTotal) - Math.Abs(crGrandTotal);
+                }
+
+            }
+            if (grpTotalBalance > 0 || grpTotalBalance < 0)
+            {
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Agent Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drgrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crgrpTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(grpTotalBalance).ToString("f2")
+                    @if (grpTotalBalance > 0)
+                    {
+                        <text>Dr</text>
+                    }
+                    else
+                    {
+                        <text>Cr</text>
+                    }
+                </td>
+            </tr>
+
+            }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Grand Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drGrandTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crGrandTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @{
+            var crGrandTotalAbs = Math.Abs(crGrandTotal);
+            grandTotalBalance = drGrandTotal - crGrandTotalAbs;
+                    }
+                    @Math.Abs(grandTotalBalance).ToString("f2")
+                    @if (grandTotalBalance != 0)
+                    {
+                        if (grandTotalBalance > 0)
+                        {
+                        <text>Dr</text>
+                        }
+                        else
+                        {
+                        <text>Cr</text>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        @* ------- End Group By Agent          ---------*@
+         
+        @* ------- Start Group By Account Group  ---------*@  
+        
+        @if (Model.GroupBy == 4)
+        {
+            var DspsubLedger = 0;
+            if (Model.DisplaySubledger)
+            {
+                DspsubLedger = 1;
+            }
+
+            string groupbyname = "";
+            foreach (var item in Model.LedgerList)
+            {
+                if (groupbyname != @item.GroupByName)
+                {
+                    if (grpTotalBalance > 0 || grpTotalBalance < 0)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                A/C Group Total :
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @drgrpTotal.ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(crgrpTotal).ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(grpTotalBalance).ToString("f2")
+                                @if (grpTotalBalance > 0)
+                                {
+                                    <text>Dr</text>
+                                }
+                                else
+                                {
+                                    <text>Cr</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    drgrpTotal = 0;
+                    crgrpTotal = 0;
+                    grpTotalBalance = 0;
+                    groupbyname = @item.GroupByName;
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold">
+                            A/C Group : @item.GroupByName
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td>
+                    </td>
+                    <td style="font-weight: bold; padding-left: 20px">
+                        A/C : @item.AccountName
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+
+                
+                var subLedgers = UtilityService.GetSubLedgers(item.Id, Model.StartDate, Model.EndDate, Model.FYId, Model.SubLedgers, Model.BranchId);
+                if (Model.DisplaySubledger && subLedgers.Count != 0)
+                {
+                    foreach (var subLedger in subLedgers)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 30px">
+                                SubLedger :
+                                @if (Model.DisplaySubledger == true && subLedger.Description != null)
+                                {<text>@subLedger.Description</text>
+                                }
+                                else
+                                {
+                                    <text>No Sub Ledger</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                                var subLedgerId = 0;
+                                if (subLedger.Id != null)
+                                {
+                                    subLedgerId = Convert.ToInt32(subLedger.Id);
+                                }
+                                var openingBalance = UtilityService.GetSubLedgerOpeningBalance(item.Id, subLedgerId, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+                                decimal balance = openingBalance;
+                                decimal drTotal = 0;
+                                decimal crTotal = 0;
+
+
+                                if (groupbyname != @item.GroupByName)
+                                {
+                                    if (grpTotalBalance > 0 || grpTotalBalance < 0)
+                                    {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        A/C Group Total :
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @drgrpTotal.ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(crgrpTotal).ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(grpTotalBalance).ToString("f2")
+                                        @if (grpTotalBalance > 0)
+                                        {
+                                            <text>Dr</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Cr</text>
+                                        }
+                                    </td>
+                                </tr>
+                                    }
+                                    drgrpTotal = 0;
+                                    crgrpTotal = 0;
+                                    grpTotalBalance = 0;
+
+                                }
+
+                                if (openingBalance != 0)
+                                {
+                            <tr>
+                                <td>
+                                </td>
+                                <td style="padding-left: 30px">
+                                    Opening Balance
+                                </td>
+                                <td style="text-align: right">
+                                    @if (openingBalance > 0)
+                                    {
+                                        drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (openingBalance < 0)
+                                    {
+                                        crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                                    //drgrpTotal += drTotal;
+                                    //crgrpTotal += crTotal;
+                                    drGrandTotal += drTotal;
+                                    crGrandTotal += crTotal;
+                                }
+
+
+                                int ProductDetails = 0;
+                                if (Model.DisplayProductDetails == true)
+                                {
+                                    ProductDetails = 1;
+                                }
+                                var TermDetails = 0;
+
+                                var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger, Model.BranchId,subLedgerId);
+                                string date = "";
+                                foreach (var ledger in partyLedgers)
+                                {
+                                    var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                                    balance += ledger.Amount;
+                            <tr>
+                                <td>
+                                    @*@if (date != ledger.VDate.ToString("MM/dd/yyyy"))
+                                                     {<text>@ledger.VDate.ToString("MM/dd/yyyy")</text>
+                                                     }*@
+                                    @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                                </td>
+                                <td style="padding-left: 40px">
+                                    @description #:@ledger.VNo
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount > 0)
+                                    {
+                                        drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount < 0)
+                                    {
+                                        crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @Math.Abs(balance).ToString("f2")
+                                    @if (balance > 0)
+                                    {
+                                        <text>Dr</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Cr</text>
+                                    }
+                                </td>
+                            </tr>
+                                    date = ledger.VDate.ToString("MM/dd/yyyy");
+
+                                    if (Model.DisplayProductDetails == true && ledger.ProductDetails != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                ProductDetails :
+                            </td>
+                            <td colspan="4">
+                                @Html.Raw(@ledger.ProductDetails)
+                            </td>
+                        </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Narration != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                Narration :
+                            </td>
+                            <td colspan="4">
+                                @ledger.Narration
+                            </td>
+                        </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Remarks != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                Remarks :
+                            </td>
+                            <td colspan="4">
+                                @ledger.Remarks
+                            </td>
+                        </tr>
+                                    }
+
+
+                                }
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Total:
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @drTotal.ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(crTotal).ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+                            drgrpTotal += drTotal;
+                            crgrpTotal += crTotal;
+                            drGrandTotal += drTotal;
+                            crGrandTotal += crTotal;
+
+                    }
+
+                    grpTotalBalance = Math.Abs(drgrpTotal) - Math.Abs(crgrpTotal);
+                    grandTotalBalance = Math.Abs(drGrandTotal) - Math.Abs(crGrandTotal);
+                }
+                else
+                {
+                    var openingBalance = UtilityService.GetLedgerOpeningBalance(item.Id, 0, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+                    decimal balance = openingBalance;
+
+                    decimal drTotal = 0;
+                    decimal crTotal = 0;
+                    if (openingBalance != 0)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 30px">
+                                Opening Balance
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance > 0)
+                                {
+                                    drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance < 0)
+                                {
+                                    crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                             
+                    }
+                    int ProductDetails = 0;
+                    if (Model.DisplayProductDetails == true)
+                    {
+                        ProductDetails = 1;
+                    }
+                    var TermDetails = 0;
+
+                    var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger,Model.BranchId,0);
+
+                    string date = "";
+                    foreach (var ledger in partyLedgers)
+                    {
+                        var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                        balance += ledger.Amount;
+                    <tr>
+                        <td>
+                            @* @if (date != ledger.VDate.ToString("MM/dd/yyyy"))
+                                         {<text>@ledger.VDate.ToString("MM/dd/yyyy")</text>
+                                         }*@
+                            @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                        </td>
+                        <td style="padding-left: 30px">
+                            @description #:@ledger.VNo
+                        </td>
+                        <td style="text-align: right">
+                            @if (ledger.Amount > 0)
+                            {
+                                drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (ledger.Amount < 0)
+                            {
+                                crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+                            date = ledger.VDate.ToString("MM/dd/yyyy");
+                    }
+                     
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Ledger Total :
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @drTotal.ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(crTotal).ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+
+                            drGrandTotal += drTotal;
+                            crGrandTotal += crTotal;
+                            drgrpTotal += drTotal;
+                            crgrpTotal += crTotal;
+                            grpTotalBalance = Math.Abs(drgrpTotal) - Math.Abs(crgrpTotal);
+                            grandTotalBalance = Math.Abs(drGrandTotal) - Math.Abs(crGrandTotal);
+                }
+
+            }
+            if (grpTotalBalance > 0 || grpTotalBalance < 0)
+            {
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    A/C Group Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drgrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crgrpTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(grpTotalBalance).ToString("f2")
+                    @if (grpTotalBalance > 0)
+                    {
+                        <text>Dr</text>
+                    }
+                    else
+                    {
+                        <text>Cr</text>
+                    }
+                </td>
+            </tr>
+
+            }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Grand Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drGrandTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crGrandTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @{
+            var crGrandTotalAbs = Math.Abs(crGrandTotal);
+            grandTotalBalance = drGrandTotal - crGrandTotalAbs;
+                    }
+                    @Math.Abs(grandTotalBalance).ToString("f2")
+                    @if (grandTotalBalance != 0)
+                    {
+                        if (grandTotalBalance > 0)
+                        {
+                        <text>Dr</text>
+                        }
+                        else
+                        {
+                        <text>Cr</text>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+         @* ------- End Group By Account Group       ---------*@
+         
+        @* ------- Start Group By Account Sub Group  ---------*@  
+         @if (Model.GroupBy == 5)
+         {
+             var DspsubLedger = 0;
+             if (Model.DisplaySubledger)
+             {
+                 DspsubLedger = 1;
+             }
+
+             string groupbyname = "";
+             string subgroupbyname = "";
+             foreach (var item in Model.LedgerList)
+             {
+                 if (groupbyname != @item.GroupByName)
+                 {
+                     if (grpSubTotalBalance > 0 || grpSubTotalBalance < 0)
+                     {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                A/C Sub Group Total :
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @drSubgrpTotal.ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(crSubgrpTotal).ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(grpSubTotalBalance).ToString("f2")
+                                @if (grpSubTotalBalance > 0)
+                                {
+                                    <text>Dr</text>
+                                }
+                                else
+                                {
+                                    <text>Cr</text>
+                                }
+                            </td>
+                        </tr>
+                     }
+                     drSubgrpTotal = 0;
+                     crSubgrpTotal = 0;
+                     grpSubTotalBalance = 0;
+                     subgroupbyname = @item.SubGroupByName;
+                     
+                     if (grpTotalBalance > 0 || grpTotalBalance < 0)
+                     {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                A/C Group Total :
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @drgrpTotal.ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(crgrpTotal).ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(grpTotalBalance).ToString("f2")
+                                @if (grpTotalBalance > 0)
+                                {
+                                    <text>Dr</text>
+                                }
+                                else
+                                {
+                                    <text>Cr</text>
+                                }
+                            </td>
+                        </tr>
+                     }
+                     drgrpTotal = 0;
+                     crgrpTotal = 0;
+                     grpTotalBalance = 0;
+                     groupbyname = @item.GroupByName;
+                     <tr>
+                         <td>
+                         </td>
+                         <td style="font-weight: bold">
+                             A/C Group : @item.GroupByName
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                     <tr>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold; padding-left: 20px">
+                            A/C Sub Group : @item.SubGroupByName
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                 }
+                 else if (subgroupbyname != @item.SubGroupByName)
+                 {
+                     if (grpSubTotalBalance > 0 || grpSubTotalBalance < 0)
+                     {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                A/C Sub Group Total :
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @drSubgrpTotal.ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(crSubgrpTotal).ToString("f2")
+                            </td>
+                            <td style="text-align: right; font-weight: bold">
+                                @Math.Abs(grpSubTotalBalance).ToString("f2")
+                                @if (grpSubTotalBalance > 0)
+                                {
+                                    <text>Dr</text>
+                                }
+                                else
+                                {
+                                    <text>Cr</text>
+                                }
+                            </td>
+                        </tr>
+                     }
+                     drSubgrpTotal = 0;
+                     crSubgrpTotal = 0;
+                     grpSubTotalBalance = 0;
+                     subgroupbyname = @item.SubGroupByName;
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold; padding-left: 20px">
+                            A/C Sub Group : @item.SubGroupByName
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                 }
+                <tr>
+                    <td>
+                    </td>
+                    <td style="font-weight: bold; padding-left: 40px">
+                        A/C : @item.AccountName
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+
+                
+                 var subLedgers = UtilityService.GetSubLedgers(item.Id, Model.StartDate, Model.EndDate, Model.FYId, Model.SubLedgers, Model.BranchId);
+                 if (Model.DisplaySubledger && subLedgers.Count != 0)
+                 {
+                     foreach (var subLedger in subLedgers)
+                     {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 40px">
+                                SubLedger :
+                                @if (Model.DisplaySubledger == true && subLedger.Description != null)
+                                {<text>@subLedger.Description</text>
+                                }
+                                else
+                                {
+                                    <text>No Sub Ledger</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                                var subLedgerId = 0;
+                                if (subLedger.Id != null)
+                                {
+                                    subLedgerId = Convert.ToInt32(subLedger.Id);
+                                }
+                                var openingBalance = UtilityService.GetSubLedgerOpeningBalance(item.Id, subLedgerId, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+                                decimal balance = openingBalance;
+                                decimal drTotal = 0;
+                                decimal crTotal = 0;
+
+
+                                if (groupbyname != @item.GroupByName)
+                                {
+                                    if (grpTotalBalance > 0 || grpTotalBalance < 0)
+                                    {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        A/C Group Total :
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @drgrpTotal.ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(crgrpTotal).ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(grpTotalBalance).ToString("f2")
+                                        @if (grpTotalBalance > 0)
+                                        {
+                                            <text>Dr</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Cr</text>
+                                        }
+                                    </td>
+                                </tr>
+                                    }
+                                    drgrpTotal = 0;
+                                    crgrpTotal = 0;
+                                    grpTotalBalance = 0;
+
+                                }
+
+                                if (openingBalance != 0)
+                                {
+                            <tr>
+                                <td>
+                                </td>
+                                <td style="padding-left: 50px">
+                                    Opening Balance
+                                </td>
+                                <td style="text-align: right">
+                                    @if (openingBalance > 0)
+                                    {
+                                        drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (openingBalance < 0)
+                                    {
+                                        crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                                    //drgrpTotal += drTotal;
+                                    //crgrpTotal += crTotal;
+                                    drGrandTotal += drTotal;
+                                    crGrandTotal += crTotal;
+                                }
+
+
+                                int ProductDetails = 0;
+                                if (Model.DisplayProductDetails == true)
+                                {
+                                    ProductDetails = 1;
+                                }
+                                var TermDetails = 0;
+
+                                var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger,Model.BranchId, subLedgerId);
+                                string date = "";
+                                foreach (var ledger in partyLedgers)
+                                {
+                                    var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                                    balance += ledger.Amount;
+                            <tr>
+                                <td>
+                                    @*@if (date != ledger.VDate.ToString("MM/dd/yyyy"))
+                                                     {<text>@ledger.VDate.ToString("MM/dd/yyyy")</text>
+                                                     }*@
+                                    @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                                </td>
+                                <td style="padding-left: 50px">
+                                    @description #:@ledger.VNo
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount > 0)
+                                    {
+                                        drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount < 0)
+                                    {
+                                        crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @Math.Abs(balance).ToString("f2")
+                                    @if (balance > 0)
+                                    {
+                                        <text>Dr</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Cr</text>
+                                    }
+                                </td>
+                            </tr>
+                                    date = ledger.VDate.ToString("MM/dd/yyyy");
+
+                                    if (Model.DisplayProductDetails == true && ledger.ProductDetails != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                ProductDetails :
+                            </td>
+                            <td colspan="4">
+                                @Html.Raw(@ledger.ProductDetails)
+                            </td>
+                        </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Narration != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                Narration :
+                            </td>
+                            <td colspan="4">
+                                @ledger.Narration
+                            </td>
+                        </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Remarks != null)
+                                    {
+                        <tr>
+                            <td style="text-align: right;">
+                                Remarks :
+                            </td>
+                            <td colspan="4">
+                                @ledger.Remarks
+                            </td>
+                        </tr>
+                                    }
+
+
+                                }
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Total:
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @drTotal.ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(crTotal).ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+                            drgrpTotal += drTotal;
+                            crgrpTotal += crTotal;
+                            drSubgrpTotal += drTotal;
+                            crSubgrpTotal += crTotal;
+                            drGrandTotal += drTotal;
+                            crGrandTotal += crTotal;
+
+                     }
+
+                     grpSubTotalBalance = Math.Abs(drSubgrpTotal) - Math.Abs(crSubgrpTotal);
+                     grpTotalBalance = Math.Abs(drgrpTotal) - Math.Abs(crgrpTotal);
+                     grandTotalBalance = Math.Abs(drGrandTotal) - Math.Abs(crGrandTotal);
+                 }
+                 else
+                 {
+                     var openingBalance = UtilityService.GetLedgerOpeningBalance(item.Id, 0, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+                     decimal balance = openingBalance;
+
+                     decimal drTotal = 0;
+                     decimal crTotal = 0;
+                     if (openingBalance != 0)
+                     {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 50px">
+                                Opening Balance
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance > 0)
+                                {
+                                    drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance < 0)
+                                {
+                                    crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                             
+                     }
+                     int ProductDetails = 0;
+                     if (Model.DisplayProductDetails == true)
+                     {
+                         ProductDetails = 1;
+                     }
+                     var TermDetails = 0;
+
+                     var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger,Model.BranchId,0);
+
+                     string date = "";
+                     foreach (var ledger in partyLedgers)
+                     {
+                         var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                         balance += ledger.Amount;
+                    <tr>
+                        <td>
+                            @* @if (date != ledger.VDate.ToString("MM/dd/yyyy"))
+                                         {<text>@ledger.VDate.ToString("MM/dd/yyyy")</text>
+                                         }*@
+                            @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                        </td>
+                        <td style="padding-left: 50px">
+                            @description #:@ledger.VNo
+                        </td>
+                        <td style="text-align: right">
+                            @if (ledger.Amount > 0)
+                            {
+                                drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (ledger.Amount < 0)
+                            {
+                                crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+                            date = ledger.VDate.ToString("MM/dd/yyyy");
+                     }
+                     
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Ledger Total :
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @drTotal.ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(crTotal).ToString("f2")
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            @Math.Abs(balance).ToString("f2")
+                            @if (balance > 0)
+                            {
+                                <text>Dr</text>
+                            }
+                            else
+                            {
+                                <text>Cr</text>
+                            }
+                        </td>
+                    </tr>
+
+                            drGrandTotal += drTotal;
+                            crGrandTotal += crTotal;
+                            drSubgrpTotal += drTotal;
+                            crSubgrpTotal += crTotal;
+                            grpSubTotalBalance = Math.Abs(drSubgrpTotal) - Math.Abs(crSubgrpTotal);
+                            drgrpTotal += drTotal;
+                            crgrpTotal += crTotal;
+                            grpTotalBalance = Math.Abs(drgrpTotal) - Math.Abs(crgrpTotal);
+
+                            grandTotalBalance = Math.Abs(drGrandTotal) - Math.Abs(crGrandTotal);
+                 }
+
+             }
+             if (grpSubTotalBalance > 0 || grpSubTotalBalance < 0)
+             {
+                <tr>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        A/C Sub Group Total :
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @drSubgrpTotal.ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @Math.Abs(crSubgrpTotal).ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @Math.Abs(grpSubTotalBalance).ToString("f2")
+                        @if (grpSubTotalBalance > 0)
+                        {
+                            <text>Dr</text>
+                        }
+                        else
+                        {
+                            <text>Cr</text>
+                        }
+                    </td>
+                </tr>
+             }
+             if (grpTotalBalance > 0 || grpTotalBalance < 0)
+             {
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    A/C Group Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drgrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crgrpTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(grpTotalBalance).ToString("f2")
+                    @if (grpTotalBalance > 0)
+                    {
+                        <text>Dr</text>
+                    }
+                    else
+                    {
+                        <text>Cr</text>
+                    }
+                </td>
+            </tr>
+
+             }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Grand Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drGrandTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crGrandTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @{
+             var crGrandTotalAbs = Math.Abs(crGrandTotal);
+             grandTotalBalance = drGrandTotal - crGrandTotalAbs;
+                    }
+                    @Math.Abs(grandTotalBalance).ToString("f2")
+                    @if (grandTotalBalance != 0)
+                    {
+                        if (grandTotalBalance > 0)
+                        {
+                        <text>Dr</text>
+                        }
+                        else
+                        {
+                        <text>Cr</text>
+                        }
+                    }
+                </td>
+            </tr>
+         }
+
+
+    </table>
+</div>

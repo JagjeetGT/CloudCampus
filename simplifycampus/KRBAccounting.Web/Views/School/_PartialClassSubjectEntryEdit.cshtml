@@ -1,0 +1,57 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Domain.Entities.ScClassSubjectMapping
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.SubjectId, new { @class = "hdn_Subject_Id" })
+            <input type="text"  class = "modallink text_subject input-160 input" value="@if (Model.Subject != null)
+                                                                                        {
+                                                                                            @Model.Subject.Description
+                                                                                        }
+                                                                                           "  href="@Url.Action("GetSubjects", "School")" title="Subject "  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ResultSystem, new { @class = "hdn_ResultSystem_Id" })
+            <input type="text" class = "modallink  text_ResultSystem input-100 input" value="@UtilityService.GetResultSystem(Model.ResultSystem)" href="@Url.Action("GetEnumResultSystemList")"  title="Result System"  entermsg = "Press F1 for existing Account list."/>
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.EvaluateForType, new { @class = "hdn_EvaluateForType_Id" })
+            <input type="text" class = "modallink text_EvaluateForType input-100 input" value="@UtilityService.GetEvaluateForPass(Model.EvaluateForType)"  href="@Url.Action("GetEnumEvaluateForPassList")"  title="Evaluation For Pass"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.SubjectType, new { @class = "hdn_SubjectType_Id" })
+            <input type="text" class = "modallink text_SubjectType input-100 input" value="@UtilityService.GetSubjectType(Model.SubjectType)" href="@Url.Action("GetEnumSubjectTypeList")" title="Subject Type"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ClassType, new { @class = "hdn_ClassType_Id" })
+            <input type="text" class = "modallink text_ClassType input-100 input" value="@UtilityService.GetClassType(Model.ClassType)" href="@Url.Action("GetEnumClassTypeList")" title="Class Type"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "narration input-160 input", href = "/School/ClassSubjectEntry", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-class-subject-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-class-subject-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "Payroll Generation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="../../Scripts/Knockoutjs/knockout-2.2.1.js" type="text/javascript"></script>
+<script src="../../Scripts/Knockoutjs/knockout.mapping-latest.js" type="text/javascript"></script>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Payroll Generation
+                    </h1>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    
+                    <div id="payroll-form">
+                        <div id="error-msg">
+    </div>
+                        @Html.Partial("_PartialPayrollGeneration")
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="payrolldetail">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">    function writeError(control,
+msg) {
+        var err_msg = '<div class="alert-error alert"><a class="close" href="#">×</a><p>'
++ msg + '</p></div>'; $('#' + control).html(err_msg);
+    }
+
+    function success(data) {
+        Begin();
+        $(".payrolldetail").html(data.partialView);
+        if (data.msg != "") {
+            writeError("error-msg", data.msg);
+        }
+        else {
+            $("#error-msg").html("");
+        }
+
+    }
+
+    
+</script>

@@ -1,0 +1,246 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.ScEmployeeInfo
+@*<div class="head">
+    <h1>
+        Student Detail Inforamtion</h1>
+    
+    <div class="clear">
+    </div>
+</div>*@
+<div class="block-fluid table-sorting">
+    <table >
+        <tr>
+            <td colspan="3" style="font-weight:bold">
+                <h3 align="center">
+                    Employee Detail Information</h3>
+            </td>
+        </tr>
+        <tr>
+            <td  style="font-size:10px;">
+                <label class="label-120">
+                    Code :
+                </label>
+                @Model.Code
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120">
+                    Name :
+                </label>
+                @Model.Description
+            </td>
+            <td rowspan="4" style="border: 0px">
+                @*@{
+                    var path = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "Content/academicsimage/" + Model.StdPhotoFileName + Model.StdPhotoExt;
+                    if (!File.Exists(path))
+                    {
+                        path = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "Content/img/NoImage.jpg";
+
+                    }
+                }
+
+
+
+
+                <img src="@path" width="80px" height="80px" style="float: right;
+                                margin-top: 10px" />*@
+                @*<img src="../../Content/img/kohinoor.png" width="50px" />*@
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" >
+                    Gender :
+                </label>
+                @Model.Gender
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" >
+                    Marital Status :
+                </label>@Model.MaritalStatus
+            </td>
+           
+        </tr>
+        <tr>
+            <td style="font-size:10px;" colspan="2" >
+                <label class="label-120" >
+                    BOD :
+                </label>
+                @Model.MitiOfBirth B.S||
+                @Convert.ToDateTime(Model.DateOfBirth).ToShortDateString() A.D
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120">
+                    Father's Name :
+                </label>@Model.FatherName
+            </td>
+           
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" >
+                    Religion :
+                </label>@Model.Religion
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" >
+                    Mobile :
+                </label>@Model.Mobile
+            </td>
+            <td style="border: 0px">
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <table >
+        <tr>
+            <td colspan="2" style="font-weight:bold" >
+                <h4 align="center">
+                    Other Information</h4>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="font-weight:bold;">
+                <h5>
+                    Permanent Address</h5>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Country :
+                </label>@Model.Country
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Address :
+                </label>
+                @Model.Address
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120">
+                    Phone :
+                </label>
+                @Model.Phone
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Email :
+                </label>@Model.Email
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td colspan="2" style="font-weight:bold;">
+                <h5>
+                    Temporary Address</h5>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+    Country:
+</label>@Model.Country1
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Address :
+                </label>@Model.Address1
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Phone :
+                </label>
+                @Model.Phone1
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Email :
+                </label>
+                @Model.Email1
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <table>
+        <tr>
+            <td colspan="2" style="font-weight:bold;">
+                <h5>
+                    Education/Qualification Information</h5>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Education :
+                </label>@Model.Education
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <table >
+        <tr>
+            <td colspan="2" style="font-weight:bold;">
+                <h5>
+                    Official Information</h5>
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Date of Join :
+                </label>@Convert.ToDateTime(Model.DateOfJoin).ToShortDateString()
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Category :
+                </label>@Model.EmployeeCategory.Description
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120">
+                    Department :
+                </label>@Model.EmployeeDepartment.Description
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120">
+                    Post :
+                </label>@Model.EmployeePost.Description
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120">
+                    Start Time :
+                </label>
+                @Model.StartTime
+                @*@Convert.ToDateTime(Model.StartTime).ToShortTimeString()*@
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" >
+                    End Time :
+                </label>
+                @Model.EndTime
+                @*@Convert.ToDateTime(Model.EndTime).ToShortTimeString()*@
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Weekend Holiday :
+                </label>@Enum.GetName(typeof(Weekholidayenum), Model.Weekholiday)
+            </td>
+            <td style="font-size:10px;">
+                <label class="label-120" style="font-size:8px;">
+                    Status :
+                </label>
+                @Enum.GetName(typeof(StatusEnum), Model.Status)
+            </td>
+        </tr>
+    </table>
+</div>

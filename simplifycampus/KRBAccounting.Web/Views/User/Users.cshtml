@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.Title = "User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="../../Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+@*<p>
+    <a href="javascript:void(0);" class="btn addUser">New(+)</a> <a class="btn" style="float: right;" href="@Url.Action("Roles", "User")">
+        <i></i>Roles</a>
+</p>*@
+<div id="User-list">
+    @Html.Action("UserList")
+</div>
+<div class="dialog" id="modalUser" style="display: none">
+    <div class="block">
+    </div>
+</div>
+<div class="dialog" id="modalPassword" style="display: none">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('.block').html(data);
+                $(this).addClass("done");
+                $("#modalUser").dialog({
+                    //autoOpen: false,
+                    modal: true,
+                    width: 'auto',
+                    buttons: {
+                        "Save": function () {
+                            var atLeastOneIsChecked = $('input[name="role"]:checked').length > 0;
+                            if (atLeastOneIsChecked) {
+                                $(".ui-dialog #User-form").submit();
+                            } else {
+                                $(".role-error").html("Select any one Role");
+                            }
+                            //$(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    }
+
+    $('a.addUser').live('click', function () {
+        Begin();
+        var url = '@Url.Action("UserAdd", "User")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editUser').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("UserEdit", "User")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editPasswordUser').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("ChangePassword", "User")/' + id;
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('.block').html(data);
+                $(this).addClass("done");
+                $("#modalPassword").dialog({
+                    //autoOpen: false,
+                    modal: true,
+                    width: 'auto',
+                    buttons: {
+                        "Save": function () {
+                            Begin();
+                            $(".ui-dialog #pwd-form").submit();
+                           
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+
+        });
+
+        return false;
+    });
+
+    $('#saveUser').live('click', function () {
+        $("#User-form").submit();
+    });
+
+    function OnComplete() {
+        Begin();
+        $('#modalUser .block').load("/User/UserAdd");
+        $("#User-list").load("/User/UserList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+        Begin();
+        $('#modalUser').dialog("close");
+        $("#User-list").load("/User/UserList");
+        $.unblockUI();
+    }
+
+    function onRemove(e) {
+        for (var i = 0; i < e.files.length; i++) {
+            var data = getGuid(e.files[i].name);
+            e.files[i].name = data;
+        }
+    }
+    function getGuid(id) {
+        var newValue = "hddimage" + id.replace('.', '');
+        var returnvalue = $("." + newValue).val();
+        return returnvalue;
+    }
+    function onUpload(e) {
+        var files = e.files;
+        // Check the extension of each file and abort the upload if it is not .jpg
+        $.each(files, function () {
+            var ext = this.extension.toUpperCase();
+            if (ext == ".JPG" || ext == ".PNG" || ext == ".JPEG") {
+
+            } else {
+                $("#kendoWindow").dialog();
+                //alert("Only .jpg, .png and .jpeg files can be uploaded");
+                e.preventDefault();
+            }
+        });
+
+    }
+</script>

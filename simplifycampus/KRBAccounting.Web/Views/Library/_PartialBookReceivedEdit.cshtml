@@ -1,0 +1,160 @@
+﻿@model KRBAccounting.Domain.Entities.ScBookReceived
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@{
+    var date = Model.Date.ToString("dd/MM/yyyy");
+}
+@using (Ajax.BeginForm("BookReceivedEdit", "Library", new { controller = "Library" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)@Html.HiddenFor(x => x.CreatedById)@Html.HiddenFor(x => x.CreatedDate)
+   
+
+    
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Number</label>
+            <span class="field">@Html.TextBoxFor(m => m.Number, new { @class = "input-250 input", entermsg = "Enter Number" })
+                @Html.ValidationMessageFor(m => m.Number) </span></span><span class="stack">
+                    <label class="label-90">
+                        Date</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.Miti)
+                        @Html.HiddenFor(m => m.Date, new { displayId = "DisplayDate" })
+                        @Html.TextBoxFor(m => m.DisplayDate, new { @class = "input-100 input", entermsg = "Enter Date.", miti = Model.SystemControl.DateType, dateId = "Date", displayId = "DisplayDate", mitiId = "Miti" })
+                        @Html.ValidationMessageFor(m => m.Date)
+                    </span></span>
+        <input type="hidden" id="currDate" value="@date"/>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Book</label>
+            <span class="field">@Html.HiddenFor(m => m.BookId)
+                <input type="text" class = "modallink input-250 input" value="@Model.Book.Name" href="@Url.Action("GetBook", "Library")" valueId="BookId" id="feeitemledger" title="Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.BookId)</span></span><span class="stack">
+                    <label class="label-90">
+                        Quantity</label>
+                    <span class="field">@Html.TextBoxFor(m => m.Quantity, new { @class = "input-150 input", entermsg = "Enter Quantity" })
+                        @*@Html.ValidationMessageFor(m => m.Quantity)*@ </span></span>
+        <input type="button" class="btn" onclick="GetDetail()" value="Add Rows" />
+    </div>
+    <div class="clearfix">
+    </div>
+
+    <div class="lag detailEntryTable" style="height: 400px; width: 100%">
+        <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 100%">
+            <tr class="nodrop nodrag">
+                <th width="20px">
+                </th>
+               <th>
+                     Accession No
+                </th>
+                <th>
+                    Bar Code
+                </th>
+                <th>
+                   Status
+                </th>
+                <th>
+                    Remarks
+                </th>
+            </tr>
+            @foreach (var item in Model.ReceivedDetailses)
+            {
+                @Html.Partial("_PartialBookReceivedDetailAdd", item)
+            }
+        </table>
+
+    </div>
+    <div class="clearfix">
+    </div>
+    
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks) </span></span>
+    </div>
+}
+<script type="text/javascript">
+
+    function GetDetail() {
+        var qty = $("#Quantity").val();
+        if (qty != '') {
+            qty = parseInt(qty);
+            var url = '@Url.Action("BookReceivedDetails")?qtyCount=' + qty;
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $("#table-class-fee-rate-detail .subject-detail-entry").remove();
+                    $("#table-class-fee-rate-detail").append(data);
+
+                    var e = document.querySelectorAll('.hdn_BookId_Id');
+                    $.each(e, function (index) {
+                        var element = $(this).closest('tr');
+                        element.attr("id", 'tr_' + index);
+
+                        var bookId = element.find(".hdn_BookId_Id").attr('id');
+
+                        element.find('.text_Book').attr({
+                            "valueid": bookId,
+                            "id": "book_" + index
+                        });
+                    });
+                }
+            });
+        }
+    }
+
+
+//    $(document).ready(function () {
+//        var dateType = '@Model.SystemControl.DateType';
+//        var date;
+//        var nepDate;
+//        if (dateType == 1) {
+//            date = $("#currDate").val();
+//            nepDate = convertToNepali(date);
+//        } else {
+//            date = $("#currDate").val();
+//            date = convertToNepali(date);
+//            nepDate = date;
+//        }
+//        $("#Miti").val(nepDate);
+//        $("#DisplayDate").val(date);
+
+//        $("#Date").nepNoBackDatePicker();
+
+    //    });
+    
+
+     $(document).ready(function() {
+        var dateType = @Model.SystemControl.DateType;
+        if (dateType == "1") {
+            $("#DisplayDate").mask("99/99/9999");
+            $("#DisplayDate").live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#DisplayDate").mask("9999/99/99");
+            $("#DisplayDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+    });
+
+</script>

@@ -1,0 +1,287 @@
+﻿@using KRBAccounting.Data.Repositories
+@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Master.LedgerAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("OnlineGeneralLedgerAdd", "Entry", new AjaxOptions { UpdateTargetId = "MsgError", OnSuccess = "sucess" }, new { @class = "form-custom online-form", id = "online-ledger-form" }))
+{
+    <div id="MsgError">
+    </div>
+    <div style="width: 845px;">
+        <div class="lag">
+            <span class="stack">
+                <label>
+                    Account Name</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.Ledger.AccountName, new { @class = "input" })
+                    @Html.ValidationMessageFor(m => m.Ledger.AccountName)
+                </span></span><span class="stack">
+                    <label>
+                        Category</label>
+                    @Html.DropDownListFor(x => x.Ledger.Category, Model.Category, new { @class = "select-90 input" })</span>
+            <span class="stack">
+                <label>
+                    Short Name</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.Ledger.ShortName, new { @class = "input" })
+                    @Html.ValidationMessageFor(m => m.Ledger.ShortName)
+                </span></span>
+        </div>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Account Information</a></li>
+                <li><a href="#tabs-2">Other Information</a></li>
+            </ul>
+            <div id="tabs-1">
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            Group</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.Ledger.AccountGroupId)
+                            <input type="text" class = "modallink input" href="@Url.Action("GetAccountGroupList", "Master")" createhref="@Url.Action("OnlineAccountGroupAdd", "Master")" valueId="Ledger_AccountGroupId" id="accountgroup" child="Ledger_AccountSubGroupId accountsubgroup"/>
+                            @Html.ValidationMessageFor(m => m.Ledger.AccountGroupId)
+                        </span></span><span class="stack">
+                            <label class="label-70">
+                                Sub Group</label>
+                            <span class="field">
+                                @Html.HiddenFor(m => m.Ledger.AccountSubGroupId)
+                                @*<input type="text" class = "modallink input" href="@Url.Action("GetAccountSubGroupByGroupId", "Master")" createhref="@Url.Action("AccountSubGroupAddModal", "Master")" valueId="Ledger_AccountSubGroupId" id="accountsubgroup" parent="Ledger_AccountGroupId"/>*@
+                                <input type="text" class = "modallink input" href="@Url.Action("GetAccountSubGroupByGroupId", "Master")" createhref="@Url.Action("OnlineAccountSubGroupAdd", "Master")" valueId="Ledger_AccountSubGroupId" id="accountsubgroup" parent="Ledger_AccountGroupId"/>
+                            </span></span>
+                </div>
+                <div class="lag">
+                    <label>
+                        Cash/Bank</label>
+                    <div class="field">
+                        @Html.CheckBoxFor(m => m.Ledger.IsCashBank, new { @class = "input" })
+                    </div>
+                    <label>
+                        Cash Book</label>
+                    <div class="field">
+                        @Html.CheckBoxFor(m => m.Ledger.IsCashBook, new { @class = "input" })
+                    </div>
+                    <label>
+                        Sub Ledger</label>
+                    <div class="field">
+                        @Html.EditorFor(m => m.Ledger.IsSubLedger, new { @class = "input" })
+                    </div>
+                    <label>
+                        Bill Wise Adjustment</label>
+                    <div class="field">
+                        @Html.EditorFor(m => m.Ledger.IsBillWiseAdjustment, new { @class = "input" })
+                    </div>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            Area</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.Ledger.AreaId)
+                            <input type="text" class = "modallink input" href="@Url.Action("GetArea", "Master")" valueId="Ledger_AreaId" id="area"/>
+                        </span></span><span class="stack">
+                            <label>
+                                Agent</label>
+                            <span class="field">
+                                @Html.HiddenFor(x => x.Ledger.AgentId)
+                                <input type="text" class = "modallink input" href="@Url.Action("GetAgent", "Master")" valueId="Ledger_AgentId" id="agent"/>
+                            </span></span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            Currency</label>
+                        <span class="field">
+                            @Html.DropDownListFor(m => m.Ledger.CurrencyId, Model.Currency, "Currency", new { @class = "select-80 input" })
+                        </span></span><span class="stack">
+                            <label>
+                                Credit Limit</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Ledger.CreditLimit, new { @class = "input-80 input" })
+                                @Html.ValidationMessageFor(m => m.Ledger.CreditLimit)
+                            </span></span><span class="stack">
+                                <label>
+                                    Credit Days</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Ledger.CreditDays, new { @class = "input-80 input" })
+                                    @Html.ValidationMessageFor(m => m.Ledger.CreditDays)
+                                </span></span><span class="stack">
+                                    <label>
+                                        Cheque Receipt Days</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.Ledger.ChequeReceiptDays, new { @class = "input-80 input" })
+                                        @Html.ValidationMessageFor(m => m.Ledger.ChequeReceiptDays)
+                                    </span></span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label>
+                            Rate of Interest</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Ledger.RateOfInterest, new { @class = "input" })
+                            @Html.ValidationMessageFor(m => m.Ledger.RateOfInterest)
+                        </span></span>
+                </div>
+            </div>
+            <div id="tabs-2">
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            Address</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Ledger.Address, new { @class = "input" })
+                            @Html.ValidationMessageFor(m => m.Ledger.Address)
+                        </span></span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            City</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Ledger.City, new { @class = "input-160 input" })
+                            @Html.ValidationMessageFor(m => m.Ledger.City)
+                        </span></span><span class="stack">
+                            <label class="label-60">
+                                State</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Ledger.State, new { @class = "input-160 input" })
+                                @Html.ValidationMessageFor(m => m.Ledger.State)
+                            </span></span><span class="stack">
+                                <label class="label-60">
+                                    Country</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Ledger.Country, new { @class = "input-160 input" })
+                                    @Html.ValidationMessageFor(m => m.Ledger.Country)
+                                </span></span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            Phone(O)</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Ledger.PhoneO, new { @class = "input-160 input" })
+                        </span></span><span class="stack">
+                            <label class="label-60">
+                                Phone(R)</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Ledger.PhoneR, new { @class = "input-160 input" })
+                            </span></span><span class="stack">
+                                <label class="label-60">
+                                    Fax</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Ledger.Fax, new { @class = "input-160 input" })
+                                </span></span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            Email</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Ledger.Email, new { @class = "input-295 input" })
+                        </span></span><span class="stack">
+                            <label class="label-70">
+                                Pan No</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Ledger.PanNo, new { @class = "input-295 input" })
+                            </span></span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-60">
+                            DL No.</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Ledger.DLNo, new { @class = "input-80 input" })
+                        </span></span><span class="stack">
+                            <label class="label-110">
+                                Contact Person</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Ledger.ContactPerson, new { @class = "input-370 input" })
+                            </span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    if (Model.SystemControl.UDF == "1")
+    {
+        if (Model.UdfEntries.LongCount() != 0)
+        {
+           
+    <a href="javascript:void(0);" class="btn LedgerCustomFiled">UDF</a>
+    <div class="UDFEntry" style="display: none">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+        }
+    }
+    <span class="clearfix"></span>
+    <input type="button" class="btn btn-small btn-primary onlineSave" value="Save" />
+}
+<script language="javascript" type="text/javascript">
+    function CategoryChange(category) {
+        if (category == "BO" || category == "CU" || category == "VE") {
+            $("#Ledger_IsCashBank").attr("disabled", "disabled");
+            $("#Ledger_IsCashBook").attr("disabled", "disabled");
+            $("#Ledger_IsSubLedger").removeAttr("disabled");
+            $("#Ledger_IsBillWiseAdjustment").removeAttr("disabled");
+        }
+        else if (category == "OT") {
+            $("#Ledger_IsCashBank").removeAttr("disabled");
+            $("#Ledger_IsCashBook").attr("disabled", "disabled");
+            $("#Ledger_IsSubLedger").removeAttr("disabled");
+            $("#Ledger_IsBillWiseAdjustment").attr("disabled", "disabled");
+        }
+    }
+
+    $(document).ready(function () {
+        $("#tabs").tabs();
+
+        var category = $("#Ledger_Category").val();
+        CategoryChange(category);
+        $("#Ledger_IsCashBank").attr('checked', 'checked');
+        $("#Ledger_Category").live("change", function () {
+            var category1 = $("#Ledger_Category").val();
+            //alert(category1);
+            CategoryChange(category1);
+        });
+
+        $('#Ledger_IsCashBank').click(function () {
+            var checked = $(this).attr('checked');
+
+            if (checked) {
+                $('#Ledger_IsCashBook').removeAttr('disabled');
+            } else {
+                $('#Ledger_IsCashBook').attr('disabled', true);
+            }
+        });
+    });
+    $(".LedgerCustomFiled").live("click", function () {
+        $(".UDFEntry").toggle('hide');
+
+    });
+    $("#Ledger_AccountName").live("focusout", function () {
+        var name = $(this).val();
+
+        $.getJSON("/Master/IsAccountNameAvailable?name=" + name, "", function (data, status, xhr) {
+            if (data != '') {
+
+                $("#MsgError").html(data);
+                $("#Ledger_AccountName").focus();
+            } else {
+                $("#MsgError").html('');
+            }
+        });
+
+    });
+    $("#Ledger_ShortName").live("focusout", function () {
+        var name = $(this).val();
+
+        $.getJSON("/Master/IsShortNameAvailable?name=" + name, "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#Ledger_ShortName").focus();
+            } else {
+                $("#MsgError").html('');
+            }
+        });
+    });
+</script>

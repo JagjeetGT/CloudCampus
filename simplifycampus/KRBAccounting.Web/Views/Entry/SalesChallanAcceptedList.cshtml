@@ -1,0 +1,60 @@
+﻿@using KRBAccounting.Service
+@model PagedList<KRBAccounting.Domain.Entities.SalesChallanMaster>
+
+       <div class="block-fluid table-sorting" id="tbl-accepted">
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+            <thead>
+               <tr>
+                            <th width="20%">
+                                Challan No.
+                            </th>
+                            <th>
+                                Challan Date
+                            </th>
+                            <th>
+                                Vendor
+                            </th>
+                            <th>
+                                Created By
+                            </th>
+                            <th>
+                                Approved Date
+                            </th>
+                            <th>
+                                Approved By
+                            </th>
+                        </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                                <td>@item.ChallanNo
+                                </td>
+                                <td>@item.ChallanDate.ToShortDateString()
+                                </td>
+                                <td>@item.Ledger.AccountName
+                                </td>
+                                <td>@item.User.Username
+                                </td>
+                                <td>@Convert.ToDateTime(item.ApprovedDate).ToShortDateString()
+                                </td>
+                                <td>@UtilityService.GetUserNameById(item.ApprovedBy)
+                                </td>
+                                <td>
+                                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "PB"))
+                                    {
+                                        <a href="javascript:void(0);" data-id="@item.Id" class="editSalesChallan icon-edit">
+                                        </a>
+                                    }
+                                    | <a class= "icon-print" href = "@Url.Action("SalesChallanPrint", "Entry", new { invoiceId = item.Id })" title = "Print Bill" target="_blank">
+                                    </a>
+                                </td>
+                            </tr>
+                }
+            </tbody>
+        </table>
+            <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "SalesChallanAcceptedList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-accepted" }))
+    </div>
+</div>

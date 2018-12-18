@@ -1,0 +1,100 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.ScLibraryMemberRegistration
+@if (Model.Type == "student")
+{
+    <div class="lag">
+        <label>
+            Name :</label>
+        <div class="field">
+            @if (Model.Studentinfo != null)
+            {
+                @Model.Studentinfo.StuDesc
+            }
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label>
+            Admission No. :</label>
+        <div class="field">
+            @if (Model.Studentinfo != null)
+            {
+                @Model.Studentinfo.Regno
+            }
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label>
+            Roll No. :</label>
+        <div class="field">
+            @if (Model.Studentinfo != null)
+            {
+                @UtilityService.GetStudentRollNoByStudentId(Model.Studentinfo.StudentID)
+                //@Model.RollNo
+            }
+        </div>
+    </div> <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label>
+            Class Name :</label>
+        <div class="field">
+            @if (Model.Studentinfo != null)
+            {
+                @Model.Class.Description
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="lag">
+        <label>
+            Name :</label>
+        <div class="field">
+            @if (Model.StaffMaster != null)
+            {
+                @Model.StaffMaster.Description
+            }
+        </div>
+    </div>
+     <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label>
+            Position :</label>
+        <div class="field">
+            @if (Model.StaffMaster != null && Model.StaffMaster.EmployeePost != null)
+            {
+                @Model.StaffMaster.EmployeePost.Description
+            }
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label>
+            Employee Code :</label>
+        <div class="field">
+            @if (Model.StaffMaster != null)
+            {
+                @Model.StaffMaster.Code
+            }
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label>
+            Category :</label>
+        <div class="field">
+            @if (Model.StaffMaster != null)
+            {
+                @Model.StaffMaster.EmployeeCategory.Description
+            }
+        </div>
+    </div>
+}

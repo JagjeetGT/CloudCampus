@@ -1,0 +1,289 @@
+﻿@model KRBAccounting.Web.ViewModels.ARAP.OutStandingFromViewModel
+@{
+    ViewBag.Title = "Ledger";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Outstanding Vendor</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfOutStandingSupplierReport", "ARAP")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelOutStandingSupplierReport", "ARAP")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("OutStandingSupplierForm", Model)
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modalReportForm").dialog('open'); });
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+
+//        $("#saveForm").live("click", function () {
+//            $("#report-form").submit();
+//        });
+
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Generate Outstanding Vendor Report',
+            buttons: {
+                "OK": function () {
+                    var isChecked = $('#AllLedger').attr('checked') ? true : false;
+                    var category = $('input:radio[name=Category]:checked').val();
+                    //if all ledger is checked, pass empty parameter as ledgers , that generates report for all the ledgers
+                    if (isChecked) {
+                        var elements = document.getElementsByName("ledgers");
+                        var len = elements.length;
+                        var arr = [];
+                        for (var i = 0; i < len; i++) {
+                            arr.push(elements[i].value);
+                        }
+//                        var startDate = $("#StartDate").val();
+//                        var endDate = $("#EndDate").val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/ARAP/OutStandingSupplier/?ledgers=&&AsOnDate=" + $("#AsOnDate").val(),
+                            success: function (data) {
+                                $("#report").html(data);
+                                $('#modalReportForm').modal('hide');
+                            }
+                        });
+                    } else {
+                        if (modalshow == true) {
+                            modalshow = false;
+                            selectedRows.removeAll();
+                            var link = "/ARAP/GetLedgerSupplier";
+                            $.ajax({
+                                url: link,
+                                dataType: "json",
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    var tableData = CreateTableViewList(data, "listpopup", true);
+                                    $('#modalbox-report .msg-body').html(tableData);
+//                                    $.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+//                                    //alert($(".jquery-msg-content").html());
+//                                    $(".jquery-msg-content .msg-footer #display-report").attr('onclick', 'DisplaySupplierLedger();');
+//                                    $('#modalbox-report .msg-body').html("");
+                                    //                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+
+
+                                    $("#modalbox-report").dialog({
+                                        modal: true,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function () {
+                                                modalshow = true;
+                                                DisplaySupplierLedger();
+                                                $(this).dialog("close");
+                                            },
+                                            Cancel: function () {
+                                                modalshow = true;
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });
+
+                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+                                    $('.selectable-table').tableSelect({
+                                        onClick: function (row) {
+                                            //alert(row);
+                                        },
+                                        onDoubleClick: function (rows) {
+                                            $.each(rows, function (i, row) {
+                                                var name = $(row).children('td').eq(0).attr("ledger-id");
+                                                if ($(row).hasClass('disabled')) {
+                                                    $(row).removeClass('disabled');
+                                                    selectedRows.remove(name);
+                                                } else {
+                                                    $(row).addClass('disabled');
+                                                    selectedRows.add(name);
+                                                }
+                                            });
+                                            updateList();
+                                        },
+                                        onChange: function (row) {
+                                            //alert(row);
+                                        }
+                                    });
+                                }
+                            });
+                            return true;
+
+                        } else {
+                            return false;
+                        }
+                    }
+                    $(this).dialog('close');
+                }
+                ,
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+   
+//    function OpenModal() {
+//        $('#modalReportForm').modal({
+//            keyboard: false,
+//            backdrop: "static"
+//        }).css({
+//            width: 'auto',
+//            'margin-left': function () {
+//                return -($(this).width() / 2);
+//            }
+//        });
+//    }
+
+    $("#generate_report_btn").live('click', function (e) {
+        var isChecked = $('#AllLedger').attr('checked') ? true : false;
+        var category = $('input:radio[name=Category]:checked').val();
+        if (isChecked) {
+            var elements = document.getElementsByName("ledgers");
+            var len = elements.length;
+            var arr = [];
+            for (var i = 0; i < len; i++) {
+                arr.push(elements[i].value);
+            }
+            var startDate = $("#StartDate").val();
+            var endDate = $("#EndDate").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/ARAP/OutStandingSupplier/?ledgers=" + arr + "&&AsOnDate=" + $("#AsOnDate").val(),
+                success: function (data) {
+                    $("#report").html(data);
+                    $('#modalReportForm').modal('hide');
+                }
+            });
+        } else {
+            if (modalshow == true) {
+                modalshow = false;
+                selectedRows.removeAll();
+                var link = "/ARAP/GetLedgerSupplier";
+                $.ajax({
+                    url: link,
+                    dataType: "json",
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        var tableData = CreateTableViewList(data, "listpopup", true);
+                        $('#modalbox-report .msg-body').html(tableData);
+                        //                        $.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                        //                        //alert($(".jquery-msg-content").html());
+                        //                        $(".jquery-msg-content .msg-footer #display-report").attr('onclick', 'DisplaySupplierLedger();');
+                        //                        $('#modalbox-report .msg-body').html("");
+                        //                        $('#modalbox-report .msg-footer .selectedRows').html("");
+
+                        $("#modalbox-report").dialog({
+                            modal: true,
+                            width: 'auto',
+                            buttons: {
+                                "Ok": function () {
+                                    modalshow = true;
+                                    DisplaySupplierLedger();
+                                    $(this).dialog("close");
+                                },
+                                Cancel: function () {
+                                    modalshow = true;
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+
+                        $('#modalbox-report .msg-footer .selectedRows').html("");
+                        $('.selectable-table').tableSelect({
+                            onClick: function (row) {
+                                //alert(row);
+                            },
+                            onDoubleClick: function (rows) {
+                                $.each(rows, function (i, row) {
+                                    var name = $(row).children('td').eq(0).attr("ledger-id");
+                                    if ($(row).hasClass('disabled')) {
+                                        $(row).removeClass('disabled');
+                                        selectedRows.remove(name);
+                                    } else {
+                                        $(row).addClass('disabled');
+                                        selectedRows.add(name);
+                                    }
+                                });
+                                updateList();
+                            },
+                            onChange: function (row) {
+                                //alert(row);
+                            }
+                        });
+                    }
+                });
+                return true;
+
+            } else {
+                return false;
+            }
+        }
+
+    });
+    
+    $('#GroupBy').change(function () {
+        var groupBy = $('#GroupBy').val();
+
+        if (groupBy == 2) {
+            $("#DocAgent").removeAttr("disabled");
+        } else {
+            $("#DocAgent").attr("disabled", "disabled");
+            $("#DocAgent").removeAttr("checked");
+        }
+    });
+    function updateList() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="ledgers" value="' + this + '" />');
+        });
+    };
+    var selectedRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.removeAll = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+</script>

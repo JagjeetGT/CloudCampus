@@ -1,0 +1,44 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.AccountSubGroup>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Group Name
+                </th>
+                <th width="5%">
+                </th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Description
+                    </td>
+                    <td>@if (item.AccountGroup != null)
+                        {
+                            @item.AccountGroup.Description
+                        }
+
+                    </td>
+                    <td>
+                        <a href="javascript:void(0);" class="editAccountSubGroup icon-pencil" data-id="@item.Id" title="Edit: @item.Description"></a>
+                    </td>
+                    <td><a href="javascript:void(0);" class="AccountSubGroupDelete icon-remove" data-id="@item.Id" title="Delete"></a></td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+   <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "AccountSubGroupList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "accountsubgroup-list"}))
+    </div>
+</div>

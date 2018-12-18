@@ -1,0 +1,23 @@
+﻿@model KRBAccounting.Domain.Entities.ScFineSchemeDetails
+
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Days, new { @class = "input-120 input first-col", isrequired="true" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Percentage, new { @class = "input-100 input" })
+        </td>
+      <td>
+            @Html.TextBoxFor(x => x.Amount, new { @class = "last-col-custom input input-120 input", href = "/School/FineSchemeDatailAdd", tableid = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

@@ -1,0 +1,108 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScStudentFeeRateMaster>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr  >
+                <th width="5%">S.N.</th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Student Name
+                </th>
+                
+                <th>
+                    Basic Amount
+                </th>
+                <th>
+                    Term Amount
+                </th>
+                <th>
+                    NetAmount
+                </th>
+          @*      <th>
+                    CreatedDate
+                </th>
+                <th>
+                    CreatedBy
+                </th>*@
+                <th>
+                    UpdatedDate
+                </th>
+                <th>
+                    UpdatedBy
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr  >
+                    <td>@i</td>
+                    <td>@if (item.Class != null)
+                        {
+                            @item.Class.Description
+                        }
+
+                    </td>
+                    <td class="_detail ttLT" title="@item.Studentinfo.Class.Description: @item.Studentinfo.StuDesc" align="center" data-classid="@item.StudentId" style="cursor: pointer" >
+                        @if (item.Studentinfo != null)
+                              {
+                                  @item.Studentinfo.StuDesc
+                              }
+
+                    </td>
+                    <td>@item.BasicAmount
+                    </td>
+                    <td>@item.TermAmount
+                    </td>
+                    <td>@item.NetAmount
+                    </td>
+                    @*<td>@Convert.ToDateTime(item.CreatedDate).ToShortDateString()
+                    </td>
+                    <td>@if (item.CreatedBy != null)
+                        {
+                            @item.CreatedBy.Username
+                        }
+
+                    </td>*@
+                    <td>@Convert.ToDateTime(item.UpdatedDate).ToShortDateString()
+                    </td>
+                    <td>@if (item.UpdatedBy != null)
+                        {
+                            @item.UpdatedBy.Username
+                        }
+
+                    </td>
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="#" class="editScClassFeeRate icon-edit" data-Id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("StudentFeeRateDelete", new {id = item.Id})" onclick = "return confirm('Are you sure you wish to delete this Student Wise Fee Rate?');" class="deleteScClassFeeRate icon-remove" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "StudentFeeRateList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "subject-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@

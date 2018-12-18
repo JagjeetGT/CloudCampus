@@ -1,0 +1,53 @@
+﻿@model KRBAccounting.Domain.Entities.ScHouseMapping
+           @{
+               var d = Model.StartDate.ToString("dd/MM/yyyy");
+               var e = Model.EndDate.ToString("dd/MM/yyyy");
+           }
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "hdn_Subject_Id first-col" })
+            <input type="text"  class = "modallink text_subject input-120 input"   href="@Url.Action("GetStudentByClassSection", "School",new{classId=Model.ClassId,sectionId=Model.SectionId})" title="Student List"  />
+
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Studentinfo.StdCode, new { @class = "stdCode input-100", @readonly = "readonly" })
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.Status, new { @class = "hdn_Status" })
+            <input type="text"  class = "modallink text_status input-120 input"  href="@Url.Action("GetStudentStatus", "School")" title="Subject "  entermsg = "Press F1 for existing Account list." />
+        </td>  
+        <td>
+            <span>
+                @Html.HiddenFor(m => m.StartMiti, new { @class = "StartMiti" })
+                @Html.HiddenFor(m => m.StartDate, new { @class = "StartDate", displayid = "DisplayDate" })
+                <input type="text" id="DisplayDate" class="DisplayStartDate input-90 input" value="@d" miti="@Model.DateType" dateId = "StartDate" displayid = "DisplayDate" mitiId = "StartMiti"/>
+            </span>
+        </td> 
+        <td>
+             
+               <span>
+                @Html.HiddenFor(m => m.EndMiti, new { @class = "EndMiti" })
+                @Html.HiddenFor(m => m.EndDate, new { @class = "EndDate", displayid = "DisplayEndDate" })
+                <input type="text" id="DisplayEndDate" class="DisplayEndDate input-90 input" value="@e" miti="@Model.DateType" dateId = "EndDate" displayid = "DisplayEndDate" mitiId = "EndMiti"/>
+            </span>
+              
+
+        </td> 
+        
+            var url = Url.Action("HouseDetailAdd", new {sectionId = Model.SectionId, classId = Model.ClassId});
+        
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "last-col-custom input-160 input", href = url, tableid = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

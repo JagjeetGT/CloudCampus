@@ -1,0 +1,172 @@
+﻿@using System.Data
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.PurchaseChallanViewModel
+@{
+    decimal totalBasicAmt = 0;
+    decimal totalGrandTotal = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix"></div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="table tbl-list" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Product Description
+                </th>
+                <th>
+                    Qty
+                </th>
+                <th>
+                    Rate
+                </th>
+                <th>
+                    Basic Amt
+                </th>
+            </tr>
+        </thead>
+              @foreach (var item in Model.PurchaseDetails)
+        {
+
+            if (item.Orders == 1)
+            {
+            <tr>
+                <td>
+                    <b>@(Model.Datetype == 1 ? @item.ChallanDate.ToString("MM/dd/yyyy") : @item.ChallanMiti)</b>
+                </td>
+                <td>
+                    <b>Inv. No: @item.ChallanNo</b>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Vendor:</b>
+                </td>
+                <td>
+                    <b>@item.ProductDecription</b>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+                 
+
+            }
+
+            else
+            {
+
+                if (item.ProductDecription == "Basic Amt Total" || item.ProductDecription == "Invoice Total")
+                {
+                    
+            <tr>
+                <td>
+                </td>
+                <td>
+                    <b>@item.ProductDecription</b>
+                </td>
+                <td style="text-align: right">
+                </td>
+                <td style="text-align: right">
+                </td>
+                <td style="text-align: right">
+                    <b>@item.BasicAmount</b>
+                </td>
+            </tr>
+                          
+                }
+                else
+                {
+            <tr>
+                <td>
+                    @item.Code
+                </td>
+                <td>@item.ProductDecription
+                </td>
+                <td style="text-align: right">@item.Qty
+                </td>
+                <td style="text-align: right">@item.Rate
+                </td>
+                <td style="text-align: right">@item.BasicAmount
+                </td>
+            </tr>    
+            
+            
+                                         if (Model.DisplayRemarks)
+                                         {
+                                             if (!string.IsNullOrEmpty(item.Remarks))
+                                             {
+            <tr>
+                <td style="text-align: right; font-size: 11px">
+                    Remarks :
+                </td>
+                <td colspan="5" style="padding-left: 40px; font-size: 11px">
+                    @item.Remarks
+                </td>
+            </tr>
+                                             }
+                                         }
+
+
+
+
+                }
+                if (item.ProductDecription == "Basic Amt Total")
+                {
+                    totalBasicAmt += item.BasicAmount;
+                }
+                else
+                {
+                    totalGrandTotal += item.BasicAmount;
+                }
+
+            }
+
+        }
+      <tr>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">
+                Total Basic Amount
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">@totalBasicAmt
+            </td>
+        </tr>
+        
+        <tr>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">
+                Grand Total
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">@totalGrandTotal
+            </td>
+        </tr>
+    </table>
+</div>
+

@@ -1,0 +1,71 @@
+﻿@model KRBAccounting.Domain.Entities.User
+@using (Html.BeginForm("UserInfo", "StudentProfile", FormMethod.Post, new { enctype = "multipart/form-data", id = "User-form", @class = "form-horizontal" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    
+    @Html.HiddenFor(x => x.ImageGuid)
+    @Html.HiddenFor(x => x.Ext)
+    <div id="MsgErrorUserInfo">@Html.ValidationSummary(true)
+    </div>
+ 
+    
+
+    <div class="control-group">
+        <label class="label-120 control-label">
+            User Name
+        </label>
+        <span class="controls">
+            @Html.TextBoxFor(m => m.Username, new { @class = "input-295 input" })
+            @Html.ValidationMessageFor(m => m.Username)
+        </span>
+    </div>
+    <div class="control-group">
+        <label class="control-label">
+            Avatar</label>
+        <div class="controls">
+            <div class="fileupload fileupload-new" data-provides="fileupload">
+                <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;">
+                    @if (KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name) != null)
+                    {
+                        <img src="@KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name)" alt="@User.Identity.Name" />
+                    }
+                    else
+                    {
+                        <img src="/Content/social/assets/img/plugins/bootstrap-fileupload/image-50x50.png"
+                            alt="Selected image" />
+                    }
+                </div>
+                <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;">
+                </div>
+                <span class="btn btn-file"><span class="fileupload-new">Select image</span><span
+                    class="fileupload-exists">Change</span><input type="file" name="file" /></span>
+                <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+            </div>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="label-120  control-label">
+            Full Name
+        </label>
+        <span class="controls">
+            @Html.EditorFor(m => m.FullName, new { @class = "input-295 input" })
+            @Html.ValidationMessageFor(m => m.FullName)
+        </span>
+    </div>
+    <div class="control-group">
+        <label class="label-120  control-label">
+            Email Address
+        </label>
+        <span class="controls">
+            @Html.EditorFor(m => m.EmailAddress, new { @class = "input-295 input" })
+            @Html.ValidationMessageFor(m => m.EmailAddress)
+        </span>
+    </div>
+    
+
+    <div class="control-group">
+        <div class="controls">
+            <input type="submit" class="btn btn-primary" value="Save" />
+        </div>
+    </div>
+}

@@ -1,0 +1,77 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScStudentCategory>
+@{
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Code
+                </th>
+                @*<th>
+                    Created Date
+                </th>
+                <th>
+                    Created By
+                </th>*@
+                <th>
+                    Updated Date
+                </th>
+                <th>
+                    Updated By
+                </th>
+                <th width="7%">
+                </th>
+        
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@item.Description
+                    </td>
+                    <td>@item.Code
+                    </td>
+                    @*<td>@item.CreatedDate.ToShortDateString()
+                    </td>
+                    <td>@item.CreatedBy.Username
+                    </td>*@
+                    <td>@item.UpdatedDate.ToShortDateString()
+                    </td>
+                    <td>@item.UpdatedBy.Username
+                    </td>
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="Javascript:void(0)" class="editScHouseGroup icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                 
+                        @if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)" class="deleteClass icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@ 

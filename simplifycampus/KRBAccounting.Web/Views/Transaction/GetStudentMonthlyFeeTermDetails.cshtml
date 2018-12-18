@@ -1,0 +1,52 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScMonthlyBill>
+@{
+    ViewBag.Title = "GetStudentMonthlyFeeTermDetails";
+    int sno = 1;
+    var className = "bcPopupSearchs" +  Model.FirstOrDefault().ScMonthlyBillStudent.StudentId;
+    decimal feeTotal = 0;
+    decimal eduTac = 0;
+}
+  
+<div id="@className" style="width: 288px; position: absolute"  class="popup">
+    <table>
+        <th>S.No</th>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Education Tax</th>
+        <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td>@sno</td>
+                    <td>@item.FeeItem.Description</td>
+                    <td>@item.FeeAmount</td>
+                    <td>@item.EducationTaxAmount</td>
+                </tr>
+                sno++;
+                feeTotal += item.FeeAmount;
+                eduTac += item.EducationTaxAmount;
+            }
+               
+            <tr>
+                <td colspan="2"><b>Total</b></td>
+                <td><b>@feeTotal</b></td>
+                <td><b>@eduTac</b></td>
+            </tr>
+        </tbody>
+    </table>
+       @* <div class="footer">
+         
+            <a class="btn btn-danger link_bcPopupSearch">Close</a>
+        </div>*@
+    </div>
+@*<script>
+    
+    $(".link_bcPopupSearchs").live("click",function () {
+        if ($("#bcPopupSearchs").is(":visible")) {
+            $("#bcPopupSearchs").fadeOut(200);
+        } else {
+            $("#bcPopupSearchs").fadeIn(300);
+        }
+        return false;
+    });
+</script>*@

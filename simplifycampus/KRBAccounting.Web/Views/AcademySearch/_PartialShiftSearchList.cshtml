@@ -1,0 +1,89 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScShift>
+           @{
+               var i = 1;
+             var userRight = (UserRight)ViewBag.UserRight;}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr align="center"><th width="5%">S.N.</th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Memo
+                </th>
+              @*  <th>
+                    Created Date
+                </th>
+                <th>
+                    Created By
+                </th>*@
+                <th>
+                    Updated Date
+                </th>
+                <th>
+                    Updated By
+                </th>
+                <th>
+                    Active
+                </th>
+                <th>
+                    Display Order
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr align="center">
+                    <td>@i</td>
+                    <td>@item.Code
+                    </td>
+                    <td>@item.Description
+                    </td>
+                    <td>@item.Memo
+                    </td>
+                    @*<td>@item.CreatedDate.ToShortDateString()
+                    </td>
+                    <td>@item.CreatedBy.Username
+                    </td>*@
+                    <td>@item.UpdatedDate.ToShortDateString()
+                    </td>
+                    <td>@item.UpdatedBy.Username
+                    </td>
+                    <td>@if(item.IsActive)
+                        {
+                            <input type="checkbox" checked="checked" disabled="disabled"/>
+                        }
+                        else
+                        {<input type="checkbox" disabled="disabled"/>}
+                    </td>
+                    <td>@item.DispalyOrder
+                    </td>
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="#" class="editScShift icon-edit" data-id="@item.Id" title="Edit"></a>
+                        }
+                    </td>
+                    <td>@if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("ShiftDelete", new {shiftId = item.Id})" class="deleteShift icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>
+*@

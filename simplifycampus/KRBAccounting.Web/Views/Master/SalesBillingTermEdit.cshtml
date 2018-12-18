@@ -1,0 +1,131 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Master.BillingTermAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("SalesBillingTermEdit", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "MsgError",OnSuccess = "successEdit"}, new { @class = "form-horizontal", id = "sales-billing-term-form" }))
+{
+    <div id="MsgError"></div>
+   @Html.HiddenFor(x=>x.BillingTerm.Id)
+   @Html.HiddenFor(x => x.BillingTerm.CreatedById)
+   @Html.HiddenFor(x => x.BillingTerm.CreatedDate)
+   @Html.HiddenFor(x => x.BillingTerm.BranchId)
+   @Html.HiddenFor(x => x.BillingTerm.Category)
+     <div style="width: 445px;">
+        <div class="lag">
+            <span class="stack">
+                <label class="label-100">
+                    Code</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.BillingTerm.Code, new { @class = "input-45 input" })
+                    @Html.ValidationMessageFor(m => m.BillingTerm.Code)
+                    <span class="loading BillingTerm_Code">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                </span></span><span class="stack">
+                    <label class="label-70">
+                        Description</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.BillingTerm.Description, new { @class = "input-160 input" })
+                        @Html.ValidationMessageFor(m => m.BillingTerm.Description)
+                        <span class="loading BillingTerm_Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                    </span></span>
+        </div>
+        <div class="lag">
+            <label class="label-100">
+                General Ledger</label>
+            <span class="field">
+                  @Html.HiddenFor(m => m.BillingTerm.GeneralLedgerId)
+                <input type="text" value="@UtilityService.GetLedgerNameById(Model.BillingTerm.GeneralLedgerId)" class = "modallink input-240 input" href="@Url.Action("GetLedger", "Master")" valueId="BillingTerm_GeneralLedgerId" id="general_ledger" />
+                @Html.ValidationMessageFor(m => m.BillingTerm.GeneralLedgerId)
+                @*  @Html.DropDownListFor(m => m.BillingTerm.GeneralLedgerId, Model.GeneralLedgerList, new { @class = "input" })*@
+            </span>
+        </div>
+        @*<div class="lag">
+            <span class="stack">
+                <label class="label-100">
+                    Category</label>
+                <span class="field">
+                    @Html.DropDownListFor(m => m.BillingTerm.Category, Model.CategoryList, new { @class = "select-90 input" })
+                </span></span><span class="stack">
+                    <label class="label-70">
+                        Basis</label>
+                    <span class="field">
+                        @Html.DropDownListFor(m => m.BillingTerm.Basis, Model.BasisList, new { @class = "select-90 input" })
+                    </span></span>
+        </div>*@
+        <div class="lag">
+            <span class="stack">
+                <label class="label-100">
+                    Sign</label>
+                <span class="field">
+                    @Html.DropDownListFor(m => m.BillingTerm.Sign, Model.SignList, new { @class = "select-40 input" })
+                </span></span><span class="stack">
+                    <label class="label-90">
+                        Product Wise</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.BillingTerm.IsProductWise, new { @class = "input" })
+                    </span></span><span class="stack">
+                        <label class="label-90">
+                            Profitability</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.BillingTerm.IsProfitability, new { @class = "input" })
+                        </span></span>
+        </div>
+        <div class="lag">
+            @*<span class="stack">
+                <label class="label-160">
+                    Value on which this term</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.BillingTerm.TermBasis, new { @class = "input-80 input" })
+                    @Html.ValidationMessageFor(m => m.BillingTerm.TermBasis)
+                </span></span>*@<span class="stack">
+                    <label class="label-100">
+                        Rate</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.BillingTerm.Rate, new { @class = "input-80 input" })
+                        @Html.ValidationMessageFor(m => m.BillingTerm.Rate)
+                    </span></span>
+        </div>
+        @* <div class="lag">
+             <label class="label-100">
+                 Supress if Zero</label>
+             <span class="field">
+                 @Html.CheckBoxFor(m => m.BillingTerm.SupressIfZero, new { @class = "input" })
+             </span>
+         </div>*@
+          <div class="lag">
+            <label class="label-100">
+                Is Active</label>
+            <span class="field">
+                @Html.EditorFor(m => m.BillingTerm.IsActive, new { @class = "input" })
+            </span>
+        </div><div class="lag">
+            <label class="label-100">
+                Display Order</label>
+            <span class="field">
+                @Html.EditorFor(m => m.BillingTerm.DispalyOrder, new { @class = "input" })
+            </span>
+        </div>
+    </div>
+}
+<script type="text/javascript" >
+//    $("#BillingTerm_Description").live("focusout", function () {
+//        var name = $(this).val();
+//        $.getJSON("/Master/IsSalesBillingNameAvailable?name=" + name + "&id=@Model.BillingTerm.Id", "", function (data, status, xhr) {
+//            if (data != '') {
+//                $("#MsgError").html(data);
+//                $("#BillingTerm_Description").focus();
+//            }
+//        });
+//    });
+//    $("#BillingTerm_Code").live("focusout", function () {
+//        var name = $(this).val();
+//        $.getJSON("/Master/IsSalesBillingCodeAvailable?code=" + name + "&id=@Model.BillingTerm.Id", "", function (data, status, xhr) {
+//            if (data != '') {
+//                $("#MsgError").html(data);
+//                $("#BillingTerm_Code").focus();
+//            }
+//        });
+//    });
+</script>

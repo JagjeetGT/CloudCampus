@@ -1,0 +1,56 @@
+﻿@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Domain.Entities.ScStudentSubjectMapping
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("studentEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "hdn_Student_Id" })
+            @if (Model.StudentId != 0)
+            {
+                <input type="text"  class = "modallink text_student input" value="@Model.Studentinfo.StuDesc" href="@Url.Action("GetStudentByClassId", "School")" children="hdn_Student_Id" parent="ClassId" title="Students" valueId="StudentId" id="student_id" entermsg = "Press F1 for existing Account list." />
+            }
+            else
+            {
+            <input type="text"  class = "modallink text_student input" children="hdn_Student_Id"  href="@Url.Action("GetStudentByClassId", "School")" parent="ClassId" title="Students" valueId="StudentId" id="student_id" entermsg = "Press F1 for existing Account list." />
+            }
+            
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.StdCode, new { @class = "hdn_Studentinfo_StdCode", @readonly = true })
+            
+        </td>
+       <td>
+            @Html.TextBoxFor(x => x.Regno, new { @class = "hdn_Studentinfo_Regno", @readonly = true })
+            
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Section, new { @class = "hdn_Studentinfo_Section", @readonly = true })
+            
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "narration input", href = "/School/SubjectStudentEntry", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-class-subject-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-class-subject-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

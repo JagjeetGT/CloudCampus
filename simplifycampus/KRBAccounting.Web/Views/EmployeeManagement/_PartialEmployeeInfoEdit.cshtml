@@ -1,0 +1,421 @@
+@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.ScEmployeeInfo
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("EmployeeInfoEdit", "EmployeeManagement", new { controller = "EmployeeManagement" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">General Information</a></li>
+            <li><a href="#tabs-2">Other Information</a></li>
+        </ul>
+        <div id="tabs-1">
+            <fieldset>
+                <legend>Personal Information</legend>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-90">
+                            Name</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "input-305 input", entermsg = "Enter Description" })
+                            @Html.ValidationMessageFor(m => m.Description)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        label
+                        <label class="label-70">
+                            Code</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Code, new { @class = "input-100 input", entermsg = "Enter Code" })
+                            @Html.ValidationMessageFor(m => m.Code)
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="div4" style="margin-left: 10px;">
+                    <div class="lag" style="margin-bottom: 5px">
+                        <fieldset style="margin-right: 30px;">
+                            <legend>Gender</legend>
+                            <div class="stack">
+                                <div class="field">
+                                    <div style="padding-left: 15px; float: left">
+                                        @Html.RadioButtonFor(x => x.Gender, "Male", true) Male</div>
+                                    <div style="padding-left: 15px; float: left">
+                                        @Html.RadioButtonFor(x => x.Gender, "Female", false) FeMale</div>
+                                    @Html.ValidationMessageFor(m => m.Gender)
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset style="margin-right: 35px;">
+                            <legend>Marital Status</legend>
+                            <div class="stack">
+                                <div class="field">
+                                    <div style="padding-left: 15px; float: left">
+                                        @Html.RadioButtonFor(x => x.MaritalStatus, "Married", true) Married</div>
+                                    <div style="padding-left: 15px; float: left">
+                                        @Html.RadioButtonFor(x => x.MaritalStatus, "Unmarried", false) UnMarried</div>
+                                    @Html.ValidationMessageFor(m => m.MaritalStatus)
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="clearfix">
+                        </div>
+                        <div class="stack">
+                            <label class="label-90">
+                                Father's Name</label>
+                            <div class="field">
+                                @Html.TextBoxFor(m => m.FatherName, new { @class = "input-190 input", entermsg = "Enter FatherName" })
+                                @Html.ValidationMessageFor(m => m.FatherName)
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>
+                        <div class="stack">
+                            <label class="label-90">
+                                Religion</label>
+                            <div class="field">
+                                @Html.TextBoxFor(m => m.Religion, new { @class = "input-190 input", entermsg = "Enter Religion" })
+                                @Html.ValidationMessageFor(m => m.Religion)
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>
+                        <div class="stack">
+                            <label class="label-90">
+                                Mobile</label>
+                            <div class="field">
+                                @Html.TextBoxFor(m => m.Mobile, new { @class = "input-190 input", entermsg = "Enter Mobile" })
+                                @Html.ValidationMessageFor(m => m.Mobile)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lag">
+                        <fieldset>
+                            <legend>Date Of Birth</legend>
+                            <div class="stack">
+                                <label class="label-100">
+                                    (B.S.)(YYYY-MM-DD)</label>
+                                <div class="field">@Html.TextBoxFor(m => m.MitiOfBirth, new { @class = "input-100 input", entermsg = "Enter DBOMiti" })
+                                    @Html.ValidationMessageFor(m => m.MitiOfBirth)
+                                </div>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="stack">
+                                <label class="label-100">
+                                    (A.D.)(MM-DD-YYYY)</label>
+                                <div class="field">@Html.DateTextBoxFor(m => m.DateOfBirth, new { @class = "input-100 input", entermsg = "Enter DBO" })
+                                    @Html.ValidationMessageFor(m => m.DateOfBirth)
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="clearfix">
+            </div>
+            <fieldset>
+                <legend>Official Infromation</legend>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-90">
+                            Date Of Join</label>
+                        <div class="field">
+                            @Html.HiddenFor(m => m.MitiofJoin)
+                            @Html.HiddenFor(m => m.DateOfJoin)
+                            @Html.TextBoxFor(m => m.DisplayJoinDate, new { @class = "input-100 input" })
+                            @Html.ValidationMessageFor(m => m.DisplayJoinDate)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-70">
+                            Time</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.StartTime, new { @class = "input-100 input", entermsg = "Enter StartTime" })
+                            @Html.ValidationMessageFor(m => m.StartTime)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-70">
+                            To</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.EndTime, new { @class = "input-100 input", entermsg = "Enter EndTime" })
+                            @Html.ValidationMessageFor(m => m.EndTime)
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-90">
+                            Category</label>
+                        <div class="field">
+                            @Html.DropDownListFor(m => m.EmployeeCategoryId, Model.CategoryList, new { @class = "input-100 input", entermsg = "Enter Status" })
+                            @Html.ValidationMessageFor(m => m.EmployeeCategoryId)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-70">
+                            Department</label>
+                        <div class="field">
+                            @Html.DropDownListFor(m => m.EmployeeDepartmentId, Model.DepartmentList, new { @class = "input-100 input", entermsg = "Enter Status" })
+                            @Html.ValidationMessageFor(m => m.EmployeeDepartmentId)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-70">
+                            Post</label>
+                        <div class="field">
+                            @Html.DropDownListFor(m => m.EmployeePostId, Model.PositionList, new { @class = "input-100 input", entermsg = "Enter Status" })
+                            @Html.ValidationMessageFor(m => m.EmployeePostId)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-70">
+                            Ledger
+                        </label>
+                        <div class="field">
+                            @Html.HiddenFor(x => x.LedgerId)
+                            <input type="text" class="modallink input input-150" value="@UtilityService.GetLedgerNameById(Model.LedgerId)"  id="glcode-id" valueId="LedgerId" href="@Url.Action("GetLedger", "Master")"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-90">
+                            Weekholiday</label>
+                        <div class="field">
+                            @Html.DropDownListFor(m => m.Weekholiday, Model.WeekholidayList, new { @class = "input-100 input", entermsg = "Enter Status" })
+                            @Html.ValidationMessageFor(m => m.Weekholiday)
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-70">
+                            Status</label>
+                        <div class="field">
+                            @Html.DropDownListFor(m => m.Status, Model.StatusList, new { @class = "input-100 input", entermsg = "Enter Status" })
+                            @Html.ValidationMessageFor(m => m.Status)
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-90">
+                            Remarks</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Remarks, new { @class = "input-305 input", entermsg = "Enter Remarks" })
+                            @Html.ValidationMessageFor(m => m.Remarks)
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div id="tabs-2">
+            <fieldset>
+                <legend>Permanent Address</legend>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-80">
+                            Country</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Country, new { @class = "input-190 input", entermsg = "Enter Country" })
+                            @Html.ValidationMessageFor(m => m.Country)
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="stack">
+                        <label class="label-80">
+                            Address</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Address, new { @class = "input-190 input", entermsg = "Enter Address" })
+                            @Html.ValidationMessageFor(m => m.Address)
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="stack">
+                        <label class="label-80">
+                            Phone</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Phone, new { @class = "input-190 input", entermsg = "Enter Phone" })
+                            @Html.ValidationMessageFor(m => m.Phone)
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="stack">
+                        <label class="label-80">
+                            Email</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "input-190 input", entermsg = "Enter Email" })
+                            @Html.ValidationMessageFor(m => m.Email)
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Temporary Address</legend>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-80">
+                            Country</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Country1, new { @class = "input-190 input", entermsg = "Enter Country1" })
+                            @Html.ValidationMessageFor(m => m.Country1)
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="stack">
+                        <label class="label-80">
+                            Address</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Address1, new { @class = "input-190 input", entermsg = "Enter Address1" })
+                            @Html.ValidationMessageFor(m => m.Address1)
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="stack">
+                        <label class="label-80">
+                            Phone</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Phone1, new { @class = "input-190 input", entermsg = "Enter Phone1" })
+                            @Html.ValidationMessageFor(m => m.Phone1)
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="stack">
+                        <label class="label-80">
+                            Email</label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Email1, new { @class = "input-190 input", entermsg = "Enter Email1" })
+                            @Html.ValidationMessageFor(m => m.Email1)
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="clearfix">
+            </div>
+            <fieldset>
+                <legend>Education/Qualification Details</legend>
+                <div class="stack">
+                    <div class="field">
+                        @Html.TextAreaFor(m => m.Education, new { @class = "input-615 input", entermsg = "Enter Education" })
+                        @Html.ValidationMessageFor(m => m.Education)
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#MitiOfBirth").mask('9999/99/99');
+        $("#DateOfBirth").mask('99/99/9999');
+
+        $("#tabs").tabs();
+        //$("#DateOfJoin").datepicker();
+        $("#StartTime, #EndTime").timepicker({
+            'timeFormat': 'h:i',
+            'step': 15,
+            'showDuration': true,
+            'forceRoundTime': true
+        });
+//        var nepDate = convertToNepaliNew($("#DateOfJoin").val());
+        //        $("#MitiofJoin").val(nepDate);
+        
+         var dateType = @Model.SystemControl.DateType;
+   
+        if(dateType=="1") {
+        
+        $( "#DisplayJoinDate").mask("99/99/9999");
+           $( "#DisplayJoinDate").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+                if(!validDate) {
+            $($(this).addClass("error"));
+        }
+            else {
+            $($(this).removeClass("error"));
+            }
+            });
+        }
+       
+        else {
+                  $( "#DisplayJoinDate").mask("9999/99/99");
+                  $( "#DisplayJoinDate").live("blur", function() {
+      
+                var date = $(this).val();
+     
+                var validDate=isNepaliDate(date);
+                if(!validDate) {
+                $($(this).addClass("error"));
+                }
+                else {
+                $($(this).removeClass("error"));
+                }
+                });
+                }
+
+    });
+
+   
+
+
+    $("#MitiOfBirth").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+            //alert(1);
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            $("#DateOfBirth").val(engDate);
+        }
+    });
+
+    $("#DateOfBirth").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+            //alert(1);
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            $("#MitiOfBirth").val(nepDate);
+        }
+    });
+     
+//    $("#DateOfJoin").live('blur', function () {
+//        if (!$(this).hasClass("error") && $(this).val() != "") {
+//            //alert(1);
+//            var date = $(this).val();
+//            var nepDate = convertToNepaliNew(date);
+//            $("#MitiofJoin").val(nepDate);
+//        }
+//    });
+    //$("#StartTime").on("changeTime", function () {
+    //    var value = $(this).val();
+    //    $("#EndTime").timepicker({
+    //        'timeFormat': 'h:i A',
+    //        'minTime': value,
+    //        'step': 15,
+    //        'showDuration': true,
+    //        'forceRoundTime': true
+    //    });
+    //});
+ 
+    $("#StartTime").on("changeTime", function () {
+        var value = $(this).val();
+        $("#EndTime").timepicker({
+            'timeFormat': 'H:i',
+            'minTime': value,
+            'step': 15,
+            'showDuration': true,
+            'forceRoundTime': true
+        });
+    });
+</script>

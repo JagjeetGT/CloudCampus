@@ -1,0 +1,23 @@
+﻿@using KRBAccounting.Enums
+<div class="breadLine">
+    <ul class="breadcrumb">
+        <li><a href="@Url.Action("CertificateTemplates", "School", new { templateTypeid = (int)TemplateType.CharacterCertificateSLC })">
+            <span class="text" action="CertificateTemplates">Character Certificate SLC Template</span>
+        </a></li>
+        |
+        <li><a href="@Url.Action("CertificateTemplates", "School", new { templateTypeid = (int)TemplateType.TransferCertificate })">
+            <span class="text" action="CertificateTemplates">Transfer Certificate Template</span>
+        </a></li>
+        |
+        <li><a href="@Url.Action("CertificateTemplates", "School", new { templateTypeid = (int)TemplateType.ExamRoutineFooter })">
+            <span class="text" action="CertificateTemplates">Exam Routine Footer Template</span>
+        </a></li>
+        |
+        <li><a href="@Url.Action("StudentSlc", "School")"><span class="text" action="CertificateTemplates">
+            S.L.C Student Info</span> </a></li>
+        |
+        <li><a href="@Url.Action("CertificateTemplates", "School", new { templateTypeid = (int)TemplateType.CharacterCertificate })">
+            <span class="text" action="CertificateTemplates">Character Certificate Template</span>
+        </a></li>
+    </ul>
+</div>

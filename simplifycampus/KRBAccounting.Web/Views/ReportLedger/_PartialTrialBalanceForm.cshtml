@@ -1,0 +1,235 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.TrialBalanceFormViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("TrialBalanceReport", "ReportLedger", new { controller = "ReportLedger" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "report", OnComplete = "$('#modalReportForm').modal('hide');" }, new { @class = "form-horizontal", id = "report-form" }))
+{
+    <div>
+        <div class="lag">
+            <label class="label-90">
+                Report Type</label>
+            <span class="lag" style="width: 300px">
+                @Html.RadioButtonForSelectList(m => m.ReportType, Model.ReportTypeList)
+                @Html.ValidationMessageFor(m => m.ReportType)
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+       <div class="lag asOn">
+        <label class="label-110">
+                As On Date</label>
+            <span class="field" style="width: 100px;">
+                @Html.EditorFor(m => m.AsOnDate)
+                @Html.ValidationMessageFor(m => m.AsOnDate)
+            </span>
+        </div>
+        <div class="lag startDate">
+            <label class="label-110 togglelabel">
+                Start Date</label>
+            <span class="field" style="width: 100px;">
+                @Html.EditorFor(m => m.StartDate)
+                @Html.ValidationMessageFor(m => m.StartDate)
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag endDate" style="display:none">
+            <label class="label-110">
+                End Date</label>
+            <span class="field" style="width: 100px;">
+                @Html.EditorFor(m => m.EndDate)
+                @Html.ValidationMessageFor(m => m.EndDate)
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag acgroup" style="display:none">
+            <label class="label-110">
+                Account Group</label>
+            <span class="lag" style="width: 100px;">
+                @Html.EditorFor(x => x.AccountGroup)
+            </span>
+        </div>
+        <div class="lag AcSGroup">
+            <label class="label-110">
+                Account SubGroup</label>
+            <span class="lag" style="width: 100px;">
+                @Html.EditorFor(x => x.AccountSubGroup)
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+         <div class="lag ledger">
+            <label class="label-110">
+                Ledger</label>
+            <span class="lag" style="width: 100px;" >
+                @Html.EditorFor(x => x.Ledger)
+            </span>
+        </div>
+        <div class="lag SubLedger">
+            <label class="label-110">
+                Sub Ledger</label>
+            <span class="lag" style="width: 100px;">
+                @Html.EditorFor(x => x.SubLedger)
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag GrpFormat">
+            <label class="label-110">
+                Step Format</label>
+            <span class="lag" style="width: 100px;">
+                @Html.EditorFor(x => x.StepFormat)
+            </span>
+        </div>
+        <div class="lag">
+            @if (@Model.SystemControl.DateType == 1)
+            {
+                <label class="label-110">
+                    Miti
+                </label>
+            }
+            else
+            {
+                <label class="label-110">
+                    Date 
+                </label>
+            }
+            <span class="field" style="width: 100px;">
+                @Html.CheckBoxFor(x => x.DateShow)
+            </span>
+        </div>
+        <div class="clearfix"></div>
+            @if(Model.CheckBranch)
+            {
+                 <div class="lag">
+                    <label class="label-110">
+                        Branch
+                    </label>
+                    <span class="lag">
+                       @{
+                        var branchList = Model.BranchList.Count();
+                        if (branchList > 1)
+                        {
+                                  @Html.DropDownListFor(x => x.BranchId, Model.BranchList, "All", new { @class = "input-90" })
+                        }
+                        else
+                        {
+                                @Html.DropDownListFor(x => x.BranchId, Model.BranchList, new { @class = "input-90" })
+                        }
+                
+                        }
+                    </span>
+                </div>
+            }
+        <div class="clearfix">
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+//        $("#StartDate").nepDateTimePicker({
+//            dateFormat: "mm/dd/yy",
+//            defaultDate: "+1w",
+//            changeMonth: true,
+//            changeYear: true,
+//            numberOfMonths: 1,
+//            minDate: '@Model.FiscalYear.StartDate.ToShortDateString()',
+//            maxDate: '@Model.FiscalYear.EndDate.ToShortDateString()',
+//            onSelect: function () {
+
+//                $("#StartDate").datepicker("option", "minDate", '@Model.FiscalYear.StartDate.ToShortDateString()');
+//            }
+//        });
+
+//        $("#EndDate").nepDateTimePicker({
+//            dateFormat: "mm/dd/yy",
+//            defaultDate: "+1w",
+//            changeMonth: true,
+//            changeYear: true,
+//            numberOfMonths: 1,
+//            minDate: $("#StartDate").val(),
+//            maxDate: '@Model.FiscalYear.EndDate.ToShortDateString()',
+//            onSelect: function () {
+//                $("#EndDate").datepicker("option", "minDate", $("#StartDate").val());
+//            }
+        //        });
+         var dateType = @Model.SystemControl.DateType.ToString();
+        if (dateType == "1") {
+            $("#StartDate,#EndDate" ).mask("99/99/9999");
+            $("#StartDate,#EndDate" ).live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#StartDate,#EndDate").mask("9999/99/99");
+            $("#StartDate,#EndDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+        
+        var type = $('input:radio[name=ReportType]:checked').val();
+        ChangeReportType(type);
+    });
+
+    $('input:radio[name=ReportType]').live('change', function () {
+        var val = $(this).val();
+        ChangeReportType(val);
+    });
+    
+    function ChangeReportType(value) {
+        if (value == 1) {
+            $(".asOn").css("display", "block");
+            $(".startDate").css("display", "none");
+            $(".endDate").css("display", "none");
+            $(".acgroup").css("display", "none");
+            $(".ledger").css("display", "none");
+            $(".AcSGroup").css("display", "none");
+        }
+        if (value == 2) {
+            $(".asOn").css("display", "block");
+            $(".startDate").css("display", "none");
+            $(".endDate").css("display", "none");
+            $(".acgroup").css("display", "none");
+            $(".ledger").css("display", "block");
+            $(".AcSGroup").css("display", "block");
+        }
+        if (value == 3) {
+            $(".asOn").css("display", "none");
+            $(".startDate").css("display", "block");
+            $(".endDate").css("display", "block");
+            $(".acgroup").css("display", "block");
+            $(".ledger").css("display", "block");
+            $(".AcSGroup").css("display", "block");
+        }
+    }
+     $("#AccountGroup").live("click", function () {
+        if ($(this).is(":checked")) {
+            $("#AccountSubGroup").removeAttr("disabled");
+        } else {
+            $("#AccountSubGroup").attr("disabled", "disabled");
+            $("#AccountSubGroup").removeAttr("checked");
+        }
+    });
+    
+    $("#Ledger").live("click", function () {
+        if ($(this).is(":checked")) {
+            $("#SubLedger").removeAttr("disabled");
+        } else {
+            $("#SubLedger").attr("disabled", "disabled");
+            $("#SubLedger").removeAttr("checked");
+        }
+    });
+</script>

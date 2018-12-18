@@ -1,0 +1,263 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Academy.BusTransportationMappingViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("BusTransportMappingEdit", "Transportation", new { controller = "Transportation" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCompleteEdit" }, new { @class = "form-horizontal from-custom online-form", id = "formTransportationMapping-id" }))
+{
+    @Html.HiddenFor(x => x.OldClassId)
+    @Html.HiddenFor(x => x.OldSectionId)
+    @Html.HiddenFor(x => x.OldBusRouteCode)
+     <div id="error-msg"></div>
+    <div style="width: 1000px">
+        <div class="lag">
+            <span class="stack">
+                <label class="label-120">
+                    Route</label>
+                <span class="field">
+                    @Html.HiddenFor(m => m.ScTransportMapping.BusRouteCode, new { @class = "input" })
+                    <input type="text" class = "modallink input" value="@if (Model.ScTransportMapping != null)
+                                                                        {
+                                                                            @UtilityService.GetRouteNameByStringId(Model.ScTransportMapping.BusRouteCode)
+                                                                        }
+                                                                            " href="@Url.Action("GetRouteList", "Transportation")" valueId="ScTransportMapping_BusRouteCode" id="BusRouteCode"/>
+                    @Html.ValidationMessageFor(m => m.ScTransportMapping.BusRouteCode)
+                </span></span><span class="stack">
+                    <label class="label-120">
+                        Class</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.ScTransportMapping.ClassId, new { @class = "input" })
+                        <input type="text" class = "modallink input" value="@if (Model.ScTransportMapping != null && Model.ScTransportMapping.SchClass != null)
+                                                                            {
+                                                                            @Model.ScTransportMapping.SchClass.Description
+                                                                            }
+                                                                           " href="@Url.Action("GetClasses", "School")" valueId="ScTransportMapping_ClassId" id="ClassId"/>
+                        @Html.ValidationMessageFor(m => m.ScTransportMapping.ClassId)
+                    </span></span><span class="stack">
+                        <label class="label-120">
+                            Section</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.ScTransportMapping.SectionId, new { @class = "input" })
+                            <input type="text" class = "modallink input" value="@if (Model.ScTransportMapping != null && Model.ScTransportMapping.ScSection != null)
+                                                                                {
+                                                                            @Model.ScTransportMapping.ScSection.Description
+                                                                                }
+                                                                           " href="@Url.Action("GetSections", "School")" valueId="ScTransportMapping_SectionId" id="SectionId"/>
+                            @Html.ValidationMessageFor(m => m.ScTransportMapping.SectionId)
+                        </span></span>
+        </div>
+        <hr />
+        <div class="clearfix"></div>
+        <div class="lag" style="height: 250px;">
+            <table class="table-bordered" id="bus-transportmapping-list">
+                <tr class="nodrop nodrag">
+                    <th>
+                    </th>
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Registration No
+                    </th>
+                    <th>
+                        Bus Stop From
+                    </th>
+                    <th>
+                        Bus Stop To
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    @if (Model.SystemControl.DateType == 1)
+                    {
+                        <th>
+                            Start Date (MM/dd/YYYY)
+                        </th>  
+                    }
+                    else
+                    {
+                        <th>
+                            Start Miti (YYYY/MM/dd)
+                        </th>  
+                    }
+                    @if (Model.SystemControl.DateType == 1)
+                    {
+                        <th width="100px">
+                            End Date (MM/dd/YYYY)
+                        </th>  
+                    }
+                    else
+                    {
+                        <th width="100px">
+                            End Miti (YYYY/MM/dd)
+                        </th>  
+                    }
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                </tr>
+                @foreach (var item in Model.ScTransportMappings)
+                {
+                    @Html.Partial("BusTransportMappingInfoEdit", item)
+                }
+            </table>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-120">
+                    Remarks</label>
+            </span><span class="field">
+                @Html.TextBoxFor(m => m.ScTransportMapping.Remarks, new { @class = "input-320" })
+                @Html.ValidationMessageFor(m => m.ScTransportMapping.Remarks)
+            </span>
+        </div>
+    </div>
+    
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var ledgerElement = document.querySelectorAll(".studentId");
+        $.each(ledgerElement, function (index) {
+            var element = $(this).closest("tr");
+            element.attr("id", "tr_" + index);
+
+            var Subject_valueid = element.find(".hdn_StudentId").attr("id");
+
+            element.find(".studentId").attr({
+                "valueId": Subject_valueid,
+                "id": "studentId_" + index
+            });
+
+            var ResultSystem_valueid = element.find(".hdn_BusStopFromId").attr("id");
+
+            element.find(".BusStopFromId").attr({
+                "valueId": ResultSystem_valueid,
+                "id": "BusStopFromId_" + index
+            });
+            var EvaluateForType_valueid = element.find(".hdn_BusStopToId").attr("id");
+
+            element.find(".BusStopToId").attr({
+                "valueId": EvaluateForType_valueid,
+                "id": "BusStopTo_" + index
+            });
+        });
+
+
+
+
+    });
+
+    //    function NewRowDetailList(element, index) {
+    //        $(".studentId:last").attr("id", "studentId_" + index);
+    //        $(".studentId:last").closest("tr").attr("id", "tr_" + index);
+    //        $(".studentId").attr("valueId", $(".hdn_StudentId:last").attr("id"));
+
+    //        $(".BusStopFromId:last").attr("id", "busstopFrom_" + index);
+    //        $(".BusStopFromId:last").closest("tr").attr("id", "tr_" + index);
+    //        $(".BusStopFromId").attr("valueId", $(".hdn_BusStopFromId:last").attr("id"));
+
+    //        $(".BusStopToId:last").attr("id", "busstopto_" + index);
+    //        $(".BusStopToId:last").closest("tr").attr("id", "tr_" + index);
+    //        $(".BusStopToId").attr("valueId", $(".hdn_BusStopToId:last").attr("id"));
+    //    }
+
+    ////    $(".del-row").live("click", function () {
+    ////        $(this).closest("tr").remove();
+    ////    });
+
+    //    $(".studentId").live("blur", function () {
+    //        var element = $(this);
+    //        var studentId = element.closest('span').find(".hdn_StudentId").val();
+    //        if (studentId != '' && studentId != null && studentId != 0) {
+    //            $.ajax({
+    //                url: '@Url.Action("GetRegistrationNumber", "School")',
+    //                type: 'POST',
+    //                data: { studentId: studentId },
+    //                success: function (data) {
+    //                    if (data == 0) {
+    //                        element.closest('tr').find(".registrationNumber").val('');
+    //                    } else {
+    //                        element.closest('tr').find(".registrationNumber").val(data);
+    //                    }
+    //                },
+
+    //                error: function (err) {
+    //                    writeError('msgErrorNewLocationDetails', err);
+    //                }
+
+    //            });
+    //        }
+
+    //    });
+
+    //    $("#SectionId").live("blur", function () {
+    //        var classid = $("#ScTransportMapping_ClassId").val();
+    //        var sectionId = $("#ScTransportMapping_SectionId").val();
+    //        if (classid != 0 && classid != '' && sectionId != 0 && sectionId != '') {
+    //            url = '@Url.Action("GetStudentsByClassAndSection")';
+    //            $.blockUI({
+    //                message: 'Please Wait..',
+    //                css: {
+    //                    border: 'none',
+    //                    padding: '15px',
+    //                    backgroundColor: '#fff',
+    //                    '-webkit-border-radius': '10px',
+    //                    '-moz-border-radius': '10px',
+    //                    color: '#000'
+    //                }
+    //            });
+    //            $.ajax({
+    //                url: url,
+    //                data: { classId: classid, sectionId: sectionId },
+    //                type: "GET",
+    //                error: function () {
+    //                    alert("An error occurred.");
+    //                    $.unblockUI();
+    //                },
+    //                success: function (data) {
+    //                    $("#bus-transportmapping-list tr.detail-entry").remove();
+    //                    $("#bus-transportmapping-list").append(data);
+
+
+    //                    $("#bus-transportmapping-list").append();
+    //                    $.unblockUI();
+    //                    var ledgerElement = document.querySelectorAll(".studentId");
+    //                    $.each(ledgerElement, function (index) {
+    //                        var element = $(this).closest("tr");
+    //                        element.attr("id", "tr_" + index);
+
+    //                        var Subject_valueid = element.find(".hdn_StudentId").attr("id");
+
+    //                        element.find(".studentId").attr({
+    //                            "valueId": Subject_valueid,
+    //                            "id": "studentId_" + index
+    //                        });
+
+    //                        var ResultSystem_valueid = element.find(".hdn_BusStopFromId").attr("id");
+
+    //                        element.find(".BusStopFromId").attr({
+    //                            "valueId": ResultSystem_valueid,
+    //                            "id": "BusStopFromId_" + index
+    //                        });
+    //                        var EvaluateForType_valueid = element.find(".hdn_BusStopToId").attr("id");
+
+    //                        element.find(".BusStopToId").attr({
+    //                            "valueId": EvaluateForType_valueid,
+    //                            "id": "BusStopTo_" + index
+    //                        });
+    //                    });
+
+    //                }
+    //            });
+    //        }
+
+    //    });
+
+
+   
+</script>

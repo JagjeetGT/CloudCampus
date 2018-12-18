@@ -1,0 +1,332 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Payment Slip";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="@Url.Content("/Scripts/RawPrint.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/html2canvas.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/jquery.plugin.html2canvas.js")" type="text/javascript"></script>
+<applet name="jzebra" code="jzebra.PrintApplet.class" archive="@Url.Content("/Content/jzebra/lib/jzebra.jar")" width="1px" height="1px" id="jzebra"  style="visibility: hidden" >
+    <param name="printer" value="zebra">
+</applet>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Payment Slip
+                    </h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                             <li><a href="#" class="isw-plus addRooms"></a></li>
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Rooms-list">
+                    @Html.Action("PaymentSlipList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalRooms" style="display: none;" title="Payment Slip">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $('.checkall').live('change', function () {
+        if ($(this).is(':checked')) {
+            $('.employee-checkbox').attr('checked', "checked");
+        } else {
+            $('.employee-checkbox').removeAttr('checked');
+        }
+
+
+
+    });
+
+    $("#modalRooms").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+
+                Save();
+                checkValidationError();
+                Begin();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function Save() {
+        Begin();
+        var amount = $("#PaymentAmount").val();
+        var SlipNo = $("#SlipNo").val();
+        var ledger = $("#EmployeeId").val();
+        if (amount == 0) {
+            writeError("error-msg", "Payment Amount Connot be Zero");
+            $.unblockUI();
+        }
+        if (SlipNo == "" || SlipNo == " ") {
+            writeError("error-msg", "Payment Slip Connot be Blank");
+
+            $.unblockUI();
+        }
+        if (ledger == 0) {
+            writeError("error-msg", "Please Select Employee");
+           
+            $.unblockUI();
+        }
+        if (amount != 0 && ledger != 0 && (SlipNo != "" || SlipNo != " ")) {
+            $("#form-id").submit(); $.unblockUI();
+        }
+  
+    }
+
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-error alert"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    $(".alert-error .close").live("click", function () {
+        $(".alert-error").remove();
+    });
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+           
+            success: function (data) {
+                $('#modalRooms .block').html(data);
+                
+                $(this).addClass("done");
+                $("#modalRooms").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('error-msg', err);
+            }
+        });
+    }
+
+
+
+    $('.addRooms').live('click', function () {
+        var url = '@Url.Action("PaymentSlipAdd", "Payroll")';
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete(data) {
+        
+        if (data.True == "True") {
+
+            $('#modalRooms .block').load("/Payroll/PaymentSlipAdd");
+            $("#Rooms-list").load("/Payroll/PaymentSlipList");
+            PrintObjectElement = data.Print;
+            var result = confirm("Are you sure you wish to Print this?");
+            if (result) {
+                PaymentSlipPrint();
+
+
+                return false;
+            }
+            $.unblockUI();
+        } else {
+            $.unblockUI();
+        }
+    }
+    function OnCompleteEdit() {
+
+
+        $("#Rooms-list").load("/Payroll/PaymentSlipList");
+        $('#modalRooms').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        Begin();
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            $.unblockUI();
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        Begin();
+        if (data == "True") {
+            OnCompleteEdit();
+        } else {
+            alert(data);
+        }
+    }
+
+    $('.editScRoom').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("PaymentSlipEdit", "Payroll")?id=' + id;
+        Begin();
+        getRequest(url);
+        return false;
+    });
+    $('a.deleteClass').live('click', function () {
+        var result = confirm("Are you sure you wish to delete this Allowance?");
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("pay", "Payroll")?id=' + id;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Allowance is already in use. Cannot delete.");
+                } else {
+                    $("#Rooms-list").load("/Payroll/AllowanceMastersList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+
+    });
+//    function Save() {
+//        var form = $("#form-id");
+//        var url = form.attr("action");
+//        $("form").removeData("validator");
+//        $("form").removeData("unobtrusiveValidation");
+//        $.validator.unobtrusive.parse(form);
+//        var checkstudent = false;
+//        $.each($(".employee-checkbox"), function () {
+//            if ($(this).is(":checked")) {
+//                checkstudent = true;
+//                return;
+//            }
+//            $.unblockUI();
+//        });
+
+//        if (checkstudent == false) {
+//            writeError("error-msg", "Please Select Emplyee");
+//            $.unblockUI();
+//        }
+
+
+//        if ($("form").valid() && checkstudent == true) {
+//            Begin();
+//            $.ajax({
+//                url: url,
+//                data: form.serialize(),
+//                datatype: "JSON",
+//                type: "POST",
+//                error: function () {
+
+//                    alert("An error occurred.");
+//                    $.unblockUI();
+//                },
+//                success: function (data) {
+//                    $("#report").html(data.view);
+//                    $("#modalRooms").dialog("close");
+//                    $.unblockUI();
+//                }
+//            });
+//        }
+//    }
+
+    $("#EmployeeId").live("change", function () {
+        var employeeId = $(this).val();
+        var url = '@Url.Action("GetEmployeeLedger")';
+        $.ajax({
+            url: url,
+            data: {
+                employeeId: employeeId
+            },
+            datatype: "JSON",
+            type: "POST",
+
+            error: function () {
+
+                alert("An error occurred.");
+                $.unblockUI();
+            },
+            success: function (data) {
+                $(".LedgerName").val(data.ledger);
+                $("#Ledger").val(data.LedgerId);
+                var amount = 0;
+                if (data.Balance == "" || data.Balance == " ") {
+
+                    $("#NetAmount").val(0);
+                } else {
+                    amount = Math.abs(data.Balance);
+                    $("#NetAmount").val(amount);
+                }
+
+                if (data.Balance > 0) {
+                    $("#PayAmount").val(amount);
+                    $(".bal-label").html("Advance Given");
+                }
+                else {
+                   
+
+                    $(".bal-label").html("Due Amount");
+                }
+
+
+
+
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    });
+
+    $("#DepartmentId").live("change", function () {
+        Begin();
+        $("#error-msg").html();
+        var month = $("#Month").val();
+        var departmentId = $(this).val();
+        var year = $("#Year").val();
+        var url = '@Url.Action("GetPayrollEmployee")';
+        $.ajax({
+            url: url,
+            data: {
+                month: month, year: year, departmentId: departmentId
+            },
+            datatype: "JSON",
+            type: "POST",
+
+            error: function () {
+
+                alert("An error occurred.");
+                $.unblockUI();
+            },
+            success: function (data) {
+                var item = '<option value="0">--Select Employee--</option>'; ;
+                
+                $.each(data, function () {
+                    item += '<option value="' + this.Value + '">' + this.Text + '</option>';
+
+                });
+                $("#EmployeeId").html(item);
+
+
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    });
+</script>

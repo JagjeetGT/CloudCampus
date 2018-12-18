@@ -1,0 +1,57 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScSection>
+           @{var i = Convert.ToInt32(ViewBag.SnStart);
+             var userRight = (UserRight)ViewBag.UserRight;}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="bldng-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th width="20%">
+                    Section
+                </th>
+                <th>
+                    Memo
+                </th>
+                <th width="5%">
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            @foreach (var item in Model)
+            {
+        
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Description
+                    </td>
+                    <td>@item.Memo
+                    </td>
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0);" class="editSection icon-edit" data-id="@item.Id"></a>
+                        }
+                    </td>
+                    <td>
+                        @if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)" class="deleteSection icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "ListSections", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Section-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@

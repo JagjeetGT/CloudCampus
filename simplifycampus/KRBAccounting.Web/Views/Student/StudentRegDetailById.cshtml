@@ -1,0 +1,110 @@
+﻿@using KRBAccounting.Enums
+@model PagedList<KRBAccounting.Domain.Entities.ScStudentRegistrationDetail>
+@{
+    ViewBag.Title = "StudentRegDetailById";
+}
+<br />
+<div id="loadpage">
+    <p align="center">
+        <b>
+            @if (Model.Count() != 0)
+            {
+                @Model.FirstOrDefault().Studentinfo.Class.Description
+            }
+        </b>
+    </p>
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="20px">
+                    S.No
+                </th>
+                <th>
+                    Student
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Roll No
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Shift
+                </th>
+                <th>
+                    Boarder
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>
+                        @item.Studentinfo.StuDesc
+                    </td>
+                    <td>@item.Studentinfo.StdCode
+                    </td>
+                    <td>
+                        @if (item.Section != null)
+                        {                @item.Section.Description
+                        }
+                    </td>
+                    <td>
+                        @if (item.CurrentStatus != null)
+                        {
+                            @Enum.GetName(typeof(StudentStatus), item.CurrentStatus)
+                        }
+                    </td>
+                    <td>@item.RollNo
+                    </td>
+                    <td>
+                        @if (item.StudentType != null)
+                        {
+                            @Enum.GetName(typeof(StudentType), item.StudentType)
+                        }
+                    </td>
+                    <td>
+                        @if (item.Shift != null)
+                        {
+                            @item.Shift.Description
+
+                        }
+                    </td>
+                    <td>
+                        @if (item.Boader != null)
+                        {
+                            @item.Boader.Description
+
+                        }
+                    </td>
+                    <td>@item.Narration
+                    </td>
+                </tr>
+                        i++;
+
+
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "StudentRegDetailById", "Student", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "loadpage" }))
+    </div>
+</div>

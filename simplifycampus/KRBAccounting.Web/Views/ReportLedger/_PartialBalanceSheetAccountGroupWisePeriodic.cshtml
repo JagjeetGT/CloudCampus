@@ -1,0 +1,244 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.LedgerReport.BalanceSheetViewModel
+@{
+    decimal liabilitiesOpeningTotal = 0;
+    decimal liabilitiesPeriodTotal = 0;
+    decimal liabilitiesClosingTotal = 0;
+    decimal assetsOpeningTotal = 0;
+    decimal assetsPeriodTotal = 0;
+    decimal assetsClosingTotal = 0;
+
+    var AgGrp = "";
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix"></div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="table" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    Particular
+                </th>
+                <th>
+                    Opening
+                </th>
+                <th>
+                    Period
+                </th>
+                <th>
+                    Closing
+                </th>
+            </tr>
+        </thead>
+         @if (ViewBag.ReportShow == "B" || ViewBag.ReportShow == "L")
+         {
+             <tr>
+                 <td style="font-weight: bold; text-align: center">
+                     LIABILITIES
+                 </td>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+             </tr>
+            
+             foreach (var item in Model.BsPeriodicList.Where(x => x.LedgerId == 0 && x.ShortName == null &&  x.Closing != 0 && x.BSType == "L"))
+             {
+                
+                if (Model.AccountSubGroup == true)
+                {
+                    <tr>
+                        <td style="font-weight: bold">@item.AccountName
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                    </tr>
+
+                    foreach (var AcSubgroup in Model.BsPeriodicList.Where(x => x.LedgerId == 0 && x.ShortName != null && x.AccountGroupId == item.AccountGroupId && x.BSType == "L" && x.Closing != 0))
+                    {
+                        liabilitiesOpeningTotal += AcSubgroup.Opening;
+                        liabilitiesPeriodTotal += AcSubgroup.Period;
+                        liabilitiesClosingTotal += AcSubgroup.Closing;
+                        <tr>
+                            <td style="padding-left: 30px">@AcSubgroup.AccountName
+                            </td>
+                            <td style="text-align: right">
+                                @if (AcSubgroup.Opening != 0)
+                                {<text>@AcSubgroup.Opening</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (AcSubgroup.Period != 0)
+                                {<text>@AcSubgroup.Period</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (AcSubgroup.Closing != 0)
+                                {<text>@AcSubgroup.Closing</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else if (Model.AccountSubGroup == false)
+                {
+                    liabilitiesOpeningTotal += item.Opening;
+                    liabilitiesPeriodTotal += item.Period;
+                    liabilitiesClosingTotal += item.Closing;
+                    <tr>
+                        <td>@item.AccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Opening != 0)
+                            {<text>@item.Opening</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Period != 0)
+                            {<text>@item.Period</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Closing != 0)
+                            {<text>@item.Closing</text>
+                            }
+                        </td>
+                    </tr>
+                }
+                
+             }
+             
+             <tr style="font-weight: bold; text-align: right">
+                 <td style="text-align: right">
+                     TOTAL FOR LIABILITIES
+                 </td>
+                 <td style="text-align: right">
+                     @liabilitiesOpeningTotal
+                 </td>
+                 <td style="text-align: right">
+                     @liabilitiesPeriodTotal
+                 </td>
+                 <td style="text-align: right">
+                     @liabilitiesClosingTotal
+                 </td>
+             </tr>
+             <tr>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+             </tr>
+         }
+          @if (ViewBag.ReportShow == "B" || ViewBag.ReportShow == "A")
+          {
+              <tr>
+                  <td style="font-weight: bold; text-align: center">
+                      ASSETS
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+              </tr>
+              foreach (var item in Model.BsPeriodicList.Where(x => x.LedgerId == 0 && x.ShortName == null && x.Closing != 0 && x.BSType == "A" && x.AccountCategory != "PL"))
+              {
+                    if (Model.AccountSubGroup == true)
+                    {
+                    <tr>
+                        <td style="font-weight: bold">@item.AccountName
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                    </tr>
+                             
+                        foreach (var AcSubgroup in Model.BsPeriodicList.Where(x => x.LedgerId == 0 && x.ShortName != null && x.AccountGroupId == item.AccountGroupId && x.BSType == "A" && x.AccountCategory != "PL" && x.Closing != 0))
+                        {
+                            assetsOpeningTotal += AcSubgroup.Opening;
+                            assetsPeriodTotal += AcSubgroup.Period;
+                            assetsClosingTotal += AcSubgroup.Closing;
+                            <tr>
+                                <td style="padding-left: 30px">@AcSubgroup.AccountName
+                                </td>
+                                <td style="text-align: right">
+                                    @if (AcSubgroup.Opening != 0)
+                                    {<text>@AcSubgroup.Opening</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (AcSubgroup.Period != 0)
+                                    {<text>@AcSubgroup.Period</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (AcSubgroup.Closing != 0)
+                                    {<text>@AcSubgroup.Closing</text>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else if (Model.AccountSubGroup == false)
+                    {
+                        assetsOpeningTotal += item.Opening;
+                        assetsPeriodTotal += item.Period;
+                        assetsClosingTotal += item.Closing;
+                        <tr>
+                            <td>@item.AccountName
+                            </td>
+                            <td style="text-align: right">
+                                @if (item.Opening != 0)
+                                {<text>@item.Opening</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (item.Period != 0)
+                                {<text>@item.Period</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (item.Closing != 0)
+                                {<text>@item.Closing</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+              }
+              <tr style="font-weight: bold; text-align: right">
+                  <td style="text-align: right">
+                      TOTAL FOR ASSETS
+                  </td>
+                  <td style="text-align: right">
+                      @assetsOpeningTotal
+                  </td>
+                  <td style="text-align: right">
+                      @assetsPeriodTotal
+                  </td>
+                  <td style="text-align: right">
+                      @assetsClosingTotal
+                  </td>
+              </tr>
+          }
+    </table>
+</div>

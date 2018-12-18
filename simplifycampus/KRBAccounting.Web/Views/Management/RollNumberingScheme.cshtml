@@ -1,0 +1,105 @@
+﻿@{
+    ViewBag.Title = "Roll Numeric Scheme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<p>
+    <a href="javascript:void(0);" class="btn addDocNumScheme">New(+)</a>
+</p>*@
+<div id="DocNumScheme-list">
+    @Html.Action("RollNumberingSchemeList")
+</div>
+<div class="dialog" id="modalDocNumScheme" title="Roll Numeric Scheme">
+    <div class="block"></div>
+</div>
+<script type="text/javascript">
+    
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    $("#modalDocNumScheme").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Save": function () {
+                if (CheckCurrnum()) {
+                    Begin();
+                    $("#document-numering-form").submit();
+                  
+                    $.unblockUI();
+                }
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalDocNumScheme .block').html(data);
+                $(this).addClass("done");
+                $("#modalDocNumScheme").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addDocNumScheme').live('click', function () {
+        var url = '@Url.Action("RollNumberingSchemeAdd", "Management")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editDocNumScheme').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("RollNumberingSchemeEdit", "Management")/' + id;
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    $('#saveDocNumScheme').live('click', function () {
+        $("#document-numering-form").submit();
+    });
+    function CheckCurrnum() {
+        var startno = parseInt($("#RollNumberingScheme_StartNo").val());
+        var endno = parseInt($("#RollNumberingScheme_EndNo").val());
+        var currno = parseInt($("#RollNumberingScheme_CurrNo").val());
+        //alert(startno); alert(endno); alert(currno);
+        if (startno > endno) {
+            alert("End Number Must Be Greater Than Start Number");
+            e.preventDefault();
+            return false;
+        }
+        if (startno <= currno && currno <= endno) {
+            //alert(1);
+            return true;
+        } else {
+            alert("Current Number Must be Between Start Number and End Number");
+            return false;
+        }
+
+    }
+    function OnComplete() {
+        $('#modalDocNumScheme .block').load("/Management/RollNumberingSchemeAdd");
+        $("#DocNumScheme-list").load("/Management/RollNumberingSchemeList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+        $('#modalDocNumScheme').dialog("close");
+        $("#DocNumScheme-list").load("/Management/RollNumberingSchemeList");
+        $.unblockUI();
+    }
+
+</script>

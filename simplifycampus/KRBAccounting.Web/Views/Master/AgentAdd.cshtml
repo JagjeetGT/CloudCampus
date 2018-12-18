@@ -1,0 +1,110 @@
+﻿@model KRBAccounting.Web.ViewModels.Master.AgentAddViewModel
+@{
+    Layout = null;
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("AgentAdd", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "agent-form" }))
+{@Html.HiddenFor(x=>x.Agent.Id)
+    <div style="width: 382px;">
+        @Html.ValidationSummary(true)
+        <div class="lag">
+            <label class="label-90">
+                Name</label><span class="field">
+                @Html.TextBoxFor(m => m.Agent.Name, new { @class = "input-253 input" })
+                <span style="color: #B94A48;">&nbsp;*</span>
+                @Html.ValidationMessageFor(m => m.Agent.Name)
+                <span class="loading Agent_Name">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Short Name</label>
+            <strong><font size="2"><font color="#ff3300">&nbsp;*</font> </font></strong><span
+                class="field">
+                @Html.TextBoxFor(m => m.Agent.ShorName, new { @class = "input-253 input" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.ShorName)
+                <span class="loading Agent_ShorName">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Address</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Agent.Address, new { @class = "input-253 input" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.Address)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Phone</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Agent.PhoneNo, new { @class = "input-253 input" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.PhoneNo)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Fax</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Agent.Fax, new { @class = "input-253 input" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.Fax)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Email</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Agent.Email, new { @class = "input-253 input" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.Email)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Ledger</label>
+          @*  <strong><font size="2"><font color="#ff3300">&nbsp;*</font> </font></strong>*@<span
+                class="field">
+                @Html.HiddenFor(m => m.Agent.LedgerId)
+                <input type="text" class = "modallink input input-253" href="@Url.Action("GetLedger", "Master")"  valueId="Agent_LedgerId" id="ledger"/>
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.LedgerId)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Sub-Ledger</label>
+            <span class="field">
+                @Html.HiddenFor(m => m.Agent.SubLedgerId, new { @class = "hdn_ledger_Id" })
+                <input type="text" class = "modallink input input-253" href="@Url.Action("GetSubLedger", "Master")" createhref="@Url.Action("OnlineAddSubLedger", "Cooperative")" valueId="Agent_SubLedgerId" id="subledger"/>
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Commision (%)</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Agent.Commision, new { @class = "input-253 input" })
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.Commision)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Area</label>
+           <span
+                class="field">
+                @Html.HiddenFor(m => m.Agent.Area, new { @class = "input-80 input" })
+                <input type="text" class = "modallink input-253 input" href="@Url.Action("GetArea", "Master")" createhref="@Url.Action("OnlineAddArea", "Cooperative")" valueId="Agent_Area" id="AreaAgent"/>
+                <br />
+                @Html.ValidationMessageFor(m => m.Agent.Area)
+            </span>
+        </div>
+    </div>
+    
+}

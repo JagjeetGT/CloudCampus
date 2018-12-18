@@ -1,0 +1,379 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.PurchaseOrderAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@{
+    string display = "display:none;";
+    string billTermClass = "";
+    if (Model.AllowProductWiseBillTerm)
+    {
+        display = "";
+        billTermClass = "rate-bill-term";
+    }
+}
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@*@using (Ajax.BeginForm("PurchaseOrderAdd", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "purchase-order-form" }))
+{*@
+@using (Html.BeginForm("PurchaseOrderAdd", "Entry", FormMethod.Post, new { @class = "form-horizontal form-custom", id = "purchase-order-form" }))
+{
+    @Html.HiddenFor(x => x.PurchaseOrder.Id)
+    <div id="billing-term-list" style="display: none">
+    </div>
+    <div style="width: 1317px; height: 517px;">
+        <fieldset>
+            <div style="float: left; width: 100%;" class="one-row">
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Order No.</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.PurchaseOrder.DocId)
+                            @Html.TextBoxFor(m => m.PurchaseOrder.OrderNo, new { @class = "modaldoclink input-90 input", entermsg = "Enter Voucher No.", module = "PB", valueId = "PurchaseOrder_DocId", id = "purchase_order_no" })
+                            @Html.ValidationMessageFor(m => m.PurchaseOrder.OrderNo)<span class="loading PurchaseOrder_OrderNo">
+                                <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                        </span></span><span class="stack">
+                            <label class="label-37">
+                                Date</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.OrderDate)
+                                @Html.ValidationMessageFor(m => m.OrderDate)
+                            </span></span>
+                </div>
+            </div>
+            <div style="float: left; width: 475px" class="left">
+                <div>
+                    <div class="lag">
+                        <label class="label-70">
+                            Vendor</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.PurchaseOrder.GlCode)
+                            <input type="text" class = "modallink input-346 input" href="@Url.Action("GetVendorList", "Entry")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="PurchaseOrder_GlCode" id="vendor" entermsg = "Press F1 for choosing existing Account list." />
+                            @Html.ValidationMessageFor(m => m.PurchaseOrder.GlCode)
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-70">
+                            Agent</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.PurchaseOrder.AgentCode, new { @class = "input-90", entermsg = "Enter Voucher No." })
+                            <input type="text" class = "modallink input-346 input" href="@Url.Action("GetAgent", "Master")" valueId="PurchaseOrder_AgentCode" id="agent" entermsg = "Press F1 for choosing existing cash/bank list." />
+                        </span>
+                    </div>
+                </div>
+                     <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Currency</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.PurchaseOrder.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                            <input type="text" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" valueId="PurchaseOrder_CurrencyId" 
+                             id="CurrencyId" entermsg = "Press F1 for choosing existing cash/bank list." />
+                        </span></span><span class="stack">
+                            <label class="label-37">
+                                Rate</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.PurchaseOrder.CurrentyRate, new { @class = "input-45 input CurrRate", entermsg = "Enter Rate." })
+                                @Html.ValidationMessageFor(m => m.PurchaseOrder.CurrentyRate)
+                            </span></span>
+                </div>
+            </div>
+          
+            <div class="right thumbnail" style="width: 300px; float: right">
+                <div class="lag">
+                    <label class="label-120">
+                        Current Balance</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.CurrentBalance, new { @class = "input-120 input", disabled = "disabled" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-120">
+                        Total Outstanding</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.TotalOutstanding, new { @class = "input-120 input", disabled = "disabled" })
+                    </span>
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </fieldset>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Product Details</a></li>
+                @*  <li><a href="#tabs-2">Import/Transport Details</a></li>*@
+            </ul>
+            <div id="tabs-1">
+                <div class="lag detailEntryTable">
+                    <table class="table-bordered" id="table-detail">
+                        <tr class="nodrop nodrag">
+                            <th width="20px">
+                            </th>
+                            <th width="250px">
+                                Particular
+                            </th>
+                            <th width="80px">
+                                Qty
+                            </th>
+                            @if (Model.EntryControl != null && Model.EntryControl.Unit)
+                            {
+                                <th>
+                                    Unit
+                                </th>
+                            }
+                            <th width="80px">
+                                Atl Qty
+                            </th>
+                            @if (Model.EntryControl != null && Model.EntryControl.AltUnit)
+                            {
+                                <th>
+                                    Alt Unit
+                                </th>
+                            }
+                            <th width="80px">
+                                Rate
+                            </th>
+                            <th width="80px">
+                                Basic Amt
+                            </th>
+                            <th width="80px" style="@display">
+                                Term Amt
+                            </th>
+                            <th width="80px" style="@display">
+                                Net Amt
+                            </th>
+                        </tr>
+                        @{
+                            var viewModel = new KRBAccounting.Service.Models.Purchase.PurchaseDetailEntryViewModel();
+                            viewModel.AllowProductWiseBillTerm = Model.AllowProductWiseBillTerm;
+                            viewModel.UnitList = Model.UnitList;
+                            viewModel.Index = 0;
+                            viewModel.DisableGodown = true;
+                            viewModel.DetailGuid = Guid.NewGuid().ToString();
+                            viewModel.EntryControl = Model.EntryControl;
+                        }
+                        @Html.Partial("_PartialPurchaseDetailEntry", viewModel)
+                    </table>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-90">
+                            Short Name</label>
+                        @Html.TextBoxFor(x => x.ShortName, new { @class = "input-100 input", disabled = "disabled" })
+                    </span><span class="stack" style="padding-left: 40px">
+                               <label class="label-90">
+                                   Stock Qty</label>
+                               @Html.TextBoxFor(x => x.StockQty, new { @class = "input-100 input", disabled = "disabled" })
+                           </span><span class="stack" style="padding-left: 40px">
+                                      <label class="label-90">
+                                          Alt Stock Qty</label>
+                                      @Html.TextBoxFor(x => x.AltStockQty, new { @class = "input-100 input", disabled = "disabled" })
+                                  </span>
+                </div>
+                <div class="lag">
+                    <span class="stack" style="padding-left: 264px">
+                        <label class="label-90">
+                            Total Qty</label>
+                        @Html.TextBoxFor(x => x.TotalQty, new { @class = "input-100 input", disabled = "disabled" })
+                    </span><span class="stack" style="padding-left: 40px">
+                               <label class="label-90">
+                                   Total Alt Qty</label>
+                               @Html.TextBoxFor(x => x.TotalAltQty, new { @class = "input-100 input", disabled = "disabled" })
+                           </span>
+                </div>
+            </div>
+            @*  <div id="tabs-2">
+                <div class="left thumbnail" style="float: left; width: 358px">
+                    <div class="lag">
+                        <label class="label-120">
+                            PPD No.</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.PPDNo, new { @class = "input-120 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            PPD Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PPDDate, new { @class = "input-90 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            Taxable Value</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.TaxableAmt, new { @class = "input-90 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            Vat</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.Vat, new { @class = "input-90 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            Custom Name</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.CustomName, new { @class = "input-190 input" })
+                        </span>
+                    </div>
+                </div>
+                <div class="right thumbnail" style="margin-left: 20px; float: right; width: 358px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Transport</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.Transport, new { @class = "input-190 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            Vehicle No</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.VehicleNo, new { @class = "input-120 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            C/N No</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.CnNo, new { @class = "input-100 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            C/N Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.CnDate, new { @class = "input-80 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-120">
+                            Document Bank</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.PurchaseOrderImpTransDoc.DocumentBank, new { @class = "input-190 input" })
+                        </span>
+                    </div>
+                </div>
+            </div>*@
+        </div>
+        <div class="clearfix"></div>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-70">
+                        Basic Amt</label>
+                    @Html.TextBoxFor(x => x.PurchaseOrder.BasicAmt, new { @class = "input-80 MasterBasicAmt", @readonly = "readonly" })
+                </span><span class="stack" style="padding-left: 15px">
+                           <label class="label-60">
+                               Term Amt</label>
+                           @Html.TextBoxFor(x => x.PurchaseOrder.TermAmt, new { @class = "input-80 MasterTermAmt", @readonly = "readonly" })
+                       </span><span class="stack" style="padding-left: 15px">
+                                  <label class="label-60">
+                                      Total Amt</label>
+                                  @Html.TextBoxFor(x => x.PurchaseOrder.NetAmt, new { @class = "input-80 MasterNetAmt", @readonly = "readonly" })
+                              </span><span class="stack" style="padding-left: 15px">
+                                         <label class="label-85">
+                                             Total Amt in Rs</label>
+                                         @Html.TextBoxFor(x => x.TotalAmtRs, new { @class = "input-90", disabled = "disabled" })
+                                     </span>
+            </div>
+        </fieldset>
+        <br/>
+        <div class="lag">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.PurchaseOrder.Remarks, new { @class = "input-245 input" })
+            </span>
+        </div>
+    </div>
+@* if (Model.SystemControl.UDF == "1")
+    {
+        if (Model.UdfEntries.LongCount() != 0)
+        {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+        }
+    }*@
+}
+<script type="text/javascript">
+   var totalAmt = parseFloat(0);
+   var totalQty = parseFloat(0);
+   $(document).ready(function () {
+      var dateType = @Model.SystemControl.DateType.ToString();
+     if(dateType=="1") {
+            $("#OrderDate").mask("99/99/9999");
+            $("#OrderDate").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#OrderDate").mask("9999/99/99");
+            $("#OrderDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+       
+     
+       if(dateType=="1") {
+            $("#PPDDate,#CnDate").mask("99/99/9999");
+            $("#PPDDate,#CnDate").live("blur", function() {
+                if($(this).val()!="__/__/____"&& $(this).val()!=" ") 
+                {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                    }
+            });
+            }
+    else {
+            $("#PPDDate,#CnDate").mask("9999/99/99");
+            $("#PPDDate,#CnDate").live("blur", function() {
+                 if($(this).val()!="____/__/__"&& $(this).val()!=" ") 
+                     {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                     }
+            });
+        }
+       $("#PurchaseOrder_OrderMiti").val(nepDate);
+
+       
+       $("#tabs").tabs();
+       $(".text_product").attr("id", "product_0");
+       $(".text_product").attr("valueId", $(".productId").attr("id"));
+       $(".text_product").closest("tr").attr("id", "tr_0");
+
+ 
+   });
+
+
+   
+
+</script>

@@ -1,0 +1,444 @@
+﻿
+@{
+    ViewBag.Title = "Journal Voucher";
+}
+@*<div class="page-header">
+    <h3>
+        Journal Voucher</h3>
+</div>*@ @*@if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Create", "JV"))
+{
+    <p>
+        <a href="#" class="btn addJournalVoucher">New(+)</a>
+    </p>
+}*@
+<div id="journalvoucher-list">
+    @Html.Action("JournalVoucherList")
+</div>
+<div class="dialog" id="modalJournalVoucher" style="display: none;" title="Journal Voucher(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    var debit = "1";
+    var credit = "2";
+    $("#modalJournalVoucher").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $("#journal-voucher-form");
+                // var isValid = $("form").valid();
+
+                var currencyId = $("#CurrencyId").val();
+                if (currencyId != "") {
+                    var rate = $("#JournalVoucher_CurRate").val();
+                    if (rate == "") {
+                        // alert("Please, fill the currency rate");
+                        $("#JournalVoucher_CurRate").addClass("error");
+                    }
+                }
+                var isValid = true;
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if (isValid) {
+                    var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index == 0 || index != length - 1) {
+                            if ($(this).find(".text_ledger").val() == 0) {
+                                isValid = false;
+                                $(this).find(".text_ledger").addClass("error").focus();
+                            }
+                            if ($(this).find(".hdn_Amount").val() == 0) {
+                                if (isValid) {
+                                    $(this).find(".dr-amt").addClass("error").focus();
+                                } else {
+                                    $(this).find(".dr-amt").addClass("error");
+                                }
+                                isValid = false;
+                            }
+                        }
+                    });
+                }
+                if (isValid) {
+                    var drAmt = CalculateDrAmt();
+                    var crAmt = CalculateCrAmt();
+                    if (drAmt != crAmt) {
+                        $(".form-error").html("The debit and credit field are not equal.").css("display", "block");
+                        $(".text_ledger:last").focus();
+                    } else {
+                        $.ajax({
+                            type: "POST",
+                            url: form.attr('action'),
+                            data: form.serialize(),
+                            beforeSend: function () {
+                                $.blockUI();
+                            },
+                            success: function (data) {
+                                if (data.success) {
+                                    OnComplete();
+                                }
+                                else {
+                                    $("#MsgError").html(data.msg).show();
+                                }
+                            },
+                            complete: function () {
+                                $.unblockUI();
+                            }
+                        });
+                    }
+                }
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function CalculateDrAmt() {
+        var drAmt = parseFloat(0);
+        var receiptAmtElements = document.querySelectorAll(".dr-amt");
+        var i;
+        for (i = 0; i < receiptAmtElements.length; i++) {
+            var amt = receiptAmtElements[i].value;
+            if (amt != "") {
+                drAmt = drAmt + parseFloat(amt);
+            }
+
+        }
+        return drAmt;
+    }
+
+    function CalculateCrAmt() {
+        var crAmt = parseFloat(0);
+        var paymentAmtElements = document.querySelectorAll(".cr-amt");
+        var j;
+        for (j = 0; j < paymentAmtElements.length; j++) {
+            var amt = paymentAmtElements[j].value;
+            if (amt != "") {
+                crAmt = crAmt + parseFloat(amt);
+            }
+        }
+        return crAmt;
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.blockUI();
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#modalJournalVoucher .block').html(data);
+                $(this).addClass("done");
+                $("#modalJournalVoucher").dialog('open');
+
+            },
+            complete: function () {
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addJournalVoucher').live('click', function () {
+        var url = '@Url.Action("JournalVoucherAdd", "Entry")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.EditJournalVoucher').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("JournalVoucherEdit", "Entry")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+    $('a.approvedJournalVoucher').live('click', function () {
+
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("JournalVoucherApproved", "Entry")/' + id;
+
+        $.ajax({
+            url: url,
+            type: 'Post',
+            success: function () {
+                $("#journalvoucher-list").load("/Entry/JournalVoucherList");
+            }
+        });
+
+        return false;
+    });
+
+    $("#JournalVoucher_CurRate").live("blur", function () {
+        var currencyId = $("#CurrencyId").val();
+
+        var current = $(this).val();
+
+        if (currencyId != "") {
+            if (current != "") {
+                $("#JournalVoucher_CurRate").removeClass("error");
+            } else {
+                $("#JournalVoucher_CurRate").addClass("error");
+            }
+
+        } else {
+            $("#JournalVoucher_CurRate").removeClass("error");
+        }
+
+    });
+
+
+    $("#CurrencyId").live("blur", function () {
+        var current = $(this).val();
+        if (current == "") {
+            $("#JournalVoucher_CurRate").removeClass("error");
+        }
+
+    });
+    $("a.JournalVoucherDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("JournalVoucherDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    $('#saveJournalVoucher').live('click', function () {
+        var drAmt = CalculateDrAmt();
+        var crAmt = CalculateCrAmt();
+        if (drAmt != crAmt) {
+            $(".form-error").html("The debit and credit field are not equal.").css("display", "block");
+            $(".text_ledger:last").focus();
+        } else {
+            $("#journal-voucher-form").submit();
+        }
+
+    });
+
+    function OnComplete() {
+        $("#modalJournalVoucher .block").load("/Entry/JournalVoucherAdd");
+        $("#journalvoucher-list").load("/Entry/JournalVoucherList");
+    }
+    function OnCompleteEdit() {
+
+        $("#modalJournalVoucher").modal('hide');
+        $("#journalvoucher-list").load("/Entry/JournalVoucherList");
+    }
+
+
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+            if (closestTr.find(".hdn_ledger_Id").val() != "" && (closestTr.find(".dr-amt").val() != "" || closestTr.find(".cr-amt").val() != "")) {
+                var link = $(this).attr("href");
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+
+                        if (closestTr.is(":last-child")) {
+                            $('#table-cash-bank-detail tr:last').addClass("deletable");
+                            var id = $('#table-cash-bank-detail tr:last').attr("id");
+                            $('#table-cash-bank-detail tr:last').after(data);
+                            var arrString = id.split("_");
+                            var index = parseInt(arrString[1]) + 1;
+                            $(".text_ledger:last").attr("id", "detail_" + index);
+                            $(".text_ledger:last").closest("tr").attr("id", "tr_" + index);
+                            $(".text_ledger").attr("valueId", $(".hdn_ledger_Id:last").attr("id"));
+
+                            $(".text_subledger:last").attr("id", "sub_" + index);
+                            $(".text_subledger").attr("valueId", $(".hdn_subledger_Id:last").attr("id"));
+                        }
+
+                        getDrAmount();
+                        getCrAmount();
+                        getNetAmount();
+
+
+                        if (netAmt == 0) {
+                            $(".form-error").css("display", "none");
+                        }
+                        closestTr.next().find('.text_ledger').focus();
+
+                        $('input[type="text"]').focus(function () {
+                            var closestTr = $(this).closest("tr");
+                            if ($(this).attr("entermsg")) {
+                                $(".enter-msg").html($(this).attr("entermsg"));
+                            } else {
+                                $(".enter-msg").html("");
+                            }
+                        });
+                    }
+                });
+            }
+            //closestTr.find(".text_ledger").addClass("error");
+            closestTr.find(".text_ledger").focus();
+            return false;
+        }
+
+        return true;
+    });
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+        getDrAmount();
+        getCrAmount();
+        getNetAmount();
+    });
+    $('input[type="text"]').focus(function () {
+        if ($(this).attr("entermsg")) {
+            $(".enter-msg").html($(this).attr("entermsg"));
+        } else {
+            $(".enter-msg").html("");
+        }
+
+    });
+    $(".dr-amt").live('keyup', function (e) {
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+            var closestTr = $(this).closest("tr");
+            closestTr.find(".cr-amt").val("");
+            //alert($(this).val());
+            $(this).removeClass("error");
+            $(this).closest("tr").find("hdn_Amount").val($(this).val());
+        }
+        else if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    $(".cr-amt").live('keydown', function (e) {
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+            var closestTr = $(this).closest("tr");
+            closestTr.find(".dr-amt").val("");
+            $(this).removeClass("error");
+            $(this).closest("tr").find("hdn_Amount").val($(this).val());
+            $(this).closest("tr").find(".dr-amt").removeClass("error");
+        } else if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+    $(".text_ledger").live("blur", function () {
+        if ($(this).val() == "") {
+            // $(this).addClass("error");
+            //$(this).focus();
+        } else {
+            $(this).removeClass("error");
+            if ($(this).closest("tr").find(".cr-amt").val() == "" && $(this).closest("tr").find(".dr-amt").val() == "") {
+                var receiptAmtElements = document.querySelectorAll(".dr-amt");
+                if (receiptAmtElements.length > 1) {
+                    var drAmt = CalculateDrAmt();
+                    var crAmt = CalculateCrAmt();
+                    var absDiff = Math.abs(drAmt - crAmt);
+                    if (absDiff == 0) {
+                        $(this).closest("tr").find(".cr-amt").val("");
+                        $(this).closest("tr").find(".dr-amt").val("");
+                    } else {
+                        if (drAmt > crAmt) {
+                            $(this).closest("tr").find(".cr-amt").val(absDiff);
+                        } else {
+                            $(this).closest("tr").find(".dr-amt").val(absDiff);
+                        }
+                        $(this).closest("tr").find(".hdn_Amount").val(absDiff);
+                    }
+                }
+            }
+        }
+    });
+
+    $(".cr-amt").live("focusout", function () {
+        if ($(this).val()) {
+            $(this).closest("tr").find(".hdn_Amount").val($(this).val());
+            $(this).closest("tr").find(".hdn_JVAmountType").val(credit);
+        }
+    });
+    $(".dr-amt").live("focusout", function () {
+        if ($(this).val()) {
+            $(this).closest("tr").find(".hdn_Amount").val($(this).val());
+            $(this).closest("tr").find(".hdn_JVAmountType").val(debit);
+        }
+    });
+    $(".UDFCustomFiled").live("click", function () {
+        $(".UDFEntry").toggle('hide');
+
+    });
+
+
+    function getDrAmount() {
+        drAmt = CalculateDrAmt();
+        $("#DrAmt").val(drAmt);
+    }
+
+    function getCrAmount() {
+        crAmt = CalculateCrAmt();
+        $("#CrAmt").val(crAmt);
+    }
+    function getNetAmount() {
+        netAmt = parseFloat(drAmt) - parseFloat(crAmt);
+        var netAmtFinal = "";
+        if (netAmt < 0) {
+            netAmtFinal = Math.abs(netAmt) + " Cr";
+        } else if (netAmt > 0) {
+            netAmtFinal = netAmt + " Dr";
+        }
+
+        $("#DrCrDiffAmt").val(netAmtFinal);
+        $("#DrCrDiffAmtRs").val(netAmtFinal);
+    }
+
+    $("#Date").live("blur", function (e) {
+        var currentElement = $(this);
+        var date = $(this).val();
+        var url = '@Url.Action("CheckFiscalyearDateinjournalVoucher", "Entry")?Date=' + date;
+        $.post(url, function (data) {
+            if (data != "True") {
+                currentElement.addClass("error");
+                alert(data);
+
+            } else {
+                currentElement.removeClass("error");
+            }
+        });
+    });
+</script>

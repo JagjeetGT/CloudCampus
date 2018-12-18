@@ -1,0 +1,112 @@
+﻿@model KRBAccounting.Web.ViewModels.Payroll.EmployeeStatementViewModel
+@{
+    ViewBag.Title = "Employee Statement";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Employee Statement</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfEmployeeStatement", "PayrollReport")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelEmployeeStatement", "PayrollReport")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm" style=" min-height: 265px; min-width: 635px">
+    <div class="block">@Html.Partial("_PartialEmployeeSatementForm", Model)</div>
+    <div class="clearfix"></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+    });
+    $("#saveForm").live("click", function () {
+        $("#report-form").submit();
+    });
+
+    $("#modalReportForm").dialog({
+        autoOpen: true,
+        modal: true,
+width:'auto',
+        title: 'Generate Employee Statement Report',
+        buttons: {
+            "OK": function () {
+                Begin();
+                var employee = $("#EmployeeId").val();
+              
+                if (employee == null || employee == 0) {
+                    writeError("error-msg", "Please Select employee"); $.unblockUI();
+
+                } else {
+
+                    $("#report-form").submit();
+
+                    $(this).dialog('close');
+
+
+                }
+            },
+            Cancel: function () {
+
+                $(this).dialog('close');
+            }
+        }
+    });
+
+    $("#DepartmentId").live("change", function () {
+        Begin();
+        $("#error-msg").html('');
+        var departmentId = $("#DepartmentId").val();
+        var url = '@Url.Action("GetPayrollEmployee")?departmentId=' + departmentId;
+        $.ajax({
+            url: url,
+
+            datatype: "JSON",
+            type: "POST",
+
+            error: function () {
+
+                alert("An error occurred.");
+                $.unblockUI();
+            },
+            success: function (data) {
+                var item = '<option value="0">--Select Employee--</option>'; ;
+
+                $.each(data, function () {
+                    item += '<option value="' + this.Value + '">' + this.Text + '</option>';
+
+                });
+                $("#EmployeeId").html(item);
+
+
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-error alert"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function success(data) {
+        $("#report").html(data.view);
+    }
+</script>

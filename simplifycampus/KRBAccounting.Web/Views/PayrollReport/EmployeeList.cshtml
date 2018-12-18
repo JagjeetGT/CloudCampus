@@ -1,0 +1,6 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScEmployeeInfo>
+           
+           @foreach(var item in Model)
+           {
+               @Html.Partial("_PartialEmployeeList",item)
+           }

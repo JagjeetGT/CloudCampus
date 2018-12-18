@@ -1,0 +1,77 @@
+﻿
+@model IEnumerable<KRBAccounting.Domain.Entities.ScTransportMapping>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Registation Number
+                </th>
+                <th>
+                    Bus Stop From
+                </th>
+                <th>
+                    Bus Stop To
+                </th>
+                <th>
+                    Status
+                </th>
+             
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    End Date
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Narration 
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i =1;}
+            @foreach (var item in Model)
+            {
+
+               
+                <tr>
+                    <td align="center">@i</td>
+                    <td>
+                        @item.studentinfo.StuDesc
+                    </td>
+                    <td>
+                        @item.RegNo
+                    </td>
+                   
+                    <td> @if(item.ScBusStopFrom!=null){@item.ScBusStopFrom.Description}
+                    </td>
+                    <td>@if(item.ScBusStopTo!=null){@item.ScBusStopTo.Description}
+                    </td>
+                    <td>
+                       @item.Status
+                    </td>
+                    <td>
+                        @item.StartDate
+                    </td>
+                    <td>@item.EndDate
+                    </td>
+                    <td>
+                       @item.TransportAmt
+                    </td>
+                    <td>
+                       @item.Narr
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    
+</div>

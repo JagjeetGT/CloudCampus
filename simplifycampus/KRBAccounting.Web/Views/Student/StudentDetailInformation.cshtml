@@ -1,0 +1,91 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentinfo
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list"
+        align="center">
+        <tr>
+            <td>
+                <span class="label-120">Code:</span>@if(Model.StdCode!=null){@Model.StdCode}
+                <div class="clear">
+                </div>
+                <span class="label-25">Student Name: </span>@Model.StuDesc
+                <div class="clearfix">
+                </div>
+                <span class="label-25">Class Name: </span>@Model.Class.Description
+                <div class="clearfix">
+                </div>
+                @*     <th>
+                    Section  Code
+                </th>*@ Category Name: @Model.StudentCategory.Description
+                <div class="clearfix">
+                </div>
+                Temporary Address:@Model.TmpAdd
+                <div class="clearfix">
+                </div>
+                Temporary City:@Model.TmpCity
+                <div class="clearfix">
+                </div>
+                Temporary Country:@Model.TmpCountry
+                <div class="clearfix">
+                </div>
+                Temporary District:@Model.TmpDistrict
+                <div class="clearfix">
+                </div>
+                Temporary Phone:@Model.TmpPhone
+                <div class="clearfix">
+                </div>
+                Temporary State:@Model.TmpState
+                <div class="clearfix">
+                </div>
+                Temporary Ward No.:@Model.TmpWardNo
+                <div class="clearfix">
+                </div>
+                Apply Date:@Model.ApplyDate
+                <div class="clearfix">
+                </div>
+                Phone No.:@Model.Phone
+                <div class="clearfix">
+                </div>
+                Registration No.:@Model.Regno
+                <div class="clearfix">
+                </div>
+                Previous Class:@Model.PrevClsCode
+                <div class="clearfix">
+                </div>
+                Blood Group :@Model.BloodGrp
+                <div class="clearfix">
+                </div>
+                Date Of Birth:@Model.DBO
+                <div class="clearfix">
+                </div>
+                Email-Id:@Model.EmailId
+                <div class="clearfix">
+                </div>
+                Father's Number:@Model.FMobile
+                <div class="clearfix">
+                </div>
+                Religion:@Model.Religion
+                <div class="clearfix">
+                </div>
+                Sex:@Model.Sex
+                <div class="clearfix">
+                </div>
+                Height:@Model.StHeight
+                <div class="clearfix">
+                </div>
+                Weight:@Model.StWeight
+                <div class="clearfix">
+                </div>
+                Memo:@Model.StuMemo
+            </td>
+            <td align="center">
+                
+                @Model.StdPhotoFileName
+            </td>
+        </tr>
+    </table>
+    <div class="clearfix">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#tbl-list").dataTable({ "sPaginationType": "full_numbers", "bLengthChange": true, "bFilter": true, "bInfo": true, "bPaginate": true, "aoColumns": [{ "bSortable": true }, null, null, null, null, { "bSortable": false }, { "bSortable": false}] });
+</script>

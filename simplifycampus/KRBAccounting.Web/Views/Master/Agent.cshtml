@@ -1,0 +1,164 @@
+﻿@*<div class="breadLine">
+    @Html.Partial("_PartialGeneralSettingBreadcrumb")
+</div>*@
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Agent</h1>
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Create", "CAS"))
+                        {
+                            <ul class="buttons">
+                                <li><a href="#" class="isw-plus addAgent"></a></li>
+                            </ul>
+                        }
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Agent-list">
+                    @Html.Action("AgentList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="dialog" id="modalFiscalYear" style="display: none;" title="Agent">
+    <div class="block">
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    $("#modalFiscalYear").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function() {
+                $("#agent-form").submit();
+            },
+            Cancel: function() {
+                $(this).dialog("close");
+            }
+        }
+    });
+    
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalFiscalYear .block').html(data);
+                $(this).addClass("done");
+                $("#modalFiscalYear").dialog('open');
+                $.unblockUI();
+
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addAgent').live('click', function () {
+        var url = '@Url.Action("AgentAdd", "Master")';
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+
+        return false;
+    });
+    
+    $('a.editAgent').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("AgentEdit", "Master")/' + id;
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+
+        return false;
+    });
+
+    $("a.AgentDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("AgentDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    function OnComplete(data) {
+        if (data == "True") {
+            $("#modalFiscalYear .block").load("/Master/AgentAdd");
+            $("#Agent-list").load("/Master/AgentList");
+        } else {
+            $("#modalFiscalYear .block").html(data);
+            $("#Agent-list").load("/Master/AgentList");
+        }
+    }
+    
+    function OnCompleteEdit() {
+
+        $("#modalFiscalYear").dialog("close");
+        $("#Agent-list").load("/Master/AgentList");
+    }
+
+    $("#AgentName").live("focusout", function () {
+        if ($(this).val()) {
+            if (!$("#ShorName").val()) {
+                var name = $(this).val();
+                $.getJSON("/Master/GetShortName", { name: name, module: "AT" }, function (data) {
+                    $("#ShorName").val(data.shortName.toString());
+                });
+            }
+        }
+    });
+</script>

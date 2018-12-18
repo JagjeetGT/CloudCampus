@@ -1,0 +1,115 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScLibraryMemberRegistration>
+          @{var i = Convert.ToInt32(ViewBag.SnStart);}
+<div id="loadpage">
+ 
+        <b>
+            @if (Model.Count() != 0)
+            {
+                <p align="center">Type: @Model.FirstOrDefault().Type<br/>
+               
+                 
+                    @if (Model.FirstOrDefault().ClassId != 0)
+                       {
+                        <text> Class: </text>
+                           @Model.FirstOrDefault().Class.Description
+                       }
+
+                </p>
+            }
+        </b>
+   
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N</th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Reg No./Staff Code
+                </th>
+                <th>
+                    Card No
+                </th>
+                @*<th width="5%"></th>*@
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td >@i</td>
+                    <td>@if(item.Type=="student")
+                        {
+                            @item.Studentinfo.StuDesc
+                        }
+                        else
+                        {
+                             @item.StaffMaster.Description
+                        }
+                    </td>
+                    <td>@if(item.Type=="student")
+                        {
+                            if (item.RegNo==null)
+                            {
+                                <a href="/Setup/DocumentNumberingSchemeAdd"></a>
+                            }
+                            else
+                            {
+                                   @item.RegNo
+                            }
+
+                        }
+                        else
+                        {
+                             if (item.RegNo==null)
+                            {
+                                <a href="/Setup/DocumentNumberingSchemeAdd"></a>
+                            }
+                             else
+                             {
+                                   @item.StaffMaster.Code
+                             }
+
+                        }
+                           
+                    
+                    </td>
+                    <td>
+                        @{
+                        int ii = 0;
+                        }
+                        @foreach (var d in item.LibraryCards)
+                        {
+                            if (ii == 0)
+                            {
+                                <text>@d.CardNo</text>
+                            }
+                            else
+                            {
+                                <text>, @d.CardNo</text>
+                            }
+                            ii++;
+                        }
+                    </td>
+                  
+                 @*<td>@if (CheckPermission.GivePermission("Delete", "ScLMR"))
+                        {
+                            <a href="@Url.Action("LibraryMemberRegistrationDelete", new {id = item.Id})" onclick="return confirm('Are You Sure Want to delete this?');" class="LibraryMemberRegistrationDelete icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>*@
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "LibraryMemberRegistrationsDetailList", "Library", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "LibraryMemberRegistrationsdetail-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@

@@ -1,0 +1,115 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.LibraryInformationViewModel
+@{
+    var data = Model.LibraryInformations.FirstOrDefault();
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+
+
+
+<div class="ReportList block" id="universityledgermark">
+    <div class="ReportHeader" style="text-align: center">
+   
+    </div>
+    <br />
+    <div class="row-fluid">
+
+        <p style="font-weight:bold;font-size:8px;">
+            NAME : @data.Student &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            REGISTRTION NO. : @data.Regno &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            STUDENT CODE : @data.StdCode
+            <br />
+            SECTION : @data.Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            CLASS : @Model.LibraryInformations.FirstOrDefault().Class &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            ROLL NO. :  @data.RollNo
+            <br />
+           LIBRARY REGISTRATION NO. : @Model.LibraryCard.FirstOrDefault().LibraryMemberRegistration.RegNo
+            <br />
+            ADDRESS :  @data.TmpAdd,
+            @data.TmpCity,
+            @data.TmpDistrict,
+            @data.TmpCountry
+        </p>
+
+        <h5 style="font-weight:bold">Library Card Status</h5>
+        <table border="0.5" style="font-size:8px;">
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th style="font-size:10px">Card No</th>
+                <th style="font-size:10px"> Card Status</th>
+            </tr>
+            @foreach (var item in Model.LibraryCard)
+            {
+                <tr>
+                    <td>
+                        @item.CardNo
+                    </td>
+                    <td>
+                        @if (item.IsUse)
+                        {
+                            <text> Used</text>
+                        }
+                        else
+                        {
+                            <text>Available</text>
+                        }
+                </tr>
+
+            }
+        </table>
+
+    </div>
+
+    <h5 style="font-weight:bold">Book Issued Information</h5>
+    <table border="0.5" style="font-size:8px;">
+        <tr bgcolor="#E6EEEE" align="center" style="font-weight:bold">
+            <th style="font-size:10px;">Issued Date</th>
+            <th style="font-size:10px;">Book Due Date</th>
+            <th style="font-size:10px;">Card No</th>
+            <th style="font-size:10px;">Book Accession No</th>
+            <th style="font-size:10px;">Book Return Status</th>
+            <th style="font-size:10px;">Card Status</th>
+        </tr>
+        <tr>
+            @foreach (var item in Model.LibraryInformations)
+            {
+                <td>
+                    @item.Date.ToShortDateString()||@item.Miti
+                </td>
+                <td>
+                    @item.BookDueDate.ToShortDateString()||@item.BookDueMiti
+                </td>
+                <td>
+                    @item.CardNo
+                </td>
+                <td>
+                    @item.AccessionNo
+                </td>
+                <td>
+                    @if (item.Return)
+                    {
+                        <text>Returned</text>
+                    }
+                    else
+                    {
+                        <text>Yet To Return</text>
+                    }
+                </td>
+                <td>
+                    @if (item.CardStatus)
+                    {
+                        <text>Used</text>
+                    }
+                    else
+                    {
+                        <text>Available</text>
+                    }
+                </td>
+            }
+        </tr>
+    </table>
+</div>

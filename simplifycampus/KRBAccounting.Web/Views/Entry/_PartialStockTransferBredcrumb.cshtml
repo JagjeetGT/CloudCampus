@@ -1,0 +1,21 @@
+﻿
+
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "GT"))
+        {
+            <li><a href="@Url.Action("StockTransfer", "Entry")">Godown Transfer</a> <span class="divider">
+                |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "SA"))
+        {
+            <li><a href="@Url.Action("StockAdjustment", "Entry")">Stock Adjustment</a> <span class="divider">
+                |</span></li>
+        }
+         @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "SEB"))
+        {
+            <li><a href="@Url.Action("ExpBrk", "Entry")">Expiry/Breakage</a> <span class="divider">
+                |</span></li>
+        }
+    </ul>
+</div>

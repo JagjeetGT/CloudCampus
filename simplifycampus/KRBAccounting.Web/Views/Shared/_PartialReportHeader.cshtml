@@ -1,0 +1,37 @@
+﻿@model KRBAccounting.Web.ViewModels.ReportHeader
+@*<h4>@Model.CompanyName</h4>
+<p>@Model.CompanyAddress</p>
+<div class="accountingperiod">
+    <p>
+        Accounting Period
+    </p>
+    @Model.AccountingPeriod
+</div>*@
+@*<div class="reporttitle">
+    @if (Model.ReportTitle != "")
+    {
+        <h5>
+            @Model.ReportTitle
+        </h5>
+    }
+    @if (Model.ReportDate != "")
+    {
+        <p>
+            @Model.ReportDate</p>
+    }
+</div>*@
+<table width="100%">
+    
+    <tr align="center" style="font-size: 12px;">
+     
+        <td >
+          
+           <b style="font-size:18px;">@Model.CompanyName</b><br/>
+            @Model.CompanyAddress<br/> 
+            <b>@Model.ReportTitle</b> <br/>
+            @Model.ReportDate
+        </td>
+    
+    </tr >
+    
+</table>

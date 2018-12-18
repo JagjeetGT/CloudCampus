@@ -1,0 +1,78 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Web.CustomFilters
+@*@model KRBAccounting.Web.ViewModels.Academy.AcademicsConsolidatedMarksSetupsViewModel*@
+
+@model IEnumerable<List<KRBAccounting.Domain.Entities.ScConsolidatedMarksSetup>>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Exam
+                </th>
+            
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr class="_detail">
+                    <td align="center">@i
+                    </td>
+                    <td>@item.FirstOrDefault().Code
+                    </td>
+                    <td>@item.FirstOrDefault().Description
+                    </td>
+                    <td>
+                        @{
+                            var schClass = item.FirstOrDefault().Class;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Description
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var scExam = item.FirstOrDefault().Exam;
+                        }
+                        @if (scExam != null)
+                        {
+                            @scExam.Description
+                        }
+                    </td>
+                  
+                    <td>
+                        @if (CheckPermission.GivePermission("Edit", "ScCMS"))
+                        {
+                            <a href="javascript:void(0)" class="editExam icon-edit" data-classid="@item.FirstOrDefault().ClassId" data-examid="@item.FirstOrDefault().ExamId" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    @*<td>
+                        <a href="@Url.Action("ExamMarkSetupDelete", new { examId = item.FirstOrDefault().ExamId,classId=item.FirstOrDefault().ClassId })" onclick = "return confirm('Are you sure you wish to delete this Exam mark Setup?');" class=" "  title="Delete">
+                        </a>
+                    </td>*@
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+      @*<div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "ConsolidatedMarksSetupsList", "Exam", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Rooms-list" }))
+    </div>*@
+</div>

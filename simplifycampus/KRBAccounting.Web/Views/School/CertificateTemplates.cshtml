@@ -1,0 +1,81 @@
+﻿@model KRBAccounting.Domain.Entities.Template
+
+@{
+    ViewBag.Title = "Certificate Template";
+}
+
+@Html.Partial("_PartialCertificateTemplateBreadCrumb")
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        @Model.TemplateTypeName Template</h1>
+                    <ul class="buttons">
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div class="row-form">
+                        @Html.Action("CertificateTemplateEditor", "School",new{typeid=Model.TemplateType})
+                        <div class="clear">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dr">
+            <span></span>
+        </div>
+    </div>
+</div>
+<div id="my-modal" class="modal hide fade">
+    <div class="modal-body">
+        <p class="body">
+            <img alt="Saved Correctly" src="/Content/img/1346139566_check.png" width="48" height="48" /><h2>
+                <strong>Data Saved Succesfully.</strong></h2>
+        </p>
+    </div>
+</div>
+<div id="my-modalError" class="modal hide fade">
+    <div class="modal-body">
+        <p class="body">
+            <img alt="Saved Correctly" src="/Content/img/delete.png" width="48" height="48" /><h2>
+                <strong>Error</strong></h2>
+        </p>
+    </div>
+</div>
+<script type="text/javascript">
+    editor = $(".wysiwyg").cleditor({ width: "100%", height: "100%" })[0].focus();
+    editor.refresh();
+
+
+    $(".save-buttons").live('click', function () {
+        Begin();
+        $("#CertificateTemplate-form").submit();
+        checkValidationError();
+    });
+
+    function success(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $('#my-modal').modal('show');
+            $.unblockUI();
+            setTimeout(function () {
+                $('#my-modal').modal('hide');
+            }, 1200);
+        } else {
+            $.unblockUI();
+            $('#my-modalError').modal('show');
+            $.unblockUI();
+            setTimeout(function () {
+                $('#my-modalError').modal('hide');
+            }, 1200);
+        }
+    }
+   
+</script>

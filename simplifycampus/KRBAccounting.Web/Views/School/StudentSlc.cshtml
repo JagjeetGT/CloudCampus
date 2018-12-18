@@ -1,0 +1,160 @@
+﻿@{
+    ViewBag.Title = "Student SLC";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Student Slc List</h1>
+                <ul class="buttons">
+                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Create", "GL"))
+                    {
+                        <li><a href="#" class="isw-plus addStudentSlc"></a></li>
+                    }
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="ledger-list">
+                @Html.Action("StudentSlcList")
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalLedger" style="display: none;" title="Student Slc(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+    function clearErrors() {
+        $('#msgErrorNewLocationDetails').html('');
+        $('#msgError').html('');
+    }
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#modalLedger .block').html(data);
+                $(this).addClass("done");
+                $("#modalLedger").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addStudentSlc').live('click', function () {
+        var url = '@Url.Action("StudentSlcAdd", "School")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editLedger').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("StudentSlcEdit", "School")/' + id;
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    $("a.LedgerDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            $.blockUI();
+            var url = '@Url.Action("StudentSlcDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                        $.unblockUI();
+                    } else {
+                        $.unblockUI();
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+    //
+
+    //    $('#saveLedger').live('click', function () {
+    //        $("#ledger-form").submit();
+    //    });
+
+    function OnComplete() {
+
+        $("#modalLedger .block").load("/School/StudentSlcAdd");
+        $("#ledger-list").load("/School/StudentSlcList");
+        $.unblockUI();
+    }
+
+    function success(data) {
+
+        if (data == "True") {
+            OnComplete();
+        }
+    }
+    function sucessEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+    }
+    function OnCompleteEdit() {
+        $("#modalLedger").dialog("close");
+        $("#ledger-list").load("/School/StudentSlcList");
+        $.unblockUI();
+    }
+
+    $("#modalLedger").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+               
+                $("#studentslc-form").submit();
+                Begin();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+
+    //    $('#modalLedger').modal({
+    //                    keyboard: false,
+    //                    backdrop: "static"
+    //                }).css({
+    //                    width: 'auto',
+    //                    //height: '800px',
+    //                    'margin-left': function () {
+    //                        return -($(this).width() / 2);
+    //                    }
+    //                });
+    //    $("#addLedger").click(function () { $("#modalLedger").dialog('open') });
+</script>

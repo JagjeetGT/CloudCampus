@@ -1,0 +1,116 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentExtraActivity
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StudentExtraActivitiesEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.CreateDate)
+    @Html.HiddenFor(x => x.CreateById)
+    @Html.HiddenFor(m => m.AcademicYearId)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-70">
+                Class</label>
+            <div class="field">@Html.HiddenFor(x => x.ClassId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetClasses", "School")" value="@if (Model.Class != null)
+                                                                                                                   {
+                                                                                                                       @Model.Class.Description
+                                                                                                                   }
+                                                                                                                      " valueId="ClassId" id="feeitemledger" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassId)</div>
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Section</label>
+            <div class="field">
+                @Html.HiddenFor(x => x.SectionId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetSections", "School")" value="@if (Model.Section != null)
+                                                                                                                    {
+                                                                                                                        @Model.Section.Description
+                                                                                                                    }
+                                                                                                                       " valueId="SectionId" id="houseSectionId" title="Account Name" entermsg = "Enter SectionId" />
+                @Html.ValidationMessageFor(m => m.SectionId)
+            </div>
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Activity</label>
+            <div class="field">
+                @Html.HiddenFor(x => x.ActivityId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetActivity", "School")" value="@if (Model.ExtraActivity != null)
+                                                                                                                    {
+                                                                                                                        @Model.ExtraActivity.Description
+                                                                                                                    }
+                                                                                                                       " valueId="ActivityId" id="extraActivityId" title="Account Name" entermsg = "Enter SectionId" />
+                @Html.ValidationMessageFor(m => m.ActivityId)
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag detailEntryTable" style="height: 250px; width: 100%">
+            <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 100%">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Roll No
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Start Date
+                    </th>
+                    <th>
+                        Start Miti
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                </tr>
+                @foreach (var item in Model.ActivityDetailses)
+                {
+                  
+                    @Html.Partial("_PartialStudentExtraActivityDetailEdit", item)
+                }
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Remarks</label>
+            <div class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks)
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(".StartDate").mask('99/99/9999');
+    $(".StartMiti").mask('9999/99/99');
+    var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+    $.each(ledgerElement, function (index) {
+        var element = $(this).closest("tr");
+        element.attr("id", "tr_" + index);
+
+        var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+        element.find(".text_subject").attr({
+            "valueId": Subject_valueid,
+            "id": "text_subject_" + index
+        });
+        var hdn_status_Id = element.find(".hdn_status_Id").attr("id");
+
+        element.find(".text_status").attr({
+            "valueId": hdn_status_Id,
+            "id": "text_status_" + index
+        });
+    });
+</script>

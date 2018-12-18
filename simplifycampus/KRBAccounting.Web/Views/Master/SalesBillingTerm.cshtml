@@ -1,0 +1,165 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Sales Billing Term";
+    var userRight = (UserRight) ViewBag.UserRight;
+}
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "SBT"))
+        {
+            <li><a href="@Url.Action("SalesBillingTerm", "Master")">Sales</a> <span class="divider">
+                |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PBT"))
+        {
+            <li><a href="@Url.Action("PurchaseBillingTerm", "Master")">Purchase</a> <span class="divider">
+                |</span></li>
+        }
+    </ul>
+</div>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Sales Bill Term</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addSalesBillingTerm"></a></li>
+                        }
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="salesbillingterm-list">
+                    @Html.Action("SalesBillingTermList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalSalesBillingTerm" style="display: none;" title="Sales Billing Term(+)">
+    <div class="block"></div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#modalSalesBillingTerm .block').html(data);
+                $(this).addClass("done");
+                $('#modalSalesBillingTerm').dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addSalesBillingTerm').live('click', function () {
+        var url = '@Url.Action("SalesBillingTermAdd", "Master")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editSalesBillingTerm').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesBillingTermEdit", "Master")/' + id;
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    $("a.SalesBillingTermDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("SalesBillingTermDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    function OnComplete() {
+
+        $("#modalSalesBillingTerm .block").load("/Master/SalesBillingTermAdd");
+        $("#salesbillingterm-list").load("/Master/SalesBillingTermList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+        $("#modalSalesBillingTerm").dialog('close');
+        $("#salesbillingterm-list").load("/Master/SalesBillingTermList");
+        $.unblockUI();
+    }
+
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+
+    }
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+
+    }
+
+    $("#modalSalesBillingTerm").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Save": function () {
+                Begin();
+                $("#sales-billing-term-form").submit();
+                $.unblockUI();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>

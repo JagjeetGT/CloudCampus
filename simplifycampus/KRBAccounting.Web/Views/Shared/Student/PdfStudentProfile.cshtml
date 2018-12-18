@@ -1,0 +1,641 @@
+﻿@using iTextSharp.text.pdf.qrcode
+@model KRBAccounting.Domain.Entities.ScStudentinfo
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+
+                    Student Detail Inforamtion
+
+                <div class="clear">
+                </div>
+            </div>
+            <div class="block-fluid table-sorting" id="report">
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                       style="border-top: 0px; border-bottom: 0px" align="center">
+                    @Html.HiddenFor(x => x.StudentID, new { @class = "studentid" })
+                    @Html.HiddenFor(x => x.ClassId, new { @class = "classid" })
+
+                    <tr>
+                        <h3 align="center">
+                            PERSONAL INFORMATION
+                        </h3>
+                    </tr>
+
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="">
+                                    Name :
+                                </label>
+                                @Model.StuDesc
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="">
+                                    Registration No. :
+                                </label>
+
+                                @Model.Regno
+
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Student Code :
+                                </label>
+
+                                @if (Model.StdCode != null)
+                            {@Model.StdCode}
+
+                            </div>
+
+                        </td>
+
+                        <td style="border: 0px"></td>
+                        <td style="border: 0px"></td>
+                        <td style="border: 0px"></td>
+                        <td style="border: 0px"></td>
+                        <td rowspan="4" style="border: 0px">
+                            <div class="lag">
+                                <span class="stack">
+                                    <span class="field">
+                                        @if (!string.IsNullOrEmpty(Model.StdPhotoFileName))
+{
+
+                                            <img src="/Content/academicsimage/@Model.StdPhotoFileName@Model.StdPhotoExt" height="150px" width="107px" style="padding-right: 5px; padding-top: 19px;" />
+}
+else
+{
+                                            <img src="/Content/img/NoImage.jpg" height="150px" width="107px" style="padding-right: 5px; padding-top: 19px;" />
+}
+                                    </span>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    DOB :
+                                </label>
+
+                                @if (Model.DBO != null)
+                            {
+
+                                    @Convert.ToDateTime(Model.DBO).ToShortDateString()
+
+                            }
+
+                            </div>
+
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Sex :
+                                </label>
+
+                                @Model.Sex
+
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Current Class :
+                                </label>@Model.CurrClsCode
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Category Name :
+
+                                </label>
+
+                                @Model.StudentCategory.Description
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Nationality :
+                                </label>@Model.Nationality
+                            </div>
+                        </td>
+                        <td style="border: 0px"></td>
+                        <td style="border: 0px"></td>
+
+                    </tr>
+
+
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="">
+                                    Marital Status :
+                                </label>@Model.MaritialSt
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="">
+                                    Academic Year :
+                                </label>
+                                @Model.AcademicYear.StartDate.ToShortDateString()
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Height :
+                                </label>@Model.StHeight
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Weight :
+                                </label>@Model.StWeight
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Phone No. :
+                                </label>@Model.Phone
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Apply Date :
+                                </label>
+                                @if (Model.ApplyDate != null)
+                        {
+                                    @Convert.ToDateTime(Model.ApplyDate).ToShortDateString()
+                        }
+                            </div>
+                        </td>
+                        <td style="border: 0px"></td>
+
+                    </tr>
+
+
+
+                </table>
+
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                       style="border-top: 0px; border-bottom: 0px" align="center">
+
+                    <tr>
+                        <td colspan="2" style="border: 0px">
+                            <h4 style="padding-left: 13px;">
+                                Address Details
+                            </h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border: 0px">
+                            <h5 style="padding-left: 13px;">
+                                1. Permanent
+                            </h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Address :
+                                </label>@Model.PerAdd
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Ward No. :
+                                </label>
+                                @Model.PerWardNo
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    City/Village :
+                                </label>
+                                @Model.PerCity
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    District :
+                                </label>@Model.PerDistrict
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    State/Zone :
+                                </label>@Model.PerState
+                            </div>
+                        </td>
+
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Country :
+                                </label>@Model.PerCountry
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Phone No. :
+                                </label>
+                                @Model.PerPhone
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                       style="border-top: 0px; border-bottom: 0px" align="center">
+                    <tr colspan="2">
+                        <h5 style="padding-left: 13px;">
+                            2. Temporary Address
+                        </h5>
+                    </tr>
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Address:
+                                </label>@Model.TmpAdd
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Ward No. :
+                                </label>@Model.TmpWardNo
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    City/Village :
+                                </label>
+                                @Model.TmpCity
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    District :
+                                </label>
+                                @Model.TmpDistrict
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label>
+                                    Phone No. :
+                                </label>@Model.TmpPhone
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+
+
+                </table>
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                       style="border-top: 0px; border-bottom: 0px" align="center">
+                    <tr>
+                        <td colspan="2" style="border: 0px">
+                            <h4 style="padding-left: 13px;">
+                                Parent Details
+                            </h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border: 0px">
+                            <h5 style="padding-left: 13px;">
+                                1.  Father's Information
+                            </h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Name :
+                                </label>@Model.FName
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Profession :
+                                </label>
+                                @Model.FProff
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Residental Phone No. :
+                                </label>@Model.FPhoneRes
+                            </div>
+                        </td>
+
+                    </tr>
+                    <tr>
+
+
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Email Address :
+                                </label>
+                                @Model.FEmail
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Office :
+                                </label>@Model.FOff
+                            </div>
+                        </td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Address :
+                                </label>@Model.FOffAdd
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Phone :
+                                </label>@Model.FPhoneOff
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                       style="border-top: 0px; border-bottom: 0px" align="center">
+                    <tr>
+                        <td colspan="2" style="border: 0px">
+                            <h5 style="padding-left: 13px;">
+                                2.  Mother's Information
+                            </h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Name :
+                                </label>@Model.MName
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Profession :
+                                </label>@Model.MOff
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Residental Phone No. :
+                                </label>@Model.MPhoneRes
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Mobile :
+                                </label>@Model.MMobile
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Email Address :
+                                </label>
+                                @Model.MEmail
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Office :
+                                </label>@Model.MOff
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Address :
+                                </label>@Model.MOffAdd
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Phone :
+                                </label>
+                                @Model.MPhoneOff
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                       style="border-top: 0px; border-bottom: 0px" align="center">
+                    <tr>
+                        <td colspan="2" style="border: 0px">
+                            <h5 style="padding-left: 13px;">
+                                3. Guardian's Information
+                            </h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Name :
+                                </label>@Model.GName
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Profession :
+                                </label>@Model.GProff
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Relation :
+                                </label>@Model.GRelation
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Residental Phone No. :
+                                </label>@Model.MPhoneRes
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Mobile :
+                                </label>@Model.MMobile
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Email Address :
+                                </label>
+                                @Model.MEmail
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Office :
+                                </label>@Model.MOff
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Address :
+                                </label>@Model.MOffAdd
+                            </div>
+                        </td>
+                        <td style="border: 0px">
+                            <div class="lag">
+                                <label class="label-120">
+                                    Phone :
+                                </label>@Model.MPhoneOff
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+                           style="border-top: 0px; border-bottom: 0px" align="center">
+                        <h5 style="padding-left: 13px;">
+                            Academic Background
+                        </h5>
+
+                        @foreach (var item in Model.AcademicBackGrounds)
+    {
+                            <tr>
+                                <td colspan="4">
+                                    <h5 style="padding-left: 13px;">@item.Title</h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="lag">
+                                        <label>Institution,Board,Country:</label>
+                                        @item.Institution @item.Board @item.Country
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="lag">
+                                        <label>
+                                            Passed Year:
+                                        </label>
+                                        @item.PassedYear
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="lag">
+                                        <label>
+                                            Percentage:
+                                        </label>
+                                        @item.Percentage
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="lag">
+                                        <label>
+                                            Division:
+                                        </label>
+                                        @item.Division.Description
+                                    </div>
+                                </td>
+                            </tr>
+                }
+
+
+                    </table>
+                    <label style="padding:13px">Remarks</label>
+
+
+                        <div class="_box"></div>
+
+                    <table style="width:100%; padding-top:10px;" class="block-fluid table-sorting">
+                        <tr></tr>
+                        <tr>
+                            <td>
+                                <p style="border-top: solid 1px; text-align: left;width:100px ">PREPARED BY</p>
+                            </td>
+                            <td>
+                                <p style="border-top: solid 1px; text-align: center;width:100px">CAMPUS SEAL</p>
+                            </td>
+                            <td>
+                                <p style="border-top: solid 1px; text-align: right; width: 100px;">CAMPUS CHIEF</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+       </div>
+  <style>
+      div._box {
+          width: 860px;
+          padding: 105px;
+          border: 1px solid gray;
+          margin:8px;
+      }
+</style>

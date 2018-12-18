@@ -1,0 +1,98 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.MenuItem>
+@{
+    var controllerName = ViewContext.RouteData.GetRequiredString("controller");
+    var actionName = ViewContext.RouteData.GetRequiredString("action");
+}
+<ul class="navigation">
+    @if (Model.Where(x => x.ParentId == null).OrderBy(x => x.Schedule).Count() > 1)
+    {
+        foreach (var item in Model.Where(x => x.ParentId == null  ||x.ParentId ==0).OrderBy(x => x.Schedule))
+        {
+            if (!string.IsNullOrEmpty(item.Action))
+            {
+                var className = string.Empty;
+                var url = "/" + item.Controller + "/" + item.Action;
+                if (item.Controller == controllerName)
+                {
+                    className = "active";
+                }
+                <li class="@className"><a href="@url"><span class="isw-grid"></span><span class="text" controller="@item.Controller">@item.LinkText</span>
+                                       </a></li>
+            }
+            else
+            {
+                var className = string.Empty;
+                if (item.Controller == controllerName)
+                {
+                    className = "active";
+                }
+                <li class="openable @className"><a href="Javascript:void(0)"><span class="isw-list"></span><span class="text"
+                                                                                                                 controller="@item.Controller">@item.LinkText</span>
+                                                </a>
+                    <ul>
+                        @foreach (var sub in Model.Where(x => x.ParentId == item.Id).OrderBy(x => x.Schedule))
+                        {
+                            className = string.Empty;
+                            if (sub.Controller == controllerName && sub.Action == actionName)
+                            {
+                                className = "active";
+                            }
+                            var url = "/" + sub.Controller + "/" + sub.Action;
+                            <li class="@className"><a href="@url"><span class="text" action="@sub.Action">
+                                                                      @sub.LinkText</span> </a></li>
+                        }
+                    </ul>
+                </li>
+            }
+        }
+    }
+    else
+    {
+        var item = Model.FirstOrDefault(x => x.ParentId == null);
+        if (item != null)
+        {
+
+
+            var className = string.Empty;
+
+
+            if (item.Controller == controllerName)
+            {
+                className = "active";
+            }
+            var url = "/" + item.Controller + "/DashBoard";
+            <li class="@className"><a href="@url"><span class="isw-grid"></span><span class="text" controller="@item.Controller">DashBoard</span>
+                                   </a></li>
+            foreach (var sub in Model.Where(x => x.ParentId == item.Id).OrderBy(x => x.Schedule))
+            {
+                className = string.Empty;
+                if (sub.Controller == controllerName && sub.Action == actionName)
+                {
+                    className = "active";
+                }
+                url = "/" + sub.Controller + "/" + sub.Action;
+                <li class="@className"><a href="@url"><span class="text" action="@sub.Action">
+                                                          @sub.LinkText</span> </a></li>
+            }
+        }
+    }
+</ul>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".navigation .openable > a").click(function() {
+            var par = $(this).parent('.openable');
+            var sub = par.find("ul");
+            $('.navigation .openable').not(par).each(function() {
+                $(this).removeClass('active');
+            });
+            if (sub.is(':visible')) {
+                par.find('.popup').hide();
+                par.removeClass('active');
+            } else {
+                par.addClass('active');
+            }
+
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,148 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Academic Year";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Academic Years</h1>
+                         @if (userRight.Create)
+                         {
+                             <ul class="buttons">
+                                 <li><a href="#" class="isw-plus addFiscalYear"></a></li>
+                             </ul>
+                         }
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="FiscalYear-list">
+                    @Html.Action("AcademicYearList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dialog" id="modalFiscalYear" style="display: none;" title="Academic Year(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    $("#modalFiscalYear").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#fical-year-form").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalFiscalYear .block').html(data);
+                $(this).addClass("done");
+                $("#modalFiscalYear").dialog('open');
+                $.unblockUI();
+
+            },
+            error: function (err) {
+                $.unblockUI();
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addFiscalYear').live('click', function () {
+        var url = '@Url.Action("AcademicYearAdd", "Setup")';
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editFiscalYear').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("AcademicYearEdit", "Setup")/' + id;
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+
+        return false;
+    });
+    $('a.setFiscalYear').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SetDefautAcademicYear", "Setup")/' + id;
+        Begin();
+        $.post(url, function () {
+            $("#FiscalYear-list").load("/Setup/AcademicYearList");
+            $.unblockUI();
+        });
+
+
+        return false;
+    });
+
+    function OnComplete() {
+        $('#modalFiscalYear').load("/Setup/AcademicYearAdd");
+        $("#FiscalYear-list").load("/Setup/AcademicYearList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+        $('#modalFiscalYear').dialog("close");
+        $("#FiscalYear-list").load("/Setup/AcademicYearList");
+        $.unblockUI();
+    }
+</script>

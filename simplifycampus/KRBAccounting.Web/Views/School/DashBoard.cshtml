@@ -1,0 +1,802 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.AcademyViewModel
+@using System.Web.Script.Serialization
+@using KRBAccounting.Service
+@using KRBAccounting.Web.Helpers
+@{
+    var serializer = new JavaScriptSerializer();
+    ViewBag.Title = "Dashboard | ";
+
+
+    var student = Model.AcademicStudent;
+    var max = student.Max();
+    var last = student.Count - 1;
+    var maxIndex = student.FindIndex(x => x == max);
+    var ss = Html.Raw(serializer.Serialize(Model.DivisionValue)).ToString();
+    var final = ss.Replace("\"[", "[").Replace("]\"", "]");
+   
+
+
+}
+@*<style>
+    .menulist {
+        display: none;
+    }
+    .content {
+        margin-left: 0;
+    }
+</style>*@
+<script src="@Url.Content("~/Content/highchartjs/highcharts.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/highchartjs/highcharts-more.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/highchartjs/modules/exporting.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/highchartjs/modules/data.js")" type="text/javascript"></script>
+
+<div class="workplace" style="margin-top: -12px">
+    <div class="row-fluid">
+        <div class="block-fluid">
+   <div class="span12">
+                <div id="container2" style="min-width: 100px; height: 290px; margin: 0 auto; margin-bottom: 10px">
+                </div>
+                <table id="datatable" style="display: none">
+                    <thead>
+                        <tr>
+                            <th>
+                            </th>
+                            <th>
+                                Male
+                            </th>
+                            <th>
+                                Female
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ClassChart)
+                        {
+                            <tr>
+                                <th>
+                                    Class: @item.ClassName
+                                </th>
+                                <td>
+                                    @item.MaleCount
+                                </td>
+                                <td>
+                                    @item.FemaleCount
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="clearfix">
+            </div>
+         
+            <div class="row-fluid"  style="margin-bottom: 10px">
+                <div class="span4">
+                    <div id="academicwise" style="min-width: 100px; height: 235px; margin: 0 auto">
+                    </div>
+                </div>
+                <div class="span4">
+                    <div id="containerr" style="min-width: 100px; height: 235px; margin: 0 auto">
+                    </div>
+                </div>
+                <div class="span4">
+                    <div id="genderAnalysis" style="min-width: 100px; height: 235px; margin: 0 auto">
+                    </div>
+                </div>
+            </div>
+            <table id="datatable1" style="display: none">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CategoryChart)
+                    {
+                        <tr>
+                            <th>
+                                @item.CatergoryName
+                            </th>
+                            <td>
+                                @item.StudentCount
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="clearfix">
+            </div>
+            <div class="block-fluid">
+                <div class="span12">
+                    <div id="container3" style="min-width: 100px; height: 290px; margin: 0 auto; margin-bottom: 10px">
+                    </div>
+                    <table id="datatable" style="display: none">
+                        <thead>
+                            <tr>
+                                <th>
+                                </th>
+                                <th>
+                                    Male
+                                </th>
+                                <th>
+                                    Female
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ClassChart)
+                            {
+                                <tr>
+                                    <th>
+                                        @item.ClassName
+                                    </th>
+                                    <td>
+                                        @item.MaleCount
+                                    </td>
+                                    <td>
+                                        @item.FemaleCount
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+          
+            <table id="datatable23" style="display: none">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                            Bill Amount
+                        </th>
+                        <th>
+                            Receipt Amount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.FeeAmount)
+                    {
+                        <tr>
+                            <th>
+                                class: @item.ClassName
+                            </th>
+                            <td>
+                                @item.BillAmt
+                            </td>
+                            <td>
+                                @item.ReceiptAmt
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+</div>
+
+  
+<script>
+    $(function () {
+  
+
+
+
+        Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
+            return {
+                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                stops: [
+                    [0, color],
+                    [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                ]
+            };
+        });
+        // Gender Analysis
+        var male = @Html.Raw(serializer.Serialize(Model.TotalMaleStudent));
+        var female = @Html.Raw(serializer.Serialize(Model.TotalFemaleStudent));
+        $('#genderAnalysis').highcharts({
+         
+            colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00',  '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+                type:'pie',
+                borderWidth: 2
+            },
+      
+            title: {
+                text: 'Student Gender Analysis ',
+                style: {
+                    color: '#000',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }},
+        
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+            credits: {
+                enabled:false  
+            },
+        
+            labels: {
+                style: {
+                    color: '#99b'
+                }
+            }, 
+       
+        
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+
+
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Gender Analysis',
+                data: [
+                    ['Male',   male],                    
+                    {
+                        name:'Female',
+                        y:female,
+                        selected:true,
+                        sliced:true
+                    }]}]
+      
+
+
+        });
+       
+    
+       
+        // yearwise analyasis
+    
+        var yearlist = @Html.Raw(serializer.Serialize(Model.AcademicYear));
+    
+        var student =@Html.Raw(serializer.Serialize(Model.AcademicStudent));
+            
+        var data = [];
+        $.each(student, function(index,item) {
+                      
+            data.push({
+                y: item,
+                            
+                marker:{symbol:  (
+                    function () {
+                        if(index == @maxIndex) {
+                            return 'url(./../Content/img/sun.png)';
+                        } else {
+                            return 'square';
+                        }
+                    })()
+                }
+            });
+        });
+        $('#academicwise').highcharts({
+            colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+                type:'spline',
+                borderWidth: 2,
+                plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+                plotShadow: true,
+                plotBorderWidth: 1
+            },
+      
+            title: {
+                text: 'Yearly Students ',
+                style: {
+                    color: '#000',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }},
+            xAxis: {
+                categories: yearlist,
+                gridLineWidth: 1,
+                lineColor: '#000',
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Year'
+                }
+            
+            },
+            yAxis: {
+                minorTickInterval: 'auto',
+                lineColor: '#000',
+                lineWidth: 1,
+                tickWidth: 1,
+                min:0,
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Total No. of Students'
+                }
+            },
+        
+            legend:false,
+            labels: {
+                style: {
+                    color: '#99b'
+                }
+            }, 
+            credits: {
+                enabled:false  
+            },
+        
+            tooltip: {
+                formatter: function () {
+                    return this.series.name+':'+'<b>' + this.x + '</b><br/>' + 'Total Students: '+'<b>' + this.y+'<b/>';
+                }
+
+
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    },
+                    dataLabels: {
+                        enabled:true
+                    }
+                    
+                }
+            },
+            series: [{
+                name: 'Academic Year',
+                marker: {
+                    symbol: 'square'
+                },
+                data: data,
+                color:"brown"}],
+            navigation: {
+                buttonOptions: {
+                    theme: {
+                        stroke: '#CCCCCC'
+                    }
+                }
+            }
+        });
+
+        //Student Category Analysis
+        $('#containerr').highcharts({
+        // colors: ['#FFF263','#64E572','#50B432', '#ED561B', '#DDDF00','#058DC7',  '#24CBE5',  '#FF9655', ],
+        // colors: ['#FFF263','#64E572','#50B432', '#ED561B', '#DDDF00','#058DC7',  '#24CBE5',  '#FF9655', ],
+             
+            data: {
+                table: document.getElementById('datatable1')
+            },
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+                type:'column',
+                borderWidth: 2,
+                plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+                plotShadow: true,
+                plotBorderWidth: 1
+            },
+      
+            title: {
+                text: 'Student Category Analysis',
+                style: {
+                    color: '#000',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }},
+            xAxis: {
+           
+                gridLineWidth: 1,
+                lineColor: '#000',
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Category'
+                }
+            
+            },
+            yAxis: {
+               
+                minorTickInterval: 'auto',
+                lineColor: '#000',
+                lineWidth: 1,
+                tickWidth: 1,
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Total No. of Students'
+                }
+            },
+        
+            legend:false,
+            labels: {
+                style: {
+                    color: '#99b'
+                }
+            }, 
+            credits: {
+                enabled:false  
+            },
+        
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' + 'Total Students: '+'<b>' + this.y+'<b/>';
+                }
+
+
+            },
+            plotOptions: {
+                column: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    },
+                    dataLabels: {
+                        enabled:true
+                    }
+                    
+                }
+            },
+
+            navigation: {
+                buttonOptions: {
+                    theme: {
+                        stroke: '#CCCCCC'
+                    }
+                }
+            }
+        });
+//class wise student analysis
+        $('#container2').highcharts({
+     
+            data: {
+                table: document.getElementById('datatable')
+            },
+            colors: [  '#FF9655','#24CBE5','#FFF263','#DDDF00','#50B432', '#64E572','#ED561B', '#058DC7'  ],
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+                type:'column',
+                borderWidth: 2,
+                plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+                plotShadow: true,
+                plotBorderWidth: 1
+            },
+      
+            title: {
+                text: 'Class wise Student Analysis',
+                style: {
+                    color: '#000',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }},
+            xAxis: {
+            //  categories: classList,
+                gridLineWidth: 1,
+                lineColor: '#000',
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Class'
+                }
+            
+            
+            },
+            yAxis: {
+                allowDecimals: false,
+         
+                lineColor: '#000',
+                lineWidth: 1,
+                tickWidth: 1,
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Total No. of Students'
+                }
+            },
+         
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+      
+            labels: {
+                style: {
+                    color: '#99b'
+                }
+            }, 
+            credits: {
+                enabled:false  
+            },
+        
+            tooltip: {
+                formatter: function () {
+                    return this.series.name+':'+'<br/>' + 'Total Students: '+'<b>' + this.y+'<b/>';
+                }
+
+
+            },
+            plotOptions: {
+                column: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    },
+                    dataLabels: {
+                        enabled:true
+                    }
+                    
+                }
+            
+        
+            },
+        
+
+            navigation: {
+                buttonOptions: {
+                    theme: {
+                        stroke: '#CCCCCC'
+                    }
+                }
+            }
+      
+        });
+        
+
+        // Class Fee analyis
+        $('#container3').highcharts({
+     
+            data: {
+                table: document.getElementById('datatable23')
+            },
+            colors: ['#ED561B','#50B432','#058DC7' ,'#64E572','#DDDF00', '#FFF263','#24CBE5', '#FF9655'   ],
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+                type:'line',
+                borderWidth: 2,
+                plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+                plotShadow: true,
+                plotBorderWidth: 1
+            },
+      
+            title: {
+                text: 'Class wise Fee Amount  Analysis',
+                style: {
+                    color: '#000',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }},
+            xAxis: {
+           
+                gridLineWidth: 1,
+                lineColor: '#000',
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Class'
+                }, 
+                allowDecimals:true
+            
+            
+            },
+            yAxis: {
+                min:0,
+                allowDecimals: false,
+         
+                lineColor: '#000',
+                lineWidth: 1,
+                tickWidth: 1,
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                },
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Amount'
+                }
+            },
+         
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle',
+                borderWidth: 0
+            },
+      
+            labels: {
+                style: {
+                    color: '#99b'
+                }
+            }, 
+            credits: {
+                enabled:false  
+            },
+        
+            tooltip: {
+                formatter: function () {
+                    return this.series.name+':'+'<b>' + this.y+'<b/>';
+                }
+
+
+            },
+            plotOptions: {
+                line: {
+                    marker: {
+                        radius: 4,
+                        lineColor: '#666666',
+                        lineWidth: 1
+                    },
+                    dataLabels: {
+                        enabled:true
+                    }
+                    
+                }
+
+            },
+        
+
+            navigation: {
+                buttonOptions: {
+                    theme: {
+                        stroke: '#CCCCCC'
+                    }
+                }
+            }
+        });
+        
+
+
+
+        // Division
+     
+    });
+
+
+	
+
+
+</script>

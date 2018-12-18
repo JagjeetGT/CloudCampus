@@ -1,0 +1,107 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<List<KRBAccounting.Domain.Entities.ScStudentSubjectMapping>>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.No
+                </th>
+                <th>
+                    Class Name
+                </th>
+                <th>
+                    Class Code
+                </th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Student Code
+                </th>
+                <th>
+                    Narration
+                </th>
+                            <td width="5%"></td>
+            <td width="5%"></td>
+            </tr>
+
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>
+                        @{
+                            var scStudentSubjectMapping = item.FirstOrDefault();
+                        }
+                        @if (scStudentSubjectMapping != null)
+                        {
+                            if (scStudentSubjectMapping.Class != null)
+                            {
+                                @scStudentSubjectMapping.Class.Description
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @{
+                            var schClass = item.FirstOrDefault().Class;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Code
+                        }
+
+                    </td>
+                    <td  class="_detail ttLT" title="@item.FirstOrDefault().Class.Description: @item.FirstOrDefault().Studentinfo.StuDesc" data-classid="@item.FirstOrDefault().ClassId" data-studentid="@item.FirstOrDefault().StudentId" style="cursor: pointer">
+                        @{
+                            var scStudentinfo = item.FirstOrDefault().Studentinfo;
+                        }
+                        @if (scStudentinfo != null)
+                        {
+                            @scStudentinfo.StuDesc
+                        }
+
+                    </td>
+                    <td>
+                        @{
+                            var studentinfo = item.FirstOrDefault().Studentinfo;
+                        }
+                        @if (studentinfo != null)
+                        {
+                            @studentinfo.StdCode
+                        }
+
+                    </td>
+                    <td>@item.FirstOrDefault().Narration
+                    </td>
+                    <td>  @if (userRight.Edit)
+                        {
+                            <a href="#" class="editScClassSubject icon-edit" data-classid="@item.FirstOrDefault().ClassId" data-studentid="@item.FirstOrDefault().StudentId" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>  @if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("StudentSubjectMappingDelete", new {classId = item.FirstOrDefault().ClassId, studentId = item.FirstOrDefault().StudentId})" onclick = "return confirm('Are you sure you wish to delete this Class with Subject Setup?');" class="deleteScClassSubject icon-remove" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i += 1;
+            }
+        </tbody>
+    </table>
+        <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "StudentSubjectMappingList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "StudentSubjectMapping-list" }))
+    </div>
+</div>

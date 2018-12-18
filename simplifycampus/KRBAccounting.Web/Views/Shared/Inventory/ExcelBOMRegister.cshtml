@@ -1,0 +1,111 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.BOMRegisterViewModel
+@{
+    var Remarksd = "";
+    var Vno = "";
+    var Costcenter = "";
+}
+@Html.Partial("_PartialExcelReportHeader", Model.ReportHeader)
+<br />
+<table class="table table-bordered">
+    <thead>
+        <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold; border: 1px solid">
+                <th width="15%">
+                    Memo No
+                </th>
+                <th>
+                    Cost Center/Memo Description
+                </th>
+                <th rowspan="2">
+                    Short Name 
+                </th>
+                <th>
+                    Finished Goods
+                </th>
+            </tr>
+             <tr style="border: 1px solid black">
+                <th width="15%">
+                   Short Name
+                </th>
+                <th>
+                    Godown
+                </th>
+                <th>
+                    Row Materials
+                </th>
+                <th  rowspan="2">
+                    Qty
+                </th>
+                <th  rowspan="2">
+                    Unit
+                </th>
+            </tr>
+        </thead>
+       
+        @foreach (var item in Model.BOMRegister)
+        {
+            if (Costcenter != @item.ShortNameCC)
+            {
+                <tr style="border: 1px solid black">
+                    <td style="font-weight: bold">
+                        @item.ShortNameCC 
+                    </td>
+                   <td style="font-weight: bold">
+                       @item.CostCenter
+                   </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            }
+            Costcenter = @item.ShortNameCC;
+            if (Vno != @item.BomCode)
+            {
+                 <tr style="border: 1px solid black">
+                    <td style="font-weight: bold;padding-left: 15px;">
+                        @item.BomCode   
+                    </td>
+                    <td style="font-weight: bold;padding-left: 15px;">
+                        @item.BOM  
+                    </td>
+                    <td style="font-weight: bold;padding-left: 15px;">
+                        @item.ShortNameFG
+                    </td>
+                    <td style="font-weight: bold;padding-left: 15px;">
+                        @item.FinishedGood
+                    </td>
+                    <td style="font-weight: bold;text-align: right">
+                        @item.QtyFG
+                    </td>
+                    <td style="font-weight: bold">
+                        @item.UnitFG
+                    </td>
+                </tr>
+            }
+            Vno = @item.BomCode;
+            
+              <tr style="border: 1px solid black">
+                <td>
+                </td>
+                <td style="padding-left: 30px;">
+                    @item.GoDownRaw  
+                </td>
+                <td style="padding-left: 30px;">
+                    @item.RawMaterialCode
+                </td>
+                <td style="padding-left: 30px;">
+                    @item.RawMaterial
+                </td>
+                <td style="text-align: right">
+                    @item.QtyRaw
+                </td>
+                <td>
+                    @item.UnitRaw
+                </td>
+            </tr>
+        }
+       
+    </table>

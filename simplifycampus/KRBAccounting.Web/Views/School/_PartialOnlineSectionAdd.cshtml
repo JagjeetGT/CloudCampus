@@ -1,0 +1,28 @@
+﻿@model KRBAccounting.Domain.Entities.ScSection
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("OnlineSectionAdd", "School", new AjaxOptions { UpdateTargetId = "MsgError", OnSuccess = "sucess" }, new { @class = "form-custom online-form", id = "online-ledger-form" }))
+{
+    <h3> Sction (+)</h3>
+    <div style="width: 500px;">
+        <div class="lag">
+            <label class="label-160">
+                Description</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Description, new { @class = "input input-253" })
+                @Html.ValidationMessageFor(model => model.Description)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-160">
+                Memo</label>
+            <span class="field">
+                @Html.TextAreaFor(model => model.Memo, new { @class = "input input-253" })
+                @Html.ValidationMessageFor(model => model.Memo)
+            </span>
+        </div>
+    </div>
+     <span class="clearfix"></span>
+    <input type="button" class="btn btn-small btn-primary onlineSave" value="Save" />
+}           
+

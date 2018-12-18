@@ -1,0 +1,91 @@
+﻿@model Web.ViewModels.Home.AnalysisChart
+@using System.Web.Script.Serialization
+@{
+    var serializer = new JavaScriptSerializer();
+}
+<table cellpadding="0" cellspacing="0" width="100%" id="YearlyStatistics">
+    <tr>
+        <td style="width: 100%;">
+            @Ajax.ActionLink("Previous", "PreviousYearlyChart", "Home", new { currentDate = Model.CurrentDate }, new AjaxOptions { UpdateTargetId = "YearlyStatistics", OnBegin = "YearlyAnalysisBegin()", InsertionMode = InsertionMode.Replace }, new { @class = "btn-prev-chart" })
+            @Ajax.ActionLink("Next", "NextYearlyChart", "Home", new { currentDate = Model.CurrentDate }, new AjaxOptions { UpdateTargetId = "YearlyStatistics", OnBegin = "YearlyAnalysisBegin()", InsertionMode = InsertionMode.Replace }, new { @class = "btn-next-chart" })
+            <div id="yearly-statistics">
+            </div>
+        </td>
+    </tr>
+</table>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+    var yearlyCategories = @Html.Raw(serializer.Serialize(Model.PurchaseChart.Categories));
+    var yearlyPurchase =@Html.Raw(serializer.Serialize(Model.PurchaseChart.Total));
+    var yearlyPurchaseReturn =@Html.Raw(serializer.Serialize(Model.PurchaseReturnChart.Total));
+    var yearlySales =@Html.Raw(serializer.Serialize(Model.SalesChart.Total));
+    var yearlySalesReturn =@Html.Raw(serializer.Serialize(Model.SalesReturnChart.Total));
+    var yearlyAnalysis = new Highcharts.Chart({
+        chart: { renderTo: 'yearly-statistics', defaultSeriesType: 'line' },
+        title: { text: 'Yearly Analysis for the year @Model.CurrentDate.Year', x: -20 /*center*/ },
+        subtitle: { text: '' },
+        xAxis: {
+            title: { text: 'Month' },
+            categories: yearlyCategories,
+            labels: {
+                style: {
+                    color: '#525151',
+                    font: '9px Helvetica'
+                }
+            }
+        },
+        yAxis: {
+            labels: { formatter: function () { return this.value; }, style: { color: '#89A54E',font:'9px Helvetica'} },
+            title: { text: 'Total Amount in Thousands(Rs)' },
+            lineWidth: 2,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }],
+            allowDecimals: false,
+            min: 0
+        },
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' + this.x + ': ' + this.y;
+            }
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        credits: { enabled: false },
+        legend: {
+            layout: 'horizontal',
+            align: 'bottom',
+            verticalAlign: 'bottom',
+            borderWidth: 0
+        },
+        series: [{
+            name: 'Purchase',
+            data: yearlyPurchase
+        },
+            {
+                name: 'PurchaseReturn',
+                data: yearlyPurchaseReturn
+            },{
+                name: 'Sales',
+                data: yearlySales
+            },
+            {
+                name: 'SalesReturn',
+                data: yearlySalesReturn
+            }]
+    });
+    });
+
+</script>

@@ -1,0 +1,125 @@
+﻿@using KRBAccounting.Service
+@{
+    var curdate = DateTime.Now;
+    var cdate = @curdate.ToString("MM/dd/yyyy");
+    var today = "";
+}
+@model KRBAccounting.Web.ViewModels.Academy.StaffAttendanceDateViewModel
+<table class="listpopup">
+    <tr>
+        <th>
+            Name
+        </th>
+        @for (int i = 1; i <= Model.MonthCount; i++)
+        {
+            today = "";
+            var l = Model.Month.ToString();
+        
+            if(l.Length == 1)
+            {
+                l = "0" + Model.Month;
+            }
+          var  daylen = i.ToString();
+           if(daylen.Length ==1)
+           {
+               daylen = "0" + i;
+           }
+           var date = l + "/" + daylen + "/" + Model.Year;
+           DateTime date2 = Convert.ToDateTime(date);
+            var day = Convert.ToDateTime(date).ToString("ddd");
+     
+           
+            if (date2 == curdate.Date)
+            {
+                today = "today";
+            }
+
+            if (day.ToLower() != "sat")
+            {
+            <th class="@today">
+                @day
+                <br />
+                @i
+            </th>
+            }
+
+        }
+    </tr>
+    @foreach (var item in Model.ScEmployeeInfos)
+    {
+        <tr class="subject-detail-entry detail-entry">
+            @using (Html.BeginCollectionItem("attendanceEntry"))
+            {
+                <td>
+                    @Html.Hidden("Id", item.Id)
+                    @item.Description
+                </td>
+                for (int i = 1; i <= Model.MonthCount; i++)
+                {
+                    today = "";
+                    var l = Model.Month.ToString();
+
+                    if (l.Length == 1)
+                    {
+                        l = "0" + Model.Month;
+                    }
+                    var daylen = i.ToString();
+                    if (daylen.Length == 1)
+                    {
+                        daylen = "0" + i;
+                    }
+                    var date = l + "/" + daylen + "/" + Model.Year;
+                    DateTime date2 = Convert.ToDateTime(date);
+                    var day = Convert.ToDateTime(date).ToString("ddd");
+                    DateTime date1 = Convert.ToDateTime(date);
+                    if (day.ToLower() != "sat")
+                    {
+                        var data = UtilityService.GetStaffAttendance(item.Id, date1, Model.AcademicId);
+                        bool check = data != null && data.Status == "P";
+                        if (date1 == curdate.Date)
+                        {
+                            today = "today";
+                        }
+                    
+                        <td class="@today" title="<b><span style='color:Red;'> @day @i</span> <br />@item.Description </b>">
+                    @if (date1 <= curdate.Date)
+                    {
+                        if (date1 == curdate.Date)
+                        {
+                        @Html.Hidden("Date", date)
+
+                        @Html.CheckBox("CheckList", check)
+                       
+                        }
+                        else
+                        {
+                            if (check)
+                            {
+                        <text>P</text>
+                            }
+                            else
+                            {
+                        <text><font color="RED">A</font></text>
+                            }
+                        }
+                    }
+                </td>
+                    }
+                }
+
+            }
+        </tr>
+    }
+</table>
+<div class="clearfix">
+</div>
+<div class="form-actions">
+    <input type="button" class="btn attendancesave" value="Save" />
+</div>
+<script>
+    $(document).ready(function () {
+
+        $(".detail-entry td").tooltip();
+    });
+    
+</script>

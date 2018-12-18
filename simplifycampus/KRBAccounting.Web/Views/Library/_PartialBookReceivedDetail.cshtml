@@ -1,0 +1,6 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScBookReceivedDetails>
+@foreach (var item in Model)
+{
+    item.Status = 1;
+    @Html.Partial("_PartialBookReceivedDetailAdd", item)
+}

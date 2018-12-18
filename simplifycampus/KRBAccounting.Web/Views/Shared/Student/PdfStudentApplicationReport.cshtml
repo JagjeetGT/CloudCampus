@@ -1,0 +1,99 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model KRBAccounting.Web.ViewModels.Student.StudentGeneralInformationViewModel
+@{
+    var data1 = @Model.SpStudentInfoHeader.FirstOrDefault();
+}
+<div class="workplace">
+
+    <div class="row-fluid">
+        @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+        <br />
+        <p align="left" style="font-weight: bold; float: left;font-size:8px;">
+            NAME :@data1.Student &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            REGISTRATION NO. :@data1.Regno &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            STUDENT CODE : @data1.StdCode &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            <br />
+            CLASS :@data1.Class &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+
+
+            SECTION :@data1.Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            
+            ROLL NO. @data1.Rollno
+            <br />
+            
+
+
+
+            ADDRESS : @data1.TmpAdd, @data1.TmpCity, @data1.TmpDistrict, @data1.TmpCountry
+
+        </p>
+        <br/>
+        <div class="block-fluid table-sorting">
+            <table border="0.5" style="font-size:8px;">
+                <thead>
+                    <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+              
+                        <th style="font-size:8px;" colspan="3" >
+                            Date From
+                        </th>
+                        <th style="font-size:8px;" colspan="3">
+                            Date To
+                        </th>
+                        <th style="font-size:8px;">
+                            Approved
+                        </th>
+                        <th style="font-size:8px;">
+                            Reason
+                        </th>
+                        <th style="font-size:8px;">
+                            Type
+                        </th>
+                        <th style="font-size:8px;" colspan="2">
+                            Application
+                        </th>
+                        <th style="font-size:8px;">
+                            Remarks
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    @foreach (var item in Model.ScAbsentApplications)
+                    {
+
+                        <tr>
+                         
+                  
+                            <td colspan="3" style="text-align:center">
+                                @item.DateFrom.ToShortDateString() A.D.|| @item.MitiFrom B.S.
+                            </td>
+                            <td colspan="3" style="text-align:center">
+                                @item.DateTo.ToShortDateString() A.D. || @item.MitiTo B.S.
+                            </td>
+                            <td style="text-align:center">
+                                @item.IsConfirm
+                            </td>
+                            <td style="text-align:center">
+                                @item.Reason
+                            </td>
+                            <td style="text-align:center">
+                                @item.Status
+                            </td>
+                            <td colspan="2" style="text-align:center">
+                                @item.IsApplication
+                            </td>
+                            <td style="text-align:center">
+                                @item.Remarks
+                            </td>
+
+                        </tr>
+                              
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

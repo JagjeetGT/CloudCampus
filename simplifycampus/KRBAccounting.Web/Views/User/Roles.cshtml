@@ -1,0 +1,89 @@
+﻿@{
+    ViewBag.Title = "Role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<p>
+    <a href="javascript:void(0);" class="btn addRole">New(+)</a>
+</p>*@
+<div id="Role-list">
+    @Html.Action("RoleList")
+</div>
+<div class="dialog" id="modalRole">
+    <div class="block"></div>
+    @*<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;</button>
+        <h4>
+            Role (+)</h4>
+    </div>
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer"> <a href="#" class="btn btn-small btn-primary" id="saveRole">
+            Save</a>
+    </div>*@
+</div>
+<script type="text/javascript">
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    $("#modalRole").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Save": function () {
+                $(".ui-dialog #Role-form").submit();
+                //alert(1);
+                //$(this).dialog("close");
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('.block').html(data);
+                $(this).addClass("done");
+                $("#modalRole").dialog('open');
+
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addRole').live('click', function () {
+        var url = '@Url.Action("RoleAdd", "User")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editRole').live('click', function () {
+        var role = $(this).attr("data-id");
+        var url = '@Url.Action("RoleEdit", "User")?role=' + role;
+        getRequest(url);
+        return false;
+    });
+
+    $('#saveRole').live('click', function () {
+        $("#Role-form").submit();
+    });
+
+    function OnComplete() {
+        $('#modalRole .block').load("/User/RoleAdd");
+        $("#Role-list").load("/User/RoleList");
+    }
+    function OnCompleteEdit() {
+        $('#modalRole').dialog('close');
+        $("#Role-list").load("/User/RoleList");
+    }
+</script>

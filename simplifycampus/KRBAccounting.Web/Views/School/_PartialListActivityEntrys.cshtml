@@ -1,0 +1,8 @@
+@model IEnumerable<KRBAccounting.Domain.Entities.{pEntities}>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr><th>Id</th><th>ClassId</th><th>SectionId</th><th>ActivityId</th><th>StudentId</th><th>Status</th><th>StartDate</th><th>Narr</th><th>Remarks</th></tr></thead><tbody>@foreach (var item in Model){<tr><td>@item.Id</td><td>@item.ClassId</td><td>@item.SectionId</td><td>@item.ActivityId</td><td>@item.StudentId</td><td>@item.Status</td><td>@item.StartDate</td><td>@item.Narr</td><td>@item.Remarks</td><td><a href="#" class="editScActivityEntry icon-pencil" data-id="@item.Id" title="Edit"></a></td><td><a href="#" class="deleteScActivityEntry icon-remove" data-id="@item.Id" title="Delete"></a></td></tr>}
+        </tbody>
+    </table>
+</div>

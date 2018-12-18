@@ -1,0 +1,34 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.UniversityMarkLedgerViewModel
+
+
+@using (Ajax.BeginForm("UniversityMarkLedgerList", "Report", new { controller = "Report" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "report-form" }))
+{
+    <div class=" lag ListRoom">
+        <span class="stack">
+            <label class="label-53">
+                Program
+            </label>
+            <span class="field">
+
+                @Html.DropDownListFor(x => x.ProgramId, Model.ProgramList, new { @class = "input-120 input chzn-select", entermsg = "Enter MemberId" })
+              
+            </span>
+        </span>
+    </div>
+     <div class="clearfix"></div>
+    <div class=" lag studentdrop" style="display:none">
+        <span class="stack">
+            <label class="label-53">
+               Student
+            </label>
+            <span class="field">
+                @Html.DropDownListFor(x => x.StudentId, Model.StudentList, new { @class = "input-120 input chzn-select", entermsg = "Enter MemberId" })
+        </span>
+    </span>
+</div>
+   
+    
+
+}
+
+

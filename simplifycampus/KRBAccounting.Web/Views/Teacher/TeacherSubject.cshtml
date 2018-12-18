@@ -1,0 +1,49 @@
+﻿@model KRBAccounting.Web.ViewModels.Teacher.TeacherSubjectViewModel
+@{
+    ViewBag.Title = "TeacherSubject";
+}
+<div class="row-fluid">
+    <div class="span12">
+        <h3 class="page-title">
+            @Model.Subject.Description
+        </h3>
+        <ul class="breadcrumb">
+            <li>
+                <img alt="Classes" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/conference.png"
+                    width="22" />
+                Classes : </li>
+            @foreach (var item in Model.Classes)
+            {
+
+                var name = item.ClassName;
+                if (item.SectionId != 0)
+                {
+                    name = item.ClassName + " (sec : " + item.SectionName + ")";
+                }
+                 
+                <li><a href="Javascript:void(0)" class-name="@name" class="get-student" student="@Url.Action("GetStudentByClassIdAndSubjectId", new { subjectid = Model.Subject.Id, sectionid = item.SectionId, classid = item.ClassId })">@name
+                </a></li>
+            }
+        </ul>
+    </div>
+</div>
+<div class="row-fluid student-list">
+    <div class="span12">
+        <h3 class="page-title">
+        </h3>
+        <div class="body">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(".get-student").live("click", function () {
+
+        var name = $(this).attr('class-name');
+        var url = $(this).attr('student');
+        // $(".student-list .body").load(url);
+        $.getJSON(url, function (data) {
+            $(".student-list .body").html(data);
+            $(".student-list .page-title").html(name);
+        });
+    });
+</script>

@@ -1,0 +1,735 @@
+﻿@{
+    ViewBag.Title = "Sales Order";
+}
+@Html.Partial("_PartialSalesMenu")
+@*<div class="page-header">
+    <h3>
+        Sales Invoice</h3>
+</div>
+@if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Create", "SB"))
+{
+    <p>
+        <a href="javascript:void(0);" class="btn addSalesInvoice">New(+)</a>
+    </p>
+}*@
+<div id="Salesorder-list">
+    @Html.Action("SalesOrderList")
+</div>
+<div class="dialog" id="modalSalesOrder" style="display: none;" title="Sales Order(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalSalesOrder").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $("#sales-order-form");
+                var isValid = $("form").valid();
+                var error = document.querySelectorAll('.error');
+                if(error.length>0) {
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index != 0 && index != length - 1) {
+                            if ($(this).find(".text_product").val() == 0 || $(this).find(".text_product").val() == "") {
+                                isValid = false;
+                                $(this).find(".text_product").addClass("error").focus();
+                            }
+                            if ($(this).find(".basicAmt").val() == 0 || $(this).find(".basicAmt").val() == "") {
+                                if (isValid) {
+                                    if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val() == "") {
+                                        $(this).find(".qty").addClass("error").focus();
+                                    }
+                                    if ($(this).find(".rate").val() == 0 || $(this).find(".rate").val() == "") {
+                                        $(this).find(".rate").addClass("error").focus();
+                                    }
+                                } else {
+                                    if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val() == "") {
+                                        $(this).find(".qty").addClass("error");
+                                    }
+                                    if ($(this).find(".rate").val() == 0 || $(this).find(".rate").val() == "") {
+                                        $(this).find(".rate").addClass("error");
+                                    }
+                                }
+                                isValid = false;
+                            }
+                        }
+                    });
+                }
+                if (isValid) {
+                    $.ajax({
+                        type: "POST",
+                        url: form.attr('action'),
+                        data: form.serialize(),
+                        beforeSend: function () {
+                            $.blockUI();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                OnComplete();
+                            }
+                            else {
+                                $("#MsgError").html(data.msg).show();
+                            }
+                        },
+                        complete: function () {
+                            $.unblockUI();
+                        }
+                    });
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function CalculateTotalAmt() {
+        var totalAmt = parseFloat(0);
+        var receiptAmtElements = document.querySelectorAll(".amt");
+        var i;
+        for (i = 0; i < receiptAmtElements.length; i++) {
+            var amt = receiptAmtElements[i].value;
+            if (amt != "") {
+                totalAmt = totalAmt + parseFloat(amt);
+            }
+
+        }
+        return totalAmt;
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.blockUI();
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSalesOrder .block').html(data);
+                $(this).addClass("done");
+                $("#modalSalesOrder").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+                $.unblockUI();
+            }
+        });
+    }
+
+    $('a.addSalesOrder').live('click', function () {
+        var url = '@Url.Action("SalesOrderAdd", "Entry")';
+        getRequest(url);
+        return false;
+    });
+    $('a.editSalesOrder').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesOrderEdit", "Entry")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+    $('a.approvedSalesOrder').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesOrderApproved", "Entry")/' + id;
+        $.ajax({
+            url: url,
+
+            type: 'Post',
+            success: function () {
+                $("#Salesorder-list").load("/Entry/SalesOrderList");
+
+            }
+        });
+
+        return false;
+    });
+
+    $("a.SalesOrderDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("SalesOrderDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    $('#saveSalesOrder').live('click', function () {
+        //if ($(".text_ledger:last").val()==""||$(""))
+        var error = document.querySelectorAll(".error");
+        alert(error.length());
+        if(error.length()==0) {
+            //$("#sales-order-form").submit();
+        }
+        
+    });
+    function OnComplete() {
+        $('#modalSalesOrder .block').load("/Entry/SalesOrderAdd");
+        $("#Salesorder-list").load("/Entry/SalesOrderList");
+    }
+    function OnCompleteEdit() {
+        $('#modalSalesOrder').modal('hide');
+        $("#Salesorder-list").load("/Entry/SalesOrderList");
+    }
+
+    $(".rate").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        if (keycode == 13 || keycode == 9) {
+            var closestTr = element.closest("tr");
+            if (closestTr.find(".productId").val() != "" && closestTr.find(".productId").val() != 0 && closestTr.find(".qty").val() != "" && closestTr.find(".rate").val() != "") {
+                var qty = parseFloat(closestTr.find('.qty').val());
+                var rate = parseFloat(closestTr.find('.rate').val());
+                var basicAmt = qty * rate;
+                $((closestTr.find(".basicAmt").val(basicAmt)));
+                var link = $(this).attr("href");
+                var id = $('#table-detail tr:last').attr("id");
+                var arrString = id.split("_");
+                var index = parseInt(arrString[1]) + 1;
+                //pass index as parameter while creating new table row to keep track of billing term(find out which billing term belong to which sales detail)
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    data: {
+                        index: index
+                    },
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        if (closestTr.is(":last-child")) {
+                            $('#table-detail tr:last').addClass("deletable");
+                            $('#table-detail tr:last').after(data);
+                            $(".text_product:last").attr("id", "product_" + index);
+                            $(".text_product:last").closest("tr").attr("id", "tr_" + index);
+                            $(".text_product").attr("valueId", $(".productId:last").attr("id"));
+                        }
+                        selectedElement = closestTr;
+                        if ($(element).hasClass("rate-bill-term")) {
+                            isProductWise = true;
+                            $.ajax({
+                                url: "/Entry/GetSalesBillingTerm?productwise=1",
+                                dataType: "json",
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    if (data != "") {
+                                        var tableData = CreateBillingTermTableViewProductWise(data, "listpopup", true, closestTr);
+                                        $('#modalbox-billingterm-productwise .msg-body').html(tableData);
+                                        $("#modalbox-billingterm-productwise").dialog({
+                                            modal: true,
+                                            width: 'auto',
+                                            buttons: {
+                                                "Ok": function () {
+                                                    selectedElement.find(".billing_term").remove();
+                                                    var termAmt = parseFloat(0);
+                                                    closestTr.find(".product_wise_billterms").html("");
+                                                    $(this).closest("#modalbox-billingterm-productwise").find(".billingterm_amount").each(function () {
+                                                        if ($(this).val() != "") {
+                                                            var value = parseFloat(0);
+                                                            var basis = $(this).closest("tr").find(".billingterm_Basis").html();
+                                                            var sign = $(this).closest("tr").find(".billingterm_Sign").html();
+                                                            var rate = $(this).closest("tr").find(".billingterm_rate").val();
+                                                            var desc = $(this).closest("tr").find(".billingterm_Description").html();
+                                                            var id = $(this).closest("tr").find(".billingterm_Id").val();
+                                                            value = parseFloat($(this).val());
+                                                            if (sign == "-") {
+                                                                termAmt = RoundTwoDecimalPlace(termAmt - value);
+                                                            } else {
+                                                                termAmt = RoundTwoDecimalPlace(termAmt + value);
+                                                            }
+                                                            var basicAmt = selectedElement.find(".basicAmt").val();
+                                                            selectedElement.find(".termAmt").val(termAmt);
+                                                            var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                                                            selectedElement.find(".netAmt").val(netAmt);
+                                                            var index = selectedElement.find(".indexId").val();
+                                                            if (value != 0) {
+                                                                $.ajax({
+                                                                    url: "/Entry/InsertBillTerm",
+                                                                    type: "GET",
+                                                                    data: {
+                                                                        desc: desc,
+                                                                        basis: basis,
+                                                                        id: id,
+                                                                        amount: value,
+                                                                        rate: rate,
+                                                                        sign: sign,
+                                                                        index: index,
+                                                                        isProductWise: true
+                                                                    },
+                                                                    success: function (data) {
+                                                                        // selectedElement.append(data);
+                                                                        closestTr.find(".product_wise_billterms").append(data);
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    });
+                                                    getTotalQty();
+                                                    getTotalAmt();
+                                                    $('input[type="text"]').focus(function () {
+                                                        if ($(this).attr("entermsg")) {
+                                                            $(".enter-msg").html($(this).attr("entermsg"));
+                                                        } else {
+                                                            $(".enter-msg").html("");
+                                                        }
+                                                        $(".receipt-amt").blur(function () {
+                                                            if ($(this).val() != "") {
+                                                                selectedElement.find(".payment-amt").attr("disabled", "disabled");
+                                                            } else {
+                                                                selectedElement.find(".payment-amt").removeAttr("disabled");
+                                                            }
+                                                        });
+                                                        $(".payment-amt").blur(function () {
+                                                            if ($(this).val() != "") {
+                                                                selectedElement.find(".receipt-amt").attr("disabled", "disabled");
+                                                            } else {
+                                                                selectedElement.find(".receipt-amt").removeAttr("disabled");
+                                                            }
+                                                        });
+                                                    });
+                                                    $("#savePurchaseOrder").removeAttr("disabled");
+                                                    $(".msg-body").html("");
+                                                    $("#billing-term-list").html("");
+                                                    $(this).dialog("close");
+                                                },
+                                                Cancel: function () {
+                                                    $(this).dialog("close");
+                                                }
+                                            }
+                                        });
+
+                                        $('#modalbox-billingterm-productwise').find(".billingterm_rate").first().focus();
+                                        return false;
+                                    }
+                                }
+                            });
+                            return false;
+                        } else {
+                            var basicAmt = selectedElement.find(".basicAmt").val();
+                            selectedElement.find(".termAmt").val(0);
+                            selectedElement.find(".netAmt").val(basicAmt);
+                            getTotalQty();
+                            getTotalAmt();
+                        }
+                        closestTr.next().find('.text_product').focus();
+                        isProductWise = false;
+                        getTotalQty();
+                        getTotalAmt();
+                        $('input[type="text"]').focus(function () {
+                            if ($(this).attr("entermsg")) {
+                                $(".enter-msg").html($(this).attr("entermsg"));
+                            } else {
+                                $(".enter-msg").html("");
+                            }
+                            $(".receipt-amt").blur(function () {
+                                if ($(this).val() != "") {
+                                    closestTr.find(".payment-amt").attr("disabled", "disabled");
+                                } else {
+                                    closestTr.find(".payment-amt").removeAttr("disabled");
+                                }
+                            });
+                            $(".payment-amt").blur(function () {
+                                if ($(this).val() != "") {
+                                    closestTr.find(".receipt-amt").attr("disabled", "disabled");
+                                } else {
+                                    closestTr.find(".receipt-amt").removeAttr("disabled");
+                                }
+                            });
+                        });
+                        $("#billing-term-list").html("");
+                    }
+                });
+            }
+            closestTr.find(".text_ledger").addClass("error");
+            closestTr.find(".text_ledger").focus();
+            return false;
+        }
+        return true;
+    });
+
+    $(".select").live('dblclick', function () {
+        if ($(this).closest("tr").hasClass('deletable')) {
+            $(this).closest("tr").remove();
+            getTotalQty();
+            getTotalAmt();
+        }
+    });
+
+    $('input[type="text"]').focus(function () {
+        if ($(this).attr("entermsg")) {
+            $(".enter-msg").html($(this).attr("entermsg"));
+        } else {
+            $(".enter-msg").html("");
+        }
+
+    });
+
+    $(".text_product").live("focusout", function () {
+        if ($(this).val() == "") {
+            $(this).addClass("error");
+            $(this).focus();
+        } else {
+            $(this).removeClass("error");
+        }
+    });
+
+    $("#cashbankledger").live("focusout", function () {
+        var glCode = $("#CashBankMaster_LedgerId").val();
+        $("#CashBankMaster_LedgerId").getCurrentBal();
+        $.getJSON("/Entry/DisableCheque?glCode=" + glCode, null, function (disable) {
+            if (disable) {
+                $("#CashBankMaster_ChequeNo").attr("disabled", "disabled");
+                $("#CashBankMaster_ChequeDate").attr("disabled", "disabled");
+            } else {
+                $("#CashBankMaster_ChequeNo").removeAttr("disabled");
+                $("#CashBankMaster_ChequeDate").removeAttr("disabled");
+            }
+        });
+    });
+
+    $("#customer").live("focusout", function () {
+        var glCode = $("#SalesOrder_GlCode").val();
+        if (glCode != "") {
+            $.getJSON("/Entry/GetVendorDetails?glCode=" + glCode, null, function (data) {
+                $("#CreditLimit").val(data.creditLimit);
+                $("#CurrentBalance").val(data.balance);
+                $("#OutstandingChallan").val(data.outstandingChallan);
+                $("#TotalOutstanding").val(data.totalOutstanding);
+            });
+        }
+    });
+
+    $(".text_product").live("focus", function () {
+        var element = $(this);
+        var productId = $(this).closest("tr").find(".productId").val();
+        if (productId != "" && productId != 0) {
+            $.getJSON("/Entry/ProductShortName?id=" + productId, null, function (data) {
+                $("#ShortName").val(data);
+            });
+            $.getJSON("/Entry/ProductStockQuantity?id=" + productId, null, function (data) {
+                $("#StockQty").val(data);
+            });
+
+            $.getJSON("/Entry/GetLowestUnit?id=" + productId, null, function (code) {
+                element.closest("tr").find(".unit").val(code);
+                element.closest("tr").find(".altunit").val(code);
+            });
+
+            $.getJSON("/Entry/GetDropDownlist?productId=" + productId, null, function (code) {
+                var innerhtml = '';
+                $.each(code, function () {
+                    innerhtml += '<option value="' + this.Id + '">' + this.Code + '</option>';
+
+                });
+                element.closest("tr").find(".unit").html(innerhtml);
+            });
+        } else {
+            $("#ShortName").val("");
+            $("#StockQty").val("");
+        }
+    });
+
+    $(".UDFCustomFiled").live("click", function () {
+        $(".UDFEntry").toggle('hide');
+
+    });
+
+    function getTotalQty() {
+        totalQty = parseFloat(0);
+        var qtyElements = document.querySelectorAll(".qty");
+        var i;
+        for (i = 0; i < qtyElements.length; i++) {
+            var amt = qtyElements[i].value;
+            if (amt != "") {
+                totalQty = totalQty + parseFloat(amt);
+            }
+        }
+
+        $("#TotalQty").val(totalQty);
+    }
+
+    function getTotalAmt() {
+
+        var totalAmt = parseFloat(0);
+
+        var basicAmtElements = document.querySelectorAll(".netAmt");
+        var j;
+        for (j = 0; j < basicAmtElements.length; j++) {
+            var amt = Math.abs(basicAmtElements[j].value);
+            if (amt != "") {
+                totalAmt = totalAmt + parseFloat(amt);
+            }
+        }
+        var netAmt = totalAmt;
+        var termAmt = 0;
+
+        $("#billing-term-list .billing_term_value").each(function () {
+            if ($(this).val() != "") {
+                var basis = $(this).attr("basis");
+                var sign = $(this).attr("sign");
+                var rate = parseFloat($(this).attr("rate"));
+                var value = rate / 100 * totalAmt;
+                if (sign == "-") {
+                    termAmt = RoundTwoDecimalPlace(termAmt - value);
+                } else {
+                    termAmt = RoundTwoDecimalPlace(termAmt + value);
+                }
+                netAmt = parseFloat(totalAmt) + parseFloat(termAmt);
+                //alert(termAmt);
+                //alert($(this).closest("span").find(".amount").val());
+                var newTermAmt = Math.abs(termAmt);
+                $(this).closest("span").find(".amount").val(newTermAmt);
+            }
+
+        });
+        $("#SalesOrder_BasicAmt").val(totalAmt);
+        $("#SalesOrder_NetAmt").val(netAmt);
+        $("#SalesOrder_TermAmt").val(termAmt);
+        $("#TotalAmtRs").val(netAmt);
+    }
+    $(".text_product").live('keydown', function (e) {
+        if ($(this).closest("tr").is(":first-child") || $(this).val() != "") {
+            return true;
+        } else {
+            var ev = e || event;
+            var keycode = ev.keyCode;
+            if (keycode == "13") {
+                if ($(this).val() == "") {
+                    $.ajax({
+                        url: "/Entry/GetSalesBillingTerm",
+                        dataType: "json",
+                        type: "GET",
+                        error: function () {
+                            alert("An error occurred.");
+                        },
+                        success: function (data) {
+                            if (data != "") {
+                                isProductWise = false;
+                                var tableData = CreateBillingTermTableView(data, "listpopup", true);
+                                $('#modalbox-billingterm .msg-body').html(tableData);
+                                $("#modalbox-billingterm").dialog({
+                                    modal: true,
+                                    width: 'auto',
+                                    buttons: {
+                                        "Ok": function () {
+                                            $("#billing-term-list").html("");
+                                            var termAmt = parseFloat(0);
+                                            $(this).closest("#modalbox-billingterm").find(".billingterm_amount").each(function () {
+                                                if ($(this).val() != "") {
+                                                    var value = parseFloat(0);
+                                                    var basis = $(this).closest("tr").find(".billingterm_Basis").html();
+                                                    var sign = $(this).closest("tr").find(".billingterm_Sign").html();
+                                                    var rate = $(this).closest("tr").find(".billingterm_rate").val();
+                                                    var desc = $(this).closest("tr").find(".billingterm_Description").html();
+                                                    var id = $(this).closest("tr").find(".billingterm_Id").val();
+                                                    value = parseFloat($(this).val());
+                                                    if (sign == "-") {
+                                                        termAmt = RoundTwoDecimalPlace(termAmt - value);
+                                                    } else {
+                                                        termAmt = RoundTwoDecimalPlace(termAmt + value);
+                                                    }
+                                                    var basicAmt = $("#SalesOrder_BasicAmt").val();
+                                                    var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                                                    $("#SalesOrder_NetAmt").val(netAmt);
+                                                    $("#TotalAmtRs").val(netAmt);
+                                                    $("#SalesOrder_TermAmt").val(termAmt);
+                                                    if (value != 0) {
+                                                        $.ajax({
+                                                            url: "/Entry/InsertBillTerm",
+                                                            type: "GET",
+                                                            data: {
+                                                                desc: desc,
+                                                                basis: basis,
+                                                                id: id,
+                                                                amount: Math.abs(value),
+                                                                rate: rate,
+                                                                sign: sign,
+                                                                isProductWise: false
+                                                            },
+                                                            success: function (data) {
+                                                                $(".ui-dialog #billing-term-list").append(data);
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                            $(this).dialog("close");
+                                        },
+                                        Cancel: function () {
+                                            $(this).dialog("close");
+                                        }
+                                    }
+                                });
+                                $('#modalbox-billingterm').find(".billingterm_rate").first().focus();
+                            }
+                        }
+                    });
+                    return false;
+                }
+                return true;
+            }
+        }
+
+    });
+    $(".saveBillingTerm").live("click", function () {
+        $("#billing-term-list").html("");
+        var termAmt = parseFloat(0);
+        $(this).closest("#modalbox-billingterm").find(".billingterm_amount").each(function () {
+            if ($(this).val() != "") {
+                var value = parseFloat(0);
+                var basis = $(this).closest("tr").find(".billingterm_Basis").html();
+                var sign = $(this).closest("tr").find(".billingterm_Sign").html();
+                var rate = $(this).closest("tr").find(".billingterm_rate").val();
+                var desc = $(this).closest("tr").find(".billingterm_Description").html();
+                var id = $(this).closest("tr").find(".billingterm_Id").val();
+                value = parseFloat($(this).val());
+                if (sign == "-") {
+                    termAmt = termAmt - value;
+                } else {
+                    termAmt = termAmt + value;
+                }
+                var basicAmt = $("#SalesOrder_BasicAmt").val();
+                var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                $("#SalesOrder_NetAmt").val(netAmt);
+                $("#TotalAmtRs").val(netAmt);
+                $("#SalesOrder_TermAmt").val(termAmt);
+                if (value != 0) {
+                    $.ajax({
+                        url: "/Entry/InsertBillTerm",
+                        type: "GET",
+                        data: {
+                            desc: desc,
+                            basis: basis,
+                            id: id,
+                            amount: Math.abs(value),
+                            rate: rate,
+                            sign: sign,
+                            isProductWise: false
+                        },
+                        success: function (data) {
+                            $(".ui-dialog #billing-term-list").append(data);
+                        }
+                    });
+                }
+            }
+        });
+        $(".msg-body").html("");
+    });
+    
+    $(".unit").live("change", function() {
+       var element = $(this);
+       var closestTr = element.closest("tr");
+       var unit = $(this).val();
+       var productId = closestTr.find(".productId").val();
+       var lowestUnit = closestTr.find(".altunit").val();
+       var quantity = closestTr.find(".qty").val();
+              if(quantity!="" && quantity!=0 && productId!=0) {
+                  var url = "@Url.Action("GetConversionDetail")?productId=" + productId + "&&quantity=" + quantity + "&&Unit=" + unit + "&&LowestUnit=" + lowestUnit+"&&type=S";
+                  $.getJSON(url, function(success) {
+                      closestTr.find(".altQty").val(success.convertvalue);
+                      closestTr.find(".rate").val(success.ratte);
+                      closestTr.find(".hiddenrate").val(success.ratte);
+
+                      var rate = closestTr.find(".rate").val();
+
+                      var basic = parseFloat(quantity) * parseFloat(rate);
+                      closestTr.find(".basicAmt").val(basic);
+                          closestTr.find(".termAmt").val(0);
+                      closestTr.find(".netAmt").val(basic);
+                  });
+              }
+        else {
+           alert("Enter the quantity and product");
+       }
+   });
+   
+   $(".qty").live("blur", function() {
+       var element = $(this);
+       var closestTr = element.closest("tr");
+       var unit = closestTr.find(".unit").val();
+       var productId = closestTr.find(".productId").val();
+       var lowestUnit = closestTr.find(".altunit").val();
+       var quantity = $(this).val();
+       if(quantity!="" && quantity!=0 && productId!=0) {
+           var url = "@Url.Action("GetConversionDetail")?productId=" + productId + "&&quantity=" + quantity + "&&Unit=" + unit + "&&LowestUnit=" + lowestUnit+"&&type=S";
+           $.getJSON(url, function(success) {
+               closestTr.find(".altQty").val(success.convertvalue);
+               closestTr.find(".rate").val(success.ratte);
+               closestTr.find(".hiddenrate").val(success.ratte);
+
+               var rate = closestTr.find(".rate").val();
+
+               var basic = parseFloat(quantity) * parseFloat(rate);
+               closestTr.find(".basicAmt").val(basic);
+                   closestTr.find(".termAmt").val(0);
+                      closestTr.find(".netAmt").val(basic);
+           });
+       }
+       else {
+           alert("Enter the quantity and product");
+       }
+   });
+   
+    $(".rate").live("keyup", function(e) {
+       if(IsNumberKey(e)) {
+           var element = $(this);
+           var closestTr = element.closest("tr");
+           var quantity = closestTr.find(".qty").val();
+           var rate = closestTr.find(".rate").val();
+           if (quantity && rate) {
+               var basic = parseFloat(quantity) * parseFloat(rate);
+               closestTr.find(".basicAmt").val(basic);
+               var termAmt = closestTr.find(".termAmt").val();
+               var netAmt = parseFloat(basic) + parseFloat(termAmt);
+               closestTr.find(".netAmt").val(netAmt);
+               getTotalQty();
+               getTotalAmt();
+           }
+       } else {
+           e.preventDefault();
+           return false;
+       }
+   });
+
+    $("#OrderDate").live("blur", function(e) {
+        var currentElement = $(this);
+        var date = $(this).val();
+          var url = '@Url.Action("CheckFiscalyearDateinSalesOrder", "Entry")?OrderDate='+date;
+        $.post(url, function(data) {
+          if(data !="True") {
+          currentElement.addClass("error");
+         alert(data);
+
+        } else {
+           currentElement.removeClass("error");
+            }
+        });
+    });
+</script>

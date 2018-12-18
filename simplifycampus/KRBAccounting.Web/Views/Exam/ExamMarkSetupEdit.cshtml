@@ -1,0 +1,220 @@
+@model KRBAccounting.Web.ViewModels.Academy.AcademicsExamMarkSetupViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ExamMarkSetupEdit", "Exam", new { controller = "Exam" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.ExamId)
+    @Html.HiddenFor(x => x.ClassId)
+    <div class="lag">
+        <label class="label-90">
+            Exam</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ExamMarkSetup.ExamId)
+            <input type="text" class=" input-100" readonly="readonly" href="@Url.Action("GetExames")" value="@if (Model.ExamMarkSetup.ScExam != null)
+                                                                                                  {
+                                                                                                      @Model.ExamMarkSetup.ScExam.Description
+                                                                                                  }
+                                                                                                     " createhref="@Url.Action("OnlineExamAdd")" valueid="ExamMarkSetup_ExamId" id="exam-id" />
+            @* @Html.DropDownListFor(model => model.ExamId, (IEnumerable<SelectListItem>)ViewBag.ExamList)*@
+            @*<span style="float: right; margin: 3px;"><a title="Create New" class="isb-plus createexam" createhref="@Url.Action("OnlineExamAdd")">
+            </a></span>*@
+            @Html.ValidationMessageFor(m => m.ExamMarkSetup.ExamId)
+        </div>
+        <label class="label-90">
+            Class</label>
+        <div class="field">
+            @* @Html.DropDownListFor(model => model.ClassId, (IEnumerable<SelectListItem>)ViewBag.ClassList)
+             <span style="float: right; margin: 3px;"><a title="Create New" class="isb-plus createclass" createhref="@Url.Action("OnlineExamAdd")">
+            </a></span>*@ @Html.HiddenFor(x => x.ExamMarkSetup.ClassId)
+            <input type="text" readonly="readonly" class=" input-100" value="@if (Model.ExamMarkSetup.Class != null)
+                                                                  {
+                                                                      @Model.ExamMarkSetup.Class.Description
+                                                                  }
+                                                                     " href="@Url.Action("GetExamMarkSetupClasses")" valueid="ExamMarkSetup_ClassId" id="class-id" parent="ExamMarkSetup_ExamId"/>
+            @Html.ValidationMessageFor(m => m.ExamMarkSetup.ClassId)
+        </div>
+    </div>
+
+    
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 400px; width: 1000px;">
+        <table class="listpopup" id="table-examroutine-detail" width="100px;">
+            <tr>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th colspan="2">
+                    Theory
+                </th>
+                <th colspan="2">
+                    Practical
+                </th>
+            </tr>
+            <tr class="">
+                <th>
+                    s.no
+                </th>
+                <th>
+                    Subject
+                </th>
+                <th>
+                    Result System
+                </th>
+                <th>
+                    Evaluation
+                </th>
+                <th>
+                    Full Mark
+                </th>
+                <th>
+                    Pass Mark
+                </th>
+                <th>
+                    Full Mark
+                </th>
+                <th>
+                    Pass Mark
+                </th>
+                <th>
+                    Total
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+            @{
+                int i = 1;
+            }
+           @foreach (var item in Model.ExamMarkSetups)
+           {
+               ViewBag.sno = i;
+                @Html.Partial("_PartialExamMarkSetupEdit", item)
+               i++;
+           }
+        </table>
+    </div>
+    <hr />
+    <div class="lag">
+        <label>
+            Total Theory Mark</label><div class="field">@Html.TextBoxFor(x => x.TotalTheoryMark, new { @class = "input-100", @readonly = "readonly" })</div>
+        <label>
+            Total Practical Mark</label><div class="field">@Html.TextBoxFor(x => x.TotalPracticalMark, new { @class = "input-100", @readonly = "readonly" })</div>
+    </div>
+}
+@*<script type="text/javascript">
+   $("#class-id").live("blur", function () {
+
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+   
+        if (id != 0 && id != '') {
+            url = '@Url.Action("ExamMarkSetupSubjectByClassId")?classId=' + id;
+            $.ajax({
+                url: url,
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                    if (data != '') {
+                        $("#table-examroutine-detail tr.detail-entry").remove();
+                        $("#table-examroutine-detail").append(data);
+
+                        $("#table-examroutine-detail").append();
+                        var ledgerElement = document.querySelectorAll(".text_subject");
+                        $.each(ledgerElement, function (index) {
+                            var element = $(this).closest("tr");
+                            element.attr("id", "tr_" + index);
+                            element.find(".sno").html(index + 1);
+                            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                            element.find(".text_subject").attr({
+                                "valueId": Subject_valueid,
+                                "id": "subject_" + index
+                            });
+
+                            var ResultSystem_valueid = element.find(".hdn_ResultSystem_Id").attr("id");
+
+                            element.find(".text_ResultSystem").attr({
+                                "valueId": ResultSystem_valueid,
+                                "id": "ResultSystem_" + index
+                            });
+                            var EvaluateForType_valueid = element.find(".hdn_EvaluateForType_Id").attr("id");
+
+                            element.find(".text_EvaluateForType").attr({
+                                "valueId": EvaluateForType_valueid,
+                                "id": "EvaluateForType_" + index
+                            });
+
+                        });
+
+                     $('.text_subject').first().focus();
+                    }
+                    alert("Subject is Not Exists !");
+                   
+                }
+            });
+        }
+      
+    });
+
+   $(".TheoryFullMark , .PracticalFullMark").live("blur", function () {
+        var elementt = $(this).closest("tr");
+        var themark = elementt.find(".TheoryFullMark").val();
+        var pracmark = elementt.find(".PracticalFullMark").val();
+        var total = parseFloat(themark) + parseFloat(pracmark);
+        elementt.find(".TotalMark").val(total);
+        CalcTheoryMark();
+        CalcPracticalMark();
+    });
+
+    function CalcTheoryMark() {
+        var total = parseFloat(0);
+        $.each($(".TheoryFullMark"), function () {
+            var mark = $(this).val();
+            total += parseFloat(mark);
+        });
+        $("#TotalTheoryMark").val(total);
+    }
+    function CalcPracticalMark() {
+        var total = parseFloat(0);
+        $.each($(".PracticalFullMark"), function () {
+            var mark = $(this).val();
+            total += parseFloat(mark);
+        });
+        $("#TotalPracticalMark").val(total);
+    }
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+
+            if (closestTr.find(".hdn_Subject_Id").val() != 0) {
+                closestTr.next().find('.text_subject').focus();
+                $('input[type="text"]').focus(function () {
+                    var closestTr = $(this).closest("tr");
+                    if ($(this).attr("entermsg")) {
+                        $(".enter-msg").html($(this).attr("entermsg"));
+                    } else {
+                        $(".enter-msg").html("");
+                    }
+                });
+                return true;
+            }
+            closestTr.find(".text_subject").addClass("error");
+            closestTr.find(".text_subject").focus();
+            return false;
+        }
+        return true;
+    });
+</script>
+*@

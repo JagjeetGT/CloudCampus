@@ -1,0 +1,53 @@
+﻿@model KRBAccounting.Domain.Entities.ProductUnitConversion
+<tr class="university-course-fee detail-entry ">
+    @using (Html.BeginCollectionItem("productUnitConversion"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Quantity, new { @class = "input-90 Quantity first-col" })
+        </td>
+        <td>
+            @Html.DropDownListFor(x => x.UnitId, Model.UnitList, new { @class = "input-90 Unit" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.BuyPrice, new { @class = "input-120 BuyPrice" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SalePrice, new { @class = "input-120 SalePrice" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.LowestQuantity, new { @class = "input-90 LowestQuantity" })
+        </td>
+        <td>
+            @Html.DropDownListFor(x => x.LowestUnitId, Model.LowestUnitList, new { @class = "input-90 LowestUnit" })
+        </td>
+        <td class="PlusUnit">
+          <a  data-id="@Model.Id" class="addNewConversion icon-plus" href = "@Url.Action("AddProductUnitConversion")" tableid = "qualificatione-list" ></a>
+           
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bus-route-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#bus-route-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+
+    })
+
+
+
+</script>

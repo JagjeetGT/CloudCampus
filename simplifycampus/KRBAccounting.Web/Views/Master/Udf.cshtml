@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "User Defined Field";
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        User Defined Fields</h1>
+                    <ul class="buttons">
+                        <li><a href="#" class="isw-plus addUdf"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+            <div id="Udf-list">
+                @Html.Action("UdfList")
+            </div>
+                      </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalUdf">
+    <div class="block"></div>
+    @*<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;</button>
+        <h4>
+            User Defined Field(+)</h4>
+    </div>
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer"> <a href="#" class="btn btn-small btn-primary" id="saveUdf">
+            Save</a>
+    </div>*@
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalUdf .block').html(data);
+                $(this).addClass("done");
+                //                $('.modal-body').html(data);
+                //                $(this).addClass("done");
+                //                $('#modalUdf').modal({
+                //                    keyboard: false,
+                //                    backdrop: "static"
+                //                }).css({
+                //                    width: 'auto',
+                //                    'margin-left': function () {
+                //                        return -($(this).width() / 2);
+                //                    }
+                //                });
+                $('#modalUdf').dialog('open');
+                $.unblockUI();
+
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addUdf').live('click', function () {
+        var url = '@Url.Action("UdfAdd", "Master")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editUdf').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("UdfEdit", "Master")/' + id;
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('#saveUdf').live('click', function () {
+        $("#Udf-form").submit();
+    });
+
+    function OnComplete() {
+
+        $("#modalUdf .block").load("/Master/UdfAdd");
+        $("#Udf-list").load("/Master/UdfList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+        $("#modalUdf").dialog("close");
+        $("#Udf-list").load("/Master/UdfList");
+        $.unblockUI();
+    }
+
+    $("#modalUdf").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        title: 'User Defined Field',
+        buttons: {
+            "Save": function () {
+                Begin();
+                $("#Udf-form").submit();
+                $.unblockUI();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>

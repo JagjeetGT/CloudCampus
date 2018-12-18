@@ -1,0 +1,79 @@
+@model KRBAccounting.Domain.Entities.ScBus
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("BusAdd", "Transportation", new { controller = "Transportation" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "bus-frm" }))
+{
+
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Description</label>
+            <span class="field">@Html.TextBoxFor(m => m.Description, new { @class = "input", entermsg = "Enter Description" })
+                @Html.ValidationMessageFor(m => m.Description) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+                    <label class="label-120">
+                        Vehicle No.</label>
+                    <span class="field">@Html.TextBoxFor(m => m.VehicleNo, new { @class = "input", entermsg = "Enter VehicleNo" })
+                        @Html.ValidationMessageFor(m => m.VehicleNo) </span></span>
+        <span class="stack">
+            <label class="label-120">
+                Max Capacity</label>
+            <span class="field">@Html.TextBoxFor(m => m.MaxCapicity, new { @class = "input", entermsg = "Enter Description" })
+                @Html.ValidationMessageFor(m => m.MaxCapicity) </span></span><span class="stack"></span>
+    </div>
+    <div class="clearfix"></div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Driver Name</label>
+            <span class="field">@Html.TextBoxFor(m => m.DriverName, new { @class = "input", entermsg = "Enter DriverName" })
+                @Html.ValidationMessageFor(m => m.DriverName) </span></span><span class="stack">
+                    <label class="label-120">
+                        Driver License</label>
+                    <span class="field">@Html.TextBoxFor(m => m.DriverLicense, new { @class = "input", entermsg = "Enter DriverLicense" })
+                        @Html.ValidationMessageFor(m => m.DriverLicense) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Helper Name</label>
+            <span class="field">@Html.TextBoxFor(m => m.HelperName, new { @class = "input", entermsg = "Enter HelperName" })
+                @Html.ValidationMessageFor(m => m.HelperName) </span></span><span class="stack">
+                    <label class="label-120">
+                        Contact Office</label>
+                    <span class="field">@Html.TextBoxFor(m => m.ContactOff, new { @class = "input", entermsg = "Enter ContactOff" })
+                        @Html.ValidationMessageFor(m => m.ContactOff) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Contact Number</label>
+            <span class="field">@Html.TextBoxFor(m => m.ContactPhNo, new { @class = "input", entermsg = "Enter ContactPhNo" })
+                @Html.ValidationMessageFor(m => m.ContactPhNo) </span></span><span class="stack">
+                    <label class="label-120">
+                        Contact Person</label>
+                    <span class="field">@Html.TextBoxFor(m => m.ContactPerson, new { @class = "input", entermsg = "Enter ContactPerson" })
+                        @Html.ValidationMessageFor(m => m.ContactPerson) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Contact Person PhNo.</label>
+            <span class="field">@Html.TextBoxFor(m => m.ContactPersonPhNo, new { @class = "input", entermsg = "Enter ContactPersonPhNo" })
+                @Html.ValidationMessageFor(m => m.ContactPersonPhNo) </span></span><span class="stack">
+                    <label class="label-120">
+                        Fee Memo</label>
+                    <span class="field">@Html.TextBoxFor(m => m.FeeMemo, new { @class = "input", entermsg = "Enter FeeMemo" })
+                        @Html.ValidationMessageFor(m => m.FeeMemo) </span></span>
+    </div>
+}

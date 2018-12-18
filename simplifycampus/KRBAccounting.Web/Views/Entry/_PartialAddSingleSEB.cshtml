@@ -1,0 +1,21 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.ExpBrkSingleViewModel
+@{
+    var trId = "id-" + Model.Id;
+}
+<tr id="@trId">
+    <td>@Model.STNo
+    </td>
+   
+  
+    <td>@Model.STDate.ToShortDateString()
+    </td>
+     <td>@Model.Type</td>
+    <td>@Model.Remarks
+    </td>
+    
+    <td>
+        <a href="javascript:void(0)" class="SEBEdit icon-pencil" data-id="@Model.Id" title="Edit: @Model.STNo">
+        </a>| <a href="javascript:void(0)" class="SEBRemove icon-remove" data-id="@Model.Id" title="Delete: @Model.STNo">
+        </a>
+    </td>
+</tr>

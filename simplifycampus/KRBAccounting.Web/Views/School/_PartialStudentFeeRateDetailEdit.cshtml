@@ -1,0 +1,63 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentFeeRateDetail
+@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@{
+
+
+    string display = "display:none;";
+    string billTermClass = "";
+    if (Model.AllowFeeWiseFeeTerm == 1)
+    {
+        display = "";
+        billTermClass = "rate-bill-term";
+    }
+}
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="sno">
+        </td>
+        <td>
+             @Html.HiddenFor(x=>x.DetailGuid, new {@class="detailGuid"})
+            @Html.HiddenFor(x => x.FeeItemId, new { @class = "hdn_Subject_Id" })
+            @Html.HiddenFor(x => x.Index, new { @class = "indexId" })
+            <input type="text"  class = "modallink text_subject input-190 input" href="@Url.Action("GetFeeItems")" value="@if (Model.FeeItem != null)
+                                                                                                                          {
+                                                                                                                              @Model.FeeItem.Description
+                                                                                                                          }
+                                                                                                                             "   title="Subject "  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.FeeRate, new { @class = "FeeRate basicAmt input-80 input " + billTermClass })
+            @{
+              var billingTerms = ((List<ScStudentFeeTerm>)ViewBag.BillingTermList).Where(x => x.DetailId == Model.Id);
+        
+            }
+            @if (Model.Id != 0)
+            {
+                 <span class="product_wise_billterms">
+                @foreach (var term in billingTerms.Where(x=>x.DetailId==Model.Id))
+                {
+                    term.ParentGuid = Model.DetailGuid;   
+                @Html.Action("InsertFeeTermEdit", term)
+                }
+                  </span>
+            }
+           
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TermAmount, new { @class = "input-80 termAmt input", @readonly = "readonly" })
+        </td>
+
+        <td>
+            @Html.TextBoxFor(x => x.NetAmount, new { @class = "input-80 netAmt input",@readonly="readonly" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "narration input-235 input", href = "/School/StudentFeeRateDetailAdd?AllowFeeWiseFeeTerm=" + Model.AllowFeeWiseFeeTerm, entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

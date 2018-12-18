@@ -1,0 +1,131 @@
+@media screen
+{
+    body
+    {
+        font-size: 11px;
+        line-height: 15px;
+    }
+    p
+    {
+        margin: 0;
+    }
+    .print
+    {
+        background-color: #FFFFFF;
+        border-radius: 4px 4px 4px 4px;
+        box-shadow: 1px 1px 5px #000000;
+        margin-left: 3%;
+        padding: 10px;
+        position: fixed;
+        top: 20%;
+        width: 4%;
+    }
+    .print div hr
+    {
+        margin: 20%;
+    }
+    .print div
+    {
+        border: 1px solid #EEEEEE;
+        border-radius: 4px 4px 4px 4px;
+        padding: 2px;
+    }
+    .print div a img :hover
+    {
+        opacity: 1 !important;
+    }
+    #report
+    {
+        background-color: white;
+        margin-left: 20%;
+        margin-top: 20px;
+        width: 60%;
+    }
+    #report .sno
+    {
+        text-align: left;
+    }
+    #report .number,  #report .numbericfield
+    {
+        text-align: right;
+    }
+    .ReportHeader
+    {
+        box-shadow: 1px 2px 15px #000000;
+        padding: 15px;
+        text-align: center;
+    }
+    .listpopup tr th, .listpopup tr td
+    {
+        border: 1px solid;
+        padding: 5px;
+    }
+
+}
+@media print
+{
+    .listpopup tr th, .listpopup tr td , .table tr th, .table tr td
+    {
+        border: 1px solid;
+        padding: 5px;
+         font-size: 11px;
+        line-height: 15px;
+        vertical-align: top;
+
+    }
+    .listpopup , .table {
+        width: 100% !important;
+          border-spacing:0;
+    border-collapse:collapse;
+    }
+
+    body
+    {
+        font-size: 11px;
+        line-height: 15px;
+    }
+    p
+    {
+        margin: 0;
+    }
+    #report
+    {
+        margin: 0;
+        width: 100%;
+        border: none;
+    }
+    #report .sno
+    {
+        text-align: left;
+    }
+    .print
+    {
+        display: none;
+    }
+    #report .number, #report .numbericfield
+    {
+        text-align: right;
+    }
+    .ReportHeader
+    {
+        box-shadow: none;
+        padding: 0;
+    }
+   .ReportList {
+       font-size: 11px !important
+   }
+
+.ReportHeader table tr b :first-child
+    {
+    font-size: 16px !important;
+    }
+    .ReportHeader table tr b :last-child
+    {
+        font-size: 14px!important
+    }
+}
+@page
+{
+ /*  margin-left: 5%;*/
+}
+

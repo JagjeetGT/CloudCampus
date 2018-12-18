@@ -1,0 +1,157 @@
+﻿@{
+    ViewBag.Title = "Godown Transfer";
+}
+<div class="breadLine">
+    <ul class="breadcrumb">
+            <li><a href="@Url.Action("GodownTransfer", "Entry")">Godown Transfer</a> <span class="divider">
+                |</span></li>
+    </ul>
+</div>
+
+<div id="godown-transfer-list">
+    @Html.Action("GodownTransferList")
+</div>
+<div class="dialog" id="modalGodownTransfer" style="display: none;" title="Godown Transfer(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalGodownTransfer").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                $("#godowntransfer-add-form").submit();
+                $(this).dialog("close");
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function CalculateTotalAmt() {
+        var totalAmt = parseFloat(0);
+        var receiptAmtElements = document.querySelectorAll(".amt");
+        var i;
+        for (i = 0; i < receiptAmtElements.length; i++) {
+            var amt = receiptAmtElements[i].value;
+            if (amt != "") {
+                totalAmt = totalAmt + parseFloat(amt);
+            }
+
+        }
+        return totalAmt;
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.blockUI();
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalGodownTransfer .block').html(data);
+                $(this).addClass("done");
+                $("#modalGodownTransfer").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                $.unblockUI();
+            }
+        });
+    }
+
+    $('a.addGodownTransfer').live('click', function () {
+        var url = '@Url.Action("GodownTransferAdd", "Entry")';
+        getRequest(url);
+        return false;
+    });
+    $('a.editSalesInvoice').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesInvoiceEdit", "Entry")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+    $('a.approvedSalesInvoice').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesInvoiceApproved", "Entry")/' + id;
+        $.ajax({
+            url: url,
+
+            type: 'Post',
+            success: function () {
+                $("#Salesinvoice-list").load("/Entry/SalesInvoiceList");
+
+            }
+        });
+
+        return false;
+    });
+    $('#saveSalesInvoice').live('click', function () {
+        //if ($(".text_ledger:last").val()==""||$(""))
+        $("#sales-invoice-form").submit();
+    });
+    function OnComplete() {
+        $('#modalGodownTransfer .modal-body').load("/Entry/GodownTransferAdd");
+        $("#godown-transfer-list").load("/Entry/GodownTransferList");
+    }
+    function OnCompleteEdit() {
+        $('#modalGodownTransfer').modal('hide');
+        $("#godown-transfer-list").load("/Entry/GodownTransferList");
+    }
+
+    function NewRowDetailList(element, index) {
+        $(".text_product:last").attr("id", "detail_" + index);
+        $(".text_product:last").closest("tr").attr("id", "tr_" + index);
+        $(".text_product:last").attr("valueId", $(".hdn_product_Id:last").attr("id"));
+
+        $(".text_godown:last").attr("id", "godown_" + index);
+        $(".text_godown:last").attr("valueId", $(".hdn_godown_Id:last").attr("id"));
+
+        var qty = parseFloat(element.find(".qty").val());
+        var rate = parseFloat(element.find(".rate").val());
+        var totalAmt = qty * rate;
+        element.find(".totalAmount").val(totalAmt);
+
+        $(".text_product:last").focus();
+        getTotalQty();
+        getTotalAmt();
+    }
+
+
+    function getTotalQty() {
+        totalQty = parseFloat(0);
+        var qtyElements = document.querySelectorAll(".qty");
+        var i;
+        for (i = 0; i < qtyElements.length; i++) {
+            var amt = qtyElements[i].value;
+            if (amt != "") {
+                totalQty = totalQty + parseFloat(amt);
+            }
+        }
+        $("#TotalQty").val(totalQty);
+    }
+
+
+    function getTotalAmt() {
+
+        var totalAmt = parseFloat(0);
+
+        var amtlist = document.querySelectorAll(".totalAmount");
+
+        $(amtlist).each(function () {
+            if (this.value != "") {
+
+                totalAmt += parseFloat(this.value);
+            }
+        });
+
+        $("#TotalAmt").val(totalAmt);
+    }
+
+
+</script>

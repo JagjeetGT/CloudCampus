@@ -1,0 +1,150 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models.Purchase
+@model KRBAccounting.Domain.Entities.PurchaseDetail
+@{
+    var trId = "tr_" + Model.Index;   
+}
+<tr id="@trId" class="cashbank-detail-entry detail-entry editSalesPurchase">
+    @using (Html.BeginCollectionItem("purchaseDetailEntry"))
+    {
+        string display = "display:none;";
+        string billTermClass = "";
+        if (ViewBag.AllowProductWiseBillTerm == 1)
+        {
+            display = "";
+            billTermClass = "rate-bill-term";
+        }
+        @Html.HiddenFor(x => x.PurchaseInvoiceId)
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Index, new { @class = "indexId" })
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.DetailGuid, new { @class = "detailGuid" })
+            @Html.HiddenFor(x => x.PCode, new { @class = "productId value" })
+            @if (Model.EntryControl == null || !Model.EntryControl.AltUnit)
+            {
+<text>@Html.HiddenFor(x => x.AltUnit, new { @class = "altunit disablealtunit" })</text>
+            }
+            @if (Model.EntryControl == null || !Model.EntryControl.Unit)
+            {
+<text>@Html.HiddenFor(x => x.Unit, new { @class = "unit disableunit" })</text>
+            }
+            @* @if (Model.EntryControl == null || !Model.EntryControl.BasicAmount)
+            {
+                @Html.HiddenFor(x => x.BasicAmt, new { @class = "basicAmt" })
+            }*@
+            <input type="text" class = "modallink_custom text_product input-215 input" valuetype = "purchase"  href="@Url.Action("GetProductList", "Entry")"  value="@UtilityService.GetProductNameById(Model.PCode)" entermsg = "Press F1 for existing Account list." />
+            <span class="product_batch">
+                @{
+                    if (ViewBag.PurchaseProductBatchViewModels != null)
+                    {
+                        var batch = ((List<PurchaseProductBatchViewModel>)ViewBag.PurchaseProductBatchViewModels).ToList();
+                        if (batch.Any())
+                        {
+                            var singlebatch = batch.Where(x => x.DetailId == Model.Id).FirstOrDefault();
+                            if (singlebatch != null)
+                            {
+                                singlebatch.ParentGuid = Model.DetailGuid;
+                                <text>
+                                    @Html.Partial("_PartialProductBatch", singlebatch)
+                                </text>
+                            }
+                        }
+                    }
+        
+        
+                }
+            </span>
+        </td>
+        if (Model.EntryControl != null && Model.EntryControl.Godown)
+        {
+            <td>
+                    @Html.HiddenFor(x => x.Godown, new {@class = "value"})
+                    <input type="text" name="GodownName" class="godown input-190 modallink input" href="/Master/GetGodownList"
+                           value="@UtilityService.GetGodownName(Model.Godown)" />
+                </td>
+            }
+        <td>
+            @Html.TextBoxFor(x => x.Qty, new { @class = "Qty input-100 qty numberonly", entermsg = "Enter Quantity." })
+            @*<input type="text" value="@Model.Qty" entermsg="Enter Quantity." class="input-80 qty input" />*@
+        </td>
+        if (Model.EntryControl != null && Model.EntryControl.Unit)
+        {
+            <td>
+                @Html.DropDownListFor(x => x.UnitId, Model.Unitlist, new {@class = "input-100 unit input", entermsg = "Enter Unit."})
+            </td>
+        }
+        <td>
+            @Html.TextBoxFor(x => x.AltQty, new { @class = "AltQty input-100 altQty altqty input numberonly", entermsg = "Enter Altrnative Quantity." })
+            @*<input type="text" value="@Model.AltQty" entermsg="Enter Altrnative Quantity." class="input-80 altQty input" />*@
+        </td>
+        if (Model.EntryControl != null && Model.EntryControl.Unit)
+        {
+            <td>
+                @Html.TextBoxFor(x => x.AltUnit, new {@class = "input-100 altunit input", entermsg = "Enter Altrnative Unit.", @readonly = true})
+            </td>
+        }
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "Rate input-100 rate input  numberonly " + billTermClass, entermsg = "Enter Rate.", href = "/Entry/GetPurchaseDetailEdit" })
+            @if (Model.Id != 0)
+            {
+                <span class="product_wise_billterms">
+                    @{
+                var billingTerms = ((List<BillingTermDetail>)ViewBag.BillingTermList).Where(x => x.DetailId == Model.Id);
+                    }
+                    @foreach (var term in billingTerms.OrderBy(x => x.BillingTermId))
+                    {
+                        term.ParentGuid = Model.DetailGuid;
+                        @Html.Action("InsertBillTermEdit", term)
+                    }
+                </span>
+            }else
+            {
+                <span class="product_wise_billterms"></span>
+            }
+        </td>
+            if (Model.EntryControl != null && Model.EntryControl.BasicAmount)
+            {
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt", entermsg = "Enter Basic Amount." })
+        </td>
+            }
+            else
+            {
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt", entermsg = "Enter Basic Amount.", @readonly = "readonly" })
+        </td>
+            }
+        <td style="@display">
+            @Html.TextBoxFor(x => x.TermAmt, new { @class = "input-100 termAmt input", @readonly = "readonly" })
+        </td>
+
+        <td style="@display">
+            @Html.TextBoxFor(x => x.NetAmt, new { @class = "input-100 netAmt input", @readonly = "readonly" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>

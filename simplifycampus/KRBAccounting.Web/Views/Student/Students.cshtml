@@ -1,0 +1,82 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Student Information";
+    var userRight = (UserRight)ViewBag.UserRight;
+
+}
+<script src="../../Content/loadmask/jquery.loadmask.min.js" type="text/javascript"></script>
+<link href="../../Content/loadmask/jquery.loadmask.css" rel="stylesheet" type="text/css" />
+<script src="../../Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+<!--Breadcurmb goes here-->
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Student Information</h1>
+                <ul class="buttons">
+                    @if (userRight.Create)
+                    {
+                        <li><a href="@Url.Action("AddStudent")" onclick="Begin()" class="isw-plus" title="Add Student Information">
+                        </a></li>
+                    }
+                </ul>
+                <div style="margin-top: 4px; float: right;" class="input-append ">
+                    <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                    <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchStudent"><i
+                        class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                </div>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="boader-list">
+                @Html.Action("StudentList", "Student")
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var elementtr = document.querySelectorAll("tr.QualificationDetail");
+    $.each(elementtr, function (index) {
+        $(this).attr("id", "tr_" + index);
+        var valueid = $(this).find(".hdn_division_Id").attr("id");
+        $(this).find(".division-text").attr({
+            "id": "Division" + index,
+            "valueid": valueid
+        });
+
+
+    });
+    $('a.deleteScStaffGroup').live('click', function () {
+        var result = confirm('Are you sure you wish to delete this Record?');
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("StudentInformationDelete", "Student")?id=' + id;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Student is already used by another class So cannot be deleted."); $.unblockUI();
+                } else {
+                    $("#boader-list").load("/Student/StudentList"); $.unblockUI();
+                }
+            });
+
+            return false;
+        }
+
+    });
+
+
+    $(".SearchStudent").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/StudentSearch/StudentSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#boader-list").html(data);
+        });
+    });
+
+</script>

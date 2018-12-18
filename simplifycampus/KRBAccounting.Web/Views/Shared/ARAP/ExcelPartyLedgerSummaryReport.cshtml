@@ -1,0 +1,1250 @@
+﻿
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.PartyLedgerViewModel
+@{
+    decimal OpdrGrpTotal = 0;
+    decimal OpcrGrpTotal = 0;
+    decimal PedrGrpTotal = 0;
+    decimal PecrGrpTotal = 0;
+    decimal CldrGrpTotal = 0;
+    decimal ClcrGrpTotal = 0;
+
+    decimal OpdrSubGrpTotal = 0;
+    decimal OpcrSubGrpTotal = 0;
+    decimal PedrSubGrpTotal = 0;
+    decimal PecrSubGrpTotal = 0;
+    decimal CldrSubGrpTotal = 0;
+    decimal ClcrSubGrpTotal = 0;
+
+    decimal OpdrTotal = 0;
+    decimal OpcrTotal = 0;
+    decimal PedrTotal = 0;
+    decimal PecrTotal = 0;
+    decimal CldrTotal = 0;
+    decimal ClcrTotal = 0;
+
+    decimal OpdrLedTotal = 0;
+    decimal OpcrLedTotal = 0;
+    decimal PedrLedTotal = 0;
+    decimal PecrLedTotal = 0;
+    decimal CldrLedTotal = 0;
+    decimal ClcrLedTotal = 0;
+
+    decimal NetOpClosing = 0;
+    decimal NetPClosing = 0;
+    decimal NetClosing = 0;
+    
+    
+}
+<div class="clearfix">
+</div>
+@Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+<br />
+
+<div class="ReportList">
+  <table border="1" style="font-size: 12px;">
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Ledger
+                </th>
+                <th colspan="2">
+                    Opening
+                </th>
+                <th colspan="2">
+                    Period
+                </th>
+                <th colspan="2">
+                    Closing
+                </th>
+            </tr>
+            <tr >
+                <td></td>
+                <td style="text-align: center; font-weight: bold">Debit</td>
+                <td style="text-align: center; font-weight: bold">Credit</td>
+                <td style="text-align: center; font-weight: bold">Debit</td>
+                <td style="text-align: center; font-weight: bold">Credit</td>
+                <td style="text-align: center; font-weight: bold">Debit</td>
+                <td style="text-align: center; font-weight: bold">Credit</td>
+            </tr>
+        </thead>
+ @if (Model.GroupBy == 1)
+ {
+     var CountsubLedger = 0;
+     foreach (var item in Model.LedgerList)
+     {
+         var LedgerName = "";
+         var DspsubLedger = 0;
+         if (Model.DisplaySubledger)
+         {
+             DspsubLedger = 1;
+             var subLedgerId = 0;
+             var PartyLedgers = UtilityService.GetLedgerPartiesSummary(item.Id, Model.StartDate, Model.EndDate, item.GroupById, Model.GroupBy, Model.DocAgent, DspsubLedger,Model.BranchId,subLedgerId);
+
+             foreach (var ledgers in PartyLedgers)
+             {
+                 if (LedgerName != @ledgers.Ledger)
+                 {
+                     if ((CldrLedTotal > 0 || ClcrLedTotal > 0) && CountsubLedger > 1)
+                     {
+                         <tr>
+                             <td style="text-align: right; font-weight: bold">
+                                 Ledger Total:
+                             </td>
+                             <td style="text-align: right; font-weight: bold">
+                                 @OpdrLedTotal.ToString("f2")
+                             </td>
+                             <td style="text-align: right; font-weight: bold">
+                                 @OpcrLedTotal.ToString("f2")
+                             </td>
+                             <td style="text-align: right; font-weight: bold">
+                                 @PedrLedTotal.ToString("f2")  
+                             </td>
+                             <td style="text-align: right; font-weight: bold">
+                                 @PecrLedTotal.ToString("f2")  
+                             </td>
+                             <td style="text-align: right; font-weight: bold">
+                                 @CldrLedTotal.ToString("f2")  
+                             </td>
+                             <td style="text-align: right; font-weight: bold">
+                                 @ClcrLedTotal.ToString("f2")  
+                             </td>
+                         </tr>
+                     }
+                     OpdrLedTotal = 0;
+                     OpcrLedTotal = 0;
+                     PedrLedTotal = 0;
+                     PecrLedTotal = 0;
+                     CldrLedTotal = 0;
+                     ClcrLedTotal = 0;
+                     CountsubLedger = 0;
+                     <tr>
+                         <td style="font-weight: bold">
+                             @ledgers.Ledger
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                 }
+                 OpdrTotal += ledgers.OpnDr;
+                 OpcrTotal += ledgers.OpnCr;
+                 PedrTotal += ledgers.PeriodDr;
+                 PecrTotal += ledgers.PeriodCr;
+                 CldrTotal += ledgers.CloseDr;
+                 ClcrTotal += ledgers.CloseCr;
+
+                 OpdrLedTotal += ledgers.OpnDr;
+                 OpcrLedTotal += ledgers.OpnCr;
+                 PedrLedTotal += ledgers.PeriodDr;
+                 PecrLedTotal += ledgers.PeriodCr;
+                 CldrLedTotal += ledgers.CloseDr;
+                 ClcrLedTotal += ledgers.CloseCr;
+
+                 NetOpClosing += ledgers.OpnDr - ledgers.OpnCr;
+                 NetPClosing += ledgers.PeriodDr - ledgers.PeriodCr;
+                 NetClosing += ledgers.CloseDr - ledgers.CloseCr;
+                 LedgerName = @ledgers.Ledger;
+                 CountsubLedger += 1;
+                 <tr>
+                     <td style="padding-left: 30px">
+                         @ledgers.SLName
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.OpnDr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.OpnCr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.PeriodDr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.PeriodCr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.CloseDr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.CloseCr
+                     </td>
+                 </tr>
+             }
+
+         }
+         else
+         {
+
+             var PartyLedgers = UtilityService.GetLedgerPartiesSummary(item.Id, Model.StartDate, Model.EndDate, item.GroupById, Model.GroupBy, Model.DocAgent,0, Model.BranchId,0);
+
+             foreach (var ledgers in PartyLedgers)
+             {
+                 OpdrTotal += ledgers.OpnDr;
+                 OpcrTotal += ledgers.OpnCr;
+                 PedrTotal += ledgers.PeriodDr;
+                 PecrTotal += ledgers.PeriodCr;
+                 CldrTotal += ledgers.CloseDr;
+                 ClcrTotal += ledgers.CloseCr;
+                 NetOpClosing += ledgers.OpnDr - ledgers.OpnCr;
+                 NetPClosing += ledgers.PeriodDr - ledgers.PeriodCr;
+                 NetClosing += ledgers.CloseDr - ledgers.CloseCr;
+                 <tr>
+                     <td style="font-weight: bold">
+                         @ledgers.Ledger
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.OpnDr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.OpnCr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.PeriodDr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.PeriodCr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.CloseDr
+                     </td>
+                     <td style="text-align: right">
+                         @ledgers.CloseCr
+                     </td>
+                 </tr>
+             }
+         }
+     }
+     <tr>
+             <td style="text-align: right; font-weight: bold">
+                 Total:
+             </td>
+             <td style="text-align: right; font-weight: bold">
+                 @OpdrTotal.ToString("f2")
+             </td>
+             <td style="text-align: right; font-weight: bold">
+                 @OpcrTotal.ToString("f2")
+             </td>
+             <td style="text-align: right; font-weight: bold">
+                 @PedrTotal.ToString("f2")  
+             </td>
+             <td style="text-align: right; font-weight: bold">
+                 @PecrTotal.ToString("f2")  
+             </td>
+             <td style="text-align: right; font-weight: bold">
+                 @CldrTotal.ToString("f2")  
+             </td>
+             <td style="text-align: right; font-weight: bold">
+                 @ClcrTotal.ToString("f2")  
+             </td>
+         </tr>
+         <tr>
+             <td style="text-align: right; font-weight: bold">
+                 Net Closing:
+             </td>
+            
+             @if (NetOpClosing >= 0)
+             {
+                 <td style="text-align: right; font-weight: bold">
+                     <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+                 </td>
+                 <td></td>
+             }
+             else
+             {
+                 <td></td>
+                 <td style="text-align: right; font-weight: bold">
+                     <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+                 </td>
+             }   
+             @if (NetPClosing >= 0)
+             {
+                 <td style="text-align: right; font-weight: bold">
+                     <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+                 </td>
+                 <td></td>
+             }
+             else
+             {
+                 <td></td>
+                 <td style="text-align: right; font-weight: bold">
+                     <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+                 </td>
+             }
+             @if (NetClosing >= 0)
+             {
+                 <td style="text-align: right; font-weight: bold">
+                     <text>@Math.Abs(NetClosing).ToString("f2")</text>
+                 </td>
+                 <td></td>
+             }
+             else
+             {
+                 <td></td>
+                 <td style="text-align: right; font-weight: bold">
+                     <text>@Math.Abs(NetClosing).ToString("f2")</text>
+                 </td>
+             }
+                    
+            
+         </tr>
+    
+ }
+ @if (Model.GroupBy == 2)
+  {
+      string Agentbyname = "";
+      foreach (var item in Model.LedgerList)
+      {
+          if (Agentbyname != @item.GroupByName)
+          {
+              if (@ClcrGrpTotal != 0 || @CldrGrpTotal != 0)
+              {
+                  <tr>
+                      <td style="text-align: right; font-weight: bold">
+                          Agent Total:
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpdrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpcrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PedrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PecrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @CldrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @ClcrGrpTotal.ToString("f2")  
+                      </td>
+                  </tr>
+              }
+              Agentbyname = @item.GroupByName;
+              <tr>
+                  <td style="font-weight: bold">
+                      Agent : @item.GroupByName
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+              </tr>
+              OpdrGrpTotal = 0;
+              OpcrGrpTotal = 0;
+              PedrGrpTotal = 0;
+              PecrGrpTotal = 0;
+              CldrGrpTotal = 0;
+              ClcrGrpTotal = 0;
+          }
+          var PartyLedgers = UtilityService.GetLedgerPartiesSummary(item.Id, Model.StartDate, Model.EndDate, item.GroupById, Model.GroupBy, Model.DocAgent,0,Model.BranchId,0);
+
+          foreach (var ledgers in PartyLedgers)
+          {
+              OpdrGrpTotal += ledgers.OpnDr;
+              OpcrGrpTotal += ledgers.OpnCr;
+              PedrGrpTotal += ledgers.PeriodDr;
+              PecrGrpTotal += ledgers.PeriodCr;
+              CldrGrpTotal += ledgers.CloseDr;
+              ClcrGrpTotal += ledgers.CloseCr;
+
+              OpdrTotal += ledgers.OpnDr;
+              OpcrTotal += ledgers.OpnCr;
+              PedrTotal += ledgers.PeriodDr;
+              PecrTotal += ledgers.PeriodCr;
+              CldrTotal += ledgers.CloseDr;
+              ClcrTotal += ledgers.CloseCr;
+              NetOpClosing += ledgers.OpnDr - ledgers.OpnCr;
+              NetPClosing += ledgers.PeriodDr - ledgers.PeriodCr;
+              NetClosing += ledgers.CloseDr - ledgers.CloseCr;
+             <tr>
+                 <td style="padding-left: 20px">
+                     @ledgers.Ledger
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseCr
+                 </td>
+             </tr>
+          }
+      }
+    <tr>
+         <td style="text-align: right; font-weight: bold">
+            Agent Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrGrpTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrGrpTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrGrpTotal.ToString("f2")  
+         </td>
+     </tr>
+
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+            Grand Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrTotal.ToString("f2")  
+         </td>
+     </tr>
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+             Net Closing:
+         </td>
+            
+         @if (NetOpClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+         }   
+         @if (NetPClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+         }
+         @if (NetClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+         }
+                    
+            
+     </tr> 
+  }
+  @if (Model.GroupBy == 3)
+  {
+      string Areabyname = "";
+      foreach (var item in Model.LedgerList)
+      {
+          if (Areabyname != @item.GroupByName)
+          {
+              if (@ClcrGrpTotal != 0 || @CldrGrpTotal != 0)
+              {
+                  <tr>
+                      <td style="text-align: right; font-weight: bold">
+                          Area Total:
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpdrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpcrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PedrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PecrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @CldrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @ClcrGrpTotal.ToString("f2")  
+                      </td>
+                  </tr>
+              }
+              Areabyname = @item.GroupByName;
+              <tr>
+                  <td style="font-weight: bold">
+                      Area : @item.GroupByName
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+              </tr>
+              OpdrGrpTotal = 0;
+              OpcrGrpTotal = 0;
+              PedrGrpTotal = 0;
+              PecrGrpTotal = 0;
+              CldrGrpTotal = 0;
+              ClcrGrpTotal = 0;
+          }
+          var PartyLedgers = UtilityService.GetLedgerPartiesSummary(item.Id, Model.StartDate, Model.EndDate, item.GroupById, Model.GroupBy, Model.DocAgent,0,Model.BranchId,0);
+
+          foreach (var ledgers in PartyLedgers)
+          {
+              OpdrGrpTotal += ledgers.OpnDr;
+              OpcrGrpTotal += ledgers.OpnCr;
+              PedrGrpTotal += ledgers.PeriodDr;
+              PecrGrpTotal += ledgers.PeriodCr;
+              CldrGrpTotal += ledgers.CloseDr;
+              ClcrGrpTotal += ledgers.CloseCr;
+
+              OpdrTotal += ledgers.OpnDr;
+              OpcrTotal += ledgers.OpnCr;
+              PedrTotal += ledgers.PeriodDr;
+              PecrTotal += ledgers.PeriodCr;
+              CldrTotal += ledgers.CloseDr;
+              ClcrTotal += ledgers.CloseCr;
+              NetOpClosing += ledgers.OpnDr - ledgers.OpnCr;
+              NetPClosing += ledgers.PeriodDr - ledgers.PeriodCr;
+              NetClosing += ledgers.CloseDr - ledgers.CloseCr;
+             <tr>
+                 <td style="padding-left: 20px">
+                     @ledgers.Ledger
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseCr
+                 </td>
+             </tr>
+          }
+      }
+    <tr>
+         <td style="text-align: right; font-weight: bold">
+            Area Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrGrpTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrGrpTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrGrpTotal.ToString("f2")  
+         </td>
+     </tr>
+
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+            Grand Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrTotal.ToString("f2")  
+         </td>
+     </tr>
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+             Net Closing:
+         </td>
+            
+         @if (NetOpClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+         }   
+         @if (NetPClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+         }
+         @if (NetClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+         }
+                    
+            
+     </tr> 
+  }
+  @if (Model.GroupBy == 4)
+  {
+      string groupbyname = "";
+      foreach (var item in Model.LedgerList)
+      {
+          if (groupbyname != @item.GroupByName)
+          {
+              if (@ClcrGrpTotal != 0 || @CldrGrpTotal != 0)
+              {
+                  <tr>
+                      <td style="text-align: right; font-weight: bold">
+                          A/C Group Total:
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpdrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpcrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PedrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PecrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @CldrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @ClcrGrpTotal.ToString("f2")  
+                      </td>
+                  </tr>
+              }
+              groupbyname = @item.GroupByName;
+              <tr>
+                  <td style="font-weight: bold">
+                      A/C Group : @item.GroupByName
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+              </tr>
+              OpdrGrpTotal = 0;
+              OpcrGrpTotal = 0;
+              PedrGrpTotal = 0;
+              PecrGrpTotal = 0;
+              CldrGrpTotal = 0;
+              ClcrGrpTotal = 0;
+          }
+          var PartyLedgers = UtilityService.GetLedgerPartiesSummary(item.Id, Model.StartDate, Model.EndDate, item.GroupById, Model.GroupBy, Model.DocAgent,0,Model.BranchId,0);
+
+          foreach (var ledgers in PartyLedgers)
+          {
+              OpdrGrpTotal += ledgers.OpnDr;
+              OpcrGrpTotal += ledgers.OpnCr;
+              PedrGrpTotal += ledgers.PeriodDr;
+              PecrGrpTotal += ledgers.PeriodCr;
+              CldrGrpTotal += ledgers.CloseDr;
+              ClcrGrpTotal += ledgers.CloseCr;
+
+              OpdrTotal += ledgers.OpnDr;
+              OpcrTotal += ledgers.OpnCr;
+              PedrTotal += ledgers.PeriodDr;
+              PecrTotal += ledgers.PeriodCr;
+              CldrTotal += ledgers.CloseDr;
+              ClcrTotal += ledgers.CloseCr;
+              NetOpClosing += ledgers.OpnDr - ledgers.OpnCr;
+              NetPClosing += ledgers.PeriodDr - ledgers.PeriodCr;
+              NetClosing += ledgers.CloseDr - ledgers.CloseCr;
+             <tr>
+                 <td style="padding-left: 20px">
+                     @ledgers.Ledger
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseCr
+                 </td>
+             </tr>
+          }
+      }
+    <tr>
+         <td style="text-align: right; font-weight: bold">
+            A/C Group Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrGrpTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrGrpTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrGrpTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrGrpTotal.ToString("f2")  
+         </td>
+     </tr>
+
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+            Grand Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrTotal.ToString("f2")  
+         </td>
+     </tr>
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+             Net Closing:
+         </td>
+            
+         @if (NetOpClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+         }   
+         @if (NetPClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+         }
+         @if (NetClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+         }
+                    
+            
+     </tr> 
+  }
+  
+   @if (Model.GroupBy == 5)
+   {
+       string groupbyname = "";
+       string SGroupName = "";
+       foreach (var item in Model.LedgerList)
+       {
+           if (groupbyname != @item.GroupByName)
+           {
+               if (@ClcrSubGrpTotal != 0 || @CldrSubGrpTotal != 0)
+               {
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        A/C Sub Group Total:
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @OpdrSubGrpTotal.ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @OpcrSubGrpTotal.ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @PedrSubGrpTotal.ToString("f2")  
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @PecrSubGrpTotal.ToString("f2")  
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @CldrSubGrpTotal.ToString("f2")  
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @ClcrSubGrpTotal.ToString("f2")  
+                    </td>
+                </tr>
+               }
+               if (@ClcrGrpTotal != 0 || @CldrGrpTotal != 0)
+               {
+                  <tr>
+                      <td style="text-align: right; font-weight: bold">
+                          A/C Group Total:
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpdrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @OpcrGrpTotal.ToString("f2")
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PedrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @PecrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @CldrGrpTotal.ToString("f2")  
+                      </td>
+                      <td style="text-align: right; font-weight: bold">
+                          @ClcrGrpTotal.ToString("f2")  
+                      </td>
+                  </tr>
+               }
+               groupbyname = @item.GroupByName;
+               SGroupName = @item.SubGroupByName;
+                <tr>
+                    <td style="font-weight: bold">
+                        A/C Group : @item.GroupByName
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+               <tr>
+                   <td style="padding-left: 25px; font-weight: bold">
+                       A/C Sub Group : @item.SubGroupByName
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+               </tr>
+               OpdrSubGrpTotal = 0;
+               OpcrSubGrpTotal = 0;
+               PedrSubGrpTotal = 0;
+               PecrSubGrpTotal = 0;
+               CldrSubGrpTotal = 0;
+               ClcrSubGrpTotal = 0;
+               
+               OpdrGrpTotal = 0;
+               OpcrGrpTotal = 0;
+               PedrGrpTotal = 0;
+               PecrGrpTotal = 0;
+               CldrGrpTotal = 0;
+               ClcrGrpTotal = 0;
+           }
+           else if (SGroupName != @item.SubGroupByName)
+           {
+               if (@ClcrSubGrpTotal != 0 || @CldrSubGrpTotal != 0)
+               {
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        A/C Sub Group Total:
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @OpdrSubGrpTotal.ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @OpcrSubGrpTotal.ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @PedrSubGrpTotal.ToString("f2")  
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @PecrSubGrpTotal.ToString("f2")  
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @CldrSubGrpTotal.ToString("f2")  
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @ClcrSubGrpTotal.ToString("f2")  
+                    </td>
+                </tr>
+               }
+               SGroupName = @item.SubGroupByName;
+               <tr>
+                   <td style="padding-left: 25px; font-weight: bold">
+                       A/C Sub Group : @item.SubGroupByName
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
+               </tr>
+               OpdrSubGrpTotal = 0;
+               OpcrSubGrpTotal = 0;
+               PedrSubGrpTotal = 0;
+               PecrSubGrpTotal = 0;
+               CldrSubGrpTotal = 0;
+               ClcrSubGrpTotal = 0;
+           }
+
+
+           var PartyLedgers = UtilityService.GetLedgerPartiesSummary(item.Id, Model.StartDate, Model.EndDate, item.GroupById, Model.GroupBy, Model.DocAgent,0,Model.BranchId,0);
+
+           foreach (var ledgers in PartyLedgers)
+           {
+               OpdrGrpTotal += ledgers.OpnDr;
+               OpcrGrpTotal += ledgers.OpnCr;
+               PedrGrpTotal += ledgers.PeriodDr;
+               PecrGrpTotal += ledgers.PeriodCr;
+               CldrGrpTotal += ledgers.CloseDr;
+               ClcrGrpTotal += ledgers.CloseCr;
+
+               OpdrSubGrpTotal += ledgers.OpnDr;
+               OpcrSubGrpTotal += ledgers.OpnCr;
+               PedrSubGrpTotal += ledgers.PeriodDr;
+               PecrSubGrpTotal += ledgers.PeriodCr;
+               CldrSubGrpTotal += ledgers.CloseDr;
+               ClcrSubGrpTotal += ledgers.CloseCr;
+
+               OpdrTotal += ledgers.OpnDr;
+               OpcrTotal += ledgers.OpnCr;
+               PedrTotal += ledgers.PeriodDr;
+               PecrTotal += ledgers.PeriodCr;
+               CldrTotal += ledgers.CloseDr;
+               ClcrTotal += ledgers.CloseCr;
+               NetOpClosing += ledgers.OpnDr - ledgers.OpnCr;
+               NetPClosing += ledgers.PeriodDr - ledgers.PeriodCr;
+               NetClosing += ledgers.CloseDr - ledgers.CloseCr;
+             <tr>
+                 <td style="padding-left: 40px">
+                     @ledgers.Ledger
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.OpnCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.PeriodCr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseDr
+                 </td>
+                 <td style="text-align: right">
+                     @ledgers.CloseCr
+                 </td>
+             </tr>
+           }
+       }
+       if (@ClcrSubGrpTotal != 0 || @CldrSubGrpTotal != 0)
+       {
+            <tr>
+                <td style="text-align: right; font-weight: bold">
+                    A/C Sub Group Total:
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @OpdrSubGrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @OpcrSubGrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @PedrSubGrpTotal.ToString("f2")  
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @PecrSubGrpTotal.ToString("f2")  
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @CldrSubGrpTotal.ToString("f2")  
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @ClcrSubGrpTotal.ToString("f2")  
+                </td>
+            </tr>
+       }
+       if (@ClcrGrpTotal != 0 || @CldrGrpTotal != 0)
+       {
+            <tr>
+                <td style="text-align: right; font-weight: bold">
+                    A/C Group Total:
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @OpdrGrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @OpcrGrpTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @PedrGrpTotal.ToString("f2")  
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @PecrGrpTotal.ToString("f2")  
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @CldrGrpTotal.ToString("f2")  
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @ClcrGrpTotal.ToString("f2")  
+                </td>
+            </tr>
+       }
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+            Grand Total:
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpdrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @OpcrTotal.ToString("f2")
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PedrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @PecrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @CldrTotal.ToString("f2")  
+         </td>
+         <td style="text-align: right; font-weight: bold">
+             @ClcrTotal.ToString("f2")  
+         </td>
+     </tr>
+     <tr>
+         <td style="text-align: right; font-weight: bold">
+             Net Closing:
+         </td>
+            
+         @if (NetOpClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetOpClosing).ToString("f2")</text>
+             </td>
+         }   
+         @if (NetPClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetPClosing).ToString("f2")</text>
+             </td>
+         }
+         @if (NetClosing >= 0)
+         {
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+             <td></td>
+         }
+         else
+         {
+             <td></td>
+             <td style="text-align: right; font-weight: bold">
+                 <text>@Math.Abs(NetClosing).ToString("f2")</text>
+             </td>
+         }
+                    
+            
+     </tr> 
+   }
+    </table>
+</div>

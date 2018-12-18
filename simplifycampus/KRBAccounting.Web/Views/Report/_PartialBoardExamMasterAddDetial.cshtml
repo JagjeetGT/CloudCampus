@@ -1,0 +1,116 @@
+﻿@using System.Net.Configuration
+@using iTextSharp.text.pdf
+@model KRBAccounting.Domain.StoredProcedures.Sp_GetSubjectByClassIdandStudentIdResult
+           
+@using (Html.BeginCollectionItem("BoardExamDetailList"))
+{
+
+
+    <tr>
+        <td colspan="4" >
+            @Html.HiddenFor(x => x.ClassId)
+            @Html.HiddenFor(x => x.SubjectId)
+            @Model.SubjectName
+        </td>
+    
+        <td>
+            @Model.MaskObtained_Y1
+           
+       
+        </td>
+        <td>
+            @Model.Result_Y1
+           
+           
+        </td>
+        <td>
+            @Model.SymbolNo_Y1
+           
+     
+        </td>
+        <td>
+            @Model.MaskObtained_Y2
+          
+       
+        </td>
+        <td>
+            @Model.Result_Y2
+           
+      
+        </td>
+        <td>
+            @Model.SymbolNo_Y2
+           
+   
+        </td>
+        <td>
+            @Model.MaskObtained_Y3
+           
+    
+        </td>
+        <td>
+            @Model.Result_Y3
+           
+        </td>
+        <td>
+            @Model.SymbolNo_Y3
+         
+        </td>
+        <td>
+            @Model.MaskObtained_Y4
+           
+        </td>
+        <td>
+            @Model.Result_Y4
+           
+        </td>
+        <td>
+            @Model.SymbolNo_Y4
+           
+        </td>
+        <td>
+            @Model.MaskObtained_Y5
+           
+        </td>
+        <td>
+            @Model.Result_Y5
+           
+        </td>
+        <td>
+            @Model.SymbolNo_Y5
+           
+        </td>
+        <td>
+            @Model.MaskObtained_Y6
+          
+        </td>
+        <td>
+            @Model.Result_Y6
+          
+        </td>
+        <td>
+            @Model.SymbolNo_Y6
+           
+        </td>
+        <td>
+            @Model.MaskObtained_Y7
+           
+        </td>
+        <td>
+            @Model.Result_Y7
+           
+        </td>
+        <td>
+            @Model.SymbolNo_Y7
+            
+        </td>
+        @*<td colspan="2">
+            @Model.Remarks
+
+        </td>*@
+    </tr>
+       
+}
+
+
+

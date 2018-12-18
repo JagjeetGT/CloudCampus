@@ -1,0 +1,76 @@
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+@model PagedList<IGrouping<int,KRBAccounting.Domain.Entities.ScStaffSubjectMapping>>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Staff
+                </th>
+                <th>
+                    Subjects
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i</td>
+                    <td>
+                        @{
+                            var staffSubjectMapping = item.FirstOrDefault();
+                        }
+                        @if (staffSubjectMapping != null)
+                        {
+                            if (staffSubjectMapping.Staff != null)
+                            {
+                                @staffSubjectMapping.Staff.Description
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @{
+                            var scStaffSubjectMapping = item.FirstOrDefault();
+                        }
+                        @if (scStaffSubjectMapping != null)
+                        {
+                            @UtilityService.GetStaffSubjects(scStaffSubjectMapping.StaffId)
+                        }
+
+                    </td>
+                    <td>
+                        @if(userRight.Edit)
+                        {
+                               <a href="#" class="editScStaffSubjectMapping icon-edit" data-id="@item.FirstOrDefault().StaffId" title="Edit">
+                        </a>
+                        }
+                     
+                    </td>
+                    <td>
+                        @if(userRight.Delete)
+                        {
+                               <a href="@Url.Action("StaffSubjectMappingDelete", new { staffid = item.FirstOrDefault().StaffId })" class="deleteScStaffSubjectMapping icon-remove" onclick="return confirm('Are you sure you wish to delete this record?')" title="Delete">
+                        </a>
+                        }
+                     
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+        <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "StaffSubjectMappingsList", "EmployeeManagement", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "classsubject-list" }))
+    </div>
+</div>

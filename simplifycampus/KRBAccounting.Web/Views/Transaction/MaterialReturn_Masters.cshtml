@@ -1,0 +1,207 @@
+﻿@{
+    ViewBag.Title = "Material Return";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                       Material Return</h1>
+                    <ul class="buttons">
+                        <li><a href="#" class="isw-plus addsalaryScale"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Bus-list">
+                  @Html.Action("MaterialReturn_MastersList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="dialog" id="modalSalaryScale" style="display: none;" title="Material Return">
+    <div class="block">
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $("#modalSalaryScale").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                rowCheck();
+                
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSalaryScale .block').html(data);
+                $(this).addClass("done");
+                $("#modalSalaryScale").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+
+    $('.addsalaryScale').live('click', function () {
+        var url = '@Url.Action("MaterialReturn_MasterAdd", "Transaction")';
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete(data) {
+        if (data == "True") {
+            $("#modalSalaryScale .block").load("/Transaction/MaterialReturn_MasterAdd");
+            $("#Bus-list").load("/Transaction/MaterialReturn_MastersList");
+            $.unblockUI();
+        } else {
+            $.unblockUI();
+        }
+
+    }
+
+    function OnCompleteEdit(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $("#modalSalaryScale").dialog("close");
+            $("#Bus-list").load("/Transaction/MaterialReturn_MastersList");
+        } else {
+            $.unblockUI();
+        }
+
+    }
+
+    $('.editMaterialReturn_Master').live('click', function () {
+        var Id = $(this).attr("data-id");
+        var url = '@Url.Action("MaterialReturn_MasterEdit", "Transaction")?materialreturn_masterId=' + Id;
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+
+    function rowCheck() {
+        var particulars=$(".first-col").val();
+        if (particulars=="" || particulars == 0) {
+            alert("Row Field Empty");
+        } else {
+            $("#materialIssueform-id").submit();
+        }
+    }
+    $("#VoucherDate").live('blur', function () {
+        var date = $(this).val();
+        var nepDate = convertToNepaliNew(date);
+        $("#VoucherMiti").val(nepDate);
+    });
+  
+    function NewRowDetailList(element, index) {
+        $(".product:last").attr("id", "product_" + index);
+        $(".product:last").closest("tr").attr("id", "tr_" + index);
+        $(".product").attr("valueId", $(".hdn_product:last").attr("id"));
+
+        $(".staff:last").attr("id", "staff_" + index);
+        $(".staff:last").closest("tr").attr("id", "tr_" + index);
+        $(".staff").attr("valueId", $(".hdn_staff:last").attr("id"));
+    }
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+        getTotalAmt();
+    });
+
+    $(".Rate").live('blur', function () {
+        var element = $(this);
+        var quantity = element.closest("tr").find(".Quantity").val();
+        var rate = element.closest("tr").find(".Rate").val();
+        var amount = parseFloat(quantity * rate);
+        element.closest("tr").find(".LocalAmount").val(amount);
+        getTotalAmt();
+    });
+
+    $(".product").live("blur", function () {
+        var element = $(this);
+        var productId = element.closest("tr").find(".hdn_product").val();
+        var url = '@Url.Action("GetProductRate", "Transaction")?productid=' + productId;
+        $.getJSON(url, function (data) {
+            element.closest("tr").find(".Rate").val(data);
+        });
+    });
+
+    $(".Quantity").live('blur', function () {
+        var element = $(this);
+        var quantity = element.closest("tr").find(".Quantity").val();
+        var rate = element.closest("tr").find(".Rate").val();
+        var amount = parseFloat(quantity * rate);
+        element.closest("tr").find(".LocalAmount").val(amount);
+        getTotalAmt();
+    });
+
+    function getTotalAmt() {
+
+        var totalAmt = parseFloat(0);
+
+        var amtlist = document.querySelectorAll(".LocalAmount");
+
+        $(amtlist).each(function () {
+            if (this.value != "") {
+
+                totalAmt += parseFloat(this.value);
+            }
+        });
+
+        $("#NetAmount").val(totalAmt);
+    }   
+</script>
+
+
+

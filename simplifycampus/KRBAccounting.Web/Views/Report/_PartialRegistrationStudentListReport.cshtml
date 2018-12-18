@@ -1,0 +1,110 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportRegistrationStudentListViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th width="3%">
+                    S.N.
+                </th>
+                <th width="5%">
+                    Class
+                </th>
+               <th width="8%">
+                    Apply Date
+                </th>
+                <th width="8%">
+                    Std. Code
+                </th>
+
+                <th>
+                    Student Name
+                </th>
+                 <th width="8%">
+                    Roll No
+                </th>
+             <th width="5%">
+                    Section
+                </th>
+                <th width="8%">
+                    Sex
+                </th>
+                <th width="8%">
+                    DOB
+                </th>
+                <th>
+                    Religion
+                </th>
+               <th width="10%">
+                    Category
+                </th>
+                <th>
+                    District
+                </th>
+                <th>
+                    Country
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.StudentList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>
+                    @item.StudentRegistration.Class.Description
+                </td>
+                <td>
+                    @Convert.ToDateTime(item.Studentinfo.ApplyDate).ToShortDateString()
+                </td>
+                <td>
+                    @item.Studentinfo.StdCode
+                </td>
+                <td>
+                    @item.Studentinfo.StuDesc
+                </td>
+                <td>@item.RollNo
+                </td>
+                <td>
+                    @if (item.Section != null)
+                    {
+                        @item.Section.Description
+                    }
+                </td>
+                <td>@item.Studentinfo.Sex
+                </td>
+                <td>@if(item.Studentinfo.DBO != null)
+                    {
+                        @Convert.ToDateTime(item.Studentinfo.DBO).ToShortDateString()
+                    }</td>
+                <td>@item.Studentinfo.Religion
+                </td>
+                <td>
+                    @if (item.Studentinfo.StudentCategory != null)
+                    {
+                        @item.Studentinfo.StudentCategory.Description
+                    }
+                </td>
+                <td>
+                    @item.Studentinfo.PerDistrict
+                </td>
+                <td>
+                    @item.Studentinfo.PerCountry
+                </td>
+            </tr>
+                    i++;
+        }
+    </table>
+</div>

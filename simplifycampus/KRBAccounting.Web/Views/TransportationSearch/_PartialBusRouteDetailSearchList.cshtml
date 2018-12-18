@@ -1,0 +1,78 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<IGrouping<string, KRBAccounting.Domain.Entities.ScBusRouteDetails>>
+@{
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Route Description
+                </th>
+                <th>
+                    Applicable Date
+                </th>
+                <th>
+                    Bus
+                </th>
+                <th>
+                    Fuel
+                </th>
+                <th>
+                    Bus Stops
+                </th>
+                <th>
+                    Remarks
+                </th>
+                <th width="5%">
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@item.FirstOrDefault().BusRouteDescription
+                    </td>
+                    <td>@item.FirstOrDefault().ApplicableDate.ToShortDateString()
+                    </td>
+                    <td>@UtilityService.GetBusById(item.FirstOrDefault().BusId)
+                    </td>
+                    <td>@item.FirstOrDefault().Fuel
+                    </td>
+                    <td>@UtilityService.GetBusStops(item.FirstOrDefault().BusRouteDescription)
+                    </td>
+                    <td>@item.FirstOrDefault().Remarks
+                    </td>
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="#"  class="editScBusRouteDetails icon-edit" data-id="@item.FirstOrDefault().BusRouteDescription" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("BusRouteDetailsDelete", new { routeDescription = item.FirstOrDefault().BusRouteDescription })" class="deleteScBusStop icon-remove" data-id="" title="Delete" onclick = "return confirm('Are you sure you wish to delete this bus route?')">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+</div>

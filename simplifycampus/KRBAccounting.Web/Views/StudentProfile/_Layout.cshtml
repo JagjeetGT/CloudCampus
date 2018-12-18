@@ -1,0 +1,419 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Web.Helpers
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="/Scripts/jquery-1.7.1.js"></script>
+            <script src="/Scripts/jquery.signalR-1.1.3.min.js" type="text/javascript"></script>
+            <script src="@Url.Content("~/signalr/hubs")"></script>
+    <script src="/Scripts/jquery.unobtrusive-ajax.js" type="text/javascript"></script>
+
+    <script src="../../Scripts/custom.js" type="text/javascript"></script>
+    <script src="../../Scripts/jquery.blockUI.js" type="text/javascript"></script>
+    <script src="/Content/social/assets/js/jquery-ui/js/jquery-ui-1.10.1.custom.min.js"></script>
+        <script src="/Content/social/assets/js/twitter-bootstrap/bootstrap.js"></script>
+        <script src="/Content/social/assets/js/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+        <!--[if lte IE 8]>
+            <script src="/templates/social/assets/js/placeholders/placeholders.min.js"></script>
+        <![endif]-->
+        <script src="/Content/social/assets/js/extents.js"></script>
+        <script src="/Content/social/assets/js/app.js"></script>
+        <script src="/Content/social/assets/js/jquery-fullcalendar/fullcalendar/fullcalendar.min.js"></script>
+        <script src="/Content/social/assets/js/jqvmap/jqvmap/jquery.vmap.min.js"></script>
+        <script src="/Content/social/assets/js/jqvmap/jqvmap/maps/jquery.vmap.world.js"></script>
+        <script src="/Content/social/assets/js/jqvmap/jqvmap/data/jquery.vmap.sampledata.js"></script>
+        <script src="/Content/social/assets/js/jquery-flot/jquery.flot.js"></script>
+        <script src="/Content/social/assets/js/jquery-flot/jquery.flot.resize.js"></script>
+        <script src="/Content/social/assets/js/jquery-flot/jquery.flot.selection.js"></script>
+        <script src="/Content/social/assets/js/jquery-sparkline/jquery.sparkline.min.js"></script>
+
+    <script src="/Content/social/assets/js/jquery-uniform/jquery.uniform.min.js"></script>
+    
+    
+
+    <link href="/Content/social/assets/css/twitter-bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="/Content/social/assets/css/social.css" rel="stylesheet">
+    <link href="/Content/social/assets/css/social.plugins.css" rel="stylesheet">
+    <link href="/Content/social/assets/css/social.examples.css" rel="stylesheet">
+    <link href="/Content/social/assets/css/font-awesome.css" rel="stylesheet">
+    <link href="/Content/social/assets/css/twitter-bootstrap/bootstrap-responsive.css"
+        rel="stylesheet">
+    <link href="/Content/social/assets/css/docs.css" rel="stylesheet">
+    <link href="/Content/social/assets/js/jqvmap/jqvmap/jqvmap.css" rel="stylesheet">
+    <link href="/Content/social/assets/js/bootstrap-wysihtml5/src/bootstrap-wysihtml5.css"
+        rel="stylesheet">
+    <link href="/Content/social/assets/js/bootstrap-fileupload/bootstrap-fileupload.min.css"
+        rel="stylesheet">
+    <link href="/Content/social/assets/js/jquery-uniform/themes/default/css/uniform.default.min.css"
+        rel="stylesheet">
+    <style>
+        #g1, #g2, #g3
+        {
+            width: 200px;
+            height: 160px;
+            display: inline-block;
+        }
+    </style>
+    <style>
+        .wraper #main
+        {
+            margin-top: 40px;
+        }
+    </style>
+    <script>
+        ie = false;
+    </script>
+    <!--[if lt IE 9]>
+      <script src="/templates/social/assets/js/html5shiv.js"></script>
+    <![endif]-->
+    <!--[if lte IE 8]>
+    <script src="/templates/social/assets/js/respond/respond.min.js"></script>
+    <script>
+        ie = 8;
+    </script>
+    <![endif]-->
+    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="/templates/social/assets/js/jquery-flot/excanvas.min.js"></script><![endif]-->
+    <script type="text/javascript">
+      /*<![CDATA[*/
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38708835-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    /*]]>*/
+    </script>
+</head>
+    <body>
+        @{
+            var studentId = @UtilityService.GetStudentId(User.Identity.Name);
+            var classId = UtilityService.GetClassId(User.Identity.Name);
+            var totalmsg = UtilityService.GetMessageCount(User.Identity.Name);
+           // var totalmsgNot = UtilityService.GetMessageCountForNotification(User.Identity.Name);
+        }
+        <div class="wraper sidebar-full">
+            <aside class="social-sidebar sidebar-full">
+                <div class="user-settings">
+                    <div class="arrow"></div>
+                    <h3 class="user-settings-title">Settings shortcuts</h3>
+                    <div class="user-settings-content">
+                        <a href="@Url.Action("Profile", new { name = User.Identity.Name })">
+                            <div class="icon">
+                                <i class="icon-user"></i>
+                            </div>
+                            <div class="title">My Profile</div>
+                            <div class="content">View your profile</div>
+                        </a>
+                        <a href="#view-messages">
+                            <div class="icon">
+                                <i class="icon-envelope-alt"></i>
+                            </div>
+                            <div class="title">View Messages</div>
+                            <div class="content">You have <strong>11</strong> new messages</div>
+                        </a>
+                        <a href="#view-pending-tasks">
+                            <div class="icon">
+                                <i class="icon-tasks"></i>
+                            </div>
+                            <div class="title">View Tasks</div>
+                            <div class="content">You have <strong>8</strong> pending tasks</div>
+                        </a>
+                    </div>
+                    <div class="user-settings-footer">
+                        <a href="#more-settings">See more settings</a>
+                    </div>
+                </div>
+                <div class="social-sidebar-content">
+                    <div class="scrollable">
+                 
+                        <div class="user">
+                            <a href="@Url.Action("Profile", new { name = User.Identity.Name })">
+                                <img class="avatar" width="25" height="25" src="@KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name)" alt="@UtilityService.GetUserByUserName(User.Identity.Name)">
+                            </a>  <span data-toggle="dropdown">@UtilityService.GetUserByUserName(User.Identity.Name)</span>
+                           
+                           
+                            @*<i class="icon-user trigger-user-settings"></i>*@
+                        </div>
+                        <div class="navigation-sidebar">
+                            <i class="switch-sidebar-icon icon-chevron-left"></i>
+                            <i class="switch-sidebar-full icon-chevron-right"></i>
+                            <span>Navigation</span>
+                        </div>
+                        <section class="menu">
+                            <div id="accordion2" class="accordion">
+                        
+                                <div class="accordion-group active">
+                                
+                                    <div class="accordion-heading">
+                                    
+
+                                        <a href="@Url.Action("Index")" class="accordion-toggle ">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/home.png">
+                                            <span>Dashboard </span> </a>
+                                    </div>  </div>  
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a href="#collapse-maps" data-parent="#accordion2" data-toggle="collapse" class="accordion-toggle collapsed">
+
+                                            <img alt="Maps" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/subject.png">
+                                            <span>Subjects </span><span class="arrow"></span>
+                                        </a>
+                                    </div>
+                                    <ul class="accordion-body nav nav-list collapse" id="collapse-maps" style="height:0px;">
+                                    
+                                        @foreach (var item in UtilityService.GetSubjectByStudentId(User.Identity.Name))
+                                        {
+                                            <li><a href="#">@item</a></li>
+                                        }
+                                   
+                                   
+                                    </ul>
+                                </div>  
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                    
+                                        <a href="@Url.Action("ClassRoutine")" class="accordion-toggle ">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/conference.png">
+                                            <span>Class Routine </span> </a> 
+                                    </div>  </div>  
+                                           <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                    
+                                        
+                                        <a href="#exam-routine" data-parent="#accordion2" data-toggle="collapse" class="accordion-toggle">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/exam-routine.png">
+                                            <span>Exam Routine </span><span class="arrow"></span> </a>
+
+                                    </div> 
+                                    <ul class="accordion-body nav nav-list collapse" id="exam-routine" style="height: 0px;">
+                                        
+                                    
+                                        @foreach (var item in UtilityService.GetExamist())
+                                        {
+                                            <li><a href="@Url.Action("ExamRoutine", "StudentProfile", new { classId = classId, examId = item.Value })">@item.Text</a></li>
+                                        }
+                                   
+                                   
+                                    </ul>
+                                </div>  
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                    
+                                        
+                                        <a href="#marksheet" data-parent="#accordion2" data-toggle="collapse" class="accordion-toggle">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/invoice.png">
+                                            <span>Marksheet </span><span class="arrow"></span> </a>
+
+                                    </div> 
+                                    <ul class="accordion-body nav nav-list collapse" id="marksheet" style="height: 0px;">
+                                        
+                                    
+                                        @foreach (var item in UtilityService.GetExamist())
+                                        {
+                                           <li><a href="@Url.Action("ExamResult", "StudentProfile", new {studentId=studentId, classId = classId, examId = item.Value })">@item.Text</a></li>
+                                           
+                                        }
+                                   
+                                   
+                                    </ul>
+                                </div>  
+                         
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a href="#" class="accordion-toggle ">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/note.png">
+                                            <span>Assignments</span> </a>
+                                    </div>
+                                </div>  
+                                <div class="accordion-group">
+                            
+                                    <div class="accordion-heading">
+                                        <a href="/StudentProfile/AcademicCalendar" class="accordion-toggle ">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/calendar.png">
+                                            <span>Academic Calendar </span>
+                                        </a>
+
+
+
+                                    </div> 
+                                </div>  
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <a href="#" class="accordion-toggle ">
+                                            <img alt="Charts" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/photography.png">
+                                            <span>Gallery </span> </a>
+
+
+
+                                    </div> </div>  
+                      
+                  
+                    
+
+                            </div>
+                        </section>
+                    </div>
+                </div> </aside>
+            <header>
+           
+                <nav class="navbar navbar-blue navbar-fixed-top social-navbar">
+                    <div class="navbar-inner">
+                        <div class="container-fluid">
+                            <a class="btn btn-navbar" data-toggle="collapse" data-target=".social-sidebar">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </a>
+                            <a class="brand" href="dashboard.html">
+                                @KRBAccounting.Service.UtilityService.GetBranchNameByUserName(User.Identity.Name)
+                            </a>
+                            <div id="NotificationArea">
+                                @* <ul class="nav pull-right nav-indicators">
+                                    <li class="dropdown nav-notifications">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <span class="badge"></span><i class="icon-warning-sign"></i>
+                                        </a>
+                        
+                                    </li>
+
+
+                                    <li class="dropdown nav-messages">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            @if(totalmsg.Count!=0)
+                                            {
+                                                <span class="badge"> @totalmsg.Count</span>  
+                                            }
+                                                       
+                                       
+                                            <i class="icon-envelope-alt"></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                            <li class="nav-messages-header">
+                                                <a tabindex="-1" href="#">You have <strong>@totalmsg.Count</strong> new messages</a>
+                                            </li>
+                                           
+                                                
+                                            
+                                            @foreach (var item in totalmsg.Take(5))
+                                            {
+                                                <li class="nav-message-body">
+                                                    <a href="@Url.Action("MessageInbox", "StudentProfile")">
+                                                        <img src="/Content/social/assets/img/avatars/user-55x55.png" alt="User">
+                                                        <div>
+                                                            <small class="pull-right">@item.MsgTime</small>
+                                                            <strong>@item.StudentName</strong>
+                                                   
+                                                        </div>
+                                                        <div>
+                                                            @item.MsgSubject
+                                                            <br/>
+                                                            <small>@Utility.TrimText(item.MsgBody, 5) <span style="float: right">@item.MsgDate.ToString("MMM") @item.MsgDate.ToString("dd")</span>  </small>
+                                                        </div>
+                                                    </a>
+                                                </li>
+  
+                                            }
+                                           
+                                       
+                                       
+                                        
+                                      
+                                            <li class="nav-messages-footer">
+                                                <a tabindex="-1" href="@Url.Action("MessageInbox", "StudentProfile")">View all messages
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="divider-vertical"></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
+                                        <ul class="dropdown-menu">
+                                            <li> <a href="@Url.Action("Profile", new { name = User.Identity.Name })"><i class="icon-user"></i> My Profile</a></li>
+                                   
+                                   
+                                            <li><a href="@Url.Action("Setting")"><i class="icon-cogs"></i> Settings</a></li>
+                                            <li><a href="@Url.Action("LogOff", "Account")"><i class="icon-off"></i> Log Out</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#"><i class="icon-info-sign"></i> Help</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>*@
+                                @Html.Action("Notification","StudentProfile")
+                                </div>
+                        </div>
+                    </div>
+                </nav> </header>  
+            <div id="main">
+                
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        @* <div class="span12">
+            <h3 class="page-title">
+                Dashboard
+            </h3>
+            <ul class="breadcrumb">
+                <li><i class="icon-home"></i><a href="#">Dashboard</a> </li>
+                <li style="margin-left: 150px"><i class="icon-home"></i><a href="#">Teacher</a> </li>
+                <li style="margin-left: 150px"><i class="icon-home"></i><a href="/StudentProfile/Library">Library</a> </li>
+                <li style="margin-left: 150px"><i class="icon-home"></i><a href="@Url.Action("Friends","StudentProfile",new{studentId=Model.StudentRegistrationDetail.StudentId,classId=Model.StudentRegistrationDetail.Studentinfo.ClassId})">Friends</a> </li>
+            </ul>
+        </div>*@
+                        @RenderBody()
+                    </div>
+                    <nav class="navbar navbar-blue navbar-fixed-bottom social-navbar">
+                    <footer id="footer" style="height: 10px" >
+                        <div class="container-fluid ">
+       
+                            @DateTime.UtcNow.Year © <em>Developed </em> by <a href="http://www.Emeron.com" target="_blank">Emeron Studio</a>.
+                        </div>
+                    </footer>
+                    </nav>
+            </div>
+        </div> </div>
+        
+    </body>
+</html>
+<script>
+    $(".accordion-group").live("click", function () {
+        $(".accordion-group").removeClass("active");
+        $(this).addClass("active");
+    });
+    $(function () {
+        // Declare a proxy to reference the hub.
+        var chat = $.connection.chatHub;
+        // Create a function that the hub can call to broadcast messages.
+        chat.client.updateKOTlist = function () {
+            // Html encode display name and message.
+            var url = '@Url.Action("Notification","StudentProfile")';
+            $.post(url, function (data) {
+                $("#NotificationArea").html(data);
+                
+            });
+
+        };
+
+
+        // Get the user name and store it to prepend to messages.
+        //        $('#displayname').val(prompt('Enter your name:', ''));
+        // Set initial focus to message input box.
+        //  $('#message').focus();
+        // Start the connection.
+        $.connection.hub.start().done(function () {
+            $('#sendmessage').click(function () {
+                // Call the Send method on the hub.
+                chat.server.send();
+                // Clear text box and reset focus for next comment.
+                $('#message').val('').focus();
+            });
+        });
+    });
+    
+</script>

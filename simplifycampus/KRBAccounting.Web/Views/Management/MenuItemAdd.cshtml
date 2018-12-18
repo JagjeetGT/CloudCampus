@@ -1,0 +1,54 @@
+﻿@model KRBAccounting.Domain.Entities.MenuItem
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("MenuItemAdd", "Management", new { controller = "Management" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{ 
+    <div style="width: 300px">
+        <div class="lag">
+            <span class="stack">
+                <label class="label-90">
+                    Action</label>
+                <span class="field">@Html.TextBoxFor(m => m.Action, new { @class = "input-100 input", entermsg = "Enter Action" })
+                    @Html.ValidationMessageFor(m => m.Action) </span></span>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-90">
+                    Controller</label>
+                <span class="field">@Html.TextBoxFor(m => m.Controller, new { @class = "input-100 input", entermsg = "Enter Controller" })
+                    @Html.ValidationMessageFor(m => m.Controller) </span></span>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-90">
+                    LinkText</label>
+                <span class="field">@Html.TextBoxFor(m => m.LinkText, new { @class = "input-100 input", entermsg = "Enter LinkText" })
+                    @Html.ValidationMessageFor(m => m.LinkText) </span></span>
+        </div>
+         <div class="lag">
+            <span class="stack">
+                <label class="label-90">
+                    Schedule </label>
+                <span class="field">@Html.TextBoxFor(m => m.Schedule, new { @class = "input-100 input", entermsg = "Enter LinkText" })
+                    @Html.ValidationMessageFor(m => m.Schedule) </span></span>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-90">
+                    Module</label>
+                <span class="field">
+                    @Html.HiddenFor(m=>m.ModuleId)
+                    <input type="text" class = "modallink input input-100" href="@Url.Action("GetModuleList", "Master")" valueId="ModuleId" id="ModuleName" title="Parent Menus" />
+                    @Html.ValidationMessageFor(m => m.ModuleId)
+                </span></span>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-90">
+                    Parent</label>
+                <span class="field">
+                    @Html.HiddenFor(x => x.ParentId)
+                    <input type="text" class = "modallink input input-100" href="@Url.Action("GetParentMenuList", "Management")" valueId="ParentId" id="ParentMenu" title="Parent Menus" /></span></span>
+        </div>
+    </div>
+}

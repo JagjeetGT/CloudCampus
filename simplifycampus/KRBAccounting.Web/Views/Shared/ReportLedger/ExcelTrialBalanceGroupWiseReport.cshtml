@@ -1,0 +1,644 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.TrialBalanceReportGroupWiseViewModel
+
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@{
+    decimal debitTotal = decimal.Zero;
+    decimal creditTotal = decimal.Zero;
+    decimal diff = 0;
+    var Grpcode = "";
+    var SubGrpcode = "";
+    var Ledger = "";
+}
+@Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+<br />
+
+  @if (Model.AccountSubGroup == false && Model.Ledger == false)
+    {
+        <table border="1" style="font-size: 12px;">
+            <thead>
+               <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Debit Amount
+                    </th>
+                    <th>
+                        Credit Amount
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var item in Model.ReportList)
+            {
+                <tr>
+                    <td>@item.Description
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.DebitCredit > 0)
+                        {
+                            debitTotal += item.DebitCredit;<text>@item.DebitCredit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.DebitCredit < 0)
+                        {
+                            creditTotal += Math.Abs(item.DebitCredit);<text>@Math.Abs(item.DebitCredit)</text>
+                        }
+                    </td>
+                </tr>
+            }
+            <tr class="bold numbericfield">
+                <td>
+                    Total
+                </td>
+                <td style="text-align: right">@debitTotal
+                </td>
+                <td style="text-align: right">@creditTotal
+                </td>
+            </tr>
+            @{
+            diff = debitTotal - Math.Abs(creditTotal);
+            }
+            @if (diff != 0)
+            {
+                <tr class="bold numbericfield">
+                    <td>
+                        Difference
+                    </td>
+                    <td style="text-align: right">@diff
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    @*-----   End Account Group Wise Trial Balance   --------*@
+    
+    @*-----   Start Account Group With Account Sub Group Wise Trial Balance   --------*@
+    else if (Model.AccountSubGroup == true && Model.Ledger == false)
+    {
+        <table border="1" style="font-size: 12px;">
+            <thead>
+               <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Sub Group Balance
+                    </th>
+                    <th>
+                        Debit Amount
+                    </th>
+                    <th>
+                        Credit Amount
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var item in Model.ReportList)
+            {
+                if (Grpcode != item.Code)
+                {
+                    Grpcode = item.Code;
+                    <tr>
+                        <td  style="font-weight: bold">@item.Description   
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right;font-weight: bold">
+                            @if (item.DebitCredit > 0)
+                            {
+                                <text>@item.DebitCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right;font-weight: bold">
+                            @if (item.DebitCredit < 0)
+                            {
+                                <text>@Math.Abs(item.DebitCredit)</text>
+                            }
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="padding-left: 30px">@item.ASGDesc   
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.DebitCredit > 0)
+                            {
+                                debitTotal += item.DebitCredit;<text>@item.DebitCredit  Dr</text>
+                            }
+                            @if (item.DebitCredit < 0)
+                            {
+                                creditTotal += Math.Abs(item.DebitCredit);<text>@Math.Abs(item.DebitCredit)  Cr</text>
+                            }
+                        </td>
+                        <td >
+                        </td>
+                        <td style="text-align: right">
+                        </td>
+                    </tr>
+                }
+            }
+            <tr class="bold numbericfield">
+                <td>
+                    Total
+                </td>
+                <td>
+                </td>
+                <td style="text-align: right">@debitTotal
+                </td>
+                <td style="text-align: right">@creditTotal
+                </td>
+            </tr>
+            @{
+            diff = debitTotal - Math.Abs(creditTotal);
+            }
+            @if (diff != 0)
+            {
+                <tr class="bold numbericfield">
+                    <td>
+                        Difference
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right">@diff
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    @*-----   End Account Group With Account Sub Group Wise Trial Balance   --------*@
+    
+    @*-----   Start Account Group With Ledger Wise Trial Balance   --------*@
+    else if (Model.AccountSubGroup == false && Model.Ledger == true)
+    {
+        <table border="1" style="font-size: 12px;">
+            <thead>
+             <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Ledger Balance
+                    </th>
+                    <th>
+                        Debit Amount
+                    </th>
+                    <th>
+                        Credit Amount
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var item in Model.ReportList)
+            {
+                if (Grpcode != item.Code)
+                {
+                    Grpcode = item.Code;
+                    <tr>
+                        <td>
+                        </td>
+                        <td  style="font-weight: bold">@item.Description   
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right;font-weight: bold">
+                            @if (item.DebitCredit > 0)
+                            {
+                                <text>@item.DebitCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right;font-weight: bold">
+                            @if (item.DebitCredit < 0)
+                            {
+                                <text>@Math.Abs(item.DebitCredit)</text>
+                            }
+                        </td>
+                    </tr>
+                }
+                else
+                {
+
+                    <tr>
+                        <td>
+                            @item.ShortName
+                        </td >
+                        <td style="padding-left: 30px">@item.AccountName   
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.DebitCredit > 0)
+                            {
+                                debitTotal += item.DebitCredit;<text>@item.DebitCredit  Dr</text>
+                            }
+                            @if (item.DebitCredit < 0)
+                            {
+                                creditTotal += Math.Abs(item.DebitCredit);<text>@Math.Abs(item.DebitCredit)  Cr</text>
+                            }
+                        </td>
+                        <td >
+                           
+                        </td>
+                        <td style="text-align: right">
+                           
+                        </td>
+                    </tr>
+                }
+            }
+            <tr class="bold numbericfield">
+                <td>
+                </td>
+                <td>
+                    Total
+                </td>
+                <td>
+                </td>
+                <td style="text-align: right">@debitTotal
+                </td>
+                <td style="text-align: right">@creditTotal
+                </td>
+            </tr>
+            @{
+            diff = debitTotal - Math.Abs(creditTotal);
+            }
+            @if (diff != 0)
+            {
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Difference
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right">@diff
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    @*-----   End Account Group With Ledger Wise Trial Balance   --------*@
+        
+    @*-----   Start Account Group and Sub Group and Ledger Wise Trial Balance   --------*@
+    else if (Model.AccountSubGroup == true && Model.Ledger == true)
+    {
+        if (Model.AccountSubGroup == true && Model.Ledger == true && Model.SubLedger == false)
+        {
+         <table border="1" style="font-size: 12px;">
+                <thead>
+                  <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                        <th>
+                            Code
+                        </th>
+                        <th>
+                            Particular
+                        </th>
+                        <th>
+                            Ledger Balance
+                        </th>
+                        <th>
+                            Sub Group Balance
+                        </th>
+                        <th>
+                            Debit Amount
+                        </th>
+                        <th>
+                            Credit Amount
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.ReportList)
+                {
+                    if (Grpcode != item.Code)
+                    {
+                        Grpcode = item.Code;
+                        SubGrpcode = "";
+                        <tr>
+                            <td>
+                            </td>
+                            <td  style="font-weight: bold">@item.Description   
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="text-align: right;font-weight: bold">
+                                @if (item.DebitCredit > 0)
+                                {
+                                    <text>@item.DebitCredit</text>
+                                }
+                            </td>
+                            <td style="text-align: right;font-weight: bold">
+                                @if (item.DebitCredit < 0)
+                                {
+                                    <text>@Math.Abs(item.DebitCredit)</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        if (SubGrpcode != item.ASGDesc)
+                        {
+                            SubGrpcode = item.ASGDesc;
+                            <tr>
+                                <td>
+                                </td >
+                                <td style="padding-left: 30px">@item.ASGDesc   
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right">
+                                    @if (item.DebitCredit > 0)
+                                    {
+                                       <text>@item.DebitCredit  Dr</text>
+                                    }
+                                    @if (item.DebitCredit < 0)
+                                    {
+                                        <text>@Math.Abs(item.DebitCredit)  Cr</text>
+                                    }
+                                </td>
+                                <td >
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>
+                                    @item.ShortName
+                                </td >
+                                <td style="padding-left: 45px">@item.AccountName   
+                                </td>
+                                <td style="text-align: right">
+                                    @if (item.DebitCredit > 0)
+                                    {
+                                        debitTotal += item.DebitCredit;<text>@item.DebitCredit  Dr</text>
+                                    }
+                                    @if (item.DebitCredit < 0)
+                                    {
+                                        creditTotal += Math.Abs(item.DebitCredit);<text>@Math.Abs(item.DebitCredit)  Cr</text>
+                                    }
+                                </td>
+                                <td >
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right">@debitTotal
+                    </td>
+                    <td style="text-align: right">@creditTotal
+                    </td>
+                </tr>
+                @{
+                diff = debitTotal - Math.Abs(creditTotal);
+                }
+                @if (diff != 0)
+                {
+                    <tr class="bold numbericfield">
+                        <td>
+                        </td>
+                        <td>
+                            Difference
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@diff
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else if (Model.AccountSubGroup == true && Model.Ledger == true && Model.SubLedger == true)
+        {
+            <table border="1" style="font-size: 12px;">
+                <thead>
+                   <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                        <th>
+                            Code
+                        </th>
+                        <th>
+                            Particular
+                        </th>
+                        <th>
+                           Sub Ledger Balance
+                        </th>
+                        <th>
+                            Ledger Balance
+                        </th>
+                        <th>
+                            Sub Group Balance
+                        </th>
+                        <th>
+                            Debit Amount
+                        </th>
+                        <th>
+                            Credit Amount
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.ReportList)
+                {
+                    if (Grpcode != item.Code)
+                    {
+                        Grpcode = item.Code;
+                        SubGrpcode = "";
+                        Ledger = "";
+                        <tr>
+                            <td>
+                            </td>
+                            <td  style="font-weight: bold">@item.Description   
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="text-align: right;font-weight: bold">
+                                @if (item.DebitCredit > 0)
+                                {
+                                    <text>@item.DebitCredit</text>
+                                }
+                            </td>
+                            <td style="text-align: right;font-weight: bold">
+                                @if (item.DebitCredit < 0)
+                                {
+                                    <text>@Math.Abs(item.DebitCredit)</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        if (SubGrpcode != item.ASGDesc)
+                        {
+                            SubGrpcode = item.ASGDesc;
+                            Ledger = "";
+                            <tr>
+                                <td>
+                                </td >
+                                <td style="font-weight: bold; padding-left: 30px">@item.ASGDesc   
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right">
+                                    @if (item.DebitCredit > 0)
+                                    {
+                                       <text>@item.DebitCredit  Dr</text>
+                                    }
+                                    @if (item.DebitCredit < 0)
+                                    {
+                                        <text>@Math.Abs(item.DebitCredit)  Cr</text>
+                                    }
+                                </td>
+                                <td >
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            if (Ledger != item.AccountName)
+                            {
+                                Ledger = item.AccountName;
+                                <tr>
+                                    <td>
+                                        @item.ShortName
+                                    </td >
+                                    <td style="padding-left: 45px">@item.AccountName   
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right">
+                                        @if (item.DebitCredit > 0)
+                                        {
+                                            <text>@item.DebitCredit  Dr</text>
+                                        }
+                                        @if (item.DebitCredit < 0)
+                                        {
+                                           <text>@Math.Abs(item.DebitCredit)  Cr</text>
+                                        }
+                                    </td>
+                                    <td >
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                 <tr>
+                                    <td style="padding-left: 20px">
+                                        @item.SLShortName
+                                    </td >
+                                    <td style="padding-left: 60px">@item.SLAccountName  
+                                    </td>
+                                    <td style="text-align: right">
+                                        @if (item.DebitCredit > 0)
+                                        {
+                                            debitTotal += item.DebitCredit;<text>@item.DebitCredit  Dr</text>
+                                        }
+                                        @if (item.DebitCredit < 0)
+                                        {
+                                            creditTotal += Math.Abs(item.DebitCredit);<text>@Math.Abs(item.DebitCredit)  Cr</text>
+                                        }
+                                    </td>
+                                    <td >
+                                    </td>
+                                    <td>
+                                    </td>
+                                     <td>
+                                     </td>
+                                     <td>
+                                    </td>
+                                </tr>
+                                
+                            }
+                        }
+                    }
+                }
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right">@debitTotal
+                    </td>
+                    <td style="text-align: right">@creditTotal
+                    </td>
+                </tr>
+                @{
+                diff = debitTotal - Math.Abs(creditTotal);
+                }
+                @if (diff != 0)
+                {
+                    <tr class="bold numbericfield">
+                        <td>
+                        </td>
+                        <td>
+                            Difference
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@diff
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    }

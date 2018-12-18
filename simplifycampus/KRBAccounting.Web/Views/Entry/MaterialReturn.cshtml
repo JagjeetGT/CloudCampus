@@ -1,0 +1,366 @@
+﻿@using KRBAccounting.Service.Models
+@model KRBAccounting.Web.ViewModels.Entry.MaterialReturnViewModel
+@{
+    ViewBag.Title = "Material Return";
+    var userRight = (UserRight) ViewBag.UserRight;
+
+
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@Html.Partial("_PartialInventoryIssueBredcrumb")
+<div id="debitnote-list">
+    <div class="workplace">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Material Return</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addMR"></a></li>
+                        }
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid table-sorting" id="tbl-pending">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list" id="table-mr">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Return No
+                                </th>
+                                <th>Issue Desc</th>
+                                <th>Cost Center</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.MaterialReturns)
+                            {
+                                var trId = "id-" + item.Id;
+                                <tr id="@trId">
+                                    <td>@item.Code
+                                    </td>
+                                    <td>@item.MaterialIssue.Description</td>
+                                    <td>@item.CostCenter.Name</td>
+                                    <td>
+                                          @if (userRight.Edit)
+                                          {
+                                               <a href="javascript:void(0)" class="MREdit icon-pencil" data-id="@item.Id" title="Edit: @item.Code">
+                                        </a>
+                                          }
+                                       | 
+                                          @if (userRight.Delete)
+                                          {
+                                              <a href="javascript:void(0)" class="MRRemove icon-remove" data-id="@item.Id" title="Delete: @item.Code">
+                                              </a>
+                                          }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        @Html.Raw(Html.AjaxPager(Model.MaterialReturns, "MaterialReturnList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dr">
+            <span></span>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalMR" style="display: none;" title="Material Return(+)">
+    <div class="block">
+    </div>
+</div>
+<div class="dialog" id="modalMREdit" style="display: none;" title="Material Return Edit">
+    <div class="block">
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/jQuery.tmpl.min.js")" type="text/javascript"></script>
+<script type="text/x-jquery-tmpl" id="MRAddTemplate">
+    
+    @Html.CollectionItemJQueryTemplate("MaterialReturnAddEdit", Model.MaterialReturnAddViewModel)
+</script>
+<script type="text/x-jquery-tmpl" id="MRDetailAddTemplate">
+     @{
+         var model = new KRBAccounting.Web.ViewModels.Entry.MaterialReturnDetailAddViewModel();
+         model.UnitList = Model.MaterialReturnAddViewModel.UnitList;
+         model.EntryControl = Model.EntryControl;
+      }
+    @Html.CollectionItemJQueryTemplate("_PartialMRDetailEntry", model)
+</script>
+<script type="text/javascript">
+    $('a.addMR').live('click', function () {
+        var guid = _generateGuid();
+        $('#modalMR .block').html($("#MRAddTemplate").tmpl({ index: guid }));
+        $.validator.unobtrusive.parse("#mr-form");
+        $("#modalMR").dialog('open');
+      var dateType = @Model.DateType.ToString();
+        if (dateType == "1") {
+            $("#ReturnDate,#DisplayDate").mask("99/99/9999");
+            $("#ReturnDate,#DisplayDate").live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#ReturnDate,#DisplayDate").mask("9999/99/99");
+            $("#ReturnDate,#DisplayDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+        return false;
+    });
+   
+    $("#modalMR").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $(".ui-dialog #mr-form");
+                var isValid = form.valid();
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if (isValid) {
+                     var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index == 0 || index != length - 1) {
+                            if ($(this).find(".product_text").val() == 0 ) {
+                                isValid = false;
+                                $(this).find(".product_text").addClass("error").focus();
+                            }
+                            if ($(this).find(".costCenter").val() == 0 || $(this).find(".costCenter").val == "") {
+                                if (isValid) {
+                                    $(this).find(".costCenter").addClass("error").focus();
+                                } else {
+                                    $(this).find(".costCenter").addClass("error");
+                                }
+                            }
+                            if ($(this).find(".godown").val() == 0 || $(this).find(".godown").val == "") {
+                                if (isValid) {
+                                    $(this).find(".godown").addClass("error").focus();
+                                } else {
+                                    $(this).find(".godown").addClass("error");
+                                }
+
+                            }
+                            if ($(this).find(".unit").val() == 0 || $(this).find(".unit").val == "") {
+                                if (isValid) {
+                                    $(this).find(".unit").addClass("error").focus();
+                                } else {
+                                    $(this).find(".unit").addClass("error");
+                                }
+                            }
+                            if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val == "") {
+                                if (isValid) {
+                                    $(this).find(".qty").addClass("error").focus();
+                                } else {
+                                    $(this).find(".qty").addClass("error");
+                                }
+                                isValid = false;
+                            }
+
+                        }
+                        
+                    });
+                    if(isValid) {
+                        $.ajax({
+                            type: "POST",
+                            url: form.attr('action'),
+                            data: form.serialize(),
+                            beforeSend: function() {
+                                $.blockUI();
+                            },
+                            success: function(data) {
+                                if (data.success) {
+                                    var guid = _generateGuid();
+                                    $('#modalMR .block').html($("#MRAddTemplate").tmpl({ index: guid }));
+                                    $.validator.unobtrusive.parse("#mr-form");
+                                    $("#table-mr tbody").append(data.newrow);
+                                } else {
+                                    $("#MsgError").html(data.msg).show();
+                                }
+                            },
+                            complete: function() {
+                                $.unblockUI();
+                            }
+                        });
+                    }
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("a.MRRemove").live("click", function () {
+        var result = confirm("Are you sure?");
+        if (result) {
+            BeginRequest();
+            var currentElement = $(this);
+            var id = $(this).attr("data-id");
+            var link = '@Url.Action("MaterialReturnDelete", "Entry")';
+            $.ajax({
+                url: link,
+                type: "POST",
+                data: { id: id },
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    if (data) {
+                        currentElement.closest('tr').remove();
+                        $.unblockUI();
+                        GrowlMsg('Delete Successful');
+                    }
+                    else {
+                        alert("could not be deleted");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#modalMREdit").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $(".ui-dialog #mr-form");
+                var isValid = form.valid();
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if (isValid) {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("MaterialReturnEdit", "Entry")',
+                        data: form.serialize(),
+                        beforeSend: function () {
+                            $.blockUI();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                var element = "#id-" + data.id;
+                                $(element).replaceWith(data.updatedRow);
+                                $('#modalMREdit .block').html("");
+                                $('#modalMREdit').dialog('close');
+                            }
+                            else {
+                                $("#MsgError").html(data.msg).show();
+                            }
+                        },
+                        complete: function () {
+                            $.unblockUI();
+                            GrowlMsg('Edit Successful');
+                        }
+                    });
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $('a.MREdit').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("MaterialReturnEdit", "Entry")';
+        BeginRequest();
+        $.ajax({
+            url: url,
+            data: { id: id },
+            context: document.body,
+            success: function (data) {
+                $('#modalMREdit .block').html(data);
+                $('#modalMREdit').dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                $.unblockUI();
+                alert("Error");
+            }
+        });
+
+        return false;
+    });
+
+    $(".qty").live("keyup", function () {
+        var totalQty = parseFloat(0);
+         $(this).removeClass("error");
+       $(this).closest("tr").find(".qty").removeClass("error");
+        $(".qty").each(function (index, element) {
+            if (element.value) {
+                totalQty += parseFloat(element.value);
+                }
+          });
+        
+        $("#TotalQty").val(totalQty);
+    });
+       
+    function PicklistCustomFunction(value, type) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("PopulateMaterialReturnDetails", "Entry")',
+            data: { id: value },
+            beforeSend: function () {
+                BeginRequest();
+            },
+            success: function (data) {
+                $("#CostCenter").val(data.CostCenter);
+                $("#CostCenterId").val(data.CostCenterId);
+//                $("#IssueDate").val(data.IssueDate);
+//                $("#IssueMiti").val(data.IssueMiti);
+                 $("#DisplayDate").val(data.DisplayDate);
+                $("#body-material-return-detail").html(data.materialReturnDetailView);
+                resetValidation();
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    }
+
+      $(".del-row").live('click', function (e) {
+        $(this).closest("tr").remove();
+        
+    });
+    
+    $("#ReturnDate").live("blur", function (e) {
+        var currentElement = $(this);
+        var date = $(this).val();
+        var url = '@Url.Action("CheckFiscalyearDateinMaterialReturn", "Entry")?ReturnDate=' + date;
+        $.post(url, function (data) {
+            if (data != "True") {
+                currentElement.addClass("error");
+                alert(data);
+
+            } else {
+                currentElement.removeClass("error");
+            }
+        });
+    });
+</script>

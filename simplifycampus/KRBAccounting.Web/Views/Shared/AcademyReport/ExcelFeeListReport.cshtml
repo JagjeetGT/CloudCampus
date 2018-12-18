@@ -1,0 +1,92 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportFeeListReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Code
+                </th>
+                 <th>
+                    GLCode
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Type
+                </th>
+
+                <th>
+                    Ledger Ac
+                </th>
+                <th>
+                    Education Tax
+                </th>
+               
+           
+                <th>
+                    Memo
+                </th>
+                @*<th>
+                    Schedule
+                </th>*@
+                
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.FeeList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>@item.Code
+                </td>
+                <td>@item.GLCode
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>@Enum.GetName(typeof(FeeTermType), item.Type)
+                    </td>
+                <td>
+                    @if(item.Ledger!=null)
+                    {
+                        @item.Ledger.AccountName
+                    }
+                </td>
+                
+                @*<td>
+                    @if (item.Ledger != null)
+                    {
+                        @item.Ledger.AccountName
+                    }
+                </td>*@
+                <td>@item.EducationTax
+                </td>
+                
+                
+                <td>@item.Memo</td>
+                    <@*td>@item.Schedule
+                    </td>*@
+                    
+            </tr>
+                    i++;
+        }
+    </table>
+</div>

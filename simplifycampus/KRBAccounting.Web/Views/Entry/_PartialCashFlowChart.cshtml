@@ -1,0 +1,82 @@
+﻿@model Web.ViewModels.Home.HomeViewModel
+@using System.Web.Script.Serialization
+@{
+    var serializer = new JavaScriptSerializer();
+}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        var categories = @Html.Raw(serializer.Serialize(Model.CashFlowInChart.Categories));
+        var Ins =@Html.Raw(serializer.Serialize(Model.CashFlowInChart.Total));
+        var Outs =@Html.Raw(serializer.Serialize(Model.CashFlowOutChart.Total));
+        var totalIns = new Highcharts.Chart({
+            chart: { renderTo: 'cashflow-statistics', defaultSeriesType: 'line' },
+            title: { text: '@Model.CurrentDate.ToString("MMMM") @Model.CurrentDate.Year', x: -20 /*center*/ },
+            subtitle: { text: '' },
+            xAxis: {
+                title: { text: 'Day' },
+                categories: categories
+            },
+            yAxis: {
+				labels: { formatter: function () { return this.value; }, style: { color: '#89A54E'} },
+                title: { text: 'Total Amount in Rs' },
+				lineWidth: 2,
+				plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }],
+				allowDecimals: false,
+				min: 0
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + '</b><br/>' + this.x + ': ' + this.y;
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: true
+                }
+            },
+			credits: { enabled: false },
+            legend: {
+
+                layout: 'vertical',
+
+                align: 'right',
+
+                verticalAlign: 'top',
+
+                x: -10,
+
+                y: 100,
+
+                borderWidth: 0
+
+            },
+            series: [{
+                name: 'Total Ins',
+                data: Ins
+            },
+            {
+                name: 'Total Out',
+                data: Outs
+            }]
+        });
+   });
+    </script>
+    <!--[if !IE]> START STATICS <![endif]-->
+    <table cellpadding="0" cellspacing="0" width="100%" id="CashFlowChart">
+        <tr>
+            <td style="width: 100%;">
+                @Ajax.ActionLink("Previous", "PreviousChart", "Home", new { currentDate = Model.CurrentDate.ToShortDateString() }, new AjaxOptions { UpdateTargetId = "CashFlowChart",OnBegin = "CashFlowBegin()",InsertionMode = InsertionMode.Replace }, new { @class = "btn-prev-chart" })
+                @Ajax.ActionLink("Next", "NextChart", "Home", new { currentDate = Model.CurrentDate.ToShortDateString() }, new AjaxOptions { UpdateTargetId = "CashFlowChart", OnBegin = "CashFlowBegin()", InsertionMode = InsertionMode.Replace }, new { @class = "btn-next-chart" })
+                <div id="cashflow-statistics">
+                </div>
+            </td>
+        </tr>
+    </table>
+

@@ -1,0 +1,74 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentIdCardaReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <ul style="margin: 0px; padding: 5px;">
+        @foreach (var item in Model.StudentRegistrationDetailList)
+        {
+            
+            <li style="float: left; width: 35%; border: 1px solid; margin: 10px;">
+                <ul style="margin: 0px; padding: 5px;">
+                    <li>
+                        <img width="150px" height="100px" src="../../Content/img/KohinoorAcademy.jpg" style="float: left;
+                            margin-right: 10px;">
+                        <div style="text-align: justify; background: none repeat scroll 0px 0px rgb(255, 255, 255);
+                            margin-bottom: -10px;">
+                            <b>@Model.ReportHeader.CompanyName</b>
+                            <br>
+                            @Model.ReportHeader.CompanyAddress</div>
+                    </li>
+                    <li style="clear: both;">
+                        <ul style="float: left; margin: 2px; width: 250px">
+                            <li style="float: left; width: 70px">Reg No </li>
+                            <li>: @item.Studentinfo.Regno</li>
+                            <li class="clearfix"></li>
+                            <li style="float: left; width: 70px">Name </li>
+                            <li>: @item.Studentinfo.StuDesc
+                            </li>
+                            <li class="clearfix"></li>
+                            <li style="float: left; width: 70px">Address</li>
+                            <li>: @item.Studentinfo.PerAdd
+                            </li>
+                            <li class="clearfix"></li>
+                            <li style="float: left; width: 70px">Roll No</li>
+                            <li>: @item.RollNo</li>
+                            <li class="clearfix"></li>
+                            <li style="float: left; width: 70px">DOB</li>
+                            <li>: @item.Studentinfo.DBO</li>
+                            <li class="clearfix"></li>
+                            <li style="float: left; width: 70px">Contact</li><li>: @item.Studentinfo.Phone</li>
+                            <li class="clearfix"></li>
+                            <li style="float: left; width: 70px">Email</li>
+                            <li>: @item.Studentinfo.EmailId</li>
+                        </ul>
+                        @if (!string.IsNullOrEmpty(item.Studentinfo.StdPhotoFileName))
+                        {
+                            <img src="../../Content/academicsimage/@item.Studentinfo.StdPhotoFileName@item.Studentinfo.StdPhotoExt" width="90px" height="90px" style="float: right;margin-top: 10px"/>
+                        }
+                        else
+                        {
+                            <img src="../../Content/img/NoImage.jpg" width="100px" height="100px" style="float: right;
+                                margin-top: 10px" />
+                        }
+                        <p>
+                        </p>
+                    </li>
+                    <li style="clear: both; background-color: #ffffff; height: 20px">Student Signature
+                    </li>
+                </ul>
+            </li>               
+    
+    
+    
+        }</ul>
+</div>
+<div class="clearfix">
+</div>

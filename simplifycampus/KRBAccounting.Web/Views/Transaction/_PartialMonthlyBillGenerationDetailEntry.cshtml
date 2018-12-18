@@ -1,0 +1,5 @@
+﻿@model IEnumerable<IGrouping<int,KRBAccounting.Web.ViewModels.Transaction.MonthlyBillGenerationDetailViewModel>>
+@foreach(var item in Model)
+{
+    @Html.Partial("_PartialMonthlyBillGenerationDetailEdit", item.FirstOrDefault())
+}

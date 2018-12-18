@@ -1,0 +1,215 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.StudentProfile.StudentProfileDashboard
+@{
+    ViewBag.Title = "Index";
+    Layout = "_Layout.cshtml";
+    
+}
+
+    <div class="row-fluid">
+        <div class="span12">
+            <h3 class="page-title">
+                Dashboard
+            </h3>
+            <ul class="breadcrumb">
+                <li><i class="icon-home"></i><a href="#">Dashboard</a> </li>
+                <li style="margin-left: 200px"><i class="icon-user"></i><a href="@Url.Action("TeacherList","StudentProfile",new{classId=Model.StudentRegistrationDetail.Studentinfo.ClassId})">Teacher</a> </li>
+                <li style="margin-left: 200px"><i class="icon-home"></i><a href="/StudentProfile/Library">Library</a> </li>
+                <li style="margin-left: 200px"><i class="icon-user"></i><a href="@Url.Action("Friends","StudentProfile",new{studentId=Model.StudentRegistrationDetail.StudentId,classId=Model.StudentRegistrationDetail.Studentinfo.ClassId})">Friends</a> </li>
+            </ul>
+        </div>
+
+    <div class="row-fluid">
+        <a href="#" class="icon-btn span2 offset2"><i class="icon-dashboard icon-1x "></i>
+            <div>
+                Class/Section</div>
+            <span title="Class" class="badge label-warning">@Model.StudentRegistrationDetail.Studentinfo.Class.Description</span>
+            <span title="Section" class="badge label-success badge-right">@if (Model.StudentRegistrationDetail.Section != null)
+                                                                          {
+                                                                              @Model.StudentRegistrationDetail.Section.Description
+                                                                          }</span>
+        </a>
+         @if(!string.IsNullOrEmpty(Model.ClassTeacher))
+         {
+             <a href="@Url.Action("TeacherProfile", "StudentProfile", new { teacherUsername = Model.TeacherUserName })" class="icon-btn span2"><i title="Class Teacher" class="icon-user"> @Model.ClassTeacher</i>
+                 <div>
+                     Class Teacher</div>
+                 </a>
+         }else
+         {
+             <a href="#" class="icon-btn span2"><i title="Class Teacher" class="icon-user"> </i>
+            <div>
+                Class Teacher</div>
+         </a>
+         }<a href="/StudentProfile/AcademicCalendar" class="icon-btn span2">
+                <i class="icon-calendar icon-1x"></i>
+                <div>
+                    Calendar</div>
+                <span class="badge label-important"></span> </a><a href="@Url.Action("MessageInbox", "StudentProfile")" class="icon-btn span2">
+                    <i class="icon-inbox icon-1x"></i>
+                    <div>
+                        Inbox</div>
+                    <span class="badge label-important badge-right">@Model.TotalMessage</span> </a>
+    </div>
+    <div class="row-fluid">
+        <div class="span6">
+            <section class="social-box">
+<header class="header" style="height: 30px">
+    <h4 style="width: 500px"><i></i> Library Section <a title="Library History" href="@Url.Action("StudentLibraryHistory","StudentProfile",new {studentId=Model.StudentRegistrationDetail.StudentId})">
+                                                         <i class="icon-briefcase"></i>
+                                                     </a>
+    
+        @using (Html.BeginForm("LibraryBookList", "StudentProfile", FormMethod.Post, new { @style = "float:right; margin-top: -5px;" }))
+        {
+            <div class="input-append">
+                
+                <input type="text" id="appendedInputButton"  placeholder = "Search" style="width: 150px" id="book_name"name="book_name"/> 
+<button type="submit" class="btn">Go!</button>
+</div>
+            
+        }
+    </h4>
+    
+</header>
+<div class="body">
+    <div id="demo-plot" class="plot">
+        <h6 class="feed-heading">Card No. (@Model.CardName.Count())  <span  style="float: right">
+                                               @{  int i = 0;}
+
+                                               @foreach (var item in Model.CardName)
+                                               {
+                                                   if (i == 0)
+                                                   {
+                                                       @item
+                                                   }
+                                                   else
+                                                   {
+                                                       <text>,</text>  @item
+  
+                                                   }
+                                                   i++;
+
+                                               }
+                                           </span> </h6>
+        <h6 class="feed-heading">No of Card(In Use)  <span class="label label-info" style="float: right">@Model.LibraryCardUsed</span> </h6>
+                                <div class="body">
+                        <table class="table" style="font-size: 12px">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Card No</th>
+                            <th>Book</th>
+                            <th>Publisher</th>
+                            <th>Date</th>
+                        <th>Due Date</th>
+                        <th>Fine</th>
+                        </tr>
+                        </thead>
+                            <tbody>
+                                @{
+                                    int SN0 = 1;
+                                }
+                                @foreach (var item in Model.CardDetails)
+                                {
+                                    <tr style="font-size: 10px">
+                                        <td>@SN0</td>
+                                        <td>@item.CardNo</td>
+                                        <td>@item.BookName, @item.Edition</td>
+                                        <td>@item.Publisher</td>
+                                        <td>@item.Date.ToShortDateString()</td>
+                                        <td>@item.DueDate.ToShortDateString()</td>
+                                        @if (item.Fine == 0)
+                                        {
+                                            <td></td>
+                                        }
+                                        else
+                                        {
+                                            
+                                        <td>
+                                          @item.Fine
+                                        </td>
+                                        }
+
+                                    </tr>
+                                        SN0++;
+
+                                }
+                                
+                            </tbody>
+                        </table>
+                        </div>
+        
+  
+
+    </div>
+</div>
+</section>
+        </div>
+          <div class="span6">
+            <section class="social-box">
+<header class="header">
+<h4><i></i> Fee Section<a title="Fee History" href="@Url.Action("FeeHistory","StudentProfile",new {studentId=Model.StudentRegistrationDetail.StudentId})">
+                                                         <i class="icon-briefcase"></i>
+                                                     </a></h4>
+
+</header>
+<div class="body">
+    <div id="demo-plot" class="plot">
+      
+        <h6 class="feed-heading">Total Due Amount   <span  style="float: right">@if(Model.TotalDueAmount!=0)
+                                                                               {
+                                                                                   <text>Rs.</text> @Model.TotalDueAmount <text>only</text>
+                                                                               }
+                                                                               else
+                                                                               {
+                                                                                    <text>0.00</text>
+                                                                               } </span> </h6>
+                                <div class="body">
+                        <table class="table" style="font-size: 12px">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Month</th>
+                            <th>Amount</th>
+                          
+                        </tr>
+                        </thead>
+                            <tbody>
+                                @{
+                                    SN0 = 1;
+                                }
+                                @foreach (var item in Model.BillInfos)
+                                {
+                                    <tr style="font-size: 10px">
+                                        <td>@SN0</td>
+                                        @if (Model.SystemControl.DateType == 1)
+                                        {
+                                             <td>@UtilityService.GetMonthName(item.MonthId, false)</td>
+                                        }
+                                        else
+                                        {
+                                            
+                                            <td>@NepaliDateService.LongMonth(item.MonthId)</td>
+                                            
+                                        }
+                                   
+                                       
+                                        <td>@item.Amount</td>
+                                       
+                                    </tr>
+                                       SN0++;
+
+                                }
+                                
+                            </tbody>
+                        </table>
+                        </div>
+        
+  
+
+    </div>
+</div>
+</section>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,74 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScSubject>
+           @{
+               var i = 1;
+             var userRight = (UserRight)ViewBag.UserRight;}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Result System
+                </th>
+                <th>
+                    Class Type
+                </th>
+                <th>
+                    Subject Type
+                </th>
+                <th>
+                    Evaluation 
+                </th>
+                <th>
+                    Schedule
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Description
+                    </td>
+                    <td>@item.Code
+                    </td>
+                    <td>@Enum.GetName(typeof(ResultSystem), item.ResultSystem)
+                    </td>
+                    <td>@Enum.GetName(typeof(ClassType), item.ClassType)
+                    </td>
+                    <td>@Enum.GetName(typeof(SubjectType), item.Type)
+                    </td>
+                    <td>@Enum.GetName(typeof(EvaluateForPass), item.EvaluateForType)
+                    </td>
+                    <td>@item.Schedule
+                    </td>
+                    <td>
+                         @if (userRight.Edit)
+                        {
+                            <a href="#" class="editScSubject icon-edit" data-id="@item.Id" title="Edit"></a>
+                        }
+                    </td>
+                    <td>
+                         @if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)"  class="deleteScSubject icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }</tbody>
+    </table>
+</div>

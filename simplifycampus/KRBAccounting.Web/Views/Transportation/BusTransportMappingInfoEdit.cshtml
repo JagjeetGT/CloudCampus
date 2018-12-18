@@ -1,0 +1,252 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.ScTransportMapping
+@{
+    var displayDate = false;
+    if (ViewBag.DateType == 1)
+    {
+        displayDate = true;
+    }
+    else
+    {
+        displayDate = false;
+    }
+
+
+    Model.StatusList = new SelectList(Enum.GetValues(typeof(Status)).Cast<Status>().Select(x => new SelectListItem { Text = x.ToString(), Value = ((int)x).ToString() }), "Value", "Text", Model.Status);
+
+              
+}
+<tr class="university-course-fee detail-entry deletable">
+    @using (Html.BeginCollectionItem("busTransportMappingInfoList"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.StudentId, new { @class = "input hdn_StudentId first-col" })
+                <input type="text" class = "modallink input studentId first-col" value="@if (Model.studentinfo != null)
+                                                                                        {
+                                                                                            @Model.studentinfo.StuDesc
+                                                                                        }
+                                                                                           " isrequired="true" href="@Url.Action("GetStudentByClassIdSection", "School")" parent="ScTransportMapping_ClassId" parentnext="ScTransportMapping_SectionId" valueId="ScTransportMapping_StudentId" id="StudentId"/>
+                @Html.ValidationMessageFor(m => m.StudentId)
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.TextBoxFor(x => x.RegNo, new { @class = "input level registrationNumber" })
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.BusStopFromId, new { @class = "input hdn_BusStopFromId first-col" })
+                @if (Model.ScBusStopFrom != null)
+                {
+                    <input type="text" class = "modallink input BusStopFromId" value="@if (Model.ScBusStopFrom != null)
+                                                                                      {
+                                                                                         @Model.ScBusStopFrom.Description
+                                                                                      }" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")" valueId="ScTransportMapping_BusStopFromId" id="BusStopFromId"/>
+                }
+                else
+                {
+                    <input type="text" class = "modallink input BusStopFromId" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")" valueId="ScTransportMapping_BusStopFromId" id="BusStopFromId"/>
+                }
+                @Html.ValidationMessageFor(m => m.BusStopFromId)
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.BusStopToId, new { @class = "input hdn_BusStopToId first-col" })
+                @if (Model.ScBusStopTo != null)
+                {
+                    <input type="text" class = "modallink input BusStopToId" value="@Model.ScBusStopTo.Description" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")" valueId="ScTransportMapping_BusStopToId" id="BusStopToId"/>
+                }
+                else
+                {
+                    <input type="text" class = "modallink input BusStopToId" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")" valueId="ScTransportMapping_BusStopToId" id="BusStopToId"/>
+                }
+                @Html.ValidationMessageFor(m => m.BusStopToId)
+            </span>
+        </td>
+        
+        <td>
+            @Html.DropDownListFor(x => x.Status, Model.StatusList, new { @class = "input-80" })
+        </td>
+        
+        <td>
+            <span>
+                @if (displayDate)
+                {
+                    @Html.HiddenFor(m => m.StartMiti, new { @class = "StartMitiMapping input", isrequired = "true" })
+                    if (Model.Id == 0)
+                    {
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "StartDateMapping input", isrequired = "true" })
+                    }
+                    else
+                    {
+                    @Html.DateTextBoxFor(m => m.StartDate, new { @class = "StartDateMapping input", isrequired = "true" })
+                    }
+                    
+                    @Html.ValidationMessageFor(m => m.StartDate)
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.StartMiti, new { @class = "StartMitiMapping input", isrequired = "true" })
+                    @Html.HiddenFor(m => m.StartDate, new { @class = "StartDateMapping input", isrequired = "true" })
+                    @Html.ValidationMessageFor(m => m.StartMiti)
+                }
+            </span>
+        </td>
+        
+        <td>
+            <span>
+                @if (displayDate)
+                {
+                    @Html.HiddenFor(m => m.EndMiti, new { @class = "EndMitiMapping input", isrequired = "true" })
+
+                    if (Model.Id == 0)
+                    {
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "EndDateMapping input", isrequired = "true" })  
+                    }
+                    else
+                    {
+                    @Html.DateTextBoxFor(m => m.EndDate, new { @class = "EndDateMapping input", isrequired = "true" })
+                    }
+                    @Html.ValidationMessageFor(m => m.EndDate)
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.EndMiti, new { @class = "EndMitiMapping input", isrequired = "true" })
+                    @Html.HiddenFor(m => m.EndDate, new { @class = "EndDateMapping input", isrequired = "true" })
+                    @Html.ValidationMessageFor(m => m.EndMiti)
+                }
+            </span>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TransportAmt)
+        </td>
+        
+        
+        <td>
+            @Html.TextBoxFor(x => x.Narr, new { @class = "input last-col-custom", href = "/Transportation/BusTransportMappingInfoAdd", tableid = "bus-transportmapping-list" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bus-transportmapping-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+        var startmitis = document.querySelectorAll(".StartMitiMapping");
+        var endmitis = document.querySelectorAll(".EndMitiMapping");
+
+        if (@ViewBag.DateType == 2) {
+            $.each(startmitis, function () {
+                var element = $(this).closest("tr");
+                if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "____/__/__") {
+                    var date = $(this).val();
+                    var engDate = convertToEnglishNew(date);
+                    element.find(".StartDateMapping").val(engDate);
+                }
+            });
+
+            $.each(endmitis, function () {
+                var element = $(this).closest("tr");
+                if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "____/__/__") {
+                    //alert(1);
+                    var date = $(this).val();
+                    var engDate = convertToEnglishNew(date);
+                    element.find(".EndDateMapping").val(engDate);
+                }
+            });
+        }
+
+
+        $("#bus-transportmapping-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+
+        $(".StartDateMapping").mask('99/99/9999');
+        $(".EndDateMapping").mask('99/99/9999');
+
+        $(".StartMitiMapping").mask('9999/99/99');
+        $(".EndMitiMapping").mask('9999/99/99');
+
+
+        var startId = "#StartDate_" + '@Model.Id';
+        var endId = "#EndDate_" + '@Model.Id';
+
+        $(startId).mask('99/99/9999');
+        $(endId).mask('99/99/9999');
+
+    });
+
+    $(".StartMitiMapping").live('blur', function () {
+        var element = $(this).closest("tr");
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "____/__/__") {
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            element.find(".StartDateMapping").val(engDate);
+        }
+    });
+
+    $(".StartDateMapping ").live('blur', function () {
+        var element = $(this).closest("tr");
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "__/__/____") {
+            //alert(1);
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            element.find(".StartMitiMapping").val(nepDate);
+        }
+    });
+
+    $(".EndMitiMapping ").live('blur', function () {
+        var element = $(this).closest("tr");
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "____/__/__") {
+            //alert(1);
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            element.find(".EndDateMapping").val(engDate);
+        }
+    });
+
+    $(".EndDateMapping ").live('blur', function () {
+        var element = $(this).closest("tr");
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "__/__/____") {
+            //alert(1);
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            element.find(".EndMitiMapping").val(nepDate);
+        }
+    });
+
+    function NewRowDetailList(element, index) {
+        $(".studentId:last").attr("id", "studentId_" + index);
+        $(".studentId:last").closest("tr").attr("id", "tr_" + index);
+        $(".studentId").attr("valueId", $(".hdn_StudentId:last").attr("id"));
+
+        $(".BusStopFromId:last").attr("id", "busstopFrom_" + index);
+        $(".BusStopFromId:last").closest("tr").attr("id", "tr_" + index);
+        $(".BusStopFromId").attr("valueId", $(".hdn_BusStopFromId:last").attr("id"));
+
+        $(".BusStopToId:last").attr("id", "busstopto_" + index);
+        $(".BusStopToId:last").closest("tr").attr("id", "tr_" + index);
+        $(".BusStopToId").attr("valueId", $(".hdn_BusStopToId:last").attr("id"));
+    }
+
+
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+    });
+
+</script>

@@ -1,0 +1,109 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScExamAttendanceMaster>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Exam
+                </th>
+                <th>
+                    Entry Date
+                </th>
+                <th>
+                    Total Days
+                </th>
+            @*    <th>
+                    Created Date
+                </th>
+                <th>
+                    Created By
+                </th>*@
+                <th>
+                    Updated Date
+                </th>
+                <th>
+                    Updated By
+                </th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@if (item.Classes != null)
+                        {
+                            @item.Classes.Description
+                        }
+
+                    </td>
+                    
+                    <td>@if (item.SectionId != 0)
+                        {
+                            if (item.Section != null)
+                            {
+                                @item.Section.Description
+                            }
+                        }
+                    </td>
+                    <td>@if (item.Exam != null)
+                        {
+                            @item.Exam.Description
+                        }
+
+                    </td>
+                    <td>@item.EntryDate.ToShortDateString()
+                    </td>
+                    <td>@item.TotalDays
+                    </td>
+                    @*<td>@item.CreatedDate
+                    </td>
+                    <td>@if (item.CreatedBy != null)
+                        {
+                            @item.CreatedBy.Username
+                        }
+
+                    </td>*@
+                    <td>@item.UpdatedDate.ToShortDateString()
+                    </td>
+                    <td>@if (item.UpdatedBy != null)
+                        {
+                            @item.UpdatedBy.Username
+                        }
+
+                    </td>
+                    <td>
+                       @if (userRight.Edit)
+                       {
+                           <a href="javascript:void(0)" class="editScClassFeeRate icon-edit" data-id="@item.Id" title="Edit">
+                           </a>
+                       }
+                    </td>
+                    @*<td>
+                        <a href="@Url.Action("ExamAttendanceDelete", new { id = item.Id })" onclick = "return confirm('Are you sure you wish to delete this ExamAttendance?');" class="icon-remove" title="Delete">
+                        </a>
+                    </td>*@
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+
+@*<div class="pagination">
+    @Html.Raw(Html.AjaxPager(Model, "ExamAttendanceList", "Exam", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "boader-list", OnBegin = "BeginRequest", OnComplete = "EndRequest" }))
+</div>*@

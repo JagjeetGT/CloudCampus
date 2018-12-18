@@ -1,0 +1,199 @@
+@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.ScBookIssued
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@{
+    var isssueto = "";
+
+
+
+    if (Model.Type == "staff")
+    {
+
+        var staff = UtilityService.GetStaffMasterById(Model.IssuedTo);
+        if (staff != null)
+        {
+            isssueto = staff.Description;
+
+        }
+    }
+    else
+    {
+        var student = UtilityService.GetStudentInfoById(Model.IssuedTo);
+        if (student != null)
+        {
+            isssueto = student.StuDesc;
+        }
+    }
+    var url = "/Library/BookIssuedStaff?type=" + Model.Type;
+    
+    var date = Model.Date.ToString("dd/MM/yyyy");
+    var expRetDate = Model.ExpRetDate.ToString("dd/MM/yyyy");
+    var actRetDate = Model.ActRetDate.ToString("dd/MM/yyyy");
+    
+
+
+}
+@using (Ajax.BeginForm("BookIssuedEdit", "Library", new { controller = "Library" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{@Html.HiddenFor(x => x.Id)
+@Html.HiddenFor(m=>m.OldBookId)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                IssuedNo</label>
+            <span class="field">@Html.TextBoxFor(m => m.IssuedNo, new { @class = "input-120 input", entermsg = "Enter IssuedNo" })
+                @Html.ValidationMessageFor(m => m.IssuedNo)<span class="loading IssuedNo">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </span></span><span class="stack">
+                              <label class="label-90">
+                                  Date</label>
+                              <span class="field">@Html.HiddenFor(m => m.Miti)
+                                  @Html.HiddenFor(m => m.Date, new { displayId = "DisplayDate" })
+                                  @Html.TextBoxFor(m => m.DisplayDate, new { @class = "input-120 input", entermsg = "Enter Date.", miti = Model.SystemControl.DateType, dateId = "Date", displayId = "DisplayDate", mitiId = "Miti" })
+                                  @Html.ValidationMessageFor(m => m.Date) </span></span>
+        <input type="hidden" id="currDate" value="@date"/>
+        <span class="stack">
+                        <label class="label-90">
+                            Type</label>
+                        <span class="field">@Html.DropDownListFor(m => m.Type, Model.Typelist, new { @class = "input-120 input", entermsg = "Enter Type" })
+                            @Html.ValidationMessageFor(m => m.Type) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Class</label>
+            <span class="field">@Html.HiddenFor(m => m.ClassId)
+                <input type="text" class="modallink input-120 input" value="@if (Model.Class != null)
+                                                                            {
+                                                                                @Model.Class.Description.Trim()
+                                                                            }
+                                                                               "  href="@Url.Action("GetClasses", "School")" id="class-id" valueid="ClassId"/>
+                @Html.ValidationMessageFor(m => m.ClassId) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Issued To</label>
+            <span class="field">@Html.HiddenFor(m => m.IssuedTo)
+                <input type="text" class="modallink input-120 input" value="@isssueto"  href="@url" id="Issue-id" valueid="IssuedTo"/>
+                @Html.ValidationMessageFor(m => m.IssuedTo) </span></span><span class="stack">
+                    <label class="label-90">
+                        Card Type</label>
+                    <span class="field">@Html.DropDownListFor(m => m.CardType, Model.CardTypes, new { @class = "input-120 input", entermsg = "Enter CardType" })
+                        @Html.ValidationMessageFor(m => m.CardType) </span></span><span class="stack">
+                            <label class="label-90">
+                                Book</label>
+                            <span class="field">@Html.HiddenFor(m => m.BookId)
+                                <input type="text" class="modallink input-120 input" value="@if (Model.Book != null)
+                                                                                            {
+                                                                                @Model.Book.Name
+                                                                                            }
+                                                                               "  href="@Url.Action("GetBook", "Library")" id="book-id" valueid="BookId"/>
+                                @Html.ValidationMessageFor(m => m.BookId) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Expired Date</label>
+            <span class="field">@Html.HiddenFor(m => m.ExpRetMiti)
+                @Html.HiddenFor(m => m.ExpRetDate, new { displayId = "DisplayExpRetDate" })
+                @Html.TextBoxFor(m => m.DisplayExpRetDate, new { @class = "input-120 input", entermsg = "Enter Date.", miti = Model.SystemControl.DateType, dateId = "ExpRetDate", displayId = "DisplayExpRetDate", mitiId = "ExpRetMiti" })
+                @Html.ValidationMessageFor(m => m.ExpRetDate) </span></span><input type="hidden" id="returnDate" value="@expRetDate"/><span class="stack">
+                    <label class="label-90">
+                        Return Date</label>
+                    <span class="field">@Html.HiddenFor(m => m.ActRetMiti)
+                        @Html.HiddenFor(m => m.ActRetDate, new { displayId = "DisplayActRetDate" })
+                        @Html.TextBoxFor(m => m.DisplayActRetDate, new { @class = "input-120 input", entermsg = "Enter Date.", miti = Model.SystemControl.DateType, dateId = "ActRetDate", displayId = "DisplayActRetDate", mitiId = "ActRetMiti" })
+                        @Html.ValidationMessageFor(m => m.ActRetDate)</span></span><input type="hidden" id="ActualreturnDate" value="@actRetDate"/><span class="stack">
+                            <label class="label-90">
+                                Late Fine</label>
+                            <span class="field">@Html.TextBoxFor(m => m.LateFine, new { @class = "input-120 input", entermsg = "Enter LateFine" })
+                                @Html.ValidationMessageFor(m => m.LateFine) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-370 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks) </span></span>    </div>
+  <div class="clearfix">
+    </div>
+    
+
+    
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var type = $("#Type").val();
+        if (type == "staff") {
+
+            $("#class-id").attr("disabled", "disabled");
+            $("#class-id").val('');
+            $("#ClassId").val(0);
+
+        } else {
+
+            $("#class-id").removeAttr("disabled");
+
+
+
+        }
+
+        $(document).ready(function () {
+            var dateType = '@Model.SystemControl.DateType';
+            var date;
+            var nepDate;
+            if (dateType == 1) {
+                date = $("#currDate").val();
+                nepDate = convertToNepali(date);
+            } else {
+                date = $("#currDate").val();
+                date = convertToNepali(date);
+                nepDate = date;
+            }
+            $("#Miti").val(nepDate);
+            $("#DisplayDate").val(date);
+
+            $("#Date").nepNoBackDatePicker();
+
+            var expiredate;
+            var expirenepDate;
+            if (dateType == 1) {
+                expiredate = $("#returnDate").val();
+                expirenepDate = convertToNepali(date);
+            } else {
+                expiredate = $("#returnDate").val();
+                expiredate = convertToNepali(date);
+                expirenepDate = date;
+            }
+            $("#ExpRetMiti").val(expirenepDate);
+            $("#DisplayExpRetDate").val(expiredate);
+
+            $("#ExpRetDate").nepNoBackDatePicker();
+
+            var actualdate;
+            var actualnepDate;
+            if (dateType == 1) {
+                actualdate = $("#ActualreturnDate").val();
+                actualnepDate = convertToNepali(date);
+            } else {
+                actualdate = $("#ActualreturnDate").val();
+                actualdate = convertToNepali(date);
+                actualnepDate = date;
+            }
+            $("#ActRetMiti").val(actualnepDate);
+            $("#DisplayActRetDate").val(actualdate);
+
+            $("#ActRetDate").nepNoBackDatePicker();
+
+        });
+    });
+</script>

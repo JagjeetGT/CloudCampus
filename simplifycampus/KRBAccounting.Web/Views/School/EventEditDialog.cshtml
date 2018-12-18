@@ -1,0 +1,24 @@
+﻿@model KRBAccounting.Domain.Entities.ScCalendarEvent
+@using (Ajax.BeginForm("EventEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCompleteEdit" }, new { @class = "form-horizontal from-custom online-form", id = "Employeetypeform-id1" }))
+{
+<fieldset>
+@Html.HiddenFor(x => x.Id) @Html.HiddenFor(x => x.EventDate)
+<div class="lag">
+<span class="stack">
+<label class="label-100">
+Title</label>
+<span class="field">@Html.TextBoxFor(m => m.Title, new { @class = "input-200", entermsg = "Enter Title" })
+@Html.ValidationMessageFor(m => m.Title) </span></span>
+</div>
+<div class="clearfix">
+</div>
+<div class="lag">
+<span class="stack">
+<label class="label-100">
+Description</label>
+<span class="field"><span class="field">@Html.TextAreaFor(m => m.Description, new { @class = "input-200", entermsg = "" })
+@Html.ValidationMessageFor(m => m.Description)
+</span></span></span>
+</div>
+</fieldset>
+}

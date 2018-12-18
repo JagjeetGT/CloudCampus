@@ -1,0 +1,81 @@
+﻿@model KRBAccounting.Domain.Entities.ScAbsentApplication
+@using (Ajax.BeginForm("AbsentApplicationSearch", "Student", new { controller = "Student" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "leaveapplicatiom-form-id-search" }))
+{
+
+    <div class="lag">
+        <fieldset>
+            <legend>Date From</legend><span class="stack">
+                <label class="label-100">
+                    (B.S.)(YYYY-MM-DD)</label>
+                <span class="field">@Html.TextBoxFor(m => m.MitiFrom, new { @class = "input-100 input", entermsg = "Enter DBOMiti" })
+                    @Html.ValidationMessageFor(m => m.MitiFrom) </span></span>
+            <div class="clearfix">
+            </div>
+            <span class="stack">
+                <label class="label-100">
+                    (A.D.)(MM-DD-YYYY)</label>
+                <span class="field">@Html.DateTextBoxFor(m => m.DateFrom, new { @class = "input-100 input", entermsg = "Enter DBO" })
+                    @Html.ValidationMessageFor(m => m.DateFrom) </span></span>
+        </fieldset>
+        <fieldset>
+            <legend>Date To</legend><span class="stack">
+                <label class="label-100">
+                    (B.S.)(YYYY-MM-DD)</label>
+                <span class="field">@Html.TextBoxFor(m => m.MitiTo, new { @class = "input-100 input", entermsg = "Enter DBOMiti" })
+                    @Html.ValidationMessageFor(m => m.MitiTo) </span></span>
+            <div class="clearfix">
+            </div>
+            <span class="stack">
+                <label class="label-100">
+                    (A.D.)(MM-DD-YYYY)</label>
+                <span class="field">@Html.DateTextBoxFor(m => m.DateTo, new { @class = "input-100 input", entermsg = "Enter DBO" })
+                    @Html.ValidationMessageFor(m => m.DateTo) </span></span>
+        </fieldset>
+    </div>
+    
+    <div class="lag">
+        <label class="label-90">
+            Class</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.ClassId, Model.ClassList, new { @class = "input-120 input" })
+            @Html.ValidationMessageFor(m => m.ClassId)
+        </div>
+        <div class="clearfix">
+        </div>
+        <label class="label-90">
+            Section</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.SectionId, Model.SectionList, new { @class = "input-120 input" })
+            @Html.ValidationMessageFor(m => m.SectionId)
+        </div>
+        <div class="clearfix">
+        </div>
+        <label class="label-90">
+            Confirm</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.IsConfirm, Model.YesNoList, new { @class = "input-120 input" })
+            @Html.ValidationMessageFor(m => m.IsConfirm)
+        </div>
+        <div class="clearfix"></div>
+        
+    </div>
+    <div class="clearfix"></div>
+    <div class="field">
+       <a href="javascript:void(0)" class="btn absentaplication btn-info">Filter</a>
+        </div>
+   
+   
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#leaveapplicatiom-form-id-search #MitiTo ,#leaveapplicatiom-form-id-search #MitiFrom").mask('9999/99/99');
+        $("#leaveapplicatiom-form-id-search #DateTo ,#leaveapplicatiom-form-id-search #DateFrom").mask('99/99/9999');
+
+    });
+
+
+
+
+
+</script>

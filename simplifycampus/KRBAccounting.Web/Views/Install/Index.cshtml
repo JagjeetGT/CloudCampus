@@ -1,0 +1,408 @@
+﻿@model KRBAccounting.Web.ViewModels.Install.InstallerViewModel
+@{
+    ViewBag.Title = "Installation";
+    Layout = "~/Views/Shared/_LayoutInstall.cshtml";
+    
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<script src="../../Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+
+<div class="workplace">
+    <div class="head">
+        <div class="isw-grid">
+        </div>
+        <h1>
+            Installation</h1>
+        <div class="clear">
+        </div>
+    </div>
+    <div class="block-fluid">
+        <div class="row-form">
+            @using (Html.BeginForm("NewInstall", "Install", FormMethod.Post, new { @class = "form-horizontal form-custom", id = "install-form" }))
+            {
+                @Html.HiddenFor(x => x.LogoGuid)
+                @Html.HiddenFor(x => x.LogoExt)
+                <div id="company-info">
+                    <fieldset>
+                        <legend>Database Info</legend>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Server Name</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.DatabaseInfo.ServerName, new { @class = "input-245 input" })
+                                </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Username</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.DatabaseInfo.DbUserName, new { @class = "input-245 input", autocomplete = "off",value="" })
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        Password</label>
+                                    <span class="field">
+                                        @Html.PasswordFor(m => m.DatabaseInfo.DbPassword, new { @class = "input-245 input", autocomplete = "off" ,value=""})
+                                    </span></span>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Admin Info</legend>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Admin Username</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.AdminInfo.AdminUserName, new { @class = "input-245 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        Password</label>
+                                    <span class="field">
+                                        @Html.PasswordFor(m => m.AdminInfo.AdminUserPassword, new { @class = "input-245 input" })
+                                    </span></span>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Company Info</legend>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Initial</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.CompanyInitial, new { @class = "input-245 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        Name</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "input-245 input" })
+                                    </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Country</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.CompanyCountry, new { @class = "input-245 input" })
+                                    @Html.ValidationMessageFor(m => m.CompanyCountry)
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        State</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.CompanyState, new { @class = "input-245 input" })
+                                        @Html.ValidationMessageFor(m => m.CompanyState)
+                                    </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    City</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.CompanyCity, new { @class = "input-245 input" })
+                                    @Html.ValidationMessageFor(m => m.CompanyCity)
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        Address</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.CompanyAddress, new { @class = "input-245 input" })
+                                        @Html.ValidationMessageFor(m => m.CompanyAddress)
+                                    </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Phone No</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.CompanyPhoneNo, new { @class = "input-245 input" })
+                                    @Html.ValidationMessageFor(m => m.CompanyPhoneNo)
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        Fax</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.CompanyFax, new { @class = "input-245 input" })
+                                        @Html.ValidationMessageFor(m => m.CompanyFax)
+                                    </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Email</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.CompanyEmail, new { @class = "input-245 input" })
+                                    @Html.ValidationMessageFor(m => m.CompanyEmail)
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        Pan No</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.CompanyPanNo, new { @class = "input-245 input" })
+                                        @Html.ValidationMessageFor(m => m.CompanyPanNo)
+                                    </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Tax Invoice</label>
+                                <span class="field">
+                                    @Html.CheckBoxFor(m => m.CompanyTaxInvoice, new { @class = "input-245 input" })
+                                    @Html.ValidationMessageFor(m => m.CompanyTaxInvoice)
+                                </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Start Date</label>
+                                <span class="field">
+                                    @Html.HiddenFor(m => m.CompanyStartMiti)
+                                    @Html.HiddenFor(m => m.CompanyStartDate, new { displayId = "DisplayCompanyStartDate" })
+                                    @Html.TextBoxFor(m => m.DisplayCompanyStartDate, new
+                                                    {
+                                                        @class = "input-90 input",
+                                                        entermsg = "Enter Date.",
+                                                        miti = "1",
+                                                        dateId = "CompanyStartDate",
+                                                        displayId = "DisplayCompanyStartDate",
+                                                        mitiId = "CompanyStartMiti"
+                                                    })
+                                    @Html.ValidationMessageFor(m => m.CompanyStartDate)
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        End Date</label>
+                                    <span class="field">
+                                        @Html.HiddenFor(m => m.CompanyEndMiti)
+                                        @Html.HiddenFor(m => m.CompanyEndDate, new { displayId = "DisplayCompanyEndDate" })
+                                        @Html.TextBoxFor(m => m.DisplayCompanyEndDate, new
+                                                  {
+                                                      @class = "input-90 input",
+                                                      entermsg = "Enter Date.",
+                                                      miti = "1",
+                                                      dateId = "CompanyEndDate",
+                                                      displayId = "DisplayCompanyEndDate",
+                                                      mitiId = "CompanyEndMiti"
+                                                  })
+                                        @Html.ValidationMessageFor(m => m.CompanyEndDate)
+                                    </span></span>
+                        </div>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-100">
+                                    Logo</label>
+                                <span class="field">
+                                    <div class="image">
+                                        <img src="" width="60" />
+                                    </div>
+                                    <input name="attachments" id="attachments" type="file" />
+                                </span></span>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Fiscal Year</legend>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-160">
+                                    Start Date</label>
+                                <span class="field">
+                                    @Html.HiddenFor(m => m.FYStartDateNep)
+                                    @Html.HiddenFor(m => m.FYStartDate, new { displayId = "DisplayFYStartDate" })
+                                    @Html.TextBoxFor(m => m.DisplayFYStartDate, new { @class = "input", entermsg = "Enter Voucher Date.", miti = "1", dateId = "FYStartDate", displayId = "DisplayFYStartDate", mitiId = "FYStartDateNep" })
+                                    <input type="hidden" id="currStartDate" />
+                                </span></span><span class="stack">
+                                                  <label class="label-160">
+                                                      End Date</label>
+                                                  <span class="field">
+                                                      @Html.HiddenFor(m => m.FYEndDateNep)
+                                                      @Html.HiddenFor(m => m.FYEndDate, new { displayId = "DisplayFYEndDate" })
+                                                      @Html.TextBoxFor(m => m.DisplayFYEndDate, new { @class = "input", miti = "1", dateId = "FYEndDate", displayId = "DisplayFYEndDate", mitiId = "FYEndDateNep" })
+                                                      <input type="hidden" id="currEndDate" />
+                                                  </span></span>
+                        </div>
+                    </fieldset>
+                       <fieldset>
+                        <legend>Academic Year</legend>
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-160">
+                                    Start Date</label>
+                                <span class="field">
+                                   @* @Html.TextAreaFor(x=>x.AcademicStartDisplayDate)
+                                    @Html.ValidationMessageFor(x=>x.AcademicStartDisplayDate)*@
+                                    @Html.HiddenFor(m => m.AcademicStartMiti)
+                                    @Html.HiddenFor(m => m.AcademicStartDate, new { displayId = "AcademicStartDisplayDate" })
+                                    @Html.TextBoxFor(m => m.AcademicStartDisplayDate, new { @class = "input", entermsg = "Enter Voucher Date.", miti = "1", dateId = "AcademicStartDate", displayId = "AcademicStartDisplayDate", mitiId = "AcademicStartMiti" })
+                                    <input type="hidden" id="AcaStartDate" />
+                                </span></span><span class="stack">
+                                    <label class="label-160">
+                                        End Date</label>
+                                                  <span class="field">
+                                                      
+                                                      @*     @Html.TextAreaFor(x=>x.AcademicEndDisplayDate)
+                                    @Html.ValidationMessageFor(x => x.AcademicEndDisplayDate)*@
+                                                      @Html.HiddenFor(m => m.AcademicEndMiti)
+                                                      @Html.HiddenFor(m => m.AcademicEndDate, new { displayId = "AcademicEndDisplayDate" })
+                                                      @Html.TextBoxFor(m => m.AcademicEndDisplayDate, new { @class = "input", miti = "1", dateId = "AcademicEndDate", displayId = "AcademicEndDisplayDate", mitiId = "AcademicEndMiti" })
+                                                      <input type="hidden" id="AcaEndDate" />
+                                                  </span></span>
+                        </div>
+                    </fieldset>
+
+                    <div class="clearfix">
+                    </div>
+                    <input type="button" id="btn-save" value="OK" class="btn btn-info" />
+                </div>
+                         
+            }
+            <div class="clearfix">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#DatabaseInfo_DbUserName").val("");
+        $("#DatabaseInfo_DbPassword").val("");
+    });
+
+    $("#btn-save").live("click", function () {
+        var form = $("#install-form");
+        var isValid = form.valid();
+        if (isValid) {
+            $.ajax({
+                type: "POST",
+                url: form.attr("action"),
+                data: form.serialize(),
+                beforeSend: function () {
+                    $.blockUI({ message: '<h1>Please Wait. We are creating the database.</h1>' });
+                },
+                success: function (data) {
+                    if (data.success) {
+                        window.location.href = "@Url.Action("Logon", "Account")";
+                    }
+                    else {
+                        alert(data.msg);
+                    }
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+            alert("Please fill all the required fields");
+        }
+    });
+    $("#modalBranchAdd").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                $("#branch-form").submit();
+                $(this).dialog("close");
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $(document).ready(function () {
+        $("#DatabaseInfo_DbUserName").val('');
+        $("#DatabaseInfo_DbPassword").val('');
+    
+        $("#DisplayCompanyStartDate").nepDateTimePicker();
+         $("#DisplayCompanyEndDate").nepDateTimePicker();
+
+        $("#DisplayFYStartDate").nepDateTimePicker();
+        $("#DisplayFYEndDate").nepDateTimePicker();
+      
+        $("#AcademicStartDisplayDate").nepDateTimePicker();
+        $("#AcademicEndDisplayDate").nepDateTimePicker();
+
+
+        function getRequest(url) {
+            $.ajax({
+                url: url,
+                context: document.body,
+                success: function (data) {
+                    $('#modalBranchAdd .block').html(data);
+                    $(this).addClass("done");
+                    $("#modalBranchAdd").dialog('open');
+                    $.unblockUI();
+
+                }
+            });
+        }
+
+        $('a.addBranch').live('click', function () {
+            var url = '@Url.Action("BranchAdd", "Management")';
+            getRequest(url);
+            return false;
+        });
+
+        $('#saveBranch').live('click', function () {
+            $("#branch-form").submit();
+        });
+
+        function success(data) {
+            if (data == "true") {
+                window.location.reload(true);
+            }
+        }
+    });
+    $(document).ready(function() {
+        //kendo ui plugin
+        //for uploading files
+        $("#attachments").kendoUpload({
+            upload: onUpload,
+            remove: onRemove,
+            multiple: true,
+            async: {
+                saveUrl: ('/Install/UploadImages'),
+//                     removeUrl: ('/remove-images/UserImages'),
+                autoUpload: true
+            },
+
+            success: function(data) {
+
+                if (data.response.success != null) {
+                    alert(data.response.success);
+
+                }
+                var logoGuid = data.response.guid;
+                if (logoGuid.toString() == '') {
+                    alert('upload failed please try again');
+                } else {
+                    var name = "hddimage" + data.response.filename;
+                    var classname = "hddimage" + data.response.filename.replace('.', '');
+                    $('#install-form').append('<input type="hidden" class="' + classname + '" value="' + logoGuid + '" name="' + name + '" id="' + name + '" />');
+                    $("#LogoGuid").val(logoGuid);
+                    $("#LogoExt").val(data.response.ext);
+                }
+            }
+        });
+    });
+     
+
+    function onUpload(e) {
+        var files = e.files;
+        // Check the extension of each file and abort the upload if it is not .jpg
+        $.each(files, function () {
+            var ext = this.extension.toUpperCase();
+            if (ext == ".JPG" || ext == ".PNG" || ext == ".JPEG") {
+
+            } else {
+                $("#kendoWindow").dialog();
+                //alert("Only .jpg, .png and .jpeg files can be uploaded");
+                e.preventDefault();
+            }
+        });
+
+    }
+    function onRemove(e) {
+        for (var i = 0; i < e.files.length; i++) {
+            var data = getGuid(e.files[i].name);
+            e.files[i].name = data;
+        }
+    }
+
+</script>

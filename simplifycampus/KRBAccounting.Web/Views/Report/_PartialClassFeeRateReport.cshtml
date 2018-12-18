@@ -1,0 +1,106 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportClassFeeRateReportViewModel
+@{
+    decimal subtotal = 0;
+    decimal total = 0;
+    decimal gtotal = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+    
+      
+        @foreach (var i in Model.ClassFeeRateGrouping)
+        {
+            <tr style="font-weight: bold" align="center">
+                <td colspan="6">
+                    Class:
+                    @{
+            var schClass = i.FirstOrDefault().Classes;
+                    }
+                    @if (schClass != null)
+                    {
+                        @schClass.Code
+                    }
+                    ,
+                    @if (schClass != null)
+                    {
+                        @schClass.Description
+                    }
+                </td>
+            </tr>
+                  <tr align="center">
+                <th>
+                    Fee Code
+                </th>
+                <th>
+                    Fee Name
+                </th>
+                <th>
+                    Fee Type
+                </th>
+                <th>
+                    Amount
+                </th>
+            </tr>
+     
+                    var data = Model.ClassFeeRates.Where(x => x.ClassId == i.FirstOrDefault().ClassId);
+
+                    foreach (var item in data)
+                    {
+            <tr align="center">
+                <td>@item.ScFeeItem.Code
+                </td>
+                <td>@item.ScFeeItem.Description
+                </td>
+                <td>@Enum.GetName(typeof(FeeType), item.ScFeeItem.Type)
+                </td>
+                <td>@item.FeeRate
+                </td>
+                <td>
+                </td>
+            </tr>
+                     subtotal += item.FeeRate;
+                 
+
+                    }
+           
+                        
+            gtotal += subtotal;
+           
+            <tr style="font-weight: bold" align="center">
+                <td colspan="3" align="center">
+                    Sub Total
+                </td>
+                <td>
+                    @subtotal
+                    
+                </td>
+                <td>
+                </td>
+            </tr>
+            subtotal = 0;
+                   
+           
+
+        }
+        <tr style="font-weight: bold" align="center">
+            <td colspan="3" align="center">
+                Grand Total
+            </td>
+            <td>
+                @gtotal
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+</div>

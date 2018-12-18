@@ -1,0 +1,17 @@
+﻿@model KRBAccounting.Service.Models.Purchase.PurchaseProductBatchViewModel
+@using (Html.BeginCollectionItem("ProductBatchList"))
+{
+    @Html.HiddenFor(x => x.BatchSerialNo, new { @class = "BatchSerialNo" })
+    @Html.HiddenFor(x => x.ProductId, new { @class = "ProductId" })
+    @Html.HiddenFor(x => x.Qty, new { @class = "Qty" })
+    @Html.HiddenFor(x => x.ParentGuid, new { @class = "ParentGuid" })
+    @Html.DateHiddenFor(x => x.MfgDate, new { @class = "MfgDate" })
+    @Html.DateHiddenFor(x => x.ExpDate, new { @class = "ExpDate" })
+    @Html.HiddenFor(x => x.IsMfgDate, new { @class = "IsMfgDate" })
+    @Html.HiddenFor(x => x.IsExpDate, new { @class = "IsExpDate" })
+    @Html.HiddenFor(x => x.UnitId, new { @class = "UnitId" })
+    @Html.HiddenFor(x => x.GodownId, new { @class = "BatchGodownId" })
+    @Html.HiddenFor(x => x.Godown, new { @class = "BatchGodown" })
+    @Html.HiddenFor(x => x.SalesRate, new { @class = "SalesRate" })
+    @Html.HiddenFor(x => x.BuyRate, new { @class = "BuyRate" })
+}

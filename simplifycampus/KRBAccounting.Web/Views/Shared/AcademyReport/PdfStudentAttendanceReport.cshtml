@@ -1,0 +1,87 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentAttendanceReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var i in Model.StduentAttendacegrouping)
+{
+    <div class="ReportList" style="border: 1px solid; height: 900px;">
+        <div style="margin: 25px;">
+            <div class="ReportHeader" style="text-align: center">
+                @*@Html.Partial("_PartialReportHeader", Model.ReportHeader)*@
+                <div class="clearfix">
+                </div>
+             @*   <div>
+              
+                    <p align="left" style="font-weight: bold; float: left">
+                        Class :
+                        @{
+    var schClass = i.FirstOrDefault().Class;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Description
+                        }
+                    </p>
+                    @{
+                        var Section = i.FirstOrDefault().Section;
+                    }
+                    @if (Section != null)
+                    {
+                        <p align="right" style="font-weight: bold;">
+                            Section :
+                            @Section.Description 
+                        </p> }
+                    <div class="clearfix">
+                    </div>
+                    <p align="left" style="font-weight: bold; float: left">
+                        
+                        Total Working Day : @Model.WorkingDays
+                    </p>
+                </div>*@
+            </div>
+            @*  <table border="0.5" style="font-size: 8px;">
+                <thead>
+                   <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Present Day
+                        </th>
+                        <th>
+                            Percentage
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.StudentAttendances.Where(x => x.SectionId == i.FirstOrDefault().SectionId && x.ClassId == i.FirstOrDefault().ClassId).GroupBy(x => x.StudentId))
+                {
+                    <tr>
+                        <td>
+                            @item.FirstOrDefault().StudentName
+                        </td>
+                        <td>
+                            @item.FirstOrDefault().PresentDay
+                        </td>
+                        <td>
+                            @{
+                    var percentage = Math.Round((Convert.ToDouble(item.FirstOrDefault().PresentDay) / Convert.ToDouble(Model.WorkingDays)) * 100.0, 2);
+                            }
+                            @percentage
+                        </td>
+                    </tr>
+                }
+            </table>*@
+        </div>
+        <div class="clearfix">
+        </div>
+    </div>
+   
+    <div class="clearfix">
+    </div>
+    <hr />
+}

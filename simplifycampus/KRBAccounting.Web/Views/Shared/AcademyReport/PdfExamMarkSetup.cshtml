@@ -1,0 +1,114 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportExamRoutineReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Class/Subject Code
+                </th>
+                <th>
+                    Class/Subject Name
+                </th>
+                <th>
+                    Exam Code/ResultSystem
+                </th>
+                <th>
+                   Exam Name/Evaluation For Type
+                </th>
+                <th>
+                    Practical Full Marks
+                </th>
+                <th>
+                    Practical Pass Marks
+                </th>
+                <th>
+                    Theory Full Marks
+                </th>
+                <th>
+                    Theory Pass Marks
+                </th>
+                <th>
+                    Subject Type
+                </th>
+
+            </tr>
+        </thead>
+       
+        @foreach (var i in Model.ExamMarkSetupGrouping)
+        {
+            <tr style="font-weight: bold">
+               
+                <td>
+                    @i.FirstOrDefault().Class.Code
+                </td>
+                <td>
+                    @i.FirstOrDefault().Class.Description
+                </td>
+                
+                <td>
+                    @i.FirstOrDefault().ScExam.Code
+                </td>
+                <td>
+                    @i.FirstOrDefault().ScExam.Description
+                </td>
+                <td>
+                   
+                </td>
+                <td>
+                </td>
+                <td>
+                   
+                </td>
+                <td>
+                </td>
+                <td>
+                   
+                
+                   
+                </td>
+            </tr>
+            foreach (var item in Model.ExamMarkSetUps.Where(x=>x.ClassId==i.FirstOrDefault().ClassId &&x.ExamId == i.FirstOrDefault().ExamId))
+                 {
+                     <tr>
+               
+                         <td>
+                             @item.Subject.Code
+                         </td>
+                         <td>
+                             @item.Subject.Description
+                         </td>
+                         <td>
+                             @Enum.GetName(typeof (ResultSystem), item.ResultSystem)
+                         </td>
+                         <td>
+                             @Enum.GetName(typeof (EvaluateForPass), item.EvaluateForType)
+                         </td>
+                         <td>@item.PracticalFullMark
+                         </td>
+                         <td>
+                             @item.PracticalPassMark
+                         </td>
+                         <td>@item.TheoryFullMark
+                         </td>
+                         <td>
+                             @item.TheoryPassMark
+                         </td>
+                         <td>
+                             @Enum.GetName(typeof (SubjectType), item.SubjectType)
+                         </td>
+                     </tr>
+                 }
+            
+        }
+    </table>
+</div>

@@ -1,0 +1,394 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.DebitNoteAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@{
+    //var date = Model.DebitNoteMaster.Date.ToString("MM/dd/yyyy");
+    EntryControlPL entryControl = (EntryControlPL)ViewBag.EntryControl;
+}
+@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@using (Ajax.BeginForm("DebitNoteEdit", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnCompleteEdit" }, new { @class = "form-horizontal form-custom", id = "debitnote-form" }))
+{
+    @Html.HiddenFor(x => x.DebitNoteMaster.Id)
+    @Html.HiddenFor(x => x.DebitNoteMaster.CreatedById)
+    @Html.HiddenFor(x => x.DebitNoteMaster.CreatedDate)
+    @Html.HiddenFor(x => x.DebitNoteMaster.DocId)
+    @Html.HiddenFor(x => x.DebitNoteMaster.Number)
+    @Html.HiddenFor(x => x.DebitNoteMaster.BranchId)
+    @Html.HiddenFor(x => x.DebitNoteMaster.IsApproved)
+    @Html.HiddenFor(x => x.DebitNoteMaster.ApprovedBy)
+    @Html.HiddenFor(x => x.DebitNoteMaster.ApprovedDate)
+    
+    <div style="min-width: 740px; max-width: 795px; height: 450px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Debit Note No.</label>
+                    <span class="field">
+                        @*<input type="text" value="@Model.DebitNoteMaster.Number" class="input-90" disabled="disabled"/>*@
+                        @Html.TextBoxFor(x=>x.DebitNoteMaster.Number, new { @class="input-90 input",entermsg="Enter Number"})
+                        @Html.ValidationMessageFor(m => m.DebitNoteMaster.Number)<span class="loading DebitNoteMaster_Number">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                    </span></span><span class="stack" style="padding: 0 0 0 203px">
+                        <label class="label-90">
+                            Date</label>
+                        <span class="field">
+                            
+                            @Html.TextBoxFor(m => m.Date)
+                            @Html.ValidationMessageFor(m => m.Date)
+                        </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Party Name</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.DebitNoteMaster.GlCode)
+                        <input type="text" id="PartyName" class="input-245 modallink input" href = "/Master/GetLedgerExceptCategoryOther" value="@UtilityService.GetLedgerNameById(Model.DebitNoteMaster.GlCode)" valueId="DebitNoteMaster_GlCode"/>
+                        @* @Html.TextBoxFor(m => m.PartyName, new { @class = "input-245 modallink", href = "/Master/GetLedgerExceptCategoryOther", entermsg = "Press F1 for existing Party List.", valueId = "DebitNoteMaster_GlCode" })*@
+                    </span></span>
+                <div style="padding: 0 0 0 408px">
+                    <label class="label-90">
+                        Current Balance</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.CurrentBalance, new { @class = "input-120", disabled = "disabled" })
+                    </span>
+                </div>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Agent Name</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.DebitNoteMaster.AgentCode)
+                        @Html.TextBoxFor(m => m.AgentName, new { @class = "input-245", entermsg = "Press F1 for existing Agents List.", disabled = "disabled", value = UtilityService.GetAgentNameById(Model.DebitNoteMaster.AgentCode) })
+                    </span></span>
+            </div>
+            <div class="lag" >
+                <label class="label-90" style="margin-left: 50px;">
+                    Sub Ledger</label>
+                <span class="field">
+                    @Html.HiddenFor(x => x.DebitNoteMaster.SlCode)
+                    @Html.TextBoxFor(m => m.SubLedger, new { @class = "input-245", entermsg = "Press F1 for existing Sub Ledger List.", disabled = "disabled" })
+                </span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Ref. Bill No.</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.DebitNoteMaster.RefBillNo, new { @class = "input-90 input", entermsg = "Enter Reference Bill No." })
+                    </span></span><span class="stack">
+                        <label class="label-37">
+                            Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.RefDate, new { @class = "input-90 input", entermsg = "Enter Reference Bill Date." })
+                        </span></span> <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Currency</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.DebitNoteMaster.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                            <input type="text"value="@Model.DebitNoteMaster.CurCode" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" valueId="DebitNoteMaster_CurrencyId" 
+                             id="CurrencyId" entermsg = "Press F1 for choosing existing cash/bank list." />
+                        </span></span><span class="stack">
+                            <label class="label-37">
+                                Rate</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.DebitNoteMaster.CurRate, new { @class = "input-45 input", entermsg = "Enter Rate." })
+                                @Html.ValidationMessageFor(m => m.DebitNoteMaster.CurRate)
+                            </span></span>
+                </div>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" style="width: 675px" id="table-cash-bank-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="270px">
+                        General Ledger
+                    </th>
+                    @if (entryControl!=null&& entryControl.SubLedger)
+                    {
+                        <th width="80px">
+                            Sub Ledger
+                        </th>
+                    }
+                    <th width="80px">
+                        Amount
+                    </th>
+                    <th width="270px">
+                        Narration
+                    </th>
+                </tr>
+                @{
+                    var index = 0;
+                }
+                @foreach (var detail in Model.DebitNoteMaster.DebitNoteDetails)
+                {
+                    detail.Index = index;
+                    @Html.Partial("_PartialDebitNoteDetailEdit", detail)
+                    index++;
+                }
+                @{
+                var debitNoteDetail = new KRBAccounting.Domain.Entities.DebitNoteDetail();
+                debitNoteDetail.Index = index;
+                }
+                @Html.Partial("_PartialDebitNoteDetailEdit", debitNoteDetail)
+            </table>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-53">
+                    Gl Code</label>
+                @Html.TextBoxFor(x => x.GlCode, new { @class = "input-160", disabled = "disabled" })
+            </span><span class="stack">
+                <label class="label-53">
+                    Curr Bal</label>
+                @Html.TextBoxFor(x => x.GlDetailCurrBal, new { @class = "input-160", disabled = "disabled" })
+            </span>
+        </div>
+        <span class="clearfix"></span>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-40">
+                        Total Amt</label>
+                    @Html.TextBoxFor(x => x.TotalAmt, new { @class = "input-160", disabled = "disabled" })
+                </span><span class="stack">
+                           <label class="label-40">
+                               Total Amt in Rs</label>
+                           @Html.TextBoxFor(x => x.TotalAmtRs, new { @class = "input-160", disabled = "disabled" })
+                       </span>
+            </div>
+        </fieldset>
+         @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+         {
+             <div class="lag">
+                 <label class="label-90">
+                     Remarks</label>
+                 <span class="field">
+                     @Html.TextBoxFor(m => m.DebitNoteMaster.Remarks, new {@class = "input-370"})
+                 </span>
+             </div>
+         }
+    </div>
+               @* if (Model.SystemControl.UDF == "1")
+                {
+                    if (Model.UdfEntries.LongCount() != 0)
+                    {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry" style="display: none">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+                    }
+                }*@
+}
+<script type="text/javascript">
+    $(document).ready(function() {
+        var amt = document.querySelectorAll(".amt");
+
+        $.each(amt, function(i, item) {
+            if (item.value == 0) {
+                $(this).val('');
+            }
+        });
+        var dateType = @Model.SystemControl.DateType.ToString();
+       // var date;
+//        if (dateType == 1) {
+//            date = $("#currDate").val();
+//        } else {
+//            date = $("#currDate").val();
+//            date = convertToNepali(date);
+//        }
+//        $("#DisplayDate").val(date);
+        
+        if(dateType=="1") {
+            $("#Date").mask("99/99/9999");
+            $("#Date").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#Date").mask("9999/99/99");
+            $("#Date").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+
+         if(dateType=="1") {
+            $("#RefDate").mask("99/99/9999");
+              $("#RefDate").live("blur", function() {
+                  var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                       });
+            }
+    else {
+            $("#RefDate").mask("9999/99/99");
+               $("#RefDate").live("blur", function() {
+                  var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                       
+            });
+        }
+        //$("#DebitNoteMaster_Date").nepDateTimePicker();
+        var ledgerElement = document.querySelectorAll(".text_ledger");
+        $.each(ledgerElement, function(index) {
+
+            var valueid = $(".hdn_ledger_Id").get(index);
+
+            $(this).attr("id", "detail_" + index);
+            $(this).attr("valueId", valueid.id);
+        });
+        var subledgerElement = document.querySelectorAll(".text_subledger");
+        var i = 0;
+        $.each(subledgerElement, function(index) {
+            var closestTr = $(this).closest('tr');
+            var valueid = closestTr.find(".hdn_subledger_Id").attr('id');
+            
+            $(this).attr("id", "subLedger_" + i);
+          $(this).attr("valueId", valueid);
+            i++;
+        });
+    });
+    
+
+
+
+
+//      
+
+//        $(".narration").live('keydown', function (e) {
+//            var element = $(this);
+//            var ev = e || event;
+//            var keycode = ev.keyCode;
+//            //e.preventDefault();
+//            if (keycode == 13) {
+//                var closestTr = element.closest("tr");
+//                if (closestTr.find(".hdn_ledger_Id").val() != "" && closestTr.find(".amt").val() != "") {
+//                    var link = $(this).attr("href");
+//                    $.ajax({
+//                        url: link,
+//                        type: "GET",
+//                        error: function () {
+//                            alert("An error occurred.");
+//                        },
+//                        success: function (data) {
+//                            if (closestTr.is(":last-child")) {
+//                                $('#table-cash-bank-detail tr:last').after(data);
+//                                var index = $(".narration").index(element) + 1;
+//                                $(".text_ledger:last").attr("id", "detail_" + index);
+//                                $(".text_ledger").attr("valueId", $(".hdn_ledger_Id:last").attr("id"));
+//                                $(".amt:last").val("");
+//                              
+//                            }
+//                            var totalAmt = CalculateTotalAmt();
+//                            $("#TotalAmt").val(totalAmt);
+//                            $("#TotalAmtRs").val(totalAmt);
+//                            closestTr.next().find('.text_ledger').focus();
+//                        }
+//                    });
+//                }
+//                else if (closestTr.find(".hdn_ledger_Id").val() == "") {
+//                    closestTr.find(".text_ledger").addClass("error");
+//                    closestTr.find(".text_ledger").focus();
+//                }
+//                else if (closestTr.find(".amt").val() == "") {
+//                    closestTr.find(".amt").addClass("error");
+//                    closestTr.find(".amt").focus();
+//                }
+
+//                return false;
+//            }
+//            return true;
+//        });
+
+//        $('input[type="text"]').focus(function () {
+//            if ($(this).attr("entermsg")) {
+//                $(".enter-msg").html($(this).attr("entermsg"));
+//            } else {
+//                $(".enter-msg").html("");
+//            }
+
+//        });
+
+//        $(".text_ledger").live("blur", function () {
+//            if ($(this).val() == "") {
+//                $(this).addClass("error");
+//                $(this).focus();
+//            } else {
+//                $(this).removeClass("error");
+//                var drAmt = parseFloat(0);
+//                var receiptAmtElements = document.querySelectorAll(".dr-amt");
+//                if (receiptAmtElements.length > 1) {
+//                    var i;
+//                    for (i = 0; i < receiptAmtElements.length; i++) {
+//                        var amt = receiptAmtElements[i].value;
+//                        if (amt != "") {
+//                            drAmt = drAmt + parseFloat(amt);
+//                        }
+
+//                    }
+
+//                    //Fill Pay Amt at the bottom
+//                    var crAmt = parseFloat(0);
+//                    var paymentAmtElements = document.querySelectorAll(".cr-amt");
+//                    var j;
+//                    for (j = 0; j < paymentAmtElements.length; j++) {
+//                        var amt = paymentAmtElements[j].value;
+//                        if (amt != "") {
+//                            crAmt = crAmt + parseFloat(amt);
+//                        }
+//                    }
+//                    var absDiff = Math.abs(drAmt - crAmt);
+//                    if (drAmt > crAmt) {
+//                        $(this).closest("tr").find(".cr-amt").val(absDiff);
+//                    } else {
+//                        $(this).closest("tr").find(".dr-amt").val(absDiff);
+//                    }
+//                }
+//            }
+//        });
+//        $("#PartyName").live("focusout", function () {
+//            $("#DebitNoteMaster_GlCode").getCurrentBal();
+//        });
+//        $(".text_ledger").getDetailCurrentBalance();
+//    });
+//    $(".amt").live("focusout", function () {
+//        if ($(this).val() != '') {
+//            $(this).closest("tr").find(".hdn_Amount").val($(this).val());
+//        
+
+//        }
+//    });
+//    $(".UDFCustomFiled").live("click", function () {
+//        $(".UDFEntry").toggle('hide');
+
+//    });
+</script>

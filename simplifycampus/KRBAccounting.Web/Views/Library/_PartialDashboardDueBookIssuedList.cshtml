@@ -1,0 +1,76 @@
+@using KRBAccounting.Service
+@model IEnumerable<KRBAccounting.Domain.Entities.ScBookIssued>
+@{var i = 1;}
+<div class="block-fluid table-sorting">
+    <table width="100%" class="listpopup" id="DueBook">
+        <thead>
+            <tr>
+                <th>
+                    S.N
+                </th>
+                <th>
+                    Issue To
+                </th>
+                <th>
+                    Book Name
+                </th>
+                <th>
+                    Accession No
+                </th>
+                <th>
+                    Card No
+                </th>
+                <th>
+                    Issue Date
+                </th>
+                <th>
+                    Due Date
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>
+                        @if (item.LibraryCard != null)
+                        {
+                            if (item.LibraryCard.LibraryMemberRegistration != null)
+                            {
+                                @(item.LibraryCard.LibraryMemberRegistration.StudentId != 0 ? item.LibraryCard.LibraryMemberRegistration.Studentinfo.StuDesc : item.LibraryCard.LibraryMemberRegistration.StaffMaster.Description)
+                            }
+                        }
+                    </td>
+                    <td>
+                        @if (item.BookReceivedDetails != null)
+                        {
+                            @item.BookReceivedDetails.BookReceived.Book.Name
+                        }
+                    </td>
+                    <td>
+                        @if (item.BookReceivedDetails != null)
+                        {
+                            @item.BookReceivedDetails.AccessionNo
+                        }
+                    </td>
+                    <td>
+                        @if (item.LibraryCard != null)
+                        {
+                            @item.LibraryCard.CardNo
+                        }
+                    </td>
+                    <td>@item.Date.ToShortDateString()
+                    </td>
+                    <td>
+                        @item.BookDueDate.ToShortDateString()
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="clearfix">
+    </div>
+</div>

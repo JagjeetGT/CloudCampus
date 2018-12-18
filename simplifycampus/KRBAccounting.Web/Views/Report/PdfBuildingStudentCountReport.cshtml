@@ -1,0 +1,53 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.BuildingStudentViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Building
+                </th>
+                <th>
+                    Room
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Total Students
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.StatisticsStudentBuildingCounts.GroupBy(x => x.BuildingName))
+        {
+            <tr>
+                <td>@item.Key
+                </td>
+                <td colspan="4"></td>
+            </tr>
+            foreach (var ite in Model.StatisticsStudentBuildingCounts.Where(x => x.BuildingName == item.Key))
+            { 
+                <tr>
+                    <td></td>
+                    <td>
+                        @ite.RoomName
+                    </td>
+                    <td>@ite.ClassName
+                    </td>
+                    <td>@ite.Total
+                    </td>
+                </tr>
+                    
+            }
+
+
+
+        }
+    </table>
+</div>

@@ -1,0 +1,192 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.JournalVoucherAddViewModel
+@{
+    var Debit =
+      Convert.ToInt32(KRBAccounting.Enums.JVAmountTypeEnum.D);
+    var Credit =
+    Convert.ToInt32(KRBAccounting.Enums.JVAmountTypeEnum.C);
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@using (Ajax.BeginForm("JournalVoucherAdd", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "journal-voucher-form" }))*@
+@using (Html.BeginForm("JournalVoucherAdd", "Entry", FormMethod.Post, new { @class = "form-horizontal form-custom", id = "journal-voucher-form" }))
+{@Html.HiddenFor(x => x.JournalVoucher.Id)
+    <div id="MsgError">
+    </div>
+    <div style="min-width: 700px; max-width: 833px; height: 400px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Voucher No.</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.JournalVoucher.DocId)
+                        @Html.TextBoxFor(x => x.JournalVoucher.JVNumber, new { @class = "modaldoclink input-90 input", module = "JV", valueId = "JournalVoucher_DocId", id = "journalvoucherno", entermsg = "Press F1 for choosing existing cash/bank list." })
+                        @Html.ValidationMessageFor(m => m.JournalVoucher.JVNumber)<span class="loading JournalVoucher_JVNumber">
+                            <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                    </span></span>
+                <div class="lag">
+                    <span class="stack" style="padding: 0 0 0 250px">
+                        <label>
+                            Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(x => x.Date)
+                            @Html.ValidationMessageFor(x => x.Date)
+                        </span></span>
+                </div>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Currency</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.JournalVoucher.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                        <input type="text" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" valueId="JournalVoucher_CurrencyId" 
+                             id="CurrencyId" entermsg = "Press F1 for choosing existing cash/bank list." />
+                    </span></span><span class="stack">
+                        <label class="label-37">
+                            Rate</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.JournalVoucher.CurRate, new { @class = "input-45 input", entermsg = "Enter Rate." })
+                            @Html.ValidationMessageFor(m => m.JournalVoucher.CurRate)
+                        </span></span>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" id="table-cash-bank-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="260px">
+                        General Ledger
+                    </th>
+                    @if (Model.EntryControl != null && Model.EntryControl.SubLedger)
+                    {
+                        <th width="80px">
+                            Sub Ledger
+                        </th>
+                    }
+                    <th width="80px">
+                        Dr Amount
+                    </th>
+                    <th width="80px">
+                        Cr Amount
+                    </th>
+                    <th width="260px">
+                        Narration
+                    </th>
+                </tr>
+                @{
+                    var viewModel = new KRBAccounting.Web.ViewModels.Entry.JournalVoucherDetailEntryViewModel();
+                    viewModel.EntryControl = Model.EntryControl;
+                    
+                }
+                @Html.Partial("_PartialJournalVoucherDetailEntry", viewModel)
+            </table>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-53">
+                    Gl Code</label>
+                @Html.TextBoxFor(x => x.GlCode, new { @class = "input-100 input", disabled = "disabled" })
+            </span><span class="stack">
+                <label class="label-53">
+                    Curr Bal</label>
+                @Html.TextBoxFor(x => x.GlDetailCurrBal, new { @class = "input-100 input", disabled = "disabled" })
+            </span>
+        </div>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-25">
+                        Total</label>
+                </span><span class="stack">
+                    <label class="label-40">
+                        Dr Amt</label>
+                    @Html.TextBoxFor(x => x.DrAmt, new { @class = "input-64 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Cr Amt</label>
+                    @Html.TextBoxFor(x => x.CrAmt, new { @class = "input-64 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-85">
+                        Dr Cr Diff Amt</label>
+                    @Html.TextBoxFor(x => x.DrCrDiffAmt, new { @class = "input-64 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-110">
+                        Dr Cr Diff Amt in Rs</label>
+                    @Html.TextBoxFor(x => x.DrCrDiffAmtRs, new { @class = "input-64 input", disabled = "disabled" })
+                </span>
+            </div>
+        </fieldset>
+        @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+        {
+            <div class="lag">
+                <label class="label-90">
+                    Remarks</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.JournalVoucher.Remarks, new { @class = "input-245 input" })
+                </span>
+            </div>
+        }
+        <span class="clearfix"></span>
+        <div class="form-error alert alert-error" style="display: none">
+        </div>
+    </div>
+@*if (Model.SystemControl.UDF == "1")
+                    {
+                        if (Model.UdfEntries.LongCount() != 0)
+                        {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry" style="display: none">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+                        }
+                    }*@
+}
+<script type="text/javascript">
+    var drAmt = parseFloat(0);
+    var crAmt =  parseFloat(0);
+    var netAmt = parseFloat(0);
+    credit = @Credit;
+    debit = @Debit;
+    var dateType = @Model.SystemControl.DateType.ToString();
+    $(document).ready(function () {
+        if(dateType=="1") {
+            $("#Date").mask("99/99/9999");
+            $("#Date").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#Date").mask("9999/99/99");
+            $("#Date").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+        
+        
+
+
+        $(".text_ledger").attr("id", "detail_0");
+        $(".text_ledger").attr("valueId", $(".hdn_ledger_Id").attr("id"));
+        $(".text_ledger").closest("tr").attr("id","tr_0");
+        
+        $(".text_subledger").attr("id", "sub_0");
+        $(".text_subledger").attr("valueId", $(".hdn_subledger_Id").attr("id"));
+        
+        $(".text_ledger").getDetailCurrentBalance();
+    });
+</script>

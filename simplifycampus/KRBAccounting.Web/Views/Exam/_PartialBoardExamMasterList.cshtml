@@ -1,0 +1,80 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.BoardExamMaster>
+    @*@{
+            var userRight = (UserRight)ViewBag.UserRight;
+        }*@
+    <div class="block-fluid table-sorting">
+        <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+            <thead>
+                <tr>
+
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Program
+                    </th>
+                    <th>
+                        Division
+                    </th>
+                    <th>
+                        Remarks
+                    </th>
+                    <th width="5%"></th>
+                    <th width="5%"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Studentinfo.StuDesc</td>
+                        <td>
+
+                            @item.Program.Description
+
+
+                        </td>
+
+                        <td>
+                            @if(item.Division!=null){
+                            
+                            @item.Division.Description
+                            }
+                            
+
+
+                        </td>
+                        <td>
+
+                            @item.Remarks
+
+
+                        </td>
+
+
+                        <td>
+
+                            <a href="@Url.Action("BoardExamMasterEdit",new{boardexammasterid=@item.Id})" class="editExam icon-edit" title="Edit">
+                            </a>
+
+                        </td>
+                        <td>
+
+                            <a href="@Url.Action("BoardExamMasterDelete", new {Id = @item.Id})" onclick="return confirm('Are you sure you wish to delete this Exam Routine?');" class=" icon-remove" title="Delete">
+                            </a>
+
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+@*<div class="pagination">
+    @Html.Raw(Html.AjaxPager(Model, "BoardExamMasterList", "Exam", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "boader-list" }))
+</div>*@

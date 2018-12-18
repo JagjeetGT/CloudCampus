@@ -1,0 +1,523 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.PartyLedgerViewModel
+@{
+    decimal drLedgerTotal = 0;
+    decimal crLedgerTotal = 0;
+    decimal LedgerTotalBalance = 0;
+    
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+    var VNo = "";
+}
+<div class="clearfix">
+</div>
+@Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+<br />
+
+<div class="ReportList">
+  <table border="1" style="font-size: 12px;">
+    <thead>
+        <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Account Description
+                </th>
+                <th>
+                    Dr Amount
+                </th>
+                <th>
+                    Cr Amount
+                </th>
+                <th>
+                    Balance
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.LedgerList)
+        { 
+            <tr>
+                <td>
+                </td>
+                <td style="font-weight: bold">
+                    A/C : @item.AccountName
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            var DspsubLedger = 0;
+            if (Model.DisplaySubledger)
+            {
+                DspsubLedger = 1;
+            }
+            var subLedgers = UtilityService.GetSubLedgers(item.Id, Model.StartDate, Model.EndDate, Model.FYId, Model.SubLedgers,Model.BranchId);
+            if (Model.DisplaySubledger && subLedgers.Count != 0)
+            {
+                foreach (var subLedger in subLedgers)
+                {
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="padding-left: 15px;font-weight: bold">
+                            SubLedger :
+                            @if (subLedger.Description != null)
+                            {<text>@subLedger.Description</text>
+                            }
+                            else
+                            {
+                                <text>No Sub Ledger</text>
+                            }
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+
+                    var subLedgerId = 0;
+                    if (subLedger.Id != null)
+                    {
+                        subLedgerId = Convert.ToInt32(subLedger.Id);
+                    }
+                    var openingBalance = UtilityService.GetSubLedgerOpeningBalance(item.Id, subLedgerId, Model.StartDate, Model.EndDate, Model.FYId,Model.BranchId);
+
+                    decimal balance = openingBalance;
+                    decimal drTotal = 0;
+                    decimal crTotal = 0;
+                    VNo = "";
+
+                    if (openingBalance != 0)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 30px">
+                                Opening Balance
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance > 0)
+                                {
+                                    drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (openingBalance < 0)
+                                {
+                                    crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                                }
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                            }
+                            int ProductDetails = 0;
+                            if (Model.DisplayProductDetails == true)
+                            {
+                                ProductDetails = 1;
+                            }
+                            int TermDetails = 0;
+                            if (Model.DisplayTermDetails == true)
+                            {
+                                TermDetails = 1;
+                            }
+                            if (subLedger.Id != null)
+                            {
+                                subLedgerId = Convert.ToInt32(subLedger.Id);
+                            }
+                            var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, ProductDetails, TermDetails, DspsubLedger,Model.BranchId, subLedgerId);
+                            foreach (var ledger in partyLedgers)
+                            {
+                                var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                                balance += ledger.Amount;
+
+                                if (VNo != ledger.VNo)
+                                {
+                                    VNo = ledger.VNo;
+                            <tr>
+                                <td>
+                                    @(Model.Datetype == 1 ? ledger.VDate.ToString("MM/dd/yyyy") : ledger.VMiti)
+                                </td>
+                                <td style="padding-left: 30px">
+                                    @description #:@ledger.VNo
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount > 0)
+                                    {
+                                        drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @if (ledger.Amount < 0)
+                                    {
+                                        crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                                    }
+                                </td>
+                                <td style="text-align: right">
+                                    @Math.Abs(balance).ToString("f2")
+                                    @if (balance > 0)
+                                    {
+                                        <text>Dr</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Cr</text>
+                                    }
+                                </td>
+                            </tr>
+
+                                    if (ledger.ChequeNo != null)
+                                    {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="padding-left: 40px; font-size: 7px">
+                                        Paid By ChqNo. : @ledger.ChequeNo
+                                        Dated : @(Model.Datetype == 1 ? @ledger.ChequeDate.ToString("MM/dd/yyyy") : @ledger.ChequeMiti)
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                    }
+
+                                    if (Model.DisplayRemarks == true && ledger.Narration != null)
+                                    {
+                                <tr>
+                                    <td style="text-align: right; font-size: 11px">
+                                        Narration :
+                                    </td>
+                                    <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                                        @ledger.Narration
+                                    </td>
+                                </tr>
+                                    }
+
+                                }
+                                if (Model.DisplayProductDetails == true && ledger.ProductDetails != null)
+                                {
+                            <tr>
+                                <td style="text-align: right; font-size: 11px">
+                                    Product Details :
+                                </td>
+                                <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                           
+                                    @Html.Raw(ledger.ProductDetails)
+                                </td>
+                            </tr>
+                                }
+
+                                if (Model.DisplayTermDetails == true && ledger.TermDetails != null)
+                                {
+                            <tr>
+                                <td style="text-align: right; font-size: 11px">
+                                    Term Details :
+                                </td>
+                                <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                           
+                                    @Html.Raw(ledger.TermDetails)
+                                </td>
+                            </tr>
+                                }
+                                if (Model.DisplayRemarks == true && ledger.Remarks != null)
+                                {
+                            <tr>
+                                <td style="text-align: right; font-size: 11px">
+                                    Remarks :
+                                </td>
+                                <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                                    @ledger.Remarks
+                                </td>
+                            </tr>
+                                }
+                            }
+                            if (partyLedgers.Count>=2)
+                            {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Sub Ledger Total:
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @drTotal.ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(crTotal).ToString("f2")
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        @Math.Abs(balance).ToString("f2")
+                                        @if (balance > 0)
+                                        {
+                                            <text>Dr</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Cr</text>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                    drGrandTotal += drTotal;
+                    crGrandTotal += crTotal;
+
+                    drLedgerTotal += drTotal;
+                    crLedgerTotal += crTotal;
+                }
+                LedgerTotalBalance = drLedgerTotal - Math.Abs(crLedgerTotal);
+                grandTotalBalance = drGrandTotal - Math.Abs(crGrandTotal);
+                
+                <tr>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        Ledger Total:
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @drLedgerTotal.ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @Math.Abs(crLedgerTotal).ToString("f2")
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @Math.Abs(LedgerTotalBalance).ToString("f2")
+                        @if (LedgerTotalBalance > 0)
+                        {
+                            <text>Dr</text>
+                        }
+                        else
+                        {
+                            <text>Cr</text>
+                        }
+                    </td>
+                </tr>
+            
+                drLedgerTotal = 0;
+                crLedgerTotal = 0;
+                LedgerTotalBalance = 0;
+            }
+            else
+            {
+                var openingBalance = UtilityService.GetLedgerOpeningBalance(item.Id, 0, Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+
+                decimal balance = openingBalance;
+
+                decimal drTotal = 0;
+                decimal crTotal = 0;
+                if (openingBalance != 0)
+                {
+                    <tr>
+                        <td>
+                        </td>
+                        <td style="padding-left: 30px">
+                            Opening Balance
+                        </td>
+                        <td style="text-align: right">
+                            @if (openingBalance > 0)
+                            {
+                                drTotal += openingBalance;<text>@openingBalance.ToString("f2")</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (openingBalance < 0)
+                            {
+                                crTotal += openingBalance;<text>@Math.Abs(openingBalance).ToString("f2")</text>
+                            }
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                             
+                }
+
+                int ProductDetails = 0;
+                if (Model.DisplayProductDetails == true)
+                {
+                    ProductDetails = 1;
+                }
+                int TermDetails = 0;
+                if (Model.DisplayTermDetails == true)
+                {
+                    TermDetails = 1;
+                }
+                var partyLedgers = UtilityService.GetLedgerParties(item.Id, Model.StartDate, Model.EndDate, Model.FYId, TermDetails, ProductDetails,DspsubLedger, Model.BranchId, 0);
+                foreach (var ledger in partyLedgers)
+                {
+                    var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(ledger.Source);
+                    balance += ledger.Amount;
+                    if (VNo != ledger.VNo)
+                    {
+                        VNo = ledger.VNo;
+                        
+                        <tr>
+                            <td>
+                                @(Model.Datetype == 1 ? ledger.VDate.ToString("MM/dd/yyyy") : ledger.VMiti)
+                            </td>
+                            <td style="padding-left: 30px">
+                                @description #:@ledger.VNo
+                            </td>
+                            <td style="text-align: right">
+                                @if (ledger.Amount > 0)
+                                {
+                                    drTotal += ledger.Amount;<text>@ledger.Amount.ToString("f2")</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (ledger.Amount < 0)
+                                {
+                                    crTotal += ledger.Amount;<text>@Math.Abs(ledger.Amount).ToString("f2")</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @Math.Abs(balance).ToString("f2")
+                                @if (balance > 0)
+                                {
+                                    <text>Dr</text>
+                                }
+                                else
+                                {
+                                    <text>Cr</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                    if (ledger.ChequeNo != null)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="padding-left: 40px; font-size: 7px">
+                                Paid By ChqNo. : @ledger.ChequeNo
+                                Dated : @(Model.Datetype == 1 ? @ledger.ChequeDate.ToString("MM/dd/yyyy") : @ledger.ChequeMiti)
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.DisplayRemarks == true && ledger.Narration != null)
+                    {
+                     <tr>
+                         <td style="text-align: right; font-size: 11px">
+                             Narration :
+                         </td>
+                         <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                             @ledger.Narration
+                         </td>
+                     </tr>
+                    }
+                    if (Model.DisplayProductDetails == true && ledger.ProductDetails != null)
+                    {
+                        <tr>
+                            <td style="text-align: right; font-size: 11px">
+                                    Product Details :
+                            </td>
+                            <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                                @Html.Raw(ledger.ProductDetails)
+                            </td>
+                        </tr>
+                    }
+                    if (Model.DisplayTermDetails == true && ledger.TermDetails != null)
+                    {
+                        <tr>
+                            <td style="text-align: right; font-size: 11px">
+                                Term Details :
+                            </td>
+                            <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                           
+                                @Html.Raw(ledger.TermDetails)
+                            </td>
+                        </tr>
+                    }
+
+
+                    if (Model.DisplayRemarks == true && ledger.Remarks != null)
+                    {
+                    <tr>
+                    <td style="text-align: right; font-size: 11px">
+                        Remarks :
+                    </td>
+                    <td colspan="4" style="padding-left: 40px; font-size: 11px">
+                        @ledger.Remarks
+                    </td>
+                </tr>
+                    }
+
+                }
+           
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Total:
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @drTotal.ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(crTotal).ToString("f2")
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Math.Abs(balance).ToString("f2")
+                    @if (balance > 0)
+                    {<text>Dr</text>}
+                    else
+                    {<text>Cr</text>}
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+                    drGrandTotal += drTotal;
+                    crGrandTotal += crTotal;
+                    grandTotalBalance = drGrandTotal - Math.Abs(crGrandTotal);
+            }
+
+        }
+        <tr>
+            <td>
+            </td>
+            <td style="text-align: right; font-weight: bold">
+                Grand Total:
+            </td>
+            <td style="text-align: right; font-weight: bold">
+                @drGrandTotal.ToString("f2")
+            </td>
+            <td style="text-align: right; font-weight: bold">
+                @Math.Abs(crGrandTotal)
+            </td>
+            <td style="text-align: right; font-weight: bold">
+                @Math.Abs(grandTotalBalance).ToString("f2")
+                @if (grandTotalBalance > 0)
+                {<text>Dr</text>}
+                else
+                {<text>Cr</text>}
+            </td>
+        </tr>
+    </table>
+</div>

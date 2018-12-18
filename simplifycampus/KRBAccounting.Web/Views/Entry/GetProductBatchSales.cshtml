@@ -1,0 +1,81 @@
+﻿@model IEnumerable<KRBAccounting.Service.Models.Purchase.ProductBatchSalesViewModel>
+<table border="1px">
+    <tr>
+        <th>
+            Serial No
+        </th>
+        <th>
+            Stock
+        </th>
+        <th>
+            Unit
+        </th>
+        <th>
+            Godown
+        </th>
+        <th>
+            Buy Rate
+        </th>
+        <th>
+            Sales Rate
+        </th>
+        @if ((bool)ViewBag.IsMfgDate)
+        {
+            <th>
+                Mfg Date
+            </th>
+        }
+        @if ((bool)ViewBag.IsExpDate)
+        {
+            <th>
+                Exp Date
+            </th>
+        }
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr class="product_batch" data-id="@item.Id" godown-id="@item.GodownId" hasexpireddate="@ViewBag.IsExpDate" expproduct="@item.ExpiredProduct" isexpired="@item.IsExpired" unitid="@item.UnitId">
+            <td class="BatchSerialNo">
+                @item.BatchSerialNo
+            </td>
+            <td class="stockqty">
+                @item.StockQty
+            </td>
+            <td>
+                @item.Unit
+            </td>
+            <td class="godown">@item.Godown
+            </td>
+            <td>@item.BuyRate
+            </td>
+            <td>@item.SalesRate
+            </td>
+            @if ((bool)ViewBag.IsMfgDate)
+            {
+                <td>
+                    @if (item.MfgDate != null)
+                    {
+                        <text>@(((DateTime)item.MfgDate).ToShortDateString())</text>
+                    }
+                </td>
+            }
+            @if ((bool)ViewBag.IsExpDate)
+            {
+
+                if (item.ExpDate != null)
+                {
+                <td class="expdate" hasvalue="true">
+                    @(((DateTime)item.ExpDate).ToShortDateString())
+                </td>
+                }
+                else
+                {
+                <td class="expdate" hasvalue="false">
+                    @string.Empty
+                </td>
+                }
+
+            }
+        </tr>
+    }
+</table>

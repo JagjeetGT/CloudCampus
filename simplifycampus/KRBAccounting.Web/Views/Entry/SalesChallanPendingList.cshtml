@@ -1,0 +1,68 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.SalesChallanMaster>
+<div class="block-fluid table-sorting" id="tbl-pending">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+              <tr>
+                            <th width="20%">
+                                Challan No.
+                            </th>
+                            <th>
+                                Challan Date
+                            </th>
+                            <th>
+                                Vendor
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th>
+                                Created By
+                            </th>
+                            <th width="10%">
+                            </th>
+                        </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                                <td>@item.ChallanNo
+                                </td>
+                                <td>@item.ChallanDate.ToShortDateString()
+                                </td>
+                                <td>@if (item.Ledger != null)
+                                    {
+                                        @item.Ledger.AccountName
+                                    }
+
+                                </td>
+                                <td>@item.SalesChallanDetails.Sum(x => x.NetAmt)
+                                </td>
+                                <td>@item.User.Username
+                                </td>
+                                <td>
+                                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "PB"))
+                                    {
+                                        <a href="javascript:void(0);" data-id="@item.Id" class="editSalesChallan icon-edit">
+                                        </a>
+                                    }
+                                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "PB"))
+                                    {
+                                        <text> | <a href="javascript:void(0);" data-id="@item.Id" class="approvedSalesChallan icon-ok">
+                                        </a></text>
+                                    }
+                                    
+                                    |<a class= "SalesChallanDelete icon-remove" href = "javascript:void(0);" title = "Delete" data-id="@item.Id">
+                                     </a>
+                                     |<a class= "icon-print" href = "@Url.Action("SalesChallanPrint", "Entry", new { invoiceId = item.Id })" title = "Print Bill" target="_blank">
+                                     </a>
+
+                                </td>
+                            </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "SalesChallanPendingList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

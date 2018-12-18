@@ -1,0 +1,70 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportTeacherScheduleReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var data in Model.ScheduleGroupByClassSection)
+{
+
+    <div class="ReportList" style="border: 1px solid; height: auto; padding-top: 20px">
+        <div class="ReportHeader" style="text-align: center;font-size: 9px;font-weight: bold;">
+            @Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+            <div class="clearfix">
+            </div>
+            <div class="clearfix"></div>
+            <div>
+               <div class="ReportHeader" style="text-align: center">
+                    ROUTINE FOR THE @data.FirstOrDefault().Class.Description Section @if(data.FirstOrDefault().Section!=null){@data.FirstOrDefault().Section.Description}</div>
+            </div>
+        </div>
+        <table border="0.5" style="font-size: 8px;">
+            @for (int i = 1; i <= 6; i++)
+            {
+                <tr>
+                    <td style="height: 50px; text-align: center; font-weight: bold;">
+                    </td>
+                    @foreach (var item in Model.Schedules.Where(x => x.ClassId == data.FirstOrDefault().ClassId && x.SectionId == data.FirstOrDefault().SectionId))
+                    {
+
+                        foreach (var source in item.DetailCollection.Where(x => x.DisplayOrder == i))
+                        {
+                            var time = source.StartTime + " - " + source.EndTime;
+                        <td style="height: 50px; text-align: center;">
+                            @time
+                        </td>
+                        }
+
+                    }
+                </tr>
+                <tr bgcolor="#E6EEEE" align="center" >
+                    @{
+                    var day = Model.Schedules.FirstOrDefault(x => x.ClassId == data.FirstOrDefault().ClassId && x.SectionId == data.FirstOrDefault().SectionId).DetailCollection.FirstOrDefault(x => x.DisplayOrder == i).Day;
+                    }
+                    <td>
+                        <b>@day</b>
+                    </td>
+                    @foreach (var item in Model.Schedules.Where(x => x.ClassId == data.FirstOrDefault().ClassId && x.SectionId == data.FirstOrDefault().SectionId))
+                    {
+
+                        foreach (var source in item.DetailCollection.Where(x => x.DisplayOrder == i))
+                        {
+                        <td>
+                             @if (source.ClassSchedule.Subject!=null)
+                                    {
+                                         @source.ClassSchedule.Subject.Description
+                                    }
+                                    (@if (source.TeacherSchedules.Any() && @source.TeacherSchedules.First().Staff != null)
+                                     { @source.TeacherSchedules.First().Staff.Description}
+                                    )
+                        </td>
+                        }
+
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+}

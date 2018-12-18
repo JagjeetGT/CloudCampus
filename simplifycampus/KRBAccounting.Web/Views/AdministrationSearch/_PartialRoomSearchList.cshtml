@@ -1,0 +1,46 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScRoom>
+@{
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>Code</th><th>Description</th>
+                <th>Seats</th>
+                <th>Memo</th>
+                
+                <th width="7%"></th>
+            </tr></thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Code</td><td>@item.Description</td>
+                    <td>@item.Seats</td>
+                    <td>@item.Memo</td>
+                    
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editScRoom icon-edit" data-id="@item.Id" title="Edit"></a>
+                        }
+          
+                    @if (userRight.Delete)
+                    {
+                        <a href="javascript:void(0)" class="deleteClass icon-remove" data-id="@item.Id"  title="Delete">
+                        </a>
+                    }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+        
+</div>

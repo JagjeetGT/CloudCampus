@@ -1,0 +1,53 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.BusRouteDetailViewModel
+
+           
+<tr class="university-course-fee detail-entry">
+    @using (Html.BeginCollectionItem("busRouteInfoList"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.BusRouteDetails.BusStopId, new { @class = "input hdn_busStopId first-col" })
+                <input type="text" class = "modallink input busStopIdText first-col" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")"/>
+                @Html.ValidationMessageFor(m => m.BusRouteDetails.BusStopId)
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.TextBoxFor(x => x.PickUpTime, new { @class = "input level picktime" })
+            </span>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.DropTime, new { @class = "input board droptime" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.BusRouteDetails.AMOUNT, new { @class = "input percentage" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.BusRouteDetails.Narr, new { @class = "input institute last-col-custom", href = "/Transportation/BusRouteDetailsInfoAdd", tableid = "bus-route-list" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bus-route-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#bus-route-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

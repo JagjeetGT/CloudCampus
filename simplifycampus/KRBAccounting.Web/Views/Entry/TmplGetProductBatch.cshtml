@@ -1,0 +1,84 @@
+﻿@model KRBAccounting.Service.Models.Purchase.PurchaseProductBatchViewModel
+@using (Html.BeginForm("GetProductBatch"))
+{
+    using (Html.BeginCollectionItem("ProductBatchList"))
+    {
+        @Html.HiddenFor(x => x.IsMfgDate)
+        @Html.HiddenFor(x => x.IsExpDate)
+        <table>
+            <tr>
+                <th>
+                    Serial No
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Unit
+                </th>
+                <th>
+                    Godown
+                </th>
+                <th>
+                    Buy Rate
+                </th>
+                <th>
+                    Sales Rate
+                </th>
+                @if (Model.IsMfgDate)
+                {
+                    <th>
+                        Mfg Date
+                    </th>
+                }
+                @if (Model.IsExpDate)
+                {
+                    <th>
+                        Exp Date
+                    </th>
+                }
+            </tr>
+            <tr>
+                <td>
+                    @Html.TextBoxFor(x => x.BatchSerialNo, new {@class = "BatchSerialNo input"})
+                </td>
+                <td>
+                    @Html.TextBoxFor(x => x.Qty, new {@class = "BatchQty input"})
+                </td>
+                <td>
+                    @Html.DropDownListFor(x => x.UnitId, Model.UnitList, new {@class = "input-70 BatchUnitId input"})
+                </td>
+                <td>
+                    @Html.HiddenFor(x => x.GodownId, new {@class = "value BatchGodownId"})
+                    @Html.TextBoxFor(x => x.Godown, new {@class = "input-170 modallink input BatchGodown", href = "/Master/GetGodownList"})
+                </td>
+                <td>@Html.TextBoxFor(x => x.BuyRate, new {@class = "BatchBuyRate input"})
+                </td>
+                <td>@Html.TextBoxFor(x => x.SalesRate, new {@class = "BatchSalesRate input"})
+                </td>
+                @if (Model.IsMfgDate)
+                {
+                    <td>
+                        @Html.TextBoxFor(x => x.MfgDate, new {@class = "BatchMfgDate input"})
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                $("#MfgDate").mask("99/99/9999");
+                            })
+                        </script>
+                    </td>
+                }
+                @if (Model.IsExpDate)
+                {
+                    <td>
+                        @Html.TextBoxFor(x => x.ExpDate, new {@class = "BatchExpDate input"})
+                        <script type="text/javascript">
+                            $(document).ready(function() {
+                                $("#ExpDate").mask("99/99/9999");
+                            })
+                        </script>
+                    </td>
+                }
+            </tr>
+        </table>
+    }
+}

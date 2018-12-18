@@ -1,0 +1,266 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.LibraryInformationViewModel
+@{
+    var data = Model.SP_StudentInfoHeader.FirstOrDefault();
+}
+@{
+    decimal totalfine = 0;
+
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+
+
+            <div class="head">
+                <h1>
+                    Student Library Information
+                </h1>
+                <ul class="buttons">
+                    <li>
+                        <a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                           class="isw-refresh"></a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("PdfLibraryInformation", "Student")" target="_blank" title="Export to Pdf" class="isw-pdf">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ExcelLibraryInformation", "Student")" target="_blank" title="Export to Excel" class="isw-excel">
+                        </a>
+                    </li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div class="block">
+                <div class="ReportHeader" style="text-align: center">
+                    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+               
+                </div>
+                <div class="ReportList " id="universityledgermark">
+
+                    <div class="row-fluid">
+                        <p style="font-weight:bold">
+                            NAME : @data.Student &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            REGISTRTION NO. : @data.Regno &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            STUDENT CODE : @data.StdCode
+                            <br />
+                            SECTION : @data.Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            CLASS : @data.Class &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            ROLL NO. :  @data.Rollno
+                            <br />
+                            LIBRARY REGISTRATION NO. : @Model.LibraryRegistrationNumber
+                            <br />
+                            ADDRESS :  @data.TmpAdd,
+                            @data.TmpCity,
+                            @data.TmpDistrict,
+                            @data.TmpCountry
+                        </p>
+
+
+                        <div class="row-fluid">
+                            <div class="block">
+
+
+                                <h5>Library Card Status</h5>
+                                <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list" style="border-top: 0px" align="center">
+                                    <tr>
+                                        <th>Card No</th>
+                                        <th> Card Status</th>
+                                    </tr>
+                                    @foreach (var item in Model.LibraryCard)
+                                    {
+                                        <tr>
+                                            <td style="text-align:center">
+                                                @item.CardNo
+                                            </td>
+                                            <td style="text-align:center">
+                                                @if (item.IsUse)
+                                                {
+                                                    <text> Used</text>
+                                                }
+                                                else
+                                                {
+                                                    <text>Available</text>
+                                                }
+
+                                        </tr>
+
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="block">
+
+
+                            <h5>Book Issued Information</h5>
+                            <table cellpadding="0" cellspacing="0" width="90%" class="listpopup" id="tbl-list" style="border-top: 0px" align="center">
+                                <tr>
+                                    <th>Issued Date/Miti</th>
+                                    <th>Book Due Date/Miti</th>
+                                    <th>Card No</th>
+                                    <th>Book Name</th>
+                                    <th>Book Return Status</th>
+                                    <th>Return Date/Miti</th>
+                                    <th>Fine Paid</th>
+                                    <th>Due Fine Amount</th>
+                                   
+                                </tr>
+   @foreach (var item in Model.LibraryInformations)
+{
+    <tr>
+        <td style="text-align:center">
+            @item.Date.ToShortDateString() A.D.||@item.Miti B.S.
+        </td>
+        <td style="text-align:center">
+
+            @item.BookDueDate.ToShortDateString() A.D.||@item.BookDueMiti B.S.
+        </td>
+        <td style="text-align:center">
+            @item.CardNo
+        </td>
+        <td style="text-align:center">
+           @item.BookName @item.AccessionNo
+        </td>
+        <td style="text-align:center">
+            @if (item.Return)
+        {
+        <text>Returned</text>
+        }
+        else
+        {
+        <text>Yet To Return</text>
+        }
+        </td>
+        <td style="text-align:center">
+            @if (item.ReturnDate != null)
+        {
+                                @Convert.ToDateTime(item.ReturnDate).ToShortDateString()
+
+        }
+            @if (item.ReturnDate != null)
+        {
+                                <text>A.D.</text>
+        } || @item.ReturnMiti
+        @if (item.ReturnMiti != null)
+        {
+                                <text>B.S.</text>
+        }
+
+    </td>
+        <td>@if (item.FineAmount != null)
+            {
+                @item.FineAmount
+            }</td>
+        <td>
+
+
+    @item.FinedAmount    
+           
+        </td>
+        @*totalfine+=@item.FineAmount*@
+</tr>
+
+
+}
+                                
+                            </table>
+                        </div>
+                    </div>
+
+                 
+                </div>
+                <p>
+                    Summary : @foreach (var item in Model.SP_LibraryDueAmount)
+                              {
+                                  if (Model.LibraryInformations.Where(x => x.Return == false).Count()!=0 && item.RemainingDue!=0)
+                                 {
+                                  <text>LIBRARY BOOKS PENDING AND FINE AMOUNT PENDING AS WELL</text>
+                                  }
+                                  else if (Model.LibraryInformations.Where(x => x.Return == false).Count() == 0 && item.RemainingDue != 0)
+                                  {
+                                  <text>Fine Amount Pending</text>
+                                  }
+                                  else if(Model.LibraryInformations.Where(x => x.Return == false).Count() != 0 && item.TotalDueAmount == 0 )
+                                  {
+                                      <text>LIBRARY BOOKS PENDING</text>
+                                  }
+                                  else
+                                  {
+                                      <text>NO MORE LIBRARY BOOKS AND FINE AMOUNT PENDING</text>
+                                  }
+                              }
+                    <br />
+                    Book Not Returned : @Model.LibraryInformations.Where(x => x.Return == false).Count()
+                    <br />
+                    Date : @DateTime.UtcNow.ToShortDateString() A.D.|| @NepaliDateService.NepaliDate(DateTime.UtcNow).Date B.S.
+                    <br/>
+                   Total Fine Amount : @Model.SP_LibraryDueAmount.FirstOrDefault().TotalDueAmount
+                    <br/>
+                    Total Fine Paid Amount : @Model.SP_LibraryDueAmount.FirstOrDefault().PaidDueAmount
+                    <br/>
+                    Total Remaining Due Amount : @Model.SP_LibraryDueAmount.FirstOrDefault().RemainingDue
+                    
+
+                </p>
+
+
+         
+                    <table style="float:left">
+                        <tr>
+                            <td>
+                                ----------------
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                Librarian
+                            </td>
+                        </tr>
+                    </table>
+               
+          
+
+
+           
+                    <table style="float:right">
+                        <tr>
+                            <td>
+                                ----------------
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                Stamp
+                            </td>
+                        </tr>
+                    </table>
+               
+
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<style>
+    h5 {
+        text-decoration: underline;
+        text-transform: uppercase;
+    }
+</style>

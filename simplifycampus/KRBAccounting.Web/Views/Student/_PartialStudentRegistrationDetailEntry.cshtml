@@ -1,0 +1,33 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScStudentRegistrationDetail>  
+@*@if (Model.FirstOrDefault().RegMasterId == 0)
+{
+    foreach (var item in Model)
+    {
+    @Html.Partial("_PartialStudentRegistrationDetailAdd", item)
+    
+    }
+}
+else
+{*@
+@foreach (var item in Model)
+{
+    @Html.Partial("_PartialStudentRegistrationDetailEdit", item)
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-class-fee-rate-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-class-fee-rate-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>

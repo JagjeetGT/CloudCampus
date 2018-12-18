@@ -1,0 +1,97 @@
+﻿@using KRBAccounting.Web.Helpers
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.PrintingFeeReceiptReportViewModel 
+           @{
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/img/NoImage.jpg";
+}
+@foreach (var item in Model.ScFeeReceipts)
+{
+   @* @Html.Partial("_PartialReceiptHeader", Model.Header)*@
+   
+<table style="font-size: 13px;" width="100%">
+    <tr>
+        <td rowspan="2" width="12%">
+            <img src="@Model.Header.Logo" width="40" height="30" />
+        </td>
+        <td rowspan="2" width="30%">
+            <font style="font-weight: bold">@Model.Header.CompanyName</font>
+        </td>
+        <td width="58%">
+            <font style="font-weight: normal; font-size: 10px">@Model.Header.CompanyAddress</font>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <font style="font-weight: normal; font-size: 10px">Ph. No. @Model.Header.Phone</font>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">
+            <font style="font-weight: bold; font-size: 13px">Receipt</font>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <font style="font-weight: bold; font-size: 13px">No. :</font> 
+            <font style="font-weight: normal;font-size:10px;">@item.ReceiptNo  </font>  
+        </td>
+        <td align="right">
+            <font style="font-weight: bold; font-size: 13px">Date :</font> <font style="font-weight: normal; font-size:10px;">@item.ReceiptMiti  </font>    
+        </td>
+   
+    </tr>
+    
+</table>
+    
+    
+    
+    
+    
+    
+    
+    <table border="0"  style="font-size: 13px;" width="100%">
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold">Received with thanks from Ms./Mr.:</font> @item.Studentinfo.StuDesc
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold">Reg No. :</font> @item.Studentinfo.Regno
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold;">for the payment of Monthly Fee For:  </font>   @NepaliDateService.LongMonth(item.PaidUpMonthMiti)
+                @item.PaidUpYearMiti
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold">In words: </font>
+                @{
+    double amount = Convert.ToDouble(item.ReceiptAmount);
+    var word = NumberToEnglish.changeNumericToWords(amount);
+                }
+                @word
+            </td>
+        </tr>
+    </table>
+    <table style="font-size: 13px;" width="100%">
+        <tr>
+            <td>
+                <font style="font-weight: bold; font-size: 13px">Rs.</font> <font style="font-weight: normal;
+                    font-size: 12px">@item.ReceiptAmount</font>
+            </td>
+            <td>
+                <font style="font-weight: bold; font-size: 13px">Received By:</font> <font style="font-weight: normal;
+                    font-size: 12px">@if (item.PreparedBy != null)
+                                     {
+                                         @item.PreparedBy.FullName
+                                     }
+                                                                                     </font>
+            </td>
+        </tr>
+    </table>
+}

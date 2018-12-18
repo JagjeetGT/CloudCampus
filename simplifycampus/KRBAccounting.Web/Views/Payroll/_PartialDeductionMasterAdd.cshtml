@@ -1,0 +1,72 @@
+@model KRBAccounting.Domain.Entities.PyDeductionMaster
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("DeductionMasterAdd", "Payroll", new { controller = "Payroll" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    
+    @Html.HiddenFor(m => m.Id)
+
+    
+        <div id="error-msg"></div>
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                Name</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.Name, new { @class = "input-100 input", entermsg = "Enter Name" })
+                @Html.ValidationMessageFor(m => m.Name)
+            </div>
+        </div>
+        <div class="stack">
+            <label class="label-90">
+                Type</label>
+            <div class="field">
+                @Html.DropDownListFor(m => m.Type, Model.TypeList, new { @class = "input-100 input", entermsg = "Enter Type" })
+                @Html.ValidationMessageFor(m => m.Type)
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix">
+    </div>
+
+    <div class="lag">
+        <div class="stack">
+            <div class="stack">
+                <label class="label-90">
+                    Is Flat</label>
+                <div class="field">
+                    @Html.EditorFor(m => m.IsFlat, new { @class = "input-100 input", entermsg = "Enter Year" })
+                    @Html.ValidationMessageFor(m => m.IsFlat)
+                </div>
+            </div>
+            <label class="label-90 percent-value">
+                Amount</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.Amount, new { @class = "input-100 input", entermsg = "Enter Amount" })
+                @Html.ValidationMessageFor(m => m.Amount)
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                Rebatable</label>
+            <div class="field">
+                @Html.EditorFor(m => m.Rebatable, new { @class = "input-100 input", entermsg = "Enter Rebatable" })
+                @Html.ValidationMessageFor(m => m.Rebatable)
+            </div>
+        </div>
+        <div class="stack">
+            <label class="label-90">
+                IsAnnual</label>
+            <div class="field">
+                @Html.EditorFor(m => m.IsAnnual, new { @class = "input-100 input", entermsg = "Enter IsAnnual" })
+                @Html.ValidationMessageFor(m => m.IsAnnual)
+            </div>
+        </div>
+        
+    </div>
+}

@@ -1,0 +1,24 @@
+@model KRBAccounting.Domain.Entities.ScBusStop
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("AddBusStop", "Transportation", new { controller = "Transportation" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "formBusStop-id" }))
+{
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Description</label>
+            <span class="field">@Html.TextBoxFor(m => m.Description, new { @class = "input", entermsg = "Enter Description" })
+                @Html.ValidationMessageFor(m => m.Description) </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    
+    
+    <div class="lag">
+        <span class="stack">
+            <label class="label-120">
+                Memo</label>
+            <span class="field">@Html.TextBoxFor(m => m.Memo, new { @class = "input", entermsg = "Enter Description" })
+                @Html.ValidationMessageFor(m => m.Memo) </span></span>
+    </div>
+}

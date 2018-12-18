@@ -1,0 +1,144 @@
+@using KRBAccounting.Domain.Entities
+@model KRBAccounting.Web.ViewModels.Academy.AdcamicsStudentFeeRateViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@{
+    string billTermClass = "";
+    var billingTerms = ((List<ScStudentFeeTerm>)ViewBag.BillingTermList).Where(x => x.Index == null);
+    if (ViewBag.AllowbillWiseFeeTerm == 1)
+    {
+       
+        billTermClass = "rate-bill-term";
+    }
+}
+@using (Ajax.BeginForm("StudentFeeRateEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+   
+    @Html.HiddenFor(x => x.StudentFeeRateMaster.Id)
+    @Html.HiddenFor(m => m.StudentFeeRateMaster.AcademicYearId)
+    <div id="billing-term-list" style="display: none">
+        @foreach (var term in billingTerms.Where(x => !x.IsItemWise))
+        {
+            @Html.Action("InsertFeeTermEdit", term)
+        }
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-70">
+                Class</label>
+            <span class="field">
+                @Html.HiddenFor(x => x.StudentFeeRateMaster.ClassId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetClasses", "School")" value="@if (Model.StudentFeeRateMaster.Class != null)
+                                                                                                                   {
+                                                                                                                       @Model.StudentFeeRateMaster.Class.Description
+                                                                                                                   }
+                                                                                                                      " valueId="StudentFeeRateMaster_ClassId" id="feeitemledger" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.StudentFeeRateMaster.ClassId)
+            </span></span>@*<label class="label-70">
+            Class</label>
+        <span class="field">
+            @Html.TextBoxFor(x => x.ClassCode, new { @class = "input-100", @readonly = "readonly" })</span>*@
+        <span class="stack">
+            <label class="label-70">
+                Student</label>
+            <span class="field">
+                @Html.HiddenFor(m => m.StudentFeeRateMaster.StudentId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetStudentsIdByClassId", "School")" value="@if (Model.StudentFeeRateMaster.Studentinfo != null)
+                                                                                                                               {
+                                                                                                                                   @Model.StudentFeeRateMaster.Studentinfo.StuDesc
+                                                                                                                               }
+                                                                                                                                  " parent="StudentFeeRateMaster_ClassId" valueId="StudentFeeRateMaster_StudentId" id="Shift-id" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.StudentFeeRateMaster.StudentId)
+            </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <hr />
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 400px;">
+        <table class="table-bordered" id="table-student-fee-rate-detail" style="width: 615px">
+            <tr class="nodrop nodrag">
+                <th width="20px">
+                </th>
+                <th>
+                    Fee Item
+                </th>
+                <th>
+                    Fee Rate
+                </th>
+                <th>
+                    Term Amount
+                </th>
+                <th>
+                    Net Amount
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+            @foreach (var item in Model.ScStudentFeeRateDetails)
+            {
+                if (ViewBag.AllowFeeWiseFeeTerm == 1)
+                {
+                    item.AllowFeeWiseFeeTerm = 1;
+                }
+                item.DetailGuid = Guid.NewGuid().ToString();
+                @Html.Partial("_PartialStudentFeeRateDetailEdit", item)
+            }
+        </table>
+    </div>
+    <div class="clearfix">
+    </div>
+    <hr />
+    
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Basic Amount</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.StudentFeeRateMaster.BasicAmount, new { @class = "input-120 input MasterBasicAmt " + billTermClass, entermsg = "Enter Remarks", @readonly = "readonly" })
+                @Html.ValidationMessageFor(m => m.StudentFeeRateMaster.BasicAmount)
+            </span></span><span class="stack">
+                <label class="label-90">
+                    Term Amount</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.StudentFeeRateMaster.TermAmount, new { @class = "input-120 input", entermsg = "Enter Remarks", @readonly = "readonly" })
+                    @*<a href="javascript:void(0)" class="btn @billTermClass bill-wise-feeterm" style="height: 15px">...</a>*@
+                </span></span><span class="stack">
+                    <label class="label-90">
+                        Net Amount</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.StudentFeeRateMaster.NetAmount, new { @class = "input-120 input", entermsg = "Enter Remarks", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(m => m.StudentFeeRateMaster.NetAmount)
+                    </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+  
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.StudentFeeRateMaster.Remarks, new { @class = "input-305 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.StudentFeeRateMaster.Remarks)
+            </span></span>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+        $.each(ledgerElement, function (index) {
+            var element = $(this).closest("tr");
+            element.attr("id", "tr_" + index);
+            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+            element.find(".text_subject").attr({
+                "valueId": Subject_valueid,
+                "id": "text_subject_" + index
+            });
+        });
+    });
+   
+
+</script>

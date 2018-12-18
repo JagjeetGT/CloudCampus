@@ -1,0 +1,27 @@
+﻿@model KRBAccounting.Domain.Entities.ScClassFeeRate
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable" align="center">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="sno">
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.FeeItemId, new { @class = "hdn_Subject_Id" })
+            <input type="text"  class = "modallink text_subject first-col input-190 input" value="@if (Model.ScFeeItem != null)
+                                                                                        {
+                                                                                            @Model.ScFeeItem.Description
+                                                                                        }
+                                                                                           "   title="Subject " href="@Url.Action("GetFeeItems")"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.FeeRate, new { @class = "FeeRate input-190 input" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narr, new { @class = "last-col-custom input-235 input", href = "/School/ClassFeeRateDetail", tableId = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

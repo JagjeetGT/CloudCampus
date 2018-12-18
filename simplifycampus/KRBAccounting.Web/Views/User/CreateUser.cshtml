@@ -1,0 +1,13 @@
+﻿@model KRBAccounting.Domain.Entities.User
+
+@{
+    ViewBag.Title = "CreateUser";
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+}
+@using(Html.BeginForm())
+{
+    @Html.TextBoxFor(x=>x.Username)
+    @Html.PasswordFor(x=>x.Password)
+    <input type="submit" value="Save"/>
+}
+<h2>CreateUser</h2>

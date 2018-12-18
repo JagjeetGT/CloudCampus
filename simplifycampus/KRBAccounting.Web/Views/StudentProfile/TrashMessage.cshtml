@@ -1,0 +1,66 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Web.Helpers
+@model IEnumerable<KRBAccounting.Domain.Entities.ScMessage>
+@{
+    ViewBag.Title = "SentMessage";
+}
+
+<div class="header" align="center" >
+        Trash Message
+    </div>
+    <div id="tableListData">
+        <table cellpadding="0" cellspacing="0" width="100%" class="table table-hover table-bordered "
+               id="msg-List">
+            <thead>
+                <tr>
+                    <th>Receiver</th>
+
+                    <th width="15%">
+   
+                        Subject
+                    </th>
+                    <th width="55%">
+                        Messages
+                    </th>
+                    <th width="10%">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    var senderName = "";
+                    senderName = @UtilityService.GetUserNameByUserId(item.ReceiverId);
+                   
+
+                    
+                        <tr align="center" class="msgDetails" data-id="@item.Id" style="cursor: pointer">
+        
+       
+                            <td>
+                                @senderName
+                            </td>
+                            <td>
+           
+                                @item.MsgSubject
+                            </td>
+                            <td>
+                   
+                                @Html.Raw(@Utility.TrimText(item.MsgBody, 10))  .......
+                
+                            </td>
+                            <td>
+          
+                                @item.MsgDate.ToShortDateString()
+                            </td>
+           
+                        </tr>
+            
+                   
+
+
+                }
+            </tbody>
+        </table>
+        </div>

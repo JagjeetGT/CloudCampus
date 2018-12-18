@@ -1,0 +1,221 @@
+﻿@using System.Data
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.SalesReturnSummaryViewModel
+@{
+    decimal totalBasicAmt = 0;
+    decimal totalGrandTotal = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix"></div>
+
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+<br/>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 7px;">
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Code
+                </th>
+                <th>
+                    Product Description
+                </th>
+                <th>
+                    Qty
+                </th>
+                <th>
+                    Rate
+                </th>
+                <th>
+                    Basic Amt
+                </th>
+            </tr>
+        </thead>
+        
+         @foreach (var godown in Model.SalesReturnGodownHeaders)
+         {
+             <tr>
+                 <td>
+                 </td>
+                 <td style="font-weight: bold">
+                     Godown: @godown.Name
+                 </td>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+             </tr>
+             var salesDetails=StoredProcedureService.GetSalesReturnDetails(Model.StartDate, Model.EndDate,godown.Id);
+             foreach (var item in salesDetails)
+             {
+                 <tr>
+                     <td>@item.InvoiceDate.ToString("MM/dd/yyyy")
+                     </td>
+                     <td>
+                         Inv. No: @item.InvoiceNo
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>
+                         Customer:
+                     </td>
+                     <td>@item.AccountName
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                     </td>
+                 </tr>
+                 decimal total = 0;
+                 var productDetails = StoredProcedureService.GetSalesReturnDetailProducts(item.Id);
+                 foreach (var products in productDetails)
+                 {
+                     total += products.BasicAmt;
+                     <tr>
+                         <td>@products.ShortName
+                         </td>
+                         <td>@products.Name
+                         </td>
+                         <td style="text-align: right">@products.Qty @products.Unit
+                         </td>
+                         <td style="text-align: right">@products.Rate
+                         </td>
+                         <td style="text-align: right">@products.BasicAmt
+                         </td>
+                     </tr>
+
+                     @*var productWiseBillTerms = StoredProcedureService.GetSalesProductWiseTerms(products.Id);
+                     foreach (var productWiseTerm in productWiseBillTerms)
+                     {
+                         total += productWiseTerm.TermAmount;
+                         <tr>
+                             <td>
+                             </td>
+                             <td style="text-align: right">@productWiseTerm.Description
+                             </td>
+                             <td>
+                             </td>
+                             <td style="text-align: right">@if (productWiseTerm.Rate != 0)
+                                                           {
+                                                               @productWiseTerm.Rate
+                                                           }
+                             </td>
+                             <td style="text-align: right">@productWiseTerm.TermAmount
+                             </td>
+                         </tr>
+                     }*@
+                 }
+                 totalBasicAmt += total;
+                 <tr>
+                     <td>
+                     </td>
+                     <td style="text-align: right">
+                         Total
+                     </td>
+                     <td>
+                     </td>
+                     <td style="text-align: right">
+                     </td>
+                     <td style="text-align: right">@total
+                     </td>
+                 </tr>
+            @*     var billWiseBillTerms = StoredProcedureService.GetSalesBillWiseTerms(item.Id);
+                 foreach (var billWiseTerm in billWiseBillTerms)
+                 {
+                     <tr>
+                         <td>
+                         </td>
+                         <td style="text-align: right">@billWiseTerm.Description
+                         </td>
+                         <td>
+                         </td>
+                         <td style="text-align: right">
+                             @if (billWiseTerm.Rate != 0)
+                             {
+                                 @billWiseTerm.Rate
+                             }
+                         </td>
+                         <td style="text-align: right">@billWiseTerm.TermAmount
+                         </td>
+                     </tr>
+                 }*@
+
+                 <tr>
+                     <td>
+                     </td>
+                     <td style="text-align: right">
+                         Invoice Amount
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                     </td>
+                     <td style="text-align: right">@item.NetAmt
+                     </td>
+                 </tr>
+                 totalGrandTotal += item.NetAmt;
+             }
+
+         }
+        <tr>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">
+                Total Basic Amt
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="text-align: right">@totalBasicAmt
+            </td>
+        </tr>
+        @*@{
+            var footerTerms = StoredProcedureService.GetSalesFooterTerms(Model.StartDate, Model.EndDate);
+        }
+        @foreach(var item in footerTerms)
+        {
+            if(item.TermAmount!=0)
+            {
+                <tr>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">
+                Total @item.Description
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">@item.TermAmount
+            </td>
+        </tr>
+            }
+        }*@
+        <tr>
+            <td>
+            </td>
+            <td style="text-align: right;font-weight:bold">
+                Grand Total
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="text-align: right">@totalGrandTotal
+            </td>
+        </tr>
+    </table>
+</div>

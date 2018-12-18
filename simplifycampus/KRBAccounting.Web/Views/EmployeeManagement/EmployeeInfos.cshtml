@@ -1,0 +1,143 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Employee Information";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="/Content/TimePicker/jquery.timepicker.js" type="text/javascript"></script>
+<link href="/Content/TimePicker/jquery.timepicker.css" rel="stylesheet" type="text/css" />
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Employee Information
+                    </h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addScSubject"></a></li>
+                        }
+
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div id="boader-list">
+                        @Html.AjaxAction("EmployeeInfosList")
+
+
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title="Staff Group Master(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScSubject').live('click', function () {
+        Begin();
+        var url = '@Url.Action("EmployeeInfoAdd")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editScStaffMaster').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("EmployeeInfoEdit")?id=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalsubject .block').load("/EmployeeManagement/EmployeeInfoAdd");
+        $("#boader-list").load("/EmployeeManagement/EmployeeInfosList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#boader-list").load("/EmployeeManagement/EmployeeInfosList");
+        $('#modalsubject').dialog("close"); $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data); $.unblockUI();
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data); $.unblockUI();
+        }
+    }
+
+
+    $('a.StaffMasterDelete').live('click', function () {
+        var result = confirm("Are you sure you wish to delete this Staff?");
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("EmployeeInfoDelete", "EmployeeManagement")?staffmasterId=' + id;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Staff is already in use. Cannot delete.");
+                } else {
+                    $("#boader-list").load("/EmployeeManagement/EmployeeInfosList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+
+    });
+</script>

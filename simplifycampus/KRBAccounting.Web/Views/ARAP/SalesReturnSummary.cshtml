@@ -1,0 +1,87 @@
+﻿@model KRBAccounting.Web.ViewModels.ARAP.SalesReturnSummaryFormViewModel
+@{
+    ViewBag.Title = "Sales Return Summary";
+}
+<div class="breadLine">
+    <ul class="breadcrumb">
+      @*  <li><a href="@Url.Action("SalesOrderSummary", "ARAP")">Sales Order</a> <span class="divider">
+            |</span></li>
+        <li><a href="@Url.Action("SalesChallanSummary", "ARAP")">Sales Challan</a> <span class="divider">
+            |</span></li>*@
+        <li><a href="@Url.Action("SalesSummary", "ARAP")">Sales Summary</a> <span class="divider">
+                                                                                |</span></li>
+        <li><a href="@Url.Action("SalesReturnSummary", "ARAP")">Sales Return Summary</a> <span class="divider">
+                                                                                             |</span></li>
+    </ul>
+</div>
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Sales Report</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfSalesReturnSummary", "ARAP")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelSalesReturnSummary", "ARAP")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">@Html.Partial("_PartialSalesReturnSummaryForm", Model)</div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modalReportForm").dialog('open'); });
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+
+        $("#saveForm").live("click", function () {
+            $("#report-form").submit();
+        });
+
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: '550px',
+            title: 'Generate Sales Return Summary Report',
+            buttons: {
+                "OK": function () {
+                    $("#report-form").submit();
+                    $.blockUI();
+                    $(this).dialog('close');
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+
+//    $('#Detail').click(function () {
+//        if ($(this).is(':checked')) {
+//            $(".Godown").show();
+//        } else {
+//            $(".Godown").hide();
+//        }
+//    });
+
+    $('#Godown').click(function () {
+        if ($(this).is(':checked')) {
+            $(".GodownList").show();
+        } else {
+            $(".GodownList").hide();
+        }
+    }); 
+</script>

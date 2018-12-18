@@ -1,0 +1,73 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.MenuItem>
+@{
+    ViewBag.Title = "Menu Setting";
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Menu parent</h1>
+                    <ul class="buttons">
+                        <li><a href="#" class="isw-plus addMenu"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="menu-list">
+                    @Html.Partial("MenuItemList",Model)
+                </div>
+                <div id="menu-child"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .menulist :hover {
+        cursor: pointer;
+    }
+</style>
+<script type="text/javascript">
+    $('a.addMenu').live('click', function () {
+        var url = '@Url.Action("MenuItemAdd", "Management")';
+        var element = '.modal-dialog';
+        var title = 'Menu Setting (+)';
+        getFormRequest(url, element, title);
+
+        return false;
+    });
+    $(".menulist").live("click", function() {
+        var id = $(this).attr("data-id");
+        var url = "@Url.Action("ChildMenuItemList")?id=" + id;
+        $.ajax({
+            url: url,
+            success:function(data) {
+                $("#menu-child").html(data);
+            }
+        });
+    });
+    $('a.editMenu').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("MenuItemedit", "Management")?id=' +id;
+        var element = '.modal-dialog';
+        var title = 'Menu Setting (+)';
+        getFormRequest(url, element, title);
+
+        return false;
+    });
+    function OnComplete() {
+        $(".modal-dialog .block").load("/Management/MenuItemAdd");
+        $("#menu-list").load("/Management/MenuItemList");
+    }
+    function OnCompleteEdit() {
+        $(".modal-dialog").dialog("close");
+        $("#menu-list").load("/Management/MenuItemList");
+    }
+    function SaveForm() {
+        $("#form-id").submit();
+    }
+    
+</script>

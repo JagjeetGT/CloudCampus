@@ -1,0 +1,56 @@
+@model IEnumerable<KRBAccounting.Domain.Entities.ScBook>
+@{var i = 1;}
+<div class="block-fluid table-sorting">
+    <table width="100%" class="listpopup" id="dataTable">
+        <thead>
+            <tr>
+                <th>
+                    S.N
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Number
+                </th>
+                <th>
+                    Author
+                </th>
+                <th>
+                    Rack No
+                </th>
+                <th>
+                    Row No
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@item.Name
+                    </td>
+                    <td>@item.BookNumber
+                    </td>
+                    <td>@item.PersonalAuthor
+                    </td>
+                    <td>@item.RackNo
+                    </td>
+                    <td>@item.RowNo
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="clearfix">
+    </div>
+</div>
+<script>
+  $(document).ready(function () {
+      $("#dataTable").dataTable({ "iDisplayLength": 5, "sPaginationType": "full_numbers", "bLengthChange": false, "bFilter": false, "bInfo": false, "bPaginate": true, "aoColumns": [{ "bSortable": false }, null, null, null, null, null] });
+  })
+</script>

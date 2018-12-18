@@ -1,0 +1,206 @@
+﻿@model KRBAccounting.Web.ViewModels.School.ScProgramClassViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ProgramMasterEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCompleteEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.ProgramMaster.Id)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                Description</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.Description, new { @class = "input-190 input", entermsg = "Enter Description" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.Description)<span class="loading Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </div>
+        </div>
+        <div class="stack">
+            <label class="label-90">
+                Code</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.Code, new { @class = "input-100 input", entermsg = "Enter Code" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.Code)<span class="loading Code">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                Dep. Head</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.Incharge, new { @class = "input-190 input", entermsg = "Enter Incharge" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.Incharge)
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                Faculty Description</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.FacultyDescription, new { @class = "input-450 input", entermsg = "Enter FacultyDescription" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.FacultyDescription)
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="stack">
+            <label class="label-90">
+                Level Description</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.LevelDescription, new { @class = "input-190 input", entermsg = "Enter LevelDescription" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.LevelDescription)
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                University Desc.</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.UniversityDescription, new { @class = "input-450 input", entermsg = "Enter UniversityDescription" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.UniversityDescription)
+            </div>
+        </div>
+    </div> <div class="clearfix">
+    </div>
+  
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <div class="stack">
+            <label class="label-90">
+                Schedule</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ProgramMaster.Schedule, new { @class = "input-100 input", entermsg = "Enter Schedule" })
+                @Html.ValidationMessageFor(m => m.ProgramMaster.Schedule)
+            </div>
+        </div>
+      @*  <div class="stack">
+            <label class="label-90">
+                Tot. Sem
+            </label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.ClassCount, new { @class = "input-90 input ", entermsg = "Enter Schedule" })
+                @Html.ValidationMessageFor(m => m.ClassCount)
+            </div>
+        </div>*@
+    </div>
+    <div class="clearfix">
+    </div>
+        <div class="lag">
+        
+            <label>
+                Year
+            </label>
+            <div class="field">
+                @Html.RadioButtonFor(m => m.ProgramMaster.DurationId, 1, new { @class = "input-90 input ", entermsg = "Enter Schedule",@disabled="disabled" })
+                 
+               
+            </div>
+   
+            <label >
+                Semester
+            </label>
+            <div class="field">
+                @Html.RadioButtonFor(m => m.ProgramMaster.DurationId, 2, new { @class = "input-90 input ", entermsg = "Enter Schedule", @disabled = "disabled" })
+           
+        </div>
+       
+            <label >
+                Trimester
+            </label>
+            <div class="field">
+                @Html.RadioButtonFor(m => m.ProgramMaster.DurationId, 3, new { @class = "input-90 input ", entermsg = "Enter Schedule", @disabled = "disabled" })
+                 
+               
+        
+        </div>
+    </div>
+    <div class="clearfix"></div>
+          <div class="stack">     
+        <label class="label-90">
+            Total
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ClassCount, new { @class = "input-90 input ", entermsg = "Enter Schedule" ,@readonly="readonly"})
+            @Html.ValidationMessageFor(m => m.ProgramMaster.TotalSem)
+        </div>
+    </div>
+    <div class="lag detailEntryTable" style="height: 400px; width: 100%">
+        <table class="table-bordered" id="table-Semester-detail" style="width: 100%">
+            <tr>
+                <th>
+                    S.No
+                </th>
+                <th>
+                    Semester
+                </th>
+                <th>
+                    Semester Code
+                </th>
+            </tr>
+            @foreach (var item in Model.Class)
+            {
+                @Html.Partial("_PartialProgramSemesterDetail", item)
+    
+            }
+        </table>
+    </div>
+    
+}
+<script type="text/javascript">
+
+     $(document).ready(function () {
+   
+         $(function () {
+           
+             var FacultyDescription = [ @foreach (var item in Model.ProgramMaster.FacultyList)
+                                        {
+        
+                                       <text> "@item",</text>
+
+                                        } ];
+             var levelDec = [@foreach (var item in Model.ProgramMaster.LevelList)
+                             {
+        
+                                       <text> "@item",</text>
+
+                             }
+             ];var UniDec = [@foreach (var item in Model.ProgramMaster.UniversityList)
+                             {
+        
+                                       <text> "@item",</text>
+
+                             }
+             ];
+            $("#FacultyDescription").autocomplete({
+                source: FacultyDescription
+            });
+             $("#LevelDescription").autocomplete({
+                source: levelDec
+            }); $("#UniversityDescription").autocomplete({
+                source: UniDec
+            });
+        });
+
+    });
+     
+
+  
+
+ 
+</script>
+<style>
+    .ui-menu
+    {
+        z-index: 1003 !important;
+    }
+</style>

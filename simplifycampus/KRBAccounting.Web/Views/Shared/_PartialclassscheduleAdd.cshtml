@@ -1,0 +1,40 @@
+﻿@model KRBAccounting.Web.ViewModels.School.ScClassScheduleViewModel  
+@Html.HiddenFor(m => m.SubjectId)
+
+
+<td>
+    @Html.TextBoxFor(m => m.SundayStartTime, new { @class = "input-70 input Sunday StartTime firststart " + Model.Sno, day = "Sunday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.SundayEndTim, new { @class = "input-70 input Sunday EndTim firstEnd " + Model.Sno, day = "Sunday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.MondayStartTime, new { @class = "input-70 Monday input StartTime " + Model.Sno, day = "Monday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.MondayEndTime, new { @class = "input-70 Monday input EndTim " + Model.Sno, day = "Monday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.TuesdayStartTime, new { @class = "input-70 Tuesday input StartTime " + Model.Sno, day = "Tuesday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.TuesdayEndTime, new { @class = "input-70 Tuesday input EndTim " + Model.Sno, day = "Tuesday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.WednesdayStartTime, new { @class = "input-70 Wednesday input StartTime " + Model.Sno, day = "Wednesday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.WednesdayEndTime, new { @class = "input-70 Wednesday input EndTim " + Model.Sno, day = "Wednesday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.ThursdayStartTime, new { @class = "input-70 Thursday input StartTime " + Model.Sno, day = "Thursday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.ThursdayEndTime, new { @class = "input-70 Thursday input EndTim " + Model.Sno, day = "Thursday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.FridayStartTime, new { @class = "input-70 Friday input StartTime " + Model.Sno, day = "Friday" })
+</td>
+<td>
+    @Html.TextBoxFor(m => m.FridayEndTime, new { @class = "input-70 Friday input EndTim " + Model.Sno, day = "Friday" })
+</td>

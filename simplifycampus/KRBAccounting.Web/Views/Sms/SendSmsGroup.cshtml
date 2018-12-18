@@ -1,0 +1,160 @@
+﻿@model KRBAccounting.Web.ViewModels.Sms.ScSmsGroupViewModel
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Send Group SMS</h1>
+                <ul class="buttons">
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="block-fluid">
+        <div id="student-info">
+            @using (Ajax.BeginForm("SendSmsGroup", "Sms", new { controller = "Sms" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { enctype = "multipart/form-data", id = "frm-sendgroupsms" }))
+            {
+                <div id="student-details">
+                    <div class="row" style="padding-top: 10px;">
+                        <div class="span7">
+                            <div class="lag">
+                                <label class="label-90">
+                                    Choose Group
+                                </label>
+                                <span class="field">
+                                    @Html.HiddenFor(x => x.SmsGroupId)
+                                    <input type="text" class = "modallink input" href="@Url.Action("Getgrouplist", "sms")" valueId="SmsGroupId" id="Smsgroupid"/>
+                                    @Html.ValidationMessageFor(x => x.SmsGroupId)
+                                </span>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="lag">
+                                <label class="label-90">
+                                    Templates
+                                </label>
+                                <span class="field">
+                                    @Html.DropDownListFor(x => x.TemplateId, Model.TemplateList)
+                                    @Html.ValidationMessageFor(x => x.TemplateId)
+                                </span><span>
+                                           <input type="button" value="Use Template" class="btn-mini template" style="margin-left: 10px;" /></span>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="lag">
+                                <label class="label-90">
+                                    Message
+                                </label>
+                                <span class="field">
+                                    @Html.TextAreaFor(x => x.SmsText, new { style = "width: 500px;" })
+                                    @Html.ValidationMessageFor(x => x.SmsText)
+                                </span>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="form-custom">
+                                <input type="button" value="Send" class="btn sendbtn" style="margin-left: 20px;" /></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="my-modal" class="modal hide fade">
+    <div class="modal-body">
+        <p class="body">
+            <img alt="Saved Correctly" src="/Content/img/1346139566_check.png" width="48" height="48" /><h4>
+                <strong>Message Sent Succesfully.</strong></h4>
+        </p>
+    </div>
+</div>
+<div id="my-modalError" class="modal hide fade">
+    <div class="modal-body">
+        <p class="body">
+            <img alt="Saved Correctly" src="/Content/img/delete.png" width="48" height="48" /><h4>
+                                                                                                  <strong>Error sending message. Try Again Later.</strong></h4>
+        </p>
+    </div>
+</div>
+
+<div id="my-modalNoUsername" class="modal hide fade">
+    <div class="modal-body">
+        <p class="body">
+            <img alt="Saved Correctly" src="/Content/img/delete.png" width="48" height="48" /><h4>
+                <strong>No username and password set yet.   Please set the SMS settings first.</strong></h4>
+        </p>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+    if('@ViewBag.Success' == "true") {
+        $('#my-modal').modal('show');
+            setTimeout(function () {
+                $('#my-modal').modal('hide');
+            }, 1500);
+            $.unblockUI();
+        }
+        $.unblockUI();
+    });
+    
+    $(".template").live("click", function () {
+        var templateId = $("#TemplateId").val();
+        var url = "/Sms/GetTemplate/" + templateId;
+        $.getJSON(url, function (success) {
+            $("#SmsText").val(success);
+
+        });
+    });
+
+    $(".sendbtn").live("click", function () {
+
+        $.blockUI({
+            message: 'Sending Message..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+
+        var groupid = $("#SmsGroupId").val();
+        if (groupid != 0) {
+            $("#frm-sendgroupsms").submit();
+        } else {
+            alert("Please choose a group to send msg.");
+            $.unblockUI();
+        }
+    });
+
+    function OnComplete(data) {
+        if (data == "True") {
+            var url = '@Url.Action("SendSmsGroup", "Sms",new{success="true"})';
+            window.location.href = url;
+        } else if(data=="False") {
+            $.unblockUI();
+            $('#my-modalError').modal('show');
+            setTimeout(function () {
+                $('#my-modalError').modal('hide');
+            }, 1200);
+        } else {
+            $.unblockUI();
+            $('#my-modalNoUsername').modal('show');
+            setTimeout(function () {
+                $('#my-modalNoUsername').modal('hide');
+            }, 2800);
+  
+        }
+        
+    }
+
+</script>

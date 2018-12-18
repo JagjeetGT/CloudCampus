@@ -1,0 +1,446 @@
+﻿@model KRBAccounting.Web.ViewModels.Attendance.DailyAttendanceFormViewModel
+@{
+    ViewBag.Title = "Daily Report";
+}
+<style>
+    #ledger-list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #CCCCCC;
+    }
+</style>
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Daily Attendance</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfDailyAttendance", "Attendance")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelDailyAttendance", "Attendance")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalEmployeeSalary" style="display: block;" title="Employee Payment Slip">
+    <div class="block">
+        @Html.Partial("_PartialDailyAttendanceForm", Model)
+    </div>
+    <div class="block">
+    </div>
+</div>
+<div id="modalbox-subledger" style="display: none" class="dialog">
+    <div class="msg-body block" style="padding: 0; height: 325px">
+    </div>
+    <div class="msg-footer">
+        <input type="text" class="search-box" name="search-box" placeholder="Search" />
+        <div class="selectedRows">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+var selectedDepartments = "";
+ var selectedEmployees = "";
+        $(document).ready(function() {
+            
+        $("#modalEmployeeSalary").dialog('open');  
+        });
+        $("#generate_report").live("click", function() {
+        $("#modalEmployeeSalary").dialog('open');
+        });
+            
+        $("#modalEmployeeSalary").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Generate Daily Attendance ',
+            buttons: {
+                "OK": function() {
+                     var alldepartment = $('#AllDepartment').attr('checked') ? true : false;
+                    var allemployee = $('#AllEmployee').attr('checked') ? true : false;
+                    var startDate = $("#FromDate").val();
+                    var endDate = $("#ToDate").val();
+                    
+                    var reportLink = "";
+                    if (alldepartment && allemployee) {
+                 
+                        reportLink = "/Attendance/DailyAttendanceList/?FromDate=" + startDate + "&&ToDate=" + endDate;
+                        DisplayDailyAttendance(reportLink);
+                    } 
+                    if (!alldepartment)
+                        {
+
+
+                        if (modalshow == true) {
+                            modalshow = false;
+                            selectedRows.deleteall();
+                            var link = "";
+                            link = "/Attendance/GetDepartment";
+                            $.ajax({
+                                url: link,
+                                dataType: "json",
+                                
+                                type: "GET",
+                                error: function() {
+                                    alert(1);
+                                },
+                                success: function(data) {
+                                    var tableData = CreateTableViewList(data, "listpopup", true);
+                                    $('#modalbox-report .msg-body').html(tableData);
+
+                                    $("#modalbox-report").dialog({
+                                        modal: true,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function() {
+                                                modalshow = true;
+                                                if(allemployee) {
+                                                    reportLink = "/Attendance/DailyAttendanceList/?FromDate=" + startDate + "&&ToDate=";
+                                                    DisplayDailyAttendance(reportLink);
+                                                } else {
+
+                         
+                                                DisplayDepartmentwiseemp();
+                    
+                                                }
+                                               
+                                                $(this).dialog("close");
+                                                 
+                                            },
+                                            Cancel: function() {
+                                                modalshow = true;
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });                    
+                                
+
+                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+                                    $('.selectable-table').tableSelect({
+                                        onClick: function(row) {
+                                            //alert(row);
+                                        },
+                                        onDoubleClick: function(rows) {
+                                            $.each(rows, function(i, row) {
+                                                var name = $(row).children('td').eq(0).attr("ledger-id");
+                                                if ($(row).hasClass('disabled')) {
+                                                    $(row).removeClass('disabled');
+                                                    selectedRows.remove(name);
+                                                } else {
+                                                    $(row).addClass('disabled');
+                                                    selectedRows.add(name);
+                                                }
+                                            });
+                                            updateListLedger();
+                                        },
+                                        onChange: function(row) {
+                                            //alert(row);
+                                        }
+                                    });
+                                }
+                            });
+                           
+
+                        }
+                    }else {
+                        if(!allemployee) {
+                            DisplayDepartmentwiseemp();
+                        }
+                    }
+                    
+
+
+                   
+                },
+                Cancel: function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+   
+   // For Daily Atttendance
+function DisplayDailyAttendance(url) {
+
+
+
+        url += "&&employees=" + selectedEmployees + "&&departments=" + selectedDepartments;
+        $('#modalEmployeeSalary').dialog("close");
+        $.ajax({
+            type: "POST",
+            url: url,
+            success: function (data) {
+
+                $("#report").html(data);
+                $.unblockUI();
+      
+
+            }
+        });
+    }
+
+
+function DisplayDepartmentwiseemp() {
+    alert(selectedDepartments);
+ url = "/Attendance/GetEmployeeByDepartment/?depid=" + selectedDepartments;
+       
+        $.ajax({
+            type: "POST",
+            url: url,
+            success: function (data) {
+
+                //modal for employee
+                var tableData = CreateTableViewList(data, "listpopup", true);
+                $('#modalbox-subledger .msg-body').html(tableData);
+                var startDate = $("#FromDate").val();
+                var endDate = $("#ToDate").val();
+                $("#modalbox-subledger").dialog({
+                    modal: true,
+                    width: 'auto',
+                    buttons: {
+                        "Ok": function () {
+                            modalshow = true;
+                            var url = "/Attendance/DailyAttendanceList/?FromDate=" + startDate + "&&ToDate=" + endDate;
+                            DisplayDailyAttendance(url);
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            modalshow = true;
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+                $('.selectable-table').tableSelect({
+                    onClick: function (row) {
+                        //alert(row);
+                    },
+                    onDoubleClick: function (rows) {
+                        $.each(rows, function (i, row) {
+                            var name = $(row).children('td').eq(0).attr("ledger-id");
+                            if ($(row).hasClass('disabled')) {
+                                $(row).removeClass('disabled');
+                                selectedRows.remove(name);
+                            } else {
+                                $(row).addClass('disabled');
+                                selectedRows.add(name);
+                            }
+                        });
+                        updateListLedger();
+                    },
+                    onChange: function (row) {
+                        //alert(row);
+                    }
+                });
+
+                //$("#report").html(data);
+                $.unblockUI();
+                //$("#msgClose").click();
+                $('#modalReportForm').dialog("close");
+
+            }
+        });
+    }
+
+
+
+    function updateListLedger() {
+    $('.selectedRows').html('');
+    $.each(selectedRows.list, function () {
+    $('.ui-dialog .selectedRows').append('<input type="hidden" name="ledgers" value="' + this + '" />');
+    });
+    };
+
+
+    var selectedRows = function () {
+    var instance = this;
+    if (!this.list) {
+    this.list = [];
+    }
+    this.add = function (row) {
+    list.push(row);
+    };
+    this.remove = function (row) {
+    for (var i = 0; i < list.length; i++) {
+    if (list[i] == row) {
+    this.list.splice(i, 1);
+    }
+    }
+    };
+    this.deleteall = function () {
+    this.list = [];
+    };
+    return (instance);
+    } ();
+    var selectedsubledgerRows = function () {
+    var instance = this;
+    if (!this.list) {
+    this.list = [];
+    }
+    this.add = function (row) {
+    list.push(row);
+    };
+    this.remove = function (row) {
+    for (var i = 0; i < list.length; i++) {
+    if (list[i] == row) {
+    this.list.splice(i, 1);
+    }
+    }
+    };
+    this.deleteall = function () {
+    this.list = [];
+    };
+    return (instance);
+    } ();
+
+    function ShowSubLedgerPickList(url) {
+    modalshow = false;
+    selectedsubledgerRows.deleteall();
+    $.ajax({
+    url: "/Attendance/GetLedgerCategory",
+    dataType: "json",
+    type: "GET",
+    error: function () {
+    alert("An error occurred.");
+    },
+    success: function (data) {
+    var tableData = CreateTableViewList(data, "listpopup", true);
+    $('#modalbox-subledger .msg-body').html(tableData);
+    $("#modalbox-subledger").dialog({
+    modal: true,
+    closeOnEscape: false,
+    width: 'auto',
+    buttons: {
+    "Ok": function () {
+    modalshow = true;
+           alert(2);
+    DisplayReportPartySubLedger(url);
+    $(this).dialog("close");
+    },
+    Cancel: function () {
+    modalshow = true;
+    $(this).dialog("close");
+    }
+    }
+    });
+    //$.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+    //$('#modalbox-report .msg-body').html("");
+
+    $('#modalbox-subledger .msg-footer .selectedRows').html("");
+    $('.selectable-table').tableSelect({
+    onClick: function (row) {
+    //alert(row);
+    },
+    onDoubleClick: function (rows) {
+    $.each(rows, function (i, row) {
+    var name = $(row).children('td').eq(0).attr("ledger-id1");
+    if ($(row).hasClass('disabled')) {
+    $(row).removeClass('disabled');
+    selectedsubledgerRows.remove(name);
+    } else {
+    $(row).addClass('disabled');
+    selectedsubledgerRows.add(name);
+    }
+    });
+    updateListSubLedger();
+    },
+    onChange: function (row) {
+    //alert(row);
+    }
+    });
+    }
+    });
+    return true;
+    }
+
+
+
+    function OnComplete(data) {
+        if (data == "True") {
+            $("#modalEmployeeSalary .block").load("/Attendance/DailyAttendanceList");
+            $("#Bus-list").load("/Attendance/DailyAttendanceList");
+            $.unblockUI();
+        } else {
+            $.unblockUI();
+        }
+
+    }
+
+    function OnCompleteEdit(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $("#modalEmployeeSalary").dialog("close");
+            $("#Bus-list").load("/Attendance/DailyAttendanceList");
+        } else {
+            $.unblockUI();
+        }
+
+    }
+
+
+
+          $(document).ready(function() {
+          
+            var dateType = @Model.SystemControl.DateType;
+            if (dateType == "1") {
+                $("#ToDate,#FromDate").mask("99/99/9999");
+                $("#ToDate,#FromDate").live("blur", function() {
+                        
+                    var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                    if (!validDate) {
+                        $($(this).addClass("error"));
+                    } else {
+                        $($(this).removeClass("error"));
+                    }
+                });
+            } else {
+                $("#ToDate,#FromDate").mask("9999/99/99");
+                $("#ToDate,#FromDate").live("blur", function() {
+                    var date = $(this).val();
+                       
+                    var validDate = isNepaliDate(date);
+                    if (!validDate) {
+                        $($(this).addClass("error"));
+                    } else {
+                        $($(this).removeClass("error"));
+                    }
+                        
+                });
+            }
+        });
+          
+          
+          $("#modalbox-report td").live("click", function() {
+              selectedDepartments = new Array();
+              $("#modalbox-report td").each(function() {
+                  if ($(this).closest("tr").hasClass("disabled")) {
+                      var departmentId = $(this).attr("ledger-id");
+                     
+                      selectedDepartments.push(departmentId);
+                  }
+              });
+          });
+
+         
+          $("#modalbox-subledger td").live("click", function() {
+              selectedEmployees = new Array();
+              $("#modalbox-subledger td").each(function() {
+                  if ($(this).closest("tr").hasClass("disabled")) {
+                      var departmentId = $(this).attr("ledger-id");
+                      selectedEmployees.push(departmentId);
+                  }
+              });
+          });
+          
+
+</script>

@@ -1,0 +1,145 @@
+﻿@using KRBAccounting.Domain.Entities
+@model User
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<div style="width: 500px">
+    @using (Html.BeginForm("UserAdd", "User", FormMethod.Post, new { @class = "form-horizontal form-custom", id = "User-form" }))
+    {
+        @Html.ValidationSummary(true)
+        
+        @Html.HiddenFor(x => x.ImageGuid)
+        @Html.HiddenFor(x => x.Ext)
+        <fieldset>
+            <div class="lag margin-5">
+                <div class="stack">
+                    <label>
+                        User Name</label>
+                    <div class="field">
+                        @Html.EditorFor(model => model.Username)
+                        @Html.ValidationMessageFor(model => model.Username)
+                    </div>
+                </div>
+                <div class="stack">
+                    <label>
+                        Full Name</label>
+                    <div class="field">
+                        @Html.EditorFor(model => model.FullName)
+                        @Html.ValidationMessageFor(model => model.FullName)
+                    </div>
+                </div>
+            </div>
+            <div class="lag margin-5">
+                <div class="stack">
+                    <label class="label-120">
+                        Email Address</label>
+                    <div class="field">
+                        @Html.EditorFor(model => model.EmailAddress)
+                        @Html.ValidationMessageFor(model => model.EmailAddress)
+                    </div>
+                </div>
+                <div class="stack">
+                    <label class="label-120">
+                        Password</label>
+                    <div class="field">
+                        @Html.PasswordFor(model => model.Password)
+                        @Html.ValidationMessageFor(model => model.Password)
+                    </div>
+                </div>
+            </div>
+            <div class="lag">
+                <fieldset class="input-253">
+                    <legend>Roles</legend>
+                    <div class="stack">
+                        <div class="field">
+                            @{
+                                List<Role> roles = ViewBag.RolesList;
+                            }
+                            @foreach (var role in roles)
+                            {
+                                <text><label class="checkbox margin-5">
+                                          @if (Model.Roles != null && Model.Roles.Any(x => x.RoleName == role.RoleName))
+                                          {
+                           
+                                              <input type="checkbox" name="role" value="@role.Id" checked="checked" />
+                                              @role.RoleName
+                           
+                                          }
+                                          else
+                                          {
+                           
+                                              <input type="checkbox" name="role" value="@role.Id" />
+                                              @role.RoleName
+                            
+ 
+                                          }
+                                      </label>
+                                </text>
+                            }
+                        </div>
+                        <span class="role-error" style="color:red"></span>
+                    </div>
+                   
+                </fieldset>
+                @if (ViewBag.EnableBranch)
+                {
+                    <div class="stack branch">
+                        <label>
+                            Branch</label>
+                        <div class="field">
+                            @Html.DropDownListFor(x => x.BranchId, (SelectList) ViewBag.BranchList)
+                        </div>
+                    </div>
+
+                    <div class="stack">
+                        <label>
+                            Access All Branches</label>
+                        <div class="field">
+                            @Html.EditorFor(x => x.AllBranch)
+                        </div>
+                    </div>
+                }
+            </div>
+         
+            <div class="lag">
+                <input name="attachments" id="attachments" type="file" />
+            </div>
+        </fieldset>
+    
+    }
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        //kendo ui plugin
+        //for uploading files
+        $("#attachments").kendoUpload({
+            upload: onUpload,
+            remove: onRemove,
+            multiple: false,
+            async: {
+                saveUrl: ('/User/UploadImages'),
+                removeUrl: ('/remove-images/UserImages'),
+                autoUpload: true
+            },
+
+            success: function(data) {
+
+                if (data.response.success != null) {
+                    alert(data.response.success);
+                    //window.location.reload(true);
+
+                }
+                var imageGuid = data.response.guid;
+                if (imageGuid.toString() == '') {
+                    alert('upload failed please try again');
+                } else {
+                    var name = "hddimage" + data.response.filename;
+                    var classname = "hddimage" + data.response.filename.replace('.', '');
+                    $('#User-form').append('<input type="hidden" class="' + classname + '" value="' + imageGuid + '" name="' + name + '" id="' + name + '" />');
+                    $(".ui-dialog #ImageGuid").val(data.response.guid);
+                    $(".ui-dialog #Ext").val(data.response.ext);
+                }
+            }
+        });
+    });
+    
+</script>

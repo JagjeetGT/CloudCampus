@@ -1,0 +1,52 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.ConsolidateMarkSheetViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Html.BeginForm("ConsolidateMarkSheet", "Report", new { controller = "Report" }, FormMethod.Post, new { @class = "form-horizontal", id = "report-form" }))
+{
+   
+        
+    
+    <div class="lag">
+        <label class="label-90">
+            Class</label>
+        <span class="field">@*  @Html.DropDownListFor(m => m.ClassId, Model.ClassList, new { @class = "input-190" })*@
+            <select name="ClassId" id="ClassId" class="chzn-select">
+                @foreach (var item in Model.ClassList.Where(x => x.ProgramId == 0))
+                {
+                    <option value="@item.Id">@item.Description</option>
+                }
+                @foreach (var item in Model.ProgramMasters)
+                {
+                    <optgroup label="@item.Description">
+                        @foreach (var i in Model.ClassList.Where(x => x.ProgramId == item.Id))
+                        {
+                            <option value="@i.Id">@i.Description</option>
+                        }
+                    </optgroup>
+                }
+            </select>
+            @Html.ValidationMessageFor(m => m.ClassId)
+        </span>
+        <div class="clearfix">
+        </div>
+        <label class="label-90">
+            Exam</label>
+        <span class="field">
+            @Html.DropDownListFor(m => m.ExamId, Model.ExamList, new { @class = "input-190" })
+            @Html.ValidationMessageFor(m => m.ExamId)
+        </span>
+        <div class="clearfix">
+        </div>
+        <label class="label-90">
+            Student</label>
+        <span class="field">
+            <select name="StudentId" id="StudentId" class="chzn-select">
+               
+            </select>
+            @Html.ValidationMessageFor(m => m.StudentId)
+        </span>
+    </div>
+    <div class="clearfix">
+    </div>
+   
+}

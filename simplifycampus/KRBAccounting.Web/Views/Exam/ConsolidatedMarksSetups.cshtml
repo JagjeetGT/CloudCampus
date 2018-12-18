@@ -1,0 +1,191 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Consolidated Marks Setup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Consolidated Marks Setup
+                    </h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="Javascript:void(0)" class="isw-plus addRooms"></a></li>
+                        }
+                
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  MarkSetUp"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Rooms-list">
+                    @Html.Action("ConsolidatedMarksSetupsList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalRooms" style="display: none;" title="Consolidated Marks ">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    $("#modalRooms").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                checkValidationError();
+                CheckSumit();
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function CheckSumit() {
+        var total = $(".total").val();
+        if ($("#form-id").valid()) {
+            if (total == 100) {
+                $("#form-id").submit();
+            } else {
+                alert("Total Must Be 100 Percentage");
+                $(".percentage").focus();
+                $.unblockUI();
+            }
+
+        } else {
+            $.unblockUI();
+        }
+    }
+
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalRooms .block').html(data);
+                $(this).addClass("done");
+                $("#modalRooms").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $(".percentage").live("blur", function () {
+        CalcTotal();
+    });
+
+    function CalcTotal() {
+        var total = parseFloat(0);
+        var element = document.querySelectorAll(".percentage");
+        $.each(element, function () {
+            var value = $(this).val();
+            var parsevalue = parseFloat(value);
+            total += parsevalue;
+        });
+        $(".total").val(total);
+    }
+
+    $('.addRooms').live('click', function () {
+        var url = '@Url.Action("ConsolidatedMarksSetupAdd", "Exam")';
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete() {
+
+        $('#modalRooms .block').load("/Exam/ConsolidatedMarksSetupAdd");
+        $("#Rooms-list").load("/Exam/ConsolidatedMarksSetupsList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#Rooms-list").load("/Exam/ConsolidatedMarksSetupsList");
+        $('#modalRooms').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        Begin();
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            $.unblockUI();
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        Begin();
+        if (data == "True") {
+            OnCompleteEdit();
+        } else {
+            alert(data);
+        }
+    }
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+    });
+    $('.editExam').live('click', function () {
+        var classid = $(this).attr("data-classId");
+        var examId = $(this).attr("data-examId");
+        var url = '@Url.Action("ConsolidatedMarksSetupEdit", "Exam")?classId=' + classid + "&examId=" + examId;
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+    function NewRowDetailList(element, index) {
+        var closestTr = $(".first-col:last").closest("tr");
+        closestTr.attr("id", "tr_" + index);
+        var chargeId = $(".first-col:last").attr("id");
+
+
+
+        closestTr.find(".text-exam:last").attr({
+            valueid: chargeId,
+            id: "text-exam-" + index
+        });
+    }
+
+
+
+
+    $(".MarkSetUp").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/ExaminationSearch/ConsolidatedMarksSetupsSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#Rooms-list").html(data);
+        });
+    });
+
+</script>

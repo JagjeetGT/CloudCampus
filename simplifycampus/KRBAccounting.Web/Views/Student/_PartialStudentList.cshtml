@@ -1,0 +1,92 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScStudentinfo>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list" align="center">
+        <thead>
+            <tr>
+                <th>S.N.</th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Student Name 
+                </th>
+               
+                <th>
+                    Class Name
+                </th>
+                @*<th>
+                    Section  Code
+                </th>*@
+                <th>
+                    Category Name
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+              
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+
+                <tr align="center">
+                    <td >@i</td>
+                    <td>@item.StdCode
+                    </td>
+                   
+                    <td>@item.StuDesc
+                    </td>
+                   
+                    <td>@if (item.Class != null)
+                        {
+                            @item.Class.Description
+                        }
+
+                    </td>
+                    @*<td>@if (item.Section != null)
+                        {
+                            @item.Section.Description
+                        }
+
+                    </td>*@
+                    <td>@if (item.StudentCategory != null)
+                        {
+                            @item.StudentCategory.Description
+                        }
+
+                    </td>
+                  
+               
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="@Url.Action("StudentEdit", new {id = item.StudentID})" class="editScHouseGroup icon-edit" data-id="@item.StudentID" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>@if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)" class="deleteScStaffGroup icon-remove" data-id="@item.StudentID" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+
+    </table>
+  <div class="clearfix"></div>
+</div>
+@*<script type="text/javascript">
+    $("#tbl-list").dataTable({ "sPaginationType": "full_numbers", "bLengthChange": true, "bInfo": true, "bPaginate": true, "aoColumns": [{ "bSortable": true }, null, null, null, null,{ "bSortable": false }, { "bSortable": false}] });
+</script>
+*@
+
+

@@ -1,0 +1,76 @@
+﻿@using KRBAccounting.Enums
+@model List<KRBAccounting.Web.ViewModels.School.StudentSubjectMappingViewModel>
+<div id="loadpage">
+ 
+        <b>
+            @if (Model.Count() != 0)
+            {
+                   <p align="center"> @Model.FirstOrDefault().StudentSubjectMapping.Class.Description <br/>
+
+          @Model.FirstOrDefault().StudentSubjectMapping.Subject.Description
+            </p>
+            }
+        </b>
+  
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.No
+                </th>
+                <th>
+                    Students
+                </th>
+                <th>
+                    Student Code
+                </th>
+                <th>
+                    Registration No.
+                </th>
+                <th>
+                    Section
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr align="center">
+                    <td>@i
+                    </td>
+                    <td>
+                        @if (item.StudentSubjectMapping.Studentinfo != null)
+                        {
+                            @item.StudentSubjectMapping.Studentinfo.StuDesc 
+                        }
+                    </td>
+                    <td>
+                        @if (item.StudentSubjectMapping.Studentinfo != null)
+                        {
+                            @item.StudentSubjectMapping.Studentinfo.StdCode
+                        }
+                    </td>
+                    <td>
+                        @if (item.StudentSubjectMapping.Studentinfo != null)
+                        {
+                            @item.StudentSubjectMapping.Studentinfo.Regno
+                        }
+                    </td>
+                    <td>
+                        @* @if (item.StudentRegistrationDetail != null)
+                        {
+                            if (item.StudentRegistrationDetail.Section != null)
+                            {
+                            @item.StudentRegistrationDetail.Section.Description
+                            }
+
+                        }*@
+                        @item.Section
+                    </td>
+                </tr>
+                        i += 1;
+            }
+        </tbody>
+    </table>
+</div>

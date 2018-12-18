@@ -1,0 +1,65 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Class Schedule";
+    var userRight = (UserRight)ViewBag.UserRight;
+    
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Class Schedule</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        { <li><a href="@Url.Action("ClassScheduleAdd", "School")" class="isw-plus addBook1"></a></li>
+                            
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="boader-list">
+                    @Html.Action("ClassSchedulesList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+    $("a.deleteScClassSchedule").live("click", function () {
+        var result = confirm("Are you sure?");
+        if (result) {
+            $.blockUI();
+            var currentElement = $(this);
+            var id = $(this).attr("data-id");
+            var link = '@Url.Action("DeleteClassSchedule", "School")/?id=' + id;
+            $.ajax({
+                url: link,
+                type: "POST",
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    if (data) {
+                        currentElement.closest('tr').remove();
+                        $.unblockUI();
+
+                    }
+                    else {
+                        alert("could not be deleted");
+                    }
+                }
+            });
+        }
+    });
+
+</script>
+
+
+

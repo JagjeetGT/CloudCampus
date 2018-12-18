@@ -1,0 +1,54 @@
+﻿@model KRBAccounting.Domain.Entities.ProductGroup
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("OnlineProductGroupAdd", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "MsgError", OnSuccess = "success" }, new { @class = "form-horizontal online-form", id = "product-group-form" }))
+{
+    <div id="MsgError"></div>
+    <div style="width: 445px;">
+
+        <div class="lag">
+            <label class="label-90">
+                Description</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Description, new { @class = "input-295 input" })
+                @Html.ValidationMessageFor(m => m.Description)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Short Name</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.ShortName, new { @class = "input-80 input" })
+                @Html.ValidationMessageFor(m => m.ShortName)
+            </span>
+        </div>
+    </div>
+    <span class="clearfix"></span>
+    <input type="button" class="btn btn-small btn-primary onlineSave" value="Save" />
+}
+<script type="text/javascript" >
+    $("#Description").live("focusout", function () {
+        var name = $(this).val();
+        $.getJSON("/Master/IsProductGroupNameAvailable?name=" + name, "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#Description").focus();
+            } else {
+                $("#MsgError").html('');
+            }
+        });
+    });
+    $("#ShortName").live("focusout", function () {
+        var name = $(this).val();
+        $.getJSON("/Master/IsProductGroupNameAvailable?name=" + name, "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#ShortName").focus();
+            } else {
+                $("#MsgError").html('');
+            }
+        });
+    });
+</script>

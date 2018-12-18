@@ -1,0 +1,18 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.AcademicSemesterAddViewModel
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("SemesterEntry"))
+    {
+        @Html.HiddenFor(x=>x.classId)
+        <td>
+            @Model.Sno
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SemesterDesc, new { @class = "input input-250",@readonly="readonly" })
+            @Html.ValidationMessageFor(x=>x.SemesterDesc)
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Code, new { @class = "input input-250",@readonly="readonly" })
+             @Html.ValidationMessageFor(x => x.Code)
+        </td>
+    }
+</tr>

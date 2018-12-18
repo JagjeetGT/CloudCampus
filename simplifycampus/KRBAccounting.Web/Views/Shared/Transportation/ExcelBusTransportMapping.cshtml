@@ -1,0 +1,101 @@
+﻿@using KRBAccounting.Enums
+@model IEnumerable<KRBAccounting.Domain.Entities.ScTransportMapping>
+<div class="clearfix"></div>
+<div id="loadpage">
+
+    <b>
+        @if (Model.Count() != 0)
+        {
+            <p align="center" style="font-size:10px;">
+                Class: @Model.FirstOrDefault().SchClass.Description<br />
+
+
+                @if (Model.FirstOrDefault().SectionId != 0)
+                {
+                    <text>Section: </text>
+                    @Model.FirstOrDefault().ScSection.Description
+                }
+
+            </p>
+        }
+    </b>
+    <br />
+    <table border="0.5" style="font-size: 8px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold;text-align:center">
+                <th width="5%">S.N.</th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Registation Number
+                </th>
+                <th>
+                    Bus Stop From
+                </th>
+                <th>
+                    Bus Stop To
+                </th>
+                <th>
+                    Status
+                </th>
+
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    End Date
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+
+
+                <tr style="text-align:center">
+                    <td align="center">@i</td>
+                    <td>
+                        @item.studentinfo.StuDesc
+                    </td>
+                    <td>
+                        @item.studentinfo.Regno
+                    </td>
+
+                    <td>
+                        @if (item.ScBusStopFrom != null)
+                        {@item.ScBusStopFrom.Description}
+                    </td>
+                    <td>
+                        @if (item.ScBusStopTo != null)
+                        {@item.ScBusStopTo.Description}
+                    </td>
+                    <td>
+                        @Enum.GetName(typeof(Status), Convert.ToInt32(item.Status))
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.StartDate).ToString("MM/dd/yyyy")
+                    </td>
+                    <td>
+                        @Convert.ToDateTime(item.EndDate).ToShortDateString()
+                    </td>
+                    <td>
+                        @item.TransportAmt
+                    </td>
+                    <td>
+                        @item.Narr
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+
+</div>

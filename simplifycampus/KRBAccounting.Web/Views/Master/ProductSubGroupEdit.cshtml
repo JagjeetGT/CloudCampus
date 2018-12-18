@@ -1,0 +1,50 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Master.ProductSubGroupAddViewModel
+@{
+    ViewBag.Title = "Log On";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("ProductSubGroupEdit", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "MsgError",OnSuccess = "successEdit"}, new { @class = "form-horizontal", id = "product-subgroup-form" }))
+{
+    <div id="MsgError"></div>
+    @Html.HiddenFor(x=>x.ProductSubGroup.Id)
+    @Html.HiddenFor(x => x.ProductSubGroup.CreatedById)
+    @Html.HiddenFor(x => x.ProductSubGroup.CreatedDate)
+      <div style="width: 445px;">
+
+       
+          <div class="lag">
+              <label class="label-90">
+                  Group</label>
+              <span class="field">
+                  @Html.HiddenFor(m => m.ProductSubGroup.ProductGroupId)
+                  <input type="text" value="@UtilityService.GetProductGroupById(Model.ProductSubGroup.ProductGroupId)" class = "modallink input" href="@Url.Action("GetProductGroup", "Master")" valueId="ProductSubGroup_ProductGroupId" id="productgroup"/>
+              </span>
+          </div>
+                 <div class="lag">
+                  <label class="label-90">
+                      Description</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.ProductSubGroup.Description, new { @class = "input-295 input" })
+                      @Html.ValidationMessageFor(m => m.ProductSubGroup.Description)<span class="loading ProductSubGroup_Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+      </div>
+}
+<script type="text/javascript" >
+//    $("#ProductSubGroup_Description").live("focusout", function () {
+//        var name = $(this).val();
+//        $.getJSON("/Master/IsProductSubGroupNameAvailable?name=" + name + "&id=@Model.ProductSubGroup.Id", "", function (data, status, xhr) {
+//            if (data != '') {
+//                $("#MsgError").html(data);
+//                $("#ProductSubGroup_Description").focus();
+//            } else {
+//                $("#MsgError").html('');
+//            }
+//        });
+//    });
+
+</script>

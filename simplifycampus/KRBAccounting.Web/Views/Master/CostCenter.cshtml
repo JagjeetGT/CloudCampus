@@ -1,0 +1,156 @@
+﻿@{
+    ViewBag.Title = "CostCenter";
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Cost Center</h1>
+                    <ul class="buttons">
+                        <li><a href="#" class="isw-plus addCostCenter"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="costcenter-list">
+                    @Html.Action("CostCenterList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalCostCenter"  title='Cost Center(+)'>
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalCostCenter .block').html(data);
+                $(this).addClass("done");
+                $('#modalCostCenter').dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addCostCenter').live('click', function () {
+        var url = '@Url.Action("CostCenterAdd", "Master")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editCostCenter').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("CostCenterEdit", "Master")/' + id;
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    $("a.CostCenterDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("CostCenterDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    function OnComplete() {
+
+        $("#modalCostCenter .block").load("/Master/CostCenterAdd");
+        $("#costcenter-list").load("/Master/CostCenterList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+        $("#modalCostCenter").dialog("close");
+        $("#costcenter-list").load("/Master/CostCenterList");
+        $.unblockUI();
+    }
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+
+    }
+
+    $("#modalCostCenter").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Save": function () {
+                Begin();
+                $("#cost-center-form").submit();
+                $.unblockUI();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#Name").live("focusout", function () {
+        if ($(this).val()) {
+            if (!$("#ShortName").val()) {
+                var name = $(this).val();
+                $.getJSON("/Master/GetShortName", { name: name, module: "CC" }, function (data) {
+                    $("#ShortName").val(data.shortName.toString());
+                });
+            }
+        }
+    });
+</script>

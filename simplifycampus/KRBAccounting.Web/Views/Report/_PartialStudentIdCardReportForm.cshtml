@@ -1,0 +1,59 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.ReportStudentLedgerFromViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Html.BeginForm("StudentIdCard", "Report", new { controller = "Report" }, FormMethod.Post, new { @class = "form-horizontal", id = "report-form" }))
+{
+    <div style="width: 400px; height: 325px">
+    <div class="lag">            
+        <div class="lag">
+            <label class="label-90 ">
+                Class</label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.ClassId, Model.ClassList, new { @class = "input-120 chzn-select" })
+                @Html.ValidationMessageFor(m => m.ClassId)
+            </span>
+        </div>
+        <div class="clearfix"></div>
+        <label class="input-90">Search</label>
+        <div class="field">
+            <input type="text" placeholder="Search" class="studentidcard-box" />
+        </div>
+
+
+</div>
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 250px; width: 100%">
+        <table class="listpopup" id="student-ledger-detail" style="width: 100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        @Html.CheckBoxFor(m => m.SelectAll, new { @class = "checkall" })
+                    </th>
+                    <th width="35%">
+                        Student
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Roll No
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.StudentinfoList)
+                {
+                    @Html.Partial("_PartialStudentList", item.FirstOrDefault())
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="clearfix">
+    </div> 
+    </div>
+  
+    }

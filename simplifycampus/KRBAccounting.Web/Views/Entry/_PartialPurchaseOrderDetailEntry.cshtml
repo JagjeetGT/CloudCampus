@@ -1,0 +1,81 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.PurchaseDetailEntryViewModel
+@{
+    var trId = "";
+    if (Model.Index != 0)
+    {
+        trId = "tr_" + Model.Index;
+    }
+}
+<tr class="cashbank-detail-entry detail-entry" id="@trId">
+    @using (Html.BeginCollectionItem("purchaseDetailEntry"))
+    {
+        string display = "display:none;";
+        string billTermClass = "";
+        if (Model.AllowProductWiseBillTerm)
+        {
+            display = "";
+            billTermClass = "rate-bill-term";
+        }
+       
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ProductId, new { @class = "productId" })
+            @Html.HiddenFor(x => x.Index, new { @class = "indexId" })
+            <input type="text" class = "modallink text_product input-225 input" href="@Url.Action("GetProductList", "Entry")" createhref="@Url.Action("OnlineProductAdd", "Master")"  entermsg = "Press F1 for existing Account list." value=""/>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Qty, new { @class = "input-80 qty input numberonly", entermsg = "Enter  Quantity." })
+        </td>
+        <td>
+            @Html.DropDownListFor(x => x.Unit, Model.UnitList, new { @class = "input-80 unit input", entermsg = "Enter Unit." })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltQty, new { @class = "input-80 altqty input numberonly", entermsg = "Enter Altrnative Quantity.", @readonly = true })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltUnit, new { @class = "input-80 altunit input", entermsg = "Enter Altrnative Unit.", @readonly = true })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "input-80 rate input  numberonly " + billTermClass, href = "/Entry/GetPurchaseDetailEntry", entermsg = "Enter Rate." })
+            <span class="product_wise_billterms"></span>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-80 basicAmt", entermsg = "Enter Basic Amount.", @readonly = "readonly" })
+        </td>
+        <td style="@display">
+            @Html.TextBoxFor(x => x.TermAmt, new { @class = "input-80 termAmt", @readonly = "readonly" })
+        </td>
+
+        <td style="@display">
+            @Html.TextBoxFor(x => x.NetAmt, new { @class = "input-80 netAmt", @readonly = "readonly" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+    
+  
+</tr>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+    
+
+
+   
+</script>

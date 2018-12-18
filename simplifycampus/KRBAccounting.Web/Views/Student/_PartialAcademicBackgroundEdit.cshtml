@@ -1,0 +1,43 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.AcademicBackground
+
+
+<tr class="QualificationDetail detail-entry">
+    @using (Html.BeginCollectionItem("qualificatonDetailList"))
+    {
+
+        @Html.HiddenFor(m => m.StudentId)
+
+
+        <td>
+            @Html.TextBoxFor(x => x.Title, new { @class = "input-100 title" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Institution, new { @class = "input-80 institution" })
+        </td>
+          <td>
+            @Html.TextBoxFor(x => x.Board, new { @class = "input-80 board" })
+        </td>
+          <td>
+            @Html.TextBoxFor(x => x.Country, new { @class = "input-80 country" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.PassedYear, new { @class = "input-120 passedyear " })
+        </td>
+
+        <td>
+
+            @Html.HiddenFor(x => x.DivisionId, new { @class = "hdn_division_Id" })
+            <input type="text" id="divisionid" class="modallink input-160  division-text last-col" value="@UtilityService.GetDivision(Model.DivisionId)"  href="@Url.Action("GetDivision")" valueid="DivisionId" title="Division" />
+
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Percentage, new { @class = "percentage input-160 input", href = "/Student/AcademyBackGroundEntry", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+                 <img src="../../Content/img/delete.png" width="15px" class="del-row">
+             </td>
+
+    }
+</tr>
+

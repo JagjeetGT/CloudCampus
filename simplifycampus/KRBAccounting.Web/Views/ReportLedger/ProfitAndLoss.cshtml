@@ -1,0 +1,71 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.ProfitAndLossFormViewModel
+@{
+    ViewBag.Title = "Profit & Loss";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Profit And Loss</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfProfitAndLoss", "ReportLedger")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelProfitAndLoss", "ReportLedger")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dialog" id="modalReportForm">
+    <div class="block">@Html.Partial("_PartialProfitAndLossForm", Model)</div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+         });
+        $("#saveForm").live("click", function () {
+            $("#report-form").submit();
+        });
+
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Generate Profit & Loss Report',
+            buttons: {
+                "OK": function () {
+                    $("#report-form").submit();
+                    $(this).dialog('close');
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    
+//    function OpenModal() {
+//        $('#modalReportForm').modal({
+//            keyboard: false,
+//            backdrop: "static"
+//        }).css({
+//            width: 'auto',
+//            'margin-left': function () {
+//                return -($(this).width() / 2);
+//            }
+//        });
+//    }
+
+</script>

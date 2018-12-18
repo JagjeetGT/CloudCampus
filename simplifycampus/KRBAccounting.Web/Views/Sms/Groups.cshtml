@@ -1,0 +1,191 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Sms Group List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Group List</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                              <li><a href="@Url.Action("GroupAdd", "Sms")" class="isw-plus addBuildings"></a></li>
+                        }
+                      
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Building-list">
+                    @Html.Action("GroupsList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalSchBuilding" style="display: none;" title="Sms Group">
+    <div class="block">
+    </div>
+</div>
+@*<script type="text/javascript">
+    $("#modalSchBuilding").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                $("#smsGroup-frm").submit();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSchBuilding .block').html(data);
+                $(this).addClass("done");
+                $("#modalSchBuilding").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('.addBuildings').live('click', function () {
+        var url = '@Url.Action("GroupAdd", "Sms")';
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete() {
+
+        $("#modalSchBuilding").load("/Sms/GroupAdd");
+        $("#Building-list").load("/Sms/GroupsList");
+    }
+
+    function OnCompleteEdit() {
+        $("#modalSchBuildingEdit").dialog("close");
+        $("#Building-list").load("/School/ListBuildings");
+    }
+
+    $('a.editSmsGroup').live('click', function () {
+        var buildingId = $(this).attr("data-id");
+        var url = '@Url.Action("GroupEdit", "Sms")?groupId=' + buildingId;
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+    
+
+    $("#SmsGroupTypeId, #ClassId").live("change", function () {
+        var _this = $("#multiselect");
+        var id = $("#SmsGroupTypeId").val();
+        if (id == 2) {
+            $(".classlist").css("display", "block");
+            var classId = $("#ClassId").val();
+            var url = '/School/GetStudentByClassId/' + classId;
+            var innerHtml = '';
+            $.getJSON(url, function (sucess) {
+                $(".wsws").html("");
+
+                $.each(sucess, function (i) {
+                    var value = this.Id + "_Student";
+                    innerHtml += '<option value="' + this.Id + '_Student">' + this.Description + '</option>';
+                    var data = this.Id + "_Student";
+                    var item = $('<li data-id="' + data + '"><a>' + this.Description + '</a></li>').append('<a class="add"></a>').data({
+                        'pos': i,
+                        'value': value,
+                        'name': this.Description,
+                        'native': _this
+                    }).appendTo(opts.pool);
+                    opts.items[value] = item;
+
+                });
+
+                $("#multiselect").append(innerHtml);
+            });
+
+        } else {
+            var urlstaff = '/Sms/GetStaffMasters/';
+            var innerHtmls = '';
+            $.getJSON(urlstaff, function (sucess) {
+                $(".wsws").html("");
+
+                $.each(sucess, function (i) {
+                    innerHtmls += '<option value="' + this.Id + '_Staff">' + this.Description + '</option>';
+                    var data = this.Id + "_Staff";
+                    var item = $('<li data-id="' + data + '"><a>' + this.Description + '</a></li>').append('<a class="add"></a>').data({
+                        'pos': i,
+                        'value': data,
+                        'name': this.Description,
+                        'native': _this
+                    }).appendTo(opts.pool);
+                    opts.items[data] = item;
+
+                });
+
+                //$("#multiselect").append(innerHtmls);
+            });
+
+            $(".classlist").css("display", "none");
+        }
+    });
+
+    $(".add").live("click", function () {
+        var value = $(this).closest("li").attr('data-id');
+        $("#multiselect option").each(function (index, element) {
+            if (element.value == value) {
+                $(this).attr('selected', 'selected');
+            }
+        });
+    });
+
+    $(".remove").live("click", function () {
+        var value = $(this).closest("li").attr('data-id');
+        $("#multiselect option").each(function (index, element) {
+            if (element.value == value) {
+                $(this).removeAttr('selected');
+            }
+        });
+    });
+</script>*@

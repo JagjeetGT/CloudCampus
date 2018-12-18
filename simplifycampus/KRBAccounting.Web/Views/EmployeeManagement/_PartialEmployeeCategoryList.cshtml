@@ -1,0 +1,92 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScEmployeeCategory>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                 <th>
+                    Code
+                </th>
+                <th>
+                     Name
+                </th>
+               <th>
+                    Status
+                </th>
+               @* <th>
+                    Created Date
+                </th>
+                <th>
+                    Created By
+                </th>*@
+                <th>
+                    Updated Date
+                </th>
+                <th>
+                    Updated By
+                </th>
+                
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i</td>
+                     <td>@item.Code
+                    </td>
+                    <td>@item.Description
+                    </td>
+                    <td>
+                        @item.Status
+                    </td>
+                    @*<td>@item.CreatedDate.ToString("MM/dd/yyyy")
+                    </td>
+                    <td>@if (item.CreatedBy != null)
+                        {
+                            @item.CreatedBy.Username
+                        }
+
+                    </td>*@
+                    <td>@item.UpdatedDate.ToString("MM/dd/yyyy")
+                    </td>
+                    <td>@if (item.UpdatedBy != null)
+                        {
+                            @item.UpdatedBy.Username
+                        }
+
+                    </td>
+                   
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="Javascript:void(0)" class="editScStaffGroup icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>
+                         @if (userRight.Delete)
+                         {
+                             <a href="javascript:void(0)" class="deleteemployeecategory icon-remove" data-id="@item.Id" title="Delete">
+                             </a>
+                         }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "EmployeeDepartmentList", "EmployeeManagement", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "boader-list" }))
+    </div>
+</div>
+

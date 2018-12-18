@@ -1,0 +1,1838 @@
+﻿
+@model KRBAccounting.Web.ViewModels.LedgerReport.TrialBalanceReportPeriodicViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@{
+    decimal openingTotalDebit = decimal.Zero;
+    decimal openingTotalCredit = decimal.Zero;
+    decimal periodTotalDebit = decimal.Zero;
+    decimal periodTotalCredit = decimal.Zero;
+    decimal closingTotalDebit = decimal.Zero;
+    decimal closingTotalCredit = decimal.Zero;
+
+    decimal openingLedTotalDebit = decimal.Zero;
+    decimal openingLedTotalCredit = decimal.Zero;
+    decimal periodLedTotalDebit = decimal.Zero;
+    decimal periodLedTotalCredit = decimal.Zero;
+    decimal closingLedTotalDebit = decimal.Zero;
+    decimal closingLedTotalCredit = decimal.Zero;
+
+    decimal openingSubGrpTotalDebit = decimal.Zero;
+    decimal openingSubGrpTotalCredit = decimal.Zero;
+    decimal periodSubGrpTotalDebit = decimal.Zero;
+    decimal periodSubGrpTotalCredit = decimal.Zero;
+    decimal closingSubGrpTotalDebit = decimal.Zero;
+    decimal closingSubGrpTotalCredit = decimal.Zero;
+
+    decimal openingGrpTotalDebit = decimal.Zero;
+    decimal openingGrpTotalCredit = decimal.Zero;
+    decimal periodGrpTotalDebit = decimal.Zero;
+    decimal periodGrpTotalCredit = decimal.Zero;
+    decimal closingGrpTotalDebit = decimal.Zero;
+    decimal closingGrpTotalCredit = decimal.Zero;
+
+    decimal diff = 0;
+    var AsgGrp = "";
+    var AgGrp = "";
+    var ledger = "";
+}
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    @if (Model.AccountGroup == false && Model.Ledger == true)
+    {
+        <table class="table" cellspacing="0" cellpadding="0" width="100%">
+            @if (Model.SubLedger == false)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Code
+                        </th>
+                        <th>
+                            Ledger
+                        </th>
+                        <th>
+                            Opening Debit
+                        </th>
+                        <th>
+                            Opening Credit
+                        </th>
+                        <th>
+                            Debit Transaction
+                        </th>
+                        <th>
+                            Credit Transaction
+                        </th>
+                         <th>
+                            Debit Balance
+                        </th>
+                        <th>
+                            Credit Balance
+                        </th>
+                    </tr>
+                  
+                </thead>
+                foreach (var item in Model.ReportList)
+                {
+                    <tr>
+                        <td>
+                            @item.ShortName
+                        </td>
+                        <td>
+                            @item.AccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnDebit != 0)
+                            {
+                                openingTotalDebit += item.OpnDebit;<text>@item.OpnDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnCredit != 0)
+                            {
+                                openingTotalCredit += item.OpnCredit;<text>@item.OpnCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodDebit != 0)
+                            {
+                                periodTotalDebit += item.PeriodDebit;<text>@item.PeriodDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodCredit != 0)
+                            {
+                                periodTotalCredit += item.PeriodCredit;<text>@item.PeriodCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance > 0)
+                            {
+                                closingTotalDebit += item.Balance;<text>@item.Balance</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance < 0)
+                            {
+                                closingTotalCredit += Math.Abs(item.Balance);<text>@Math.Abs(item.Balance)</text>
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td style="text-align: right">@openingTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingTotalCredit
+                    </td>
+                </tr>
+                
+                {
+                    diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+                }
+                if (diff != 0)
+                {
+                     <tr class="bold numbericfield">
+                         <td>
+                         </td>
+                         <td>
+                            Trial Balance Difference
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                          <td>
+                         </td>
+                         <td style="text-align: right">@diff
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                }
+            }
+            else if (Model.SubLedger == true)
+            {
+                 <thead>
+                    <tr>
+                        <th>
+                            Ledger
+                        </th>
+                        <th>
+                           Sub Ledger 
+                        </th>
+                       <th>
+                            Opening Debit
+                        </th>
+                        <th>
+                            Opening Credit
+                        </th>
+                        <th>
+                            Debit Transaction
+                        </th>
+                        <th>
+                            Credit Transaction
+                        </th>
+                        <th>
+                            Debit Balance
+                        </th>
+                        <th>
+                            Credit Balance
+                        </th>
+                    </tr>
+                  
+                </thead>
+                var counter = 0;
+                foreach (var item in Model.ReportList)
+                {
+                    if (AgGrp != item.AccountName)
+                    {
+                        if ((closingGrpTotalDebit > 0 || closingGrpTotalCredit > 0) && counter > 1)
+                        {
+                            <tr class="bold numbericfield">
+                                <td>
+                                </td>
+                                <td style="text-align: right; font-weight: bold">
+                                    Ledger Total
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalCredit
+                                </td>
+                            </tr>
+                        }
+                        openingGrpTotalDebit = 0;
+                        openingGrpTotalCredit = 0;
+                        periodGrpTotalDebit = 0;
+                        periodGrpTotalCredit = 0;
+                        closingGrpTotalDebit = 0;
+                        closingGrpTotalCredit = 0;
+                        counter = 0;
+                    }
+                    if (AgGrp != item.AccountName)
+                    {
+                        AgGrp = item.AccountName;
+                        <tr>
+                            <td style="font-weight: bold">
+                                @item.AccountName
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        counter = 0;
+                    }
+                    counter += 1;
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            @item.SLAccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnDebit != 0)
+                            {
+                                openingTotalDebit += item.OpnDebit;<text>@item.OpnDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnCredit != 0)
+                            {
+                                openingTotalCredit += item.OpnCredit;<text>@item.OpnCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodDebit != 0)
+                            {
+                                periodTotalDebit += item.PeriodDebit;<text>@item.PeriodDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodCredit != 0)
+                            {
+                                periodTotalCredit += item.PeriodCredit;<text>@item.PeriodCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance > 0)
+                            {
+                                closingTotalDebit += item.Balance;<text>@item.Balance</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance < 0)
+                            {
+                                closingTotalCredit += Math.Abs(item.Balance);<text>@Math.Abs(item.Balance)</text>
+                            }
+                        </td>
+                    </tr>
+                
+                            openingGrpTotalDebit += @item.OpnDebit;
+                            openingGrpTotalCredit += @item.OpnCredit;
+                            periodGrpTotalDebit += @item.PeriodDebit;
+                            periodGrpTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingGrpTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingGrpTotalCredit += @Math.Abs(item.Balance);
+                            }
+                }
+                 <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        Ledger Total
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalCredit
+                    </td>
+                </tr>
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td style="text-align: right">@openingTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingTotalCredit
+                    </td>
+                </tr> 
+                
+                {
+                    diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+                }
+                if (diff != 0)
+                {
+                     <tr class="bold numbericfield">
+                         <td>
+                         </td>
+                         <td>
+                           Trial Balance Difference
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                          <td>
+                         </td>
+                         <td style="text-align: right">@diff
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                }
+            }
+        
+        </table>
+    }
+    else if (Model.AccountGroup == true && Model.Ledger == false)
+    {
+        <table class="table" cellspacing="0" cellpadding="0" width="100%">
+        @if (Model.AccountSubGroup == true)
+        {
+            <thead>
+                <tr>
+                    <th>
+                        Account Group
+                    </th>
+                    <th>
+                        Account Sub Group
+                    </th>
+                   <th>
+                        Opening Debit
+                    </th>
+                    <th>
+                        Opening Credit
+                    </th>
+                    <th>
+                        Debit Transaction
+                    </th>
+                    <th>
+                        Credit Transaction
+                    </th>
+                    <th>
+                        Debit Balance
+                    </th>
+                    <th>
+                        Credit Balance
+                    </th>
+                </tr>
+            </thead>
+            var counter = 0;
+            foreach (var item in Model.ReportList)
+            {
+                if (AgGrp != item.AGDesc)
+                {
+                    if (counter > 1 && (closingGrpTotalDebit > 0 || closingGrpTotalCredit > 0))
+                    {
+                        <tr class="bold numbericfield">
+                            <td>
+                            </td>
+                            <td style="text-align: right">
+                                Group Total
+                            </td>
+                            <td style="text-align: right">@openingGrpTotalDebit
+                            </td>
+                            <td style="text-align: right">@openingGrpTotalCredit
+                            </td>
+                            <td style="text-align: right">@periodGrpTotalDebit
+                            </td>
+                            <td style="text-align: right">@periodGrpTotalCredit
+                            </td>
+                            <td style="text-align: right">@closingGrpTotalDebit
+                            </td>
+                            <td style="text-align: right">@closingGrpTotalCredit
+                            </td>
+                        </tr>
+                    }
+                    openingGrpTotalDebit = 0;
+                    openingGrpTotalCredit = 0;
+                    periodGrpTotalDebit = 0;
+                    periodGrpTotalCredit = 0;
+                    closingGrpTotalDebit = 0;
+                    closingGrpTotalCredit = 0;
+                    counter = 0;
+
+                    AgGrp = item.AGDesc;
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.AGDesc
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                }
+
+                openingGrpTotalDebit += @item.OpnDebit;
+                openingGrpTotalCredit += @item.OpnCredit;
+                periodGrpTotalDebit += @item.PeriodDebit;
+                periodGrpTotalCredit += @item.PeriodCredit;
+                if (item.Balance > 0)
+                {
+                    closingGrpTotalDebit += @item.Balance;
+                }
+                else
+                {
+                    closingGrpTotalCredit += @Math.Abs(item.Balance);
+                }
+
+                counter += 1;
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                        @item.ASGDesc
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.OpnDebit != 0)
+                        {
+                            openingTotalDebit += item.OpnDebit;<text>@item.OpnDebit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.OpnCredit != 0)
+                        {
+                            openingTotalCredit += item.OpnCredit;<text>@item.OpnCredit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.PeriodDebit != 0)
+                        {
+                            periodTotalDebit += item.PeriodDebit;<text>@item.PeriodDebit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.PeriodCredit != 0)
+                        {
+                            periodTotalCredit += item.PeriodCredit;<text>@item.PeriodCredit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.Balance > 0)
+                        {
+                            closingTotalDebit += item.Balance;<text>@item.Balance</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.Balance < 0)
+                        {
+                            closingTotalCredit += Math.Abs(item.Balance);<text>@Math.Abs(item.Balance)</text>
+                        }
+                    </td>
+                </tr>
+
+            }
+                
+            <tr class="bold numbericfield">
+                <td>
+                </td>
+                <td>
+                    Total
+                </td>
+                <td style="text-align: right">@openingTotalDebit
+                </td>
+                <td style="text-align: right">@openingTotalCredit
+                </td>
+                <td style="text-align: right">@periodTotalDebit
+                </td>
+                <td style="text-align: right">@periodTotalCredit
+                </td>
+                <td style="text-align: right">@closingTotalDebit
+                </td>
+                <td style="text-align: right">@closingTotalCredit
+                </td>
+            </tr>
+                
+            {
+                diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+            }
+            if (diff != 0)
+            {
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Trial Balance Difference
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right">@diff
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+                <thead>
+                    <tr>
+                        <th>
+                            Account Group
+                        </th>
+                       <th>
+                            Opening Debit
+                        </th>
+                        <th>
+                            Opening Credit
+                        </th>
+                        <th>
+                            Debit Transaction
+                        </th>
+                        <th>
+                            Credit Transaction
+                        </th>
+                         <th>
+                            Debit Balance
+                        </th>
+                        <th>
+                            Credit Balance
+                        </th>
+                    </tr>
+                </thead>
+            foreach (var item in Model.ReportList)
+            {
+                if ((AgGrp != item.AGDesc) && (closingGrpTotalDebit > 0 || closingGrpTotalCredit > 0))
+                {
+                        <tr>
+                            <td>
+                                @AgGrp
+                            </td>
+                            <td style="text-align: right">@openingGrpTotalDebit
+                            </td>
+                            <td style="text-align: right">@openingGrpTotalCredit
+                            </td>
+                            <td style="text-align: right">@periodGrpTotalDebit
+                            </td>
+                            <td style="text-align: right">@periodGrpTotalCredit
+                            </td>
+                            <td style="text-align: right">@closingGrpTotalDebit
+                            </td>
+                            <td style="text-align: right">@closingGrpTotalCredit
+                            </td>
+                        </tr>
+
+                    openingGrpTotalDebit = 0;
+                    openingGrpTotalCredit = 0;
+                    periodGrpTotalDebit = 0;
+                    periodGrpTotalCredit = 0;
+                    closingGrpTotalDebit = 0;
+                    closingGrpTotalCredit = 0;
+                }
+
+                openingTotalDebit += @item.OpnDebit;
+                openingTotalCredit += @item.OpnCredit;
+                periodTotalDebit += @item.PeriodDebit;
+                periodTotalCredit += @item.PeriodCredit;
+                if (item.Balance > 0)
+                {
+                    closingTotalDebit += @item.Balance;
+                }
+                else
+                {
+                    closingTotalCredit += @Math.Abs(item.Balance);
+                }
+
+                openingGrpTotalDebit += @item.OpnDebit;
+                openingGrpTotalCredit += @item.OpnCredit;
+                periodGrpTotalDebit += @item.PeriodDebit;
+                periodGrpTotalCredit += @item.PeriodCredit;
+                if (item.Balance > 0)
+                {
+                    closingGrpTotalDebit += @item.Balance;
+                }
+                else
+                {
+                    closingGrpTotalCredit += @Math.Abs(item.Balance);
+                }
+
+                if (AgGrp != item.AGDesc)
+                {
+                    AgGrp = item.AGDesc;
+                }
+            }
+                <tr class="bold numbericfield">
+                    <td>
+                        Total
+                    </td>
+                    <td style="text-align: right">@openingTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingTotalCredit
+                    </td>
+                </tr>
+                
+            {
+                diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+            }
+            if (diff != 0)
+            {
+                     <tr class="bold numbericfield">
+                         <td>
+                             Trial Balance Difference
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td style="text-align: right">@diff
+                         </td>
+                     </tr>
+            }
+        }
+        </table>
+    }
+    else if (Model.AccountGroup == true && Model.Ledger == true)
+    {
+        <table class="table" cellspacing="0" cellpadding="0" width="100%">
+          
+            @if (Model.AccountSubGroup == true && Model.SubLedger == false)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Account Group
+                        </th>
+                        <th>
+                            Account Sub Group
+                        </th>
+                        <th>
+                            Ledger
+                        </th>
+                        <th>
+                            Opening Debit
+                        </th>
+                        <th>
+                            Opening Credit
+                        </th>
+                        <th>
+                            Debit Transaction
+                        </th>
+                        <th>
+                            Credit Transaction
+                        </th>
+                         <th>
+                            Debit Balance
+                        </th>
+                        <th>
+                            Credit Balance
+                        </th>
+                    </tr>
+                </thead>
+                var counter = 0;
+                foreach (var item in Model.ReportList)
+                {
+                    if (AgGrp != item.AGDesc)
+                    {
+                        if (AsgGrp != item.ASGDesc)
+                        {
+                            if ((closingSubGrpTotalDebit > 0 || closingSubGrpTotalCredit > 0) && counter > 1)
+                            {
+                                <tr class="bold numbericfield">
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Sub Group Total
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalCredit
+                                    </td>
+                                </tr>
+                            }
+                            openingSubGrpTotalDebit = 0;
+                            openingSubGrpTotalCredit = 0;
+                            periodSubGrpTotalDebit = 0;
+                            periodSubGrpTotalCredit = 0;
+                            closingSubGrpTotalDebit = 0;
+                            closingSubGrpTotalCredit = 0;
+                        }
+
+                        if (closingGrpTotalDebit > 0 || closingGrpTotalDebit < 0)
+                        {
+                            <tr class="bold numbericfield">
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right; font-weight: bold">
+                                    Group Total
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalCredit
+                                </td>
+                            </tr>
+                        }
+                        openingGrpTotalDebit = 0;
+                        openingGrpTotalCredit = 0;
+                        periodGrpTotalDebit = 0;
+                        periodGrpTotalCredit = 0;
+                        closingGrpTotalDebit = 0;
+                        closingGrpTotalCredit = 0;
+
+                        AgGrp = item.AGDesc;
+                        <tr>
+                            <td style="font-weight: bold">
+                                @item.AGDesc
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        counter = 0;
+                        AsgGrp = item.ASGDesc;
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="font-weight: bold">
+                                @item.ASGDesc
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                       
+                    }
+                    else
+                    {
+                        if (AsgGrp != item.ASGDesc)
+                        {
+                            if ((closingSubGrpTotalDebit > 0 || closingSubGrpTotalCredit > 0) && counter > 1)
+                            {
+                                <tr class="bold numbericfield">
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Sub Group Total
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalCredit
+                                    </td>
+                                </tr>
+                            }
+                            openingSubGrpTotalDebit = 0;
+                            openingSubGrpTotalCredit = 0;
+                            periodSubGrpTotalDebit = 0;
+                            periodSubGrpTotalCredit = 0;
+                            closingSubGrpTotalDebit = 0;
+                            closingSubGrpTotalCredit = 0;
+
+                            counter = 0;
+                            AsgGrp = item.ASGDesc;
+                            <tr>
+                                <td>
+                                </td>
+                                <td style="font-weight: bold">
+                                    @item.ASGDesc
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+
+                    counter += 1;
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            @item.AccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnDebit != 0)
+                            {
+                                openingTotalDebit += item.OpnDebit;<text>@item.OpnDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnCredit != 0)
+                            {
+                                openingTotalCredit += item.OpnCredit;<text>@item.OpnCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodDebit != 0)
+                            {
+                                periodTotalDebit += item.PeriodDebit;<text>@item.PeriodDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodCredit != 0)
+                            {
+                                periodTotalCredit += item.PeriodCredit;<text>@item.PeriodCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance > 0)
+                            {
+                                closingTotalDebit += item.Balance;<text>@item.Balance</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance < 0)
+                            {
+                                closingTotalCredit += Math.Abs(item.Balance);<text>@Math.Abs(item.Balance)</text>
+                            }
+                        </td>
+                    </tr>
+                            openingSubGrpTotalDebit += @item.OpnDebit;
+                            openingSubGrpTotalCredit += @item.OpnCredit;
+                            periodSubGrpTotalDebit += @item.PeriodDebit;
+                            periodSubGrpTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingSubGrpTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingSubGrpTotalCredit += @Math.Abs(item.Balance);
+                            }
+
+                            openingGrpTotalDebit += @item.OpnDebit;
+                            openingGrpTotalCredit += @item.OpnCredit;
+                            periodGrpTotalDebit += @item.PeriodDebit;
+                            periodGrpTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingGrpTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingGrpTotalCredit += @Math.Abs(item.Balance);
+                            }
+                }
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        Group Total
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalCredit
+                    </td>
+                </tr>
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td style="text-align: right">@openingTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingTotalCredit
+                    </td>
+                </tr>
+                
+                {
+                    diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+                }
+                if (diff != 0)
+                {
+                     <tr class="bold numbericfield">
+                         <td>
+                         </td>
+                        <td>
+                        </td>
+                         <td>
+                             Trial Balance Difference
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td style="text-align: right">@diff
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                }
+            }
+            else if (Model.AccountSubGroup == true && Model.SubLedger == true)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Account Group
+                        </th>
+                        <th>
+                            Account Sub Group
+                        </th>
+                        <th>
+                            Ledger
+                        </th>
+                        <th>
+                            Sub Ledger
+                        </th>
+                       <th>
+                            Opening Debit
+                        </th>
+                        <th>
+                            Opening Credit
+                        </th>
+                        <th>
+                            Debit Transaction
+                        </th>
+                        <th>
+                            Credit Transaction
+                        </th>
+                         <th>
+                            Debit Balance
+                        </th>
+                        <th>
+                            Credit Balance
+                        </th>
+                    </tr>
+                </thead>
+                var counter = 0;
+                var Ledcounter = 0;
+                foreach (var item in Model.ReportList)
+                {
+                    if (AgGrp != item.AGDesc)
+                    {
+                        if (ledger != item.AccountName)
+                        {
+                            if ((closingLedTotalDebit > 0 || closingLedTotalCredit > 0) && Ledcounter > 1)
+                            {
+                                <tr class="bold numbericfield">
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                     <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Ledger Total
+                                    </td>
+                                    <td style="text-align: right">@openingLedTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@openingLedTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@periodLedTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@periodLedTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@closingLedTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@closingLedTotalCredit
+                                    </td>
+                                </tr>
+                            }
+                            openingLedTotalDebit = 0;
+                            openingLedTotalCredit = 0;
+                            periodLedTotalDebit = 0;
+                            periodLedTotalCredit = 0;
+                            closingLedTotalDebit = 0;
+                            closingLedTotalCredit = 0;
+                        }
+                        if (AsgGrp != item.ASGDesc)
+                        {
+                            if ((closingSubGrpTotalDebit > 0 || closingSubGrpTotalCredit > 0) && counter > 1)
+                            {
+                                <tr class="bold numbericfield">
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Sub Group Total
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalCredit
+                                    </td>
+                                </tr>
+                            }
+                            openingSubGrpTotalDebit = 0;
+                            openingSubGrpTotalCredit = 0;
+                            periodSubGrpTotalDebit = 0;
+                            periodSubGrpTotalCredit = 0;
+                            closingSubGrpTotalDebit = 0;
+                            closingSubGrpTotalCredit = 0;
+                        }
+
+                        if (closingGrpTotalDebit > 0 || closingGrpTotalDebit < 0)
+                        {
+                            <tr class="bold numbericfield">
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right; font-weight: bold">
+                                    Group Total
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalCredit
+                                </td>
+                            </tr>
+                        }
+                        openingGrpTotalDebit = 0;
+                        openingGrpTotalCredit = 0;
+                        periodGrpTotalDebit = 0;
+                        periodGrpTotalCredit = 0;
+                        closingGrpTotalDebit = 0;
+                        closingGrpTotalCredit = 0;
+
+                        counter = 0;
+                        Ledcounter = 0;
+                        AgGrp = item.AGDesc;
+                        AsgGrp = item.ASGDesc;
+                        ledger = item.AccountName;
+                        <tr>
+                            <td style="font-weight: bold">
+                                @item.AGDesc
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td style="font-weight: bold">
+                                @item.ASGDesc
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="font-weight: bold">
+                                @item.AccountName
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                       
+                    }
+                    else
+                    {
+                        if (AsgGrp != item.ASGDesc)
+                        {
+                            if (ledger != item.AccountName)
+                            {
+                                if ((closingLedTotalDebit > 0 || closingLedTotalCredit > 0) && Ledcounter > 1)
+                                {
+                                    <tr class="bold numbericfield">
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td style="text-align: right; font-weight: bold">
+                                            Ledger Total
+                                        </td>
+                                        <td style="text-align: right">@openingLedTotalDebit
+                                        </td>
+                                        <td style="text-align: right">@openingLedTotalCredit
+                                        </td>
+                                        <td style="text-align: right">@periodLedTotalDebit
+                                        </td>
+                                        <td style="text-align: right">@periodLedTotalCredit
+                                        </td>
+                                        <td style="text-align: right">@closingLedTotalDebit
+                                        </td>
+                                        <td style="text-align: right">@closingLedTotalCredit
+                                        </td>
+                                    </tr>
+                                }
+                                openingLedTotalDebit = 0;
+                                openingLedTotalCredit = 0;
+                                periodLedTotalDebit = 0;
+                                periodLedTotalCredit = 0;
+                                closingLedTotalDebit = 0;
+                                closingLedTotalCredit = 0;
+                            }
+                            if ((closingSubGrpTotalDebit > 0 || closingSubGrpTotalCredit > 0) && counter > 1)
+                            {
+                                <tr class="bold numbericfield">
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Sub Group Total
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@openingSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@periodSubGrpTotalCredit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalDebit
+                                    </td>
+                                    <td style="text-align: right">@closingSubGrpTotalCredit
+                                    </td>
+                                </tr>
+                            }
+                            openingSubGrpTotalDebit = 0;
+                            openingSubGrpTotalCredit = 0;
+                            periodSubGrpTotalDebit = 0;
+                            periodSubGrpTotalCredit = 0;
+                            closingSubGrpTotalDebit = 0;
+                            closingSubGrpTotalCredit = 0;
+
+                            counter = 0;
+                            Ledcounter = 0;
+                            AsgGrp = item.ASGDesc;
+                            <tr>
+                                <td>
+                                </td>
+                                <td style="font-weight: bold">
+                                    @item.ASGDesc
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+
+                        }
+                        else
+                        {
+                            if (ledger != item.AccountName)
+                            {
+                                if ((closingLedTotalDebit > 0 || closingLedTotalCredit > 0) && Ledcounter > 1)
+                                {
+                                    <tr class="bold numbericfield">
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td style="text-align: right; font-weight: bold">
+                                           Ledger Total
+                                        </td>
+                                        <td style="text-align: right">@openingLedTotalDebit
+                                        </td>
+                                        <td style="text-align: right">@openingLedTotalCredit
+                                        </td>
+                                        <td style="text-align: right">@periodLedTotalDebit
+                                        </td>
+                                        <td style="text-align: right">@periodLedTotalCredit
+                                        </td>
+                                        <td style="text-align: right">@closingLedTotalDebit
+                                        </td>
+                                        <td style="text-align: right">@closingLedTotalCredit
+                                        </td>
+                                    </tr>
+                                }
+                                openingLedTotalDebit = 0;
+                                openingLedTotalCredit = 0;
+                                periodLedTotalDebit = 0;
+                                periodLedTotalCredit = 0;
+                                closingLedTotalDebit = 0;
+                                closingLedTotalCredit = 0;
+
+                                Ledcounter = 0;
+                                ledger = item.AccountName;
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold">
+                                        @item.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+
+                    counter += 1;
+                    Ledcounter += 1;
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            @item.SLAccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnDebit != 0)
+                            {
+                                openingTotalDebit += item.OpnDebit;<text>@item.OpnDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnCredit != 0)
+                            {
+                                openingTotalCredit += item.OpnCredit;<text>@item.OpnCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodDebit != 0)
+                            {
+                                periodTotalDebit += item.PeriodDebit;<text>@item.PeriodDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodCredit != 0)
+                            {
+                                periodTotalCredit += item.PeriodCredit;<text>@item.PeriodCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance > 0)
+                            {
+                                closingTotalDebit += item.Balance;<text>@item.Balance</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance < 0)
+                            {
+                                closingTotalCredit += Math.Abs(item.Balance);<text>@Math.Abs(item.Balance)</text>
+                            }
+                        </td>
+                    </tr>
+                            openingLedTotalDebit += @item.OpnDebit;
+                            openingLedTotalCredit += @item.OpnCredit;
+                            periodLedTotalDebit += @item.PeriodDebit;
+                            periodLedTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingLedTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingLedTotalCredit += @Math.Abs(item.Balance);
+                            }
+
+                            openingSubGrpTotalDebit += @item.OpnDebit;
+                            openingSubGrpTotalCredit += @item.OpnCredit;
+                            periodSubGrpTotalDebit += @item.PeriodDebit;
+                            periodSubGrpTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingSubGrpTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingSubGrpTotalCredit += @Math.Abs(item.Balance);
+                            }
+
+                            openingGrpTotalDebit += @item.OpnDebit;
+                            openingGrpTotalCredit += @item.OpnCredit;
+                            periodGrpTotalDebit += @item.PeriodDebit;
+                            periodGrpTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingGrpTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingGrpTotalCredit += @Math.Abs(item.Balance);
+                            }
+                }
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        Group Total
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalCredit
+                    </td>
+                </tr>
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td style="text-align: right">@openingTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingTotalCredit
+                    </td>
+                </tr>
+                
+                {
+                    diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+                }
+                if (diff != 0)
+                {
+                     <tr class="bold numbericfield">
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                        </td>
+                         <td>
+                             Trial Balance Difference
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td style="text-align: right">@diff
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                }
+            }
+            else if (Model.AccountSubGroup == false && Model.SubLedger == false)
+            {
+                 <thead>
+                    <tr>
+                        <th>
+                            Account Group
+                        </th>
+                        <th>
+                            Ledger
+                        </th>
+                        <th>
+                            Opening Debit
+                        </th>
+                        <th>
+                            Opening Credit
+                        </th>
+                        <th>
+                            Debit Transaction
+                        </th>
+                        <th>
+                            Credit Transaction
+                        </th>
+                         <th>
+                            Debit Balance
+                        </th>
+                        <th>
+                            Credit Balance
+                        </th>
+                    </tr>
+                </thead>
+                foreach (var item in Model.ReportList)
+                {
+                    if (AgGrp != item.AGDesc)
+                    {
+                        if (closingGrpTotalDebit > 0 || closingGrpTotalDebit < 0)
+                        {
+                            <tr class="bold numbericfield">
+                                <td>
+                                </td>
+                                <td style="text-align: right; font-weight: bold">
+                                    Group Total
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@openingGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@periodGrpTotalCredit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalDebit
+                                </td>
+                                <td style="text-align: right">@closingGrpTotalCredit
+                                </td>
+                            </tr>
+                        }
+                        openingGrpTotalDebit = 0;
+                        openingGrpTotalCredit = 0;
+                        periodGrpTotalDebit = 0;
+                        periodGrpTotalCredit = 0;
+                        closingGrpTotalDebit = 0;
+                        closingGrpTotalCredit = 0;
+
+                    }
+                    if (AgGrp != item.AGDesc)
+                    {
+                        AgGrp = item.AGDesc;
+                        <tr>
+                            <td style="font-weight: bold">
+                                @item.AGDesc
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            @item.AccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnDebit != 0)
+                            {
+                                openingTotalDebit += item.OpnDebit;<text>@item.OpnDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.OpnCredit != 0)
+                            {
+                                openingTotalCredit += item.OpnCredit;<text>@item.OpnCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodDebit != 0)
+                            {
+                                periodTotalDebit += item.PeriodDebit;<text>@item.PeriodDebit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.PeriodCredit != 0)
+                            {
+                                periodTotalCredit += item.PeriodCredit;<text>@item.PeriodCredit</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance > 0)
+                            {
+                                closingTotalDebit += item.Balance;<text>@item.Balance</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (item.Balance < 0)
+                            {
+                                closingTotalCredit += Math.Abs(item.Balance);<text>@Math.Abs(item.Balance)</text>
+                            }
+                        </td>
+                    </tr>
+                            openingGrpTotalDebit += @item.OpnDebit;
+                            openingGrpTotalCredit += @item.OpnCredit;
+                            periodGrpTotalDebit += @item.PeriodDebit;
+                            periodGrpTotalCredit += @item.PeriodCredit;
+                            if (item.Balance > 0)
+                            {
+                                closingGrpTotalDebit += @item.Balance;
+                            }
+                            else
+                            {
+                                closingGrpTotalCredit += @Math.Abs(item.Balance);
+                            }
+                }
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        Group Total
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodGrpTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingGrpTotalCredit
+                    </td>
+                </tr>
+                <tr class="bold numbericfield">
+                    <td>
+                    </td>
+                    <td>
+                        Total
+                    </td>
+                    <td style="text-align: right">@openingTotalDebit
+                    </td>
+                    <td style="text-align: right">@openingTotalCredit
+                    </td>
+                    <td style="text-align: right">@periodTotalDebit
+                    </td>
+                    <td style="text-align: right">@periodTotalCredit
+                    </td>
+                    <td style="text-align: right">@closingTotalDebit
+                    </td>
+                    <td style="text-align: right">@closingTotalCredit
+                    </td>
+                </tr>
+                
+                {
+                    diff = closingTotalDebit - Math.Abs(closingTotalCredit);
+                }
+                if (diff != 0)
+                {
+                     <tr class="bold numbericfield">
+                         <td>
+                         </td>
+                         <td>
+                             Trial Balance Difference
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td style="text-align: right">@diff
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                }
+            }
+        </table>
+    }
+</div>

@@ -1,0 +1,77 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<List<KRBAccounting.Domain.Entities.ScTeacherSchedule>>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                   Class
+                </th>
+                <th>
+                    Section
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i</td>
+                    <td>
+                        @{
+                            var scClassSchedule = item.FirstOrDefault();
+                        }
+                        @if (scClassSchedule != null)
+                        {
+                            if (scClassSchedule.ClassScheduleDetail != null)
+                            {
+                                if (scClassSchedule.ClassScheduleDetail.ClassSchedule != null)
+                                {
+                                    if (scClassSchedule.ClassScheduleDetail.ClassSchedule.Class != null)
+                                    {
+                                        @scClassSchedule.ClassScheduleDetail.ClassSchedule.Class.Description
+                                    }
+                                }
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @{
+                            var firstOrDefault = item.FirstOrDefault();
+                        }
+                        @if (firstOrDefault != null)
+                        {
+                            if (firstOrDefault.ClassScheduleDetail != null)
+                            {
+                                if (firstOrDefault.ClassScheduleDetail.ClassSchedule != null)
+                                {
+                                    if (firstOrDefault.ClassScheduleDetail.ClassSchedule.Section != null)
+                                    {
+                                        @firstOrDefault.ClassScheduleDetail.ClassSchedule.Section.Description
+                                    }
+                                }
+                            }
+                        }
+
+                    </td>
+                    <td>
+                       @if (userRight.Edit)
+                       {
+                           <a href="@Url.Action("TeacherScheduleEdit", new {classid = item.FirstOrDefault().ClassScheduleDetail.ClassSchedule.ClassId, sectionid = item.FirstOrDefault().ClassScheduleDetail.ClassSchedule.SectionId})" class="editScClassSchedule icon-pencil" data-id="@item.FirstOrDefault().Id" title="Edit">
+                           </a>
+                       }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

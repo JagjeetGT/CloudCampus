@@ -1,0 +1,82 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportSubjectListReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    S.no.
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Result System
+                </th>
+                <th>
+                    Class Type
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Evaluate For Type
+                </th>
+                <th>
+                    Schedule
+                </th>
+                <th>
+                    Memo
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.SubjectList)
+        {
+            <tr>
+                <td>@i
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @item.Code
+                </td>
+                <td>@Enum.GetName(typeof(ResultSystem), item.ResultSystem)
+                </td>
+                <td>@Enum.GetName(typeof(ClassType), item.ClassType)
+                </td>
+                <td>
+                  @Enum.GetName(typeof(SubjectType), item.Type)
+                </td>
+                <td>@Enum.GetName(typeof(EvaluateForPass), item.EvaluateForType)
+                </td>
+                <td>@item.Schedule
+                </td>
+                <td>@item.Memo
+                </td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>

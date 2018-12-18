@@ -1,0 +1,54 @@
+﻿@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Entry.CashBankDetailEntryViewModel
+<tr class="cashbank-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("cashBankDetailEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.LedgerId, new { @class = "hdn_ledger_Id" })
+            <input type="text" class = "modallink text_ledger input-235 input" href="@Url.Action("GetNoCashBankLedger", "Master")"  title="General Ledger"  entermsg = "Press F1 for existing Account list." valueId="LedgerId" id="ledgerId" />
+        </td>
+        if (Model.EntryControl!=null&& Model.EntryControl.SubLedger)
+        {
+            //if(Model.Ledger.IsSubLedger !=null && Model.Ledger.IsSubLedger)
+            //{
+        <td>
+            @Html.HiddenFor(x => x.SubLedgerId, new { @class = "hdn_subledger_Id" })
+            <input type="text" class = "modallink text_subledger input-80 input" href="@Url.Action("GetSubLedger", "Master")"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        //}
+        }
+        <td class="receiptAmt">
+            @Html.TextBoxFor(x => x.RecAmount, new { @class = "input-80 receipt-amt input numberonly", entermsg = "Enter Receipt Amount." })
+            @Html.HiddenFor(x => x.Amount, new { @class = "hdn_Amount" })
+        </td>
+        <td class="paymentAmt">
+            @Html.TextBoxFor(x => x.PayAmount, new { @class = "input-80 payment-amt input numberonly", entermsg = "Enter Payment Amount." })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "modalNarrationlink input-235 input", href = "/Entry/GetCashBankVoucherPartial", module = 3, entermsg = "Enter Narration or press F1 for existing Narration List." })
+              
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-details').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-details tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

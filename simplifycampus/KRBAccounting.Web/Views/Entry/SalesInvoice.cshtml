@@ -1,0 +1,848 @@
+﻿@using System.Web.Script.Serialization
+@model KRBAccounting.Web.ViewModels.Entry.SalesInvoiceViewModel
+@{
+    ViewBag.Title = "Sales Invoice";
+    var serializer = new JavaScriptSerializer();
+
+    var print = new KRBAccounting.Web.ViewModels.PrintDialogViewModel();
+    print.PrintList = new SelectList("");
+    print.PaperSizeList = new SelectList("");
+}
+<script src="/Scripts/jquery.queryable-1.0.min.js" type="text/javascript"></script>
+<script src="@Url.Content("/Scripts/RawPrint.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/html2canvas.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/jquery.plugin.html2canvas.js")" type="text/javascript"></script>
+<applet name="jzebra" code="jzebra.PrintApplet.class" archive="@Url.Content("/Content/jzebra/lib/jzebra.jar")" width="1px" height="1px" id="jzebra"  style="visibility: hidden" >
+    <param name="printer" value="zebra">
+</applet>
+@Html.Partial("_PartialSalesMenu")
+<style>
+    .product_batch
+    {
+        cursor: pointer;
+    }
+</style>
+@*<div class="page-header">
+    <h3>
+        Sales Invoice</h3>
+</div>
+@if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Create", "SB"))
+{
+    <p>
+        <a href="javascript:void(0);" class="btn addSalesInvoice">New(+)</a>
+    </p>
+}*@
+<div id="Salesinvoice-list">
+    @Html.Action("SalesInvoiceList")
+</div>
+<div class="dialog" id="modalSalesInvoice" style="display: none;" title="Sales Invoice(+)">
+    <div class="block">
+    </div>
+</div>
+<div class="dialog" id="modalProductBatch" style="display: none;" title="Batch">
+    <div class="block">
+    </div>
+</div>
+<div style="display: none" class="modal-dialog-print dialog">
+    <div class="block">
+        @Html.Partial("PrintDialogForm", print)
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/jQuery.tmpl.min.js")" type="text/javascript"></script>
+<script type="text/x-jquery-tmpl" id="ProductBillTermTemplate">    
+    <span class="single-list" style="display: none">
+        <input autocomplete="off" class="collection_index" name="billTermList.Index" type="hidden" value="${index}" />
+        <input class="billing_term_value billing_term Id" id="billTermList___${index}___Id" name="billTermList[${index}].Id" type="hidden" value="${Id}" />
+        <input class="billing_term amount" id="billTermList___${index}___Amount" name="billTermList[${index}].Amount" type="hidden" value="${Amount}" />
+        <input class="billing_term Basis" id="billTermList___${index}___Basis" name="billTermList[${index}].Basis" type="hidden" value="${Basis}" />
+        <input class="billing_term Description" id="billTermList___${index}___Description" name="billTermList[${index}].Description" type="hidden" value="${Description}" />
+        <input class="billing_term Rate" id="billTermList___${index}___Rate" name="billTermList[${index}].Rate" type="hidden" value="${Rate}" />
+        <input class="billing_term Sign" id="billTermList___${index}___Sign" name="billTermList[${index}].Sign" type="hidden" value="${Sign}" />
+        <input class="billing_term BillingTermIndex" id="billTermList___${index}___BillingTermIndex" name="billTermList[${index}].BillingTermIndex" type="hidden" value="${BillingTermIndex}" />
+        <input class="billing_term IsProductWise" id="billTermList___${index}___IsProductWise" name="billTermList[${index}].IsProductWise" type="hidden" value="${IsProductWise}" />
+        <input class="billing_term ParentGuid" id="billTermList___${index}___ParentGuid" name="billTermList[${index}].ParentGuid" type="hidden" value="${ParentGuid}" />
+        <input class="billing_term DisplayOrder" id="billTermList___${index}___DisplayOrder" name="billTermList[${index}].DisplayOrder" type="hidden" value="${DisplayOrder}" />
+    </span>
+</script>
+<script type="text/x-jquery-tmpl" id="BillTermPopupTemplate">    
+    <tr class="alt">
+        <input type="hidden" class="billingterm_Id" value="${Id}">
+        <input type="hidden" class="billingterm_displayorder" value="${DisplayOrder}">
+        <td class="billingterm_Description">${Description}</td>
+        <td class="billingterm_Basis">${Basis}</td>
+        <td class="billingterm_Sign">${Sign}</td>
+        <td><input type="text" value="${Rate}" style="width:50px;" class="billingterm_rate input"></td>
+        <td><input type="text" value="${Amount}" style="width:70px;" class="billingterm_amount"></td>        
+    </tr>
+</script>
+<script type="text/javascript">
+
+    //$(document).ready(function() {
+    //    GetPrinter();
+    //    GetPaperSize();
+
+    //});
+//        function GetPrinter() {
+////            var applet = jsPrintSetup;
+////            if (applet != null) {
+////                if (!applet.isDoneFinding()) {
+////                    window.setTimeout('GetPrinter()', 100);
+////                } else {
+//                    var item = "";
+//                    var printers = jsPrintSetup.getPrintersList().split(",");
+//                    $.each(printers, function() {
+                 
+//                          item += "<option value='"+this+ "'>"+this+"</option>";
+//                    });
+
+                   
+//                     $("#PrintName").html(item);
+////                }
+////            }
+//        }
+
+       
+//        function GetPaperSize() {
+
+            
+//             var item = "";
+//                    var printers = jsPrintSetup.getPaperSizeList().split(",");
+//            var i = 1;
+//                    $.each(printers, function() {
+                
+//                if(this.search("Name") != -1) {
+
+//                    item += "<option value='" + i + "'>" + this.split(":")[1].replace( /"/g , "") + "</option>";
+//                    i++;
+//                }
+//                    });
+
+                   
+//                     $("#PaperSize").html(item);
+//        }
+//        $(".report-print").live("click", function() {
+//            var url = $(this).attr("link");
+            
+//        $(".modal-dialog-print").dialog({
+//            autoOpen: true,
+//            modal: true,
+//            width: 'auto',
+//            title:"Sales Invoice Print Dialog",
+//            buttons: {
+//                print:function() {
+//                   var orientation = $("#Orientation").val();
+                    
+//                    $.getJSON(url, function(item) {
+                       
+//                        var newWin = window.open('_blank');
+//        newWin.document.write(item.Body);
+                       
+//                        if(orientation == "1")
+//                        {
+//                            jsPrintSetup.setOption('orientation', jsPrintSetup.kPortraitOrientation);
+//                        }
+                        
+//                         if(orientation == "2")
+//                        {
+//                             jsPrintSetup.setOption('orientation', jsPrintSetup.kLandscapeOrientation);
+//                        }
+//                        // set top margins in millimeters
+//   jsPrintSetup.setOption('marginTop', 5);
+//   jsPrintSetup.setOption('marginBottom', 5);
+//   jsPrintSetup.setOption('marginLeft', 5);
+//   jsPrintSetup.setOption('marginRight', 5);
+//   // set page header
+//   jsPrintSetup.setOption('headerStrLeft', '');
+//   jsPrintSetup.setOption('headerStrCenter', '');
+//   jsPrintSetup.setOption('headerStrRight', '');
+//   // set empty page footer
+//   jsPrintSetup.setOption('footerStrLeft', '');
+//   jsPrintSetup.setOption('footerStrCenter', '');
+//   jsPrintSetup.setOption('footerStrRight', '&PT');
+                
+//                        jsPrintSetup.setPrinter($("#PrintName").val());
+//                        jsPrintSetup.setPaperSizeData($("#PaperSize").val());
+//                       jsPrintSetup.setSilentPrint(1);
+                       
+//                        jsPrintSetup.printWindow(newWin);
+//                     newWin.close();
+//                        jsPrintSetup.setSilentPrint(0);
+////                        alert(item);
+////                        PrintObjectElement = item;
+////                        printname = $("#PrintName").val();
+////                        printHTML();
+//                    });
+                    
+//                },
+//                Cancel:function () {
+//                $(this).dialog("close");
+//                }
+//            }
+//        });
+//    }) ;
+
+
+    var productWiseBatchList=@Html.Raw(serializer.Serialize(Model.ProductWiseBillTerms));
+    var billWiseBatchList=@Html.Raw(serializer.Serialize(Model.BillWiseBillTerms));
+
+    var negativeStockAction = "";
+    function PicklistCustomFunction(value, type) {
+        if(type=="challan") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PopulateSalesChallanList", "Entry")',
+                data: { id: value },
+                beforeSend: function() {
+                    BeginRequest();
+                },
+                success: function(data) {
+                    $("#customer").val(data.CustomerName);
+                    $("#SalesInvoice_GlCode").val(data.CustomerId);
+                    $("#SalesInvoice_AgentCode").val(data.AgentId);
+                    $("#agent").val(data.AgentName);
+                    $("#body-invoice-detail").html(data.challanDetailView);
+                    $("#billing-term-list").html(data.billWiseBillingTerm);
+                    $("#SalesInvoice_BasicAmt").val(data.BasicAmt);
+                    $("#SalesInvoice_TermAmt").val(data.TermAmt);
+                    $("#SalesInvoice_NetAmt").val(data.NetAmt);
+                    $("#TotalAmtRs").val(data.TotalAmtRs);
+                    $("#CurrentBalance").val(data.CurrentBalance);
+                    $("#TotalOutstanding").val(data.TotalOutstanding);
+                    resetValidation();
+                },
+                complete: function() {
+                    $.unblockUI();
+                }
+            });
+        }
+        
+        else if(type=="order") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PopulateSalesOrderList", "Entry")',
+                data: { id: value },
+                beforeSend: function() {
+                    BeginRequest();
+                },
+                success: function(data) {
+                    $("#customer").val(data.CustomerName);
+                    $("#SalesInvoice_GlCode").val(data.CustomerId);
+                    $("#SalesInvoice_AgentCode").val(data.AgentId);
+                    $("#agent").val(data.AgentName);
+                    $("#body-invoice-detail").html(data.challanDetailView);
+                    $("#billing-term-list").html(data.billWiseBillingTerm);
+                    $("#SalesInvoice_BasicAmt").val(data.BasicAmt);
+                    $("#SalesInvoice_TermAmt").val(data.TermAmt);
+                    $("#SalesInvoice_NetAmt").val(data.NetAmt);
+                    $("#TotalAmtRs").val(data.TotalAmtRs);
+                    $("#CurrentBalance").val(data.CurrentBalance);
+                    $("#TotalOutstanding").val(data.TotalOutstanding);
+                    resetValidation();
+                },
+                complete: function() {
+                    $.unblockUI();
+                }
+            });
+        }
+        
+        else if(type=="product") {
+            $.ajax({
+                url: '/Entry/GetProductBatchSales',
+                data:{productId:value},
+                begin:function () {
+                    BeginRequest();
+                },
+                success: function(data) {
+                    if(element.closest("tr").find(".unit").hasClass("disablealtunit")) {
+                        element.closest("tr").find(".altUnit").val(data.altUnit);
+                    }
+                    if(element.closest("tr").find(".unit").hasClass("disableunit")) {
+                        element.closest("tr").find(".unit").val(data.unit);
+                    }
+                    if(data.success) {
+                        $("#modalProductBatch .block").html(data.view);
+                        $("#modalProductBatch").dialog("open");
+                    }
+                    else {
+                        element.closest("tr").find(".batchid").val("");
+                        element.closest("tr").find(".BatchSerialNo").val("");
+                        element.closest("tr").find(".StockQty").val("");
+                    }
+
+                   
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+        
+        if (type == "ledger") {
+
+            var invoiceDate = $("#InvoiceDate").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PopulateSalesInvoiceLedgerList", "Entry")',
+                data: {
+                    id: value,
+                    date: invoiceDate
+                },
+                beforeSend: function () {
+                    BeginRequest();
+                },
+                success: function (data) {
+                    $("#customer").val(data.VendorName);
+                    $("#SalesInvoice_AgentCode").val(data.AgentId);
+                    $("#agent").val(data.AgentName);
+                    $("#SalesInvoice_AgentCode").val(data.AgentId);
+                    $("#SalesInvoice_DueDay").val(data.CreditDays);
+                    $("#CurrencyId").val(data.Currency);
+                    $("#SalesInvoice_CurrencyId").val(data.CurrencyId);
+                    $("#DueDate").val(data.DueDate);
+                    dateType = data.DateType;
+                    resetValidation();
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+    }
+    
+    $("#modalProductBatch").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var BatchSerialNo = $(this).find(".BatchSerialNo").val();
+                var BatchQty = $(this).find(".BatchQty").val();
+                var BatchUnitId = $(this).find(".BatchUnitId").val();
+                var BatchMfgDate = $(this).find(".BatchMfgDate").val();
+                var BatchExpDate = $(this).find(".BatchExpDate").val();
+                var BatchIsMfgDate = $(this).find(".BatchIsMfgDate").val();
+                var BatchIsExpDate = $(this).find(".BatchIsExpDate").val();
+                var BatchGodownId= $(this).find(".BatchGodownId").val();
+                var BatchGodown = $(this).find(".BatchGodown").val();
+                var BatchBuyRate = $(this).find(".BatchBuyRate").val();
+                var BatchSalesRate= $(this).find(".BatchSalesRate").val();
+                var BatchProductId = element.closest("td").find(".productId").val();
+                var parentGuid = element.closest("td").find(".detailGuid").val();
+                var guid = _generateGuid();
+                element.closest("td").find(".product_batch").html($("#ProductBatchTemplate").tmpl({ index: guid,
+                    BatchSerialNo:BatchSerialNo,
+                    Qty:BatchQty,
+                    UnitId:BatchUnitId,
+                    MfgDate:BatchMfgDate,
+                    ExpDate:BatchExpDate,
+                    IsMfgDate:BatchIsMfgDate,
+                    IsExpDate:BatchIsExpDate,
+                    ParentGuid:parentGuid,
+                    GodownId:BatchGodownId,
+                    Godown:BatchGodown,
+                    ProductId: BatchProductId,
+                    BuyRate:BatchBuyRate,
+                    SalesRate:BatchSalesRate
+                }));
+                element.closest("tr").find(".unit").val(BatchUnitId);
+                element.closest("tr").find(".qty").val(BatchQty);
+                element.closest("tr").find(".unit").val(BatchUnitId);
+                element.closest("tr").find(".qty").val(BatchQty);
+                element.closest("tr").find(".godownId").val(BatchGodownId);
+                element.closest("tr").find(".godown").val(BatchGodown);
+                //unit 
+                $(this).dialog("close");
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    
+    $("#modalSalesInvoice").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        //minWidth:850,
+        //maxWidth:1317,
+        //height:517,
+        buttons: {
+            "Ok": function () {
+                var form = $("#sales-invoice-form");
+                var isValid = true;//$("form").valid();
+                //var isValid = true;
+                var currencyId = $("#CurrencyId").val();
+                if (currencyId != "") {
+                    var rate = $("#SalesInvoice_CurrRate").val();
+                    if (rate == "") {
+                        $("#SalesInvoice_CurrRate").addClass("error");
+                    }
+                }
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if(isValid) {
+                    if(!$("#SalesInvoice_GlCode").val()||!$("#customer").val()) {
+                        $("#customer").addClass("error");
+                        isValid = false;
+                    }
+                    else {
+                        $("#customer").removeClass("error");
+                        isValid = true;
+                    }
+                }
+                if (isValid) {
+                    var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index == 0 || index != length - 1) {
+                            if ($(this).find(".text_product").val() == 0 || $(this).find(".text_product").val() == "") {
+                                isValid = false;
+                                $(this).find(".text_product").addClass("error").focus();
+                            }
+                            if ($(this).find(".basicAmt").val() == 0 || $(this).find(".basicAmt").val() == "") {
+                                if (isValid) {
+                                    if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val() == "") {
+                                        $(this).find(".qty").addClass("error").focus();
+                                    }
+                                    if ($(this).find(".rate").val() == 0 || $(this).find(".rate").val() == "") {
+                                        $(this).find(".rate").addClass("error").focus();
+                                    }
+                                } else {
+                                    if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val() == "") {
+                                        $(this).find(".qty").addClass("error");
+                                    }
+                                    if ($(this).find(".rate").val() == 0 || $(this).find(".rate").val() == "") {
+                                        $(this).find(".rate").addClass("error");
+                                    }
+                                }
+                                isValid = false;
+                            }
+                        }
+                    });
+                }
+                if (isValid) {
+                    $.ajax({
+                        type: "POST",
+                        url: form.attr('action'),
+                        data: form.serialize(),
+                        beforeSend: function () {
+                            $.blockUI();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                OnComplete();
+                            }
+                            else {
+                                $("#MsgError").html(data.msg).show();
+                            }
+                        },
+                        complete: function () {
+                            $.unblockUI();
+                        }
+                    });
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function CalculateTotalAmt() {
+        var totalAmt = parseFloat(0);
+        var receiptAmtElements = document.querySelectorAll(".amt");
+        var i;
+        for (i = 0; i < receiptAmtElements.length; i++) {
+            var amt = receiptAmtElements[i].value;
+            if (amt != "") {
+                totalAmt = totalAmt + parseFloat(amt);
+            }
+
+        }
+        return totalAmt;
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.blockUI();
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSalesInvoice .block').html(data);
+                $(this).addClass("done");
+                $("#modalSalesInvoice").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+                $.unblockUI();
+            }
+        });
+    }
+
+    $('a.addSalesInvoice').live('click', function () {
+        var url = '@Url.Action("SalesInvoiceAdd", "Entry")';
+        getRequest(url);
+        return false;
+    });
+    $('a.editSalesInvoice').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesInvoiceEdit", "Entry")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+    $('a.approvedSalesInvoice').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("SalesInvoiceApproved", "Entry")/' + id;
+        $.ajax({
+            url: url,
+
+            type: 'Post',
+            success: function () {
+                $("#Salesinvoice-list").load("/Entry/SalesInvoiceList");
+
+            }
+        });
+
+        return false;
+    });
+
+    $("a.SalesInvoiceDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("SalesInvoiceDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    $('#saveSalesInvoice').live('click', function () {
+        //if ($(".text_ledger:last").val()==""||$(""))
+        $("#sales-invoice-form").submit();
+    });
+    function OnComplete() {
+        $('#modalSalesInvoice .block').load("/Entry/SalesInvoiceAdd");
+        $("#Salesinvoice-list").load("/Entry/SalesInvoiceList");
+    }
+    function OnCompleteEdit() {
+        $('#modalSalesInvoice').modal('hide');
+        $("#Salesinvoice-list").load("/Entry/SalesInvoiceList");
+    }
+
+    $(".rate").live('keydown', function (e) {
+        var element = $(this);
+        DisplayBillTerm(e, element);
+    });
+
+    $(".select").live('dblclick', function () {
+        if ($(this).closest("tr").hasClass('deletable')) {
+            $(this).closest("tr").remove();
+            getTotalQty();
+            getTotalAmt();
+        }
+    });
+
+    $('input[type="text"]').focus(function () {
+        if ($(this).attr("entermsg")) {
+            $(".enter-msg").html($(this).attr("entermsg"));
+        } else {
+            $(".enter-msg").html("");
+        }
+
+    });
+
+    $(".text_product").live("focusout", function () {
+        if ($(this).val() == "") {
+            //   $(this).addClass("error");
+            $(this).focus();
+        } else {
+            $(this).removeClass("error");
+        }
+    });
+
+    $("#cashbankledger").live("focusout", function () {
+        var glCode = $("#CashBankMaster_LedgerId").val();
+        $("#CashBankMaster_LedgerId").getCurrentBal();
+        $.getJSON("/Entry/DisableCheque?glCode=" + glCode, null, function (disable) {
+            if (disable) {
+                $("#CashBankMaster_ChequeNo").attr("disabled", "disabled");
+                $("#CashBankMaster_ChequeDate").attr("disabled", "disabled");
+            } else {
+                $("#CashBankMaster_ChequeNo").removeAttr("disabled");
+                $("#CashBankMaster_ChequeDate").removeAttr("disabled");
+            }
+        });
+    });
+
+    $("#customer").live("focusout", function () {
+        var glCode = $("#SalesInvoice_GlCode").val();
+        if (glCode != "") {
+            $.getJSON("/Entry/GetVendorDetails?glCode=" + glCode, null, function (data) {
+                $("#CreditLimit").val(data.creditLimit);
+                $("#CurrentBalance").val(data.balance);
+                $("#OutstandingChallan").val(data.outstandingChallan);
+                $("#TotalOutstanding").val(data.totalOutstanding);
+            });
+        }
+    });
+
+    $(".text_product").live("focus", function () {
+        var element = $(this);
+        var productId = $(this).closest("tr").find(".productId").val();
+        $(this).removeClass("error");
+        $(this).closest("tr").find(".product_text").removeClass("error");
+        if (productId != "" && productId != 0) {
+            $.getJSON("/Entry/ProductShortName?id=" + productId, null, function (data) {
+                $("#ShortName").val(data);
+            });
+            $.getJSON("/Entry/ProductStockQuantity?id=" + productId, null, function (data) {
+                $("#StockQty").val(data);
+            });
+            if(element.closest("tr").find(".unit").hasClass("disablealtunit")) {
+                $.getJSON("/Entry/GetLowestUnit?id=" + productId, null, function(code) {
+                    //element.closest("tr").find(".unit").val(code);
+                    element.closest("tr").find(".altunit").val(code);
+                });
+            }
+            if(element.closest("tr").find(".unit").hasClass("disablealtunit")) {
+                $.getJSON("/Entry/GetDropDownlist?productId=" + productId, null, function(code) {
+                    var innerhtml = '';
+                    $.each(code, function() {
+                        innerhtml += '<option value="' + this.Id + '">' + this.Code + '</option>';
+
+                    });
+                    element.closest("tr").find(".unit").html(innerhtml);
+                });
+            }
+        } else {
+            $("#ShortName").val("");
+            $("#StockQty").val("");
+        }
+    });
+
+    $(".UDFCustomFiled").live("click", function () {
+        $(".UDFEntry").toggle('hide');
+
+    });
+
+    $(".text_product").live('keydown', function (e) {
+        DisplayBillWiseTerm('#sales-invoice-form',$(this),e);
+    });
+    
+    $(".saveBillingTerm").live("click", function () {
+        $("#billing-term-list").html("");
+        var termAmt = parseFloat(0);
+        $(this).closest("#modalbox-billingterm").find(".billingterm_amount").each(function () {
+            if ($(this).val() != "") {
+                var value = parseFloat(0);
+                var basis = $(this).closest("tr").find(".billingterm_Basis").html();
+                var sign = $(this).closest("tr").find(".billingterm_Sign").html();
+                var rate = $(this).closest("tr").find(".billingterm_rate").val();
+                var desc = $(this).closest("tr").find(".billingterm_Description").html();
+                var id = $(this).closest("tr").find(".billingterm_Id").val();
+                value = parseFloat($(this).val());
+                if (sign == "-") {
+                    termAmt = termAmt - value;
+                } else {
+                    termAmt = termAmt + value;
+                }
+                var basicAmt = $("#SalesInvoice_BasicAmt").val();
+                var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                $("#SalesInvoice_NetAmt").val(netAmt);
+                $("#TotalAmtRs").val(netAmt);
+                $("#SalesInvoice_TermAmt").val(termAmt);
+                if (value != 0) {
+                    $.ajax({
+                        url: "/Entry/InsertBillTerm",
+                        type: "GET",
+                        data: {
+                            desc: desc,
+                            basis: basis,
+                            id: id,
+                            amount: Math.abs(value),
+                            rate: rate,
+                            sign: sign,
+                            isProductWise: false
+                        },
+                        success: function (data) {
+                            $(".ui-dialog #billing-term-list").append(data);
+                        }
+                    });
+                }
+            }
+        });
+        $(".msg-body").html("");
+    });
+    
+    $(".unit").live("change", function() {
+        var element = $(this);
+        var closestTr = element.closest("tr");
+        var unit = $(this).val();
+        var productId = closestTr.find(".productId").val();
+        var lowestUnit = closestTr.find(".altunit").val();
+        var quantity = closestTr.find(".qty").val();
+        if(quantity!="" && quantity!=0 && productId!=0) {
+            var url = "@Url.Action("GetConversionDetail")?productId=" + productId + "&&quantity=" + quantity + "&&Unit=" + unit + "&&LowestUnit=" + lowestUnit+"&&type=S";
+            $.getJSON(url, function(success) {
+                closestTr.find(".altQty").val(success.convertvalue);
+                closestTr.find(".rate").val(success.ratte);
+                closestTr.find(".hiddenrate").val(success.ratte);
+
+                var rate = closestTr.find(".rate").val();
+
+                var basic = parseFloat(quantity) * parseFloat(rate);
+                closestTr.find(".basicAmt").val(basic);
+                closestTr.find(".termAmt").val(0);
+                closestTr.find(".netAmt").val(basic);
+            });
+        }
+        else {
+            alert("Enter the quantity and product");
+        }
+    });
+   
+    $(".qty").live("blur", function() {
+        var element = $(this);
+        var closestTr = element.closest("tr");
+        var unit = closestTr.find(".unit").val();
+        var productId = closestTr.find(".productId").val();
+        var lowestUnit = closestTr.find(".altunit").val();
+        var quantity = $(this).val();
+        if(quantity!="" && quantity!=0 && productId!=0) {
+            $(this).removeClass("error");
+            var url = "@Url.Action("GetConversionDetail")?productId=" + productId + "&&quantity=" + quantity + "&&Unit=" + unit + "&&LowestUnit=" + lowestUnit+"&&type=S";
+            $.getJSON(url, function(success) {
+                closestTr.find(".altQty").val(success.convertvalue);
+                closestTr.find(".rate").val(success.ratte);
+                closestTr.find(".hiddenrate").val(success.ratte);
+
+                var rate = closestTr.find(".rate").val();
+                if(rate) {
+                    closestTr.find(".rate").removeClass("error");
+                }
+                var basic = parseFloat(quantity) * parseFloat(rate);
+                closestTr.find(".basicAmt").val(basic);
+                closestTr.find(".termAmt").val(0);
+                closestTr.find(".netAmt").val(basic);
+                getTotalAmt();
+                getTotalQty();
+            });
+        }
+        else {
+            alert("Enter the quantity and product");
+        }
+    });
+
+    $(".rate").live("keyup", function(e) {
+        CalculateTermAmt(e, $(this));
+    });
+
+
+
+    $(".product_batch").live("click", function() {
+        if($(this).attr("hasexpireddate")=="True") {
+            if($(this).attr("isexpired")=="True"){
+                if($(this).find(".expdate").attr("hasvalue")=="true") {
+                    var expProduct = $(this).attr("expproduct");
+                    if(expProduct==1) {
+                        alert("This product has already been expired");
+                        return false;
+                    }
+                    if(expProduct==2) {
+                        alert("This product has already been expired");
+                    }
+                }
+            }
+        }
+        var closestTr = element.closest("tr");
+        var godownId = $(this).attr("godown-id");
+        var godownname = $(this).find(".godown").text();
+        var batchId = $(this).attr("data-id");
+        var BatchSerialNo = $(this).find(".BatchSerialNo").text();
+        var stockQty = $(this).find(".stockqty").text();
+        //var unitId = $(this).attr("unitid");
+        //BatchSerialNo
+        closestTr.find(".batchid").val(batchId);
+        closestTr.find(".godownId").val(godownId);
+        closestTr.find(".godownname").val(godownname);
+        closestTr.find(".BatchSerialNo").val(BatchSerialNo);
+        closestTr.find(".StockQty").val(stockQty);
+//        if(closestTr.find(".unit").hasClass("disableunit"))
+//        {
+//            closestTr.find(".unit").val(unitId);
+//        }
+        //unitId
+        $("#modalProductBatch").dialog("close");
+    });
+    
+    $("#InvoiceDate").live("blur", function (e) {
+        var currentElement = $(this);
+        var date = $(this).val();
+        //____/__/__
+
+        var val1 = date.toString().replace(/\_/g, ' ').replace(/\//g, ' ').trim();
+        if(val1) {
+            var url = '@Url.Action("CheckFiscalyearDateinSalesInvoice", "Entry")?InvoiceDate=' + date;
+            $.post(url, function (data) {
+                if (data != "True") {
+                    currentElement.addClass("error");
+                    alert(data);
+
+                } else {
+                    currentElement.removeClass("error");
+                }
+            });
+        }
+        else {
+            $(this).addClass("error");
+        }
+        
+    });
+     
+    $("#SalesInvoice_CurrRate").live("blur", function () {
+        var currencyId = $("#CurrencyId").val();
+
+        var current = $(this).val();
+
+        if (currencyId != "") {
+            if (current != "") {
+                $("#SalesInvoice_CurrRate").removeClass("error");
+            } else {
+                $("#SalesInvoice_CurrRate").addClass("error");
+            }
+
+        } else {
+            $("#SalesInvoice_CurrRate").removeClass("error");
+        }
+
+    });
+
+
+    $("#CurrencyId").live("blur", function () {
+        var current = $(this).val();
+        if (current == "") {
+            $("#SalesInvoice_CurrRate").removeClass("error");
+        }
+
+    });
+</script>

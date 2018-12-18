@@ -1,0 +1,22 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScExamRoutine>  
+@foreach (var item in Model)
+{
+    @Html.Partial("_PartialExamRoutineEdit", item)
+    
+}@Html.Partial("_PartialExamRoutineEntry", new KRBAccounting.Domain.Entities.ScExamRoutine())
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-examroutine-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-examroutine-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>

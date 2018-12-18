@@ -1,0 +1,72 @@
+﻿@using KRBAccounting.Enums
+@model IEnumerable<KRBAccounting.Domain.Entities.ScClassSubjectMapping>
+<div >
+        <p align="center">
+        <b>
+            @if (Model.Count() != 0)
+            {
+                @Model.FirstOrDefault().Class.Description
+            }
+        </b>
+    </p>
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    S.No
+                </th>
+                <th>
+                    Subject
+                </th>
+                <th>
+                    Subject Code
+                </th>
+                <th>
+                    Result System
+                </th>
+                <th>
+                    Class Type
+                </th>
+                <th>
+                    Subject Type
+                </th>
+               
+                <th>
+                    Evaluation For Pass
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>@if (item.Subject != null)
+                        {
+                            @item.Subject.Description
+                        }
+
+                    </td>
+                    <td>@if (item.Subject != null)
+                        {
+                            @item.Subject.Code
+                        }
+
+                    </td>
+                    <td>@Enum.GetName(typeof(ResultSystem), item.ResultSystem)
+                    </td>
+                    <td>@Enum.GetName(typeof(ClassType), item.ClassType)
+                    </td>
+                    <td>@Enum.GetName(typeof(SubjectType), item.SubjectType)
+                    </td>
+                    <td>@Enum.GetName(typeof(EvaluateForPass), item.EvaluateForType)
+                    </td>
+                    
+                </tr>
+                i += 1;
+            }
+        </tbody>
+    </table>
+</div>

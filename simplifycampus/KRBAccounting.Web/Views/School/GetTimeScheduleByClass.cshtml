@@ -1,0 +1,76 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Web.ViewModels.School
+@model IEnumerable<KRBAccounting.Domain.Entities.ScClassSubjectMapping>
+@{
+    var sno = 1;
+}
+
+
+@foreach (var item in Model)
+{
+    <tr class="listsubject" id="@sno">
+        @using (Html.BeginCollectionItem("busRouteInfoList"))
+        {
+            <td>@sno
+            </td>
+            <td>
+                @item.Subject.Description
+            </td>
+            var energyperformance = new ScClassScheduleViewModel();
+            energyperformance.SubjectId = item.SubjectId;
+            energyperformance.Sno = sno;
+            @Html.Partial("_PartialclassscheduleAdd", energyperformance)
+           
+        }
+    </tr>
+        sno++;
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".StartTime, .EndTim").timepicker({
+            'timeFormat': 'h:i A',
+            'step': 15,
+            'minTime': '8:00am',
+            'maxTime': '7:00pm',
+            'showDuration': true,
+            'forceRoundTime': false
+        });
+    });
+
+    $(".StartTime").live("change", function () {
+        var day = $(this).attr("day");
+        var element = $(this).closest("tr");
+        var id = element.attr("id");
+        var value = $(this).closest("tr").find("." + day + ".StartTime").val();
+        $("." + id + "." + day + ".StartTime," + "." + day + ".EndTim").timepicker({
+            'timeFormat': 'h:i A',
+            'step': 15,
+            'maxTime': '7:00pm',
+            'showDuration': true,
+            'forceRoundTime': false
+        });
+        $("." + id + "." + day + ".StartTime," + "." + id + "." + day + ".EndTim").timepicker('option', 'minTime', value);
+    });
+
+
+    $(".EndTim").live("change", function () {
+        var day = $(this).attr("day");
+        var element = $(this).closest("tr");
+        var value = element.find("." + day + ".EndTim").val();
+        if (!element.is(":last-child")) {
+            element.next("tr").find("." + day + ".StartTime").val(value);
+
+            var id = element.next("tr").attr("id");
+            $("." + id + "." + day + ".StartTime," + "." + id + "." + day + ".EndTim").timepicker({
+                'timeFormat': 'h:i A',
+                'step': 15,
+                'maxTime': '7:00pm',
+                'showDuration': true,
+                'forceRoundTime': false
+            });
+            $("." + id + "." + day + ".StartTime," + "." + id + "." + day + ".EndTim").timepicker('option', 'minTime', value);
+        }
+    });
+</script>

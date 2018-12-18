@@ -1,0 +1,237 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Web.Helpers
+@model IEnumerable<KRBAccounting.Domain.Entities.ScMessage>
+<div class="row-fluid">
+    <h4 class="page-title">
+        <div class="social-box">
+            <div class="body">
+                Message
+            </div>
+        </div>
+    </h4>
+</div>
+<div class="row-fluid">
+    <div class="social-box">
+        <div class="body">
+            <div class="row-fluid">
+                <div class="span2 left-inbox">
+                    <div class="social-nav-list">
+                        <ul class="nav nav-list dividers mail">
+                            <li class="Create">
+                                <a href="javascript:void(0)" data-href="@Url.Action("ComposeMessage", "StudentProfile")" id="composeMsg">
+                                    <i class="icon-mail"></i>Compose
+                                </a>
+                            </li>
+                            <li class="active Inbox">
+                                <a href="javascript:void(0)" data-href="@Url.Action("MessageInboxPartial", "StudentProfile")">
+                                    <i class="icon-inbox"></i>Inbox
+                                </a>
+                            </li>
+                            <li class="Sent">
+                                <a id="sentMsg" href="javascript:void(0)" data-href="@Url.Action("SentMessage", "StudentProfile")">
+                                    <i class="icon-signin"></i>Sent
+                                </a>
+                            </li>
+                            <li class=" Trash" id="trashMsg">
+                                <a href="javascript:void(0)" data-href="@Url.Action("TrashMessage", "StudentProfile")">
+                                    <i class="icon-trash"></i>Trash
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="span10 social-box right-inbox">
+                    <div id="allDataList">
+                        <div class="header" align="center">
+                            Inbox
+                        </div>
+                        <div id="tableListData">
+                            <table cellpadding="0" cellspacing="0" width="100%" class="table table-hover table-bordered "
+                                   id="msg-List">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Sender
+                                        </th>
+                                        <th width="15%">
+                                            Subject
+                                        </th>
+                                        <th width="55%">
+                                            Messages
+                                        </th>
+                                        <th width="10%">
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+
+                                        var senderName = "";
+                                        senderName = UtilityService.GetUserNameByUserId(item.SenderId);
+
+                                        if (item.IsRead)
+                                        {
+                                            <tr align="center" class="msgDetails" data-id="@item.Id" style="cursor: pointer; font-size: 12px">
+                                                <td>
+                                                    @senderName
+                                                </td>
+                                                <td>
+                                                    @item.MsgSubject
+                                                </td>
+                                                <td>
+                                                    @{
+                                                       var data = HtmlTagsRemoval.StripTagsRegex(item.MsgBody);
+                                                    }
+                                                    @Utility.TrimText(data,10)
+                                                </td>
+                                                <td>
+                                                    @item.MsgDate.ToShortDateString()
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    else
+                                    {
+                                    <tr align="center" class="msgDetails" data-id="@item.Id" style="cursor: pointer; font-size: 12px">
+                                        <td>
+                                            <b>@senderName</b>
+                                        </td>
+                                        <td>
+                                            <b>@item.MsgSubject</b>
+                                        </td>
+                                        <td>
+                                            @*   <b>@Html.Raw(@Utility.TrimText(item.MsgBody, 10)) .......</b>*@
+                                            <b>
+                                                @{
+                                                       var data = HtmlTagsRemoval.StripTagsRegex(item.MsgBody);
+                                            }
+                                            @Utility.TrimText(data,10)
+                                        </b>
+                                    </td>
+                                    <td>
+                                        <b>@item.MsgDate.ToShortDateString()</b>
+                                    </td>
+                                </tr>
+
+
+                                }
+
+
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @*<div class="pagination pagination-centered">
+                    @Html.Raw(Html.AjaxPager(Model, "TrashMessage", "Patient", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Message-List" }))
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" language="javascript">
+
+    $(".msgDetails").live("click", function () {
+        $.blockUI({
+            message: "loading......"
+        });
+        var msgId = $(this).attr("data-id");
+        var url = '@Url.Action("MessageDetail", "StudentProfile")/?msgId=' + msgId;
+        $.ajax({
+            url: url,
+
+            success: function (data) {
+
+                $("#tableListData").html(data.view);
+                $("#NotificationArea").html(data.notification);
+
+                $.unblockUI();
+
+
+
+            }
+        });
+
+    });
+
+    $(".mail li a").live("click", function () {
+        $.blockUI({
+            message: "loading......"
+        });
+        var url = $(this).attr("data-href");
+        var closesli = $(this).closest("li");
+        $(".mail li").removeClass("active");
+        $.ajax({
+            url: url,
+
+            success: function (data) {
+                closesli.addClass("active");
+                $("#allDataList").html(data.view);
+
+                $.unblockUI();
+
+
+            }
+        });
+    });
+
+    function complete(data) {
+
+        $("#allDataList").html("");
+        $("#allDataList").html(data.view);
+        var chat = $.connection.chatHub;
+        chat.server.send();
+    }
+        $("#composeMsg").live("click", function () {
+            var msgId = $(this).attr("data-id");
+
+            var url = '@Url.Action("ComposeMessage", "StudentProfile")';
+
+            $.ajax({
+                url: url,
+
+                success: function (data) {
+                    alert(data.view);
+                    $("#allDataList").html(data.view);
+
+                }
+            });
+
+        });
+    //    $("#sentMsg").live("click", function () {
+
+    //        var url = '@Url.Action("SentMessage", "StudentProfile")';
+
+    //        $.ajax({
+    //            url: url,
+
+    //            success: function (data) {
+    //                alert(data.view);
+    //                $("#allDataList").html(data.view);
+
+    //            }
+    //        });
+
+    //    });
+
+    //    $("#trashMsg").live("click", function () {
+
+    //        var url = '@Url.Action("TrashMessage", "StudentProfile")';
+
+    //        $.ajax({
+    //            url: url,
+
+    //            success: function (data) {
+    //                alert(data.view);
+    //                $("#allDataList").html(data.view);
+
+    //            }
+    //        });
+
+    //    });
+    /*]]>*/
+
+</script>

@@ -1,0 +1,88 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.ProductBatchSummaryViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<br/>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 7px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Name
+                </th>
+                <th>
+                    Short Name
+                </th>
+                <th>
+                    Serial
+                </th>
+                <th>
+                    Stock Quantity
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Mfg Date
+                </th>
+                <th>
+                    Exp Date
+                </th>
+                <th>
+                    Days
+                </th>
+                <th>
+                    Expired
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.ProductBatchSummaries)
+        {
+            <tr>
+                <td>@item.Name
+                </td>
+                <td>@item.ShortName
+                </td>
+                <td style="text-align: right">@item.SerialNo
+                </td>
+                <td style="text-align: right">@item.StockQuantity
+                </td>
+                <td>
+                    @item.Code
+                </td>
+                <td style="text-align: left">
+                    @if (item.MFGDate != null)
+                    {
+                        @Convert.ToDateTime(item.MFGDate).ToShortDateString()
+                    }
+                </td>
+                <td style="text-align: left">
+                    @if (item.EXPDate != null)
+                     {
+                        @Convert.ToDateTime(item.EXPDate).ToShortDateString()
+                     }
+                </td>
+               <td style="text-align: right">@item.Days
+                </td>
+                <td style="text-align: right">@item.Expired
+                </td>
+            </tr>
+        }
+        @*<tr>
+                <td></td>
+                 <td></td>
+                <td></td>
+                 <td></td>
+                <td></td>
+                <td></td>
+                <td style="font-weight: bold; text-align: right">Grand Total : </td>
+                <td style="font-weight: bold; text-align: right">@quantityGrandTotal</td>
+            </tr>*@
+    </table>
+</div>

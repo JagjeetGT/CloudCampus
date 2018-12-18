@@ -1,0 +1,62 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.OpeningLedger
+@{
+    var typeid = (int)LedgerCategoryEnum.BO;
+}
+<tr class="university-course-fee detail-entry">
+    @using (Html.BeginCollectionItem("openingledger"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.GlCode, new { @class = "ledger_opening_both" })
+            <input type="text" class="modallink input-160 first-col text_ledger_both" value="@if (Model.Ledger != null)
+                                                                                             {
+                                                                                                 @Model.Ledger.AccountName
+                                                                                             }" href="@Url.Action("GetLedgerbyType")?id=@typeid" valueId="GlCode" id="GlCodebothId"/>
+        </td>
+        
+        <td>
+            @Html.HiddenFor(x => x.SlCode, new { @class = "sub-ledger_openingBoth" })
+            <input type="text" class="modallink input-160 input text_subledger_both" value="@if (Model.SubLedger != null)
+                                                                                 {
+                                                                                     @Model.SubLedger.Description
+                                                                                 }" href="@Url.Action("GetSubLedger")"  valueId="OpeningLedger_SlCode" id="SlCodecustomerId"/>
+        </td>
+        
+        <td>
+            @Html.DropDownListFor(x => x.AmountType, Model.AmountTypeList, new { @class = "input-120 Unit" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Amount, new { @class = "last-col-modified input-160 BuyPrice", tableid = "openingledgerboth-list", href = "/Master/PartialOpeningBothAdd/" })
+        </td>
+        
+@*        <td class="PlusUnit">
+          <a  data-id="@Model.Id" class="addNewConversion icon-plus" href = "@Url.Action("AddProductUnitConversion")" tableid = "qualificatione-list" ></a>
+           
+        </td>*@
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#openingledgerboth-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#openingledgerboth-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+
+    })
+
+
+
+</script>

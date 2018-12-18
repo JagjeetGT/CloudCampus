@@ -1,0 +1,174 @@
+﻿@model KRBAccounting.Web.ViewModels.Master.UdfAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("UdfEdit", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnCompleteEdit"}, new { @class = "form-horizontal form-custom", id = "Udf-form" }))
+{
+    <div id="MsgError"></div>
+    @Html.HiddenFor(x => x.UdfEntry.Id)
+    <div style="width: 800px;">
+        <div class="lag input-253 ">
+            <label>
+                User Defined Field</label>
+            <span class="field UDF">
+                @Html.DropDownListFor(m => m.UdfEntry.EntryModuleId, Model.EntryModule, new { multiple = "true" })
+                @Html.ValidationMessageFor(m => m.UdfEntry.EntryModuleId)
+            </span>
+        </div>
+        <fieldset>
+            <div style="width: 500px; float: left">
+                <div class="lag">
+                    <label class="label-90">
+                        Field Name</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.UdfEntry.FieldName, new { @class = "input-253 input" })
+                        @Html.ValidationMessageFor(m => m.UdfEntry.FieldName)
+                    </span>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-90">
+                            Field Type</label>
+                        <span class="field">
+                            @Html.DropDownListFor(m => m.UdfEntry.ControlTypeId, Model.ControlType, new { @class = "select-90" })
+                            @Html.ValidationMessageFor(m => m.UdfEntry.ControlTypeId)
+                        </span></span><span class="stack">
+                            <label class="label-120">
+                                Mandatory Option</label>
+                            <span class="field">
+                                @Html.EditorFor(m => m.UdfEntry.MandatoryOpt)
+                                @Html.ValidationMessageFor(m => m.UdfEntry.MandatoryOpt)
+                            </span></span><span class="stack DuplicateOpt">
+                                <label class="label-100">
+                                    Allow Duplicate</label>
+                                <span class="field">
+                                    @Html.EditorFor(m => m.UdfEntry.DuplicateOpt)
+                                    @Html.ValidationMessageFor(m => m.UdfEntry.DuplicateOpt)
+                                </span></span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Total Width</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.UdfEntry.BodyLength, new { @class = "input-80 input" })
+                        @Html.ValidationMessageFor(m => m.UdfEntry.BodyLength)
+                    </span>
+                </div>
+                <div class="lag">
+                    <label>
+                        Schdule
+                    </label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.UdfEntry.DisplayOrder, new { @class = "input-80 input" })
+                        @Html.ValidationMessageFor(m => m.UdfEntry.DisplayOrder)
+                    </span>
+                </div>
+                <div class="lag FieldDecimal">
+                    <label class="label-90">
+                        Field Decimal
+                    </label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.UdfEntry.FieldDecimal, new { @class = "input-80 input" })
+                        @Html.ValidationMessageFor(m => m.UdfEntry.FieldDecimal)
+                    </span>
+                </div>
+                <div class="lag ListValue">
+                    <table class="table table-bordered" id="UDF-detail-entry">
+                        <tr>
+                            <th>
+                                Decription
+                            </th>
+                        </tr>
+                        <tbody>
+                            @foreach (var detail in Model.UdfEntry.UdfEntryDetials)
+                            {
+                                @Html.Partial("_PartialUdfDetailEntry", detail)
+                            }
+                            @Html.Partial("_PartialUdfDetailEntry", new KRBAccounting.Domain.Entities.UDFEntryDetail())
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+<script type="text/javascript">
+    if(@Model.UdfEntry.ControlTypeId == 6) {
+        $(".ListValue").css("display", "block");
+    }
+    if(@Model.UdfEntry.ControlTypeId !=1) {
+       $(".DuplicateOpt").css("display", "none");
+    }
+    if(@Model.UdfEntry.ControlTypeId !=2) {
+        $("#UdfEntry_FieldDecimal").val('');
+       $("#UdfEntry_FieldDecimal").attr("disabled", "disabled");
+    }
+
+    $("#UdfEntry_ControlTypeId").live("change", function () {
+
+        var val = $(this).val();
+        if (val != 1) {
+            $("#UdfEntry_DuplicateOpt").attr("disabled", "disabled");
+            $(".DuplicateOpt").css("display", "none");
+        } else {
+            $("#UdfEntry_DuplicateOpt").removeAttr("disabled");
+            $(".DuplicateOpt").css("display", "block");
+
+        }
+        if (val != 2) {
+
+            $("#UdfEntry_FieldDecimal").attr("disabled", "disabled");
+        } else {
+            $(".FieldDecimal").css("display", "block");
+            $("#UdfEntry_FieldDecimal").removeAttr("disabled");
+        }
+        if (val == 6) {
+            $("#UdfEntry_FieldDecimal").attr("disabled", "disabled");
+            $(".FieldDecimal").css("display", "none");
+            $(".ListValue").css("display", "block");
+
+
+        } else {
+            var list = document.querySelectorAll(".description");
+            $.each(list,function () {
+                if ($(this).val() != '') {
+                    $(this).closest('tr').remove();
+                }
+            });
+ 
+
+        $(".ListValue").css("display", "none");
+         
+        }
+    });
+    $(".description").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+            if ($(this).val() != '') {
+                var link = $(this).attr("href");
+           
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        if (closestTr.is(":last-child")) {
+                            $('#UDF-detail-entry tr:last').after(data);
+
+                        }
+
+                        closestTr.next().find('.description').focus();
+                    }
+                });
+            }
+            return false;
+        }
+        return true;
+    });
+</script>

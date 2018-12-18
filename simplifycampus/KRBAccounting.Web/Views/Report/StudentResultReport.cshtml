@@ -1,0 +1,32 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.ReportStudentResultFormViewModel
+@{
+    ViewBag.Title = "Student Result";
+}
+
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Exam Routine</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfLedgerReport", "ReportLedger")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("PdfLedgerReport", "ReportLedger")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("_PartialStudentResultForm", Model)</div>
+</div>

@@ -1,0 +1,152 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "LibraryLateFine";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Library Late Fine</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                             <li><a href="@Url.Action("LibraryLateFineAdd", "Library")" class="isw-plus addLibrarylatefine"></a></li>
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Library-list">
+                    @Html.Action("LibraryLateFineList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalLibraryLateFine" style="display: none;" title="LibraryLateFine">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    $("#modalLibraryLateFine").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+              
+                $("#lateFine-form").submit();
+                Begin();
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalLibraryLateFine .block').html(data);
+                $(this).addClass("done");
+                $("#modalLibraryLateFine").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addLibrarylatefine').live('click', function () {
+        var url = '@Url.Action("LibraryLateFineAdd", "Library")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editLibraryLateFine').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("LibraryLateFineEdit", "Library")?id=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalLibraryLateFine .block').load("/Library/LibraryLateFineAdd");
+        $("#Library-list").load("/Library/LibraryLateFineList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#Library-list").load("/Library/LibraryLateFineList");
+        $('#modalLibraryLateFine').dialog("close"); $.unblockUI();
+    }
+
+    function success(data) {
+        
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+            $.unblockUI();
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+            $.unblockUI();
+        }
+    }
+
+    $('a.deleteLibraryLateFine').live('click', function () {
+        var result = confirm('Are you sure you want to delete this Library Late Fine ?');
+        if (result) {
+            var Id = $(this).attr("data-id");
+            var url = '@Url.Action("LibraryLateFineDelete", "Library")?id=' + Id;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Library Late Fine is already in use. Cannot delete.");
+                } else {
+                    $("#Library-list").load("/Library/LibraryLateFineList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+        $.unblockUI();
+        return false;
+    });
+</script>

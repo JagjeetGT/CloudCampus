@@ -1,0 +1,358 @@
+﻿@{
+    ViewBag.Title = "Debit Note";
+}
+@*<div class="page-header">
+    <h3>
+        Debit Note</h3>
+</div>
+@if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Create", "DN"))
+{
+    <p>
+        <a href="javascript:void(0);" class="btn addDebitNote">New(+)</a>
+    </p>
+}*@
+<div id="debitnote-list">
+    @Html.Action("DebitNoteList")
+</div>
+<div class="dialog" id="modalDebitNote" style="display: none;" title="Debit Note(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalDebitNote").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $("#debitnote-form");
+                var isValid = $("form").valid();
+                var currencyId = $("#CurrencyId").val();
+                if (currencyId != "") {
+                    var rate = $("#DebitNoteMaster_CurRate").val();
+                    if (rate == "") {
+                        $("#DebitNoteMaster_CurRate").addClass("error");
+                    }
+                }
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if(isValid) {
+                    if (!$("#DebitNoteMaster_GlCode").val() || !$("#PartyName").val()) {
+                        $("#PartyName").addClass("error");
+                        isValid = false;
+                    } else {
+                        $("#PartyName").removeClass("error");
+                        isValid = true;
+                    }
+                }
+                if (isValid) {
+                    var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index == 0 || index != length - 1) {
+                            if ($(this).find(".text_ledger").val() == 0 || $(this).find(".text_ledger").val() == "") {
+                                isValid = false;
+                                $(this).find(".text_ledger").addClass("error").focus();
+                            }
+                            if ($(this).find(".amt").val() == 0 || $(this).find(".amt").val() == "") {
+                                if (isValid) {
+                                    $(this).find(".amt").addClass("error").focus();
+                                } else {
+                                    $(this).find(".amt").addClass("error");
+                                }
+                                $(this).removeClass("error");
+                                $(this).closest("tr").find(".amt").removeClass("error");
+                                isValid = false;
+                            }
+                        }
+                    });
+                }
+                if (isValid) {
+                    $.ajax({
+                        type: "POST",
+                        url: form.attr('action'),
+                        data: form.serialize(),
+                        beforeSend: function () {
+                            $.blockUI();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                OnComplete();
+                            }
+                            else {
+                                $("#MsgError").html(data.msg).show();
+                            }
+                        },
+                        complete: function () {
+                            $.unblockUI();
+                        }
+                    });
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function CalculateTotalAmt() {
+        var totalAmt = parseFloat(0);
+        var receiptAmtElements = document.querySelectorAll(".amt");
+        var i;
+        for (i = 0; i < receiptAmtElements.length; i++) {
+            var amt = receiptAmtElements[i].value;
+            if (amt != "") {
+                totalAmt = totalAmt + parseFloat(amt);
+            }
+
+        }
+        return totalAmt;
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.blockUI();
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalDebitNote .block').html(data);
+                $(this).addClass("done");
+                $("#modalDebitNote").dialog('open');
+            },
+            complete: function () {
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addDebitNote').live('click', function () {
+        var url = '@Url.Action("DebitNoteAdd", "Entry")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editDebitNote').live('click', function () {
+        id = $(this).attr("data-id");
+        $('#saveDebitNote').removeAttr("disabled");
+        var url = '@Url.Action("DebitNoteEdit", "Entry")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+    $('a.approvedDebitNote').live('click', function () {
+        id = $(this).attr("data-id");
+
+        var url = '@Url.Action("DebitNoteApproved", "Entry")/' + id;
+        $.ajax({
+            url: url,
+
+            type: 'Post',
+            success: function () {
+                $("#debitnote-list").load("/Entry/DebitNoteList");
+
+            }
+        });
+
+        return false;
+    });
+
+    $("a.DebitNoteDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("DebitNoteDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    $('#saveDebitNote').live('click', function () {
+        //if ($(".text_ledger:last").val()==""||$(""))
+        $("#debitnote-form").submit();
+    });
+
+    function OnComplete() {
+
+        $("#modalDebitNote .block").load("/Entry/DebitNoteAdd");
+        $("#debitnote-list").load("/Entry/DebitNoteList");
+    }
+    function OnCompleteEdit() {
+        $('#modalDebitNote').modal('hide');
+
+        $("#debitnote-list").load("/Entry/DebitNoteList");
+    }
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+            if (closestTr.find(".hdn_ledger_Id").val() != "" && closestTr.find(".amt").val() != "") {
+                var link = $(this).attr("href");
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        if (closestTr.is(":last-child")) {
+                            $('#table-cash-bank-detail tr:last').addClass("deletable");
+                            var id = $('#table-cash-bank-detail tr:last').attr("id");
+                            $('#table-cash-bank-detail tr:last').after(data);
+                            var arrString = id.split("_");
+                            var index = parseInt(arrString[1]) + 1;
+                            $(".text_ledger:last").attr("id", "detail_" + index);
+                            $(".text_ledger:last").closest("tr").attr("id", "tr_" + index);
+                            $(".text_ledger").attr("valueId", $(".hdn_ledger_Id:last").attr("id"));
+
+                            $(".text_subledger:last").attr("id", "sub_" + index);
+                            $(".text_subledger").attr("valueId", $(".hdn_subledger_Id:last").attr("id"));
+                        }
+                        var totalAmt = CalculateTotalAmt();
+                        $("#TotalAmt").val(totalAmt);
+                        $("#TotalAmtRs").val(totalAmt);
+                        closestTr.next().find('.text_ledger').focus();
+                    }
+                });
+            }
+            else if (closestTr.find(".hdn_ledger_Id").val() == "") {
+                closestTr.find(".text_ledger").addClass("error");
+                closestTr.find(".text_ledger").focus();
+            }
+            else if (closestTr.find(".amt").val() == "") {
+               // closestTr.find(".amt").addClass("error");
+                closestTr.find(".amt").focus();
+            }
+         return false;
+        }
+        return true;
+    });
+
+    $(".select").live('dblclick', function () {
+        if ($(this).closest("tr").hasClass('deletable')) {
+            $(this).closest("tr").remove();
+            var totalAmt = CalculateTotalAmt();
+            $("#TotalAmt").val(totalAmt);
+            $("#TotalAmtRs").val(totalAmt);
+        }
+    });
+    $('input[type="text"]').focus(function () {
+        if ($(this).attr("entermsg")) {
+            $(".enter-msg").html($(this).attr("entermsg"));
+        } else {
+            $(".enter-msg").html("");
+        }
+
+    });
+
+    $(".text_ledger").live("blur", function () {
+        if ($(this).val() == "") {
+//            $(this).addClass("error");
+           $(this).focus();
+        } else {
+            $(this).removeClass("error");
+            var drAmt = parseFloat(0);
+            var receiptAmtElements = document.querySelectorAll(".dr-amt");
+            if (receiptAmtElements.length > 1) {
+                var i;
+                for (i = 0; i < receiptAmtElements.length; i++) {
+                    var amt = receiptAmtElements[i].value;
+                    if (amt != "") {
+                        drAmt = drAmt + parseFloat(amt);
+                    }
+
+                }
+
+                //Fill Pay Amt at the bottom
+                var crAmt = parseFloat(0);
+                var paymentAmtElements = document.querySelectorAll(".cr-amt");
+                var j;
+                for (j = 0; j < paymentAmtElements.length; j++) {
+                    var amt = paymentAmtElements[j].value;
+                    if (amt != "") {
+                        crAmt = crAmt + parseFloat(amt);
+                    }
+                }
+                var absDiff = Math.abs(drAmt - crAmt);
+                if (drAmt > crAmt) {
+                    $(this).closest("tr").find(".cr-amt").val(absDiff);
+                } else {
+                    $(this).closest("tr").find(".dr-amt").val(absDiff);
+                }
+            }
+        }
+    });
+    $("#PartyName").live("focusout", function () {
+        $("#DebitNoteMaster_GlCode").getCurrentBal();
+    });
+
+    $(".UDFCustomFiled").live("click", function () {
+        $(".UDFEntry").toggle('hide');
+
+    });
+
+    $("#Date").live("blur", function (e) {
+        var currentElement = $(this);
+        var date = $(this).val();
+        var url = '@Url.Action("CheckFiscalyearDateinDebitNote", "Entry")?Date=' + date;
+        $.post(url, function (data) {
+            if (data != "True") {
+                currentElement.addClass("error");
+                alert(data);
+
+            } else {
+                currentElement.removeClass("error");
+            }
+        });
+    });
+
+    $("#DebitNoteMaster_CurRate").live("blur", function () {
+        var currencyId = $("#CurrencyId").val();
+
+        var current = $(this).val();
+
+        if (currencyId != "") {
+            if (current != "") {
+                $("#DebitNoteMaster_CurRate").removeClass("error");
+            } else {
+                $("#DebitNoteMaster_CurRate").addClass("error");
+            }
+
+        } else {
+            $("#DebitNoteMaster_CurRate").removeClass("error");
+        }
+
+    });
+
+
+    $("#CurrencyId").live("blur", function () {
+        var current = $(this).val();
+        if (current == "") {
+            $("#DebitNoteMaster_CurRate").removeClass("error");
+        }
+
+    });
+</script>

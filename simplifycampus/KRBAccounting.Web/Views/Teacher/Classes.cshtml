@@ -1,0 +1,17 @@
+﻿@model KRBAccounting.Web.ViewModels.Teacher.TeacherClassViewModel
+@{
+    ViewBag.Title = "TeacherSubject";
+}
+<div class="row-fluid">
+    <div class="span12">
+        <h3 class="page-title">
+            <img alt="Classes" src="/Content/social/assets/img/icons/stuttgart-icon-pack/32x32/conference.png"
+                width="22" />
+            Classes : var name = @Model..ClassName; if (item.SectionId != 0) { name = item.ClassName
+            + " (sec : " + item.SectionName + ")"; }
+            <li><a href="Javascript:void(0)" class-name="@name" class="get-student" student="@Url.Action("GetStudentByClassIdAndSubjectId", new { subjectid = Model.Subject.Id, sectionid = item.SectionId, classid = item.ClassId })">@name
+            </a></li>
+        </h3>
+    </div>
+</div>
+@Html.Partial("Students", Model.RegistrationDetails.Select(x => x.Studentinfo))

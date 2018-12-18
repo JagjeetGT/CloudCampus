@@ -1,0 +1,285 @@
+﻿@using System.Web.Script.Serialization
+@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service.Models
+@{
+    var serializer = new JavaScriptSerializer();
+    ViewBag.Title = "Division";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+    var ss = Html.Raw(serializer.Serialize(ViewBag.DivisionValue)).ToString();
+    var final = ss.Replace("\"[", "[").Replace("]\"", "]");
+}
+<script src="@Url.Content("~/Content/highchartjs/highcharts.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/highchartjs/highcharts-more.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Content/highchartjs/modules/exporting.js")" type="text/javascript"></script>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span8">
+                <div class="head" >
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Division</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addDivision"></a></li>
+                        }
+                      
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchDivision"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div  id="division-list">
+                    @Html.Action("DivisionList")
+                </div>  </div>
+                <div class="span4">
+                    <div id="examination" style="min-width: 100px; height: 231px; margin: 0 auto">
+                    </div>
+                </div>
+          
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalDivision" style="display: none;" title="Division">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    $("#modalDivision").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+
+               ValidationCheck();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function ValidationCheck() {
+        var isValid = $("form").valid();
+        if (isValid) {
+            $("#frm-id").submit();
+        }
+    }
+    $('a.editScDivision').live('click', function () {
+        var divId = $(this).attr("data-id");
+        var url = '@Url.Action("EditDivision", "School")?divId=' + divId;
+        Begin();
+
+        getRequest(url);
+        return false;
+    });
+
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalDivision .block').html(data);
+                $(this).addClass("done");
+                $.unblockUI();
+                $("#modalDivision").dialog('open');
+                
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('.addDivision').live('click', function () {
+        var url = '@Url.Action("AddDivision", "School")';
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+
+    $('a.deleteScDivision').live('click', function () {
+        var result = confirm('Are you sure you want to delete this Division ?');
+        if (result) {
+            var sectionId = $(this).attr("data-id");
+            var url = '@Url.Action("DeleteDivision", "School")?divisionId=' + sectionId;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Division is already in use. Cannot delete.");
+                } else {
+                    $("#division-list").load("/School/DivisionList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+        $.unblockUI();
+        return false;
+    });
+
+    function OnComplete() {
+        Begin();
+        $("#modalDivision").dialog("close");
+        $("#division-list").load("/School/DivisionList"); $.unblockUI();
+    }
+
+    function OnCompleteEdit() {
+        Begin();
+        $("#modalDivisionEdit").dialog("close");
+        $("#division-list").load("/School/DivisionList"); $.unblockUI();
+    }
+
+</script>
+<script type="text/javascript">
+    $(function () {
+  
+  var divison = @Html.Raw(serializer.Serialize(ViewBag.DivisionName));
+      $('#examination').highcharts({
+         colors: ['#FF00CC','#DDDF00','#ED561B','#50B432','#058DC7' ,'#64E572', '#FFF263','#24CBE5', '#FF9655'   ],
+            chart: {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+               
+                borderWidth: 2,
+                plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+                plotShadow: true,
+                plotBorderWidth: 1,
+                type: 'columnrange',
+                inverted: true
+            },
+      
+        
+
+            title: {
+                text: 'Division Management System',
+                 style: {
+                    color: '#000',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif',
+                    fontSize: '13px',
+                    fontWeight: 'bold'
+                }
+            },
+
+          
+
+            xAxis: {
+               
+                categories: divison,
+                 lineColor: '#000',
+                lineWidth: 1,
+                tickWidth: 1,
+                title: {
+                    style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Division'
+                },
+                tickColor: '#000',
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                
+                    	        
+            }
+            },
+
+            yAxis: {
+               title: {
+                   style: {
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+                    },
+                    text: 'Percentage'
+                },
+                allowDecimals: false,
+         
+                lineColor: '#000',
+                lineWidth: 1,
+                tickWidth: 1,
+                tickColor: '#000',
+                   min: 0,
+          
+                 max: 100,
+                labels: {
+                    style: {
+                        color: '#000',
+                        font: '11px Trebuchet MS, Verdana, sans-serif'
+                    }
+                   
+            }},
+
+           
+            credits: {
+                enabled:false  
+            },
+            plotOptions: {
+                columnrange: {
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () {
+                            return this.y ;
+                        }
+                    }
+                }
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Pecentage',
+                data:@final
+            }]
+
+        });
+    });
+    
+        $(".SearchDivision").live("click", function () {
+            var searchText = $(".searchText").val();
+            var url = '/AcademySearch/DivisionSearch?SearchText=' + searchText;
+            $.post(url, function (data) {
+                $("#division-list").html(data);
+            });
+        });
+
+    </script>

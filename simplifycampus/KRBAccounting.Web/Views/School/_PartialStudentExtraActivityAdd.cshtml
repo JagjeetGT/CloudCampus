@@ -1,0 +1,74 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentExtraActivity
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StudentExtraActivitiesAdd", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-70">
+                Class</label>
+            <div class="field">@Html.HiddenFor(x => x.ClassId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetClasses", "School")"  valueId="ClassId" id="feeitemledger" title="Class Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassId)</div>
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Section</label>
+            <div class="field">
+                @Html.HiddenFor(x => x.SectionId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetSections", "School")" valueId="SectionId" id="houseSectionId" title="Section Name" entermsg = "Enter SectionId" />
+                @Html.ValidationMessageFor(m => m.SectionId)
+            </div>
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Activity</label>
+            <div class="field">
+                @Html.HiddenFor(x => x.ActivityId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetActivity", "School")" valueId="ActivityId" id="extraActivityId" title="Activity Name" entermsg = "Enter SectionId" />
+                @Html.ValidationMessageFor(m => m.ActivityId)
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag detailEntryTable" style="height: 250px; width: 100%">
+            <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 100%">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Roll No
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Start Date (MM/DD/YYYY)
+                    </th>
+                    <th>
+                        Start Miti (YYYY/MM/DD)
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Remarks</label>
+            <div class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks)
+            </div>
+        </div>
+    </div>
+}

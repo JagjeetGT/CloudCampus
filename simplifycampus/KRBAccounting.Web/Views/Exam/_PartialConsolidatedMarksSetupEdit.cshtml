@@ -1,0 +1,100 @@
+@model KRBAccounting.Web.ViewModels.Academy.AcademicsConsolidatedMarksSetupsViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ConsolidatedMarksSetupEdit", "Exam", new { controller = "Exam" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.Classid)
+       @Html.HiddenFor(x => x.ExamId)
+    <div class="lag">
+        <label class="label-90">
+            Name
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.ConsolidatedMarksSetup.Description, new { @class = "input input-120" })
+            @Html.ValidationMessageFor(m => m.ConsolidatedMarksSetup.ExamId)
+        </div>
+        <label>
+            Code
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.ConsolidatedMarksSetup.Code, new { @class = "input input-100" })
+            @Html.ValidationMessageFor(m => m.ConsolidatedMarksSetup.Code)
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Class</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ConsolidatedMarksSetup.ClassId)
+            <input type="text" class="modallink input-120" value="@if (Model.ConsolidatedMarksSetup.Class != null)
+                                                                  {
+                                                                      @Model.ConsolidatedMarksSetup.Class.Description
+                                                                  }
+                                                                     " href="@Url.Action("GetClasses","School")" valueid="ConsolidatedMarksSetup_ClassId" id="class-id"/>
+            @Html.ValidationMessageFor(m => m.ConsolidatedMarksSetup.ClassId)
+        </div>
+        <label class="label-90">
+            Exam</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ConsolidatedMarksSetup.ExamId)
+            <input type="text" class="modallink input-100" href="@Url.Action("GetExames")" value="@if (Model.ConsolidatedMarksSetup.Exam != null)
+                                                                                                  {
+                                                                      @Model.ConsolidatedMarksSetup.Exam.Description
+                                                                                                  }"  valueid="ConsolidatedMarksSetup_ExamId" id="exam-id" />
+            @Html.ValidationMessageFor(m => m.ConsolidatedMarksSetup.ExamId)
+        </div>
+    </div>
+
+    
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 400px; width: 500px">
+        <table class="listpopup" id="table-consolidate-detail" width="auto">
+            <tr>
+                <th>
+                    Exam Description
+                </th>
+                <th>
+                    Order
+                </th>
+                <th>
+                    Percentage
+                </th>
+            </tr>
+            @foreach (var item in Model.ConsolidatedMarksSetups)
+            {
+                @Html.Partial("_PartialConsolidatedMarksSetupDetailEdit", item)
+            }
+        </table>
+    </div>
+    <div class="clearfix">
+    </div>
+    <hr />
+    <div class="lag">
+        <label>
+            Remark</label><div class="field">@Html.TextBoxFor(x => x.ConsolidatedMarksSetup.Remarks, new { @class = "input input-350" })</div>
+        <label>
+            Total %</label><div class="field">
+                <input type="text" readonly="readonly" class="input total input-90" /></div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        var element = document.querySelectorAll(".first-col"); //$(".first-col").closest('tr');
+        $.each(element, function (index) {
+            var closestr = $(this).closest("tr");
+            closestr.attr("id", "tr_" + index);
+
+            var firstcol = closestr.find(".first-col").attr('id');
+
+            closestr.find(".text-exam").attr({
+                valueid: firstcol,
+                id: "text-exam-" + index
+            });
+        });
+        CalcTotal();
+        
+    })
+</script>

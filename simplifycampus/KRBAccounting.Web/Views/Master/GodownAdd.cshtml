@@ -1,0 +1,90 @@
+﻿@model KRBAccounting.Domain.Entities.Godown
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("GodownAdd", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "MsgError", OnSuccess = "success"}, new { @class = "form-horizontal",id="godown-form" }))
+{@Html.HiddenFor(x=>x.Id)
+    <div id="MsgError"></div>
+      <div style="width: 445px;">
+
+              <div class="lag">
+                  <label class="label-90">
+                      Name</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.Name, new { @class = "input-295 input" })
+                      @Html.ValidationMessageFor(m => m.Name)
+                      <span class="loading Name">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+          <div class="lag">
+              <label class="label-90">
+                  Short Name</label>
+              <span class="field">
+                  @Html.TextBoxFor(m => m.ShortName, new { @class = "input-80 input" })
+                  @Html.ValidationMessageFor(m => m.ShortName)
+                  <span class="loading ShortName">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+              </span>
+          </div>
+          <div class="lag">
+              <label class="label-90">
+                  Address</label>
+              <span class="field">
+                  @Html.TextBoxFor(m => m.Address, new { @class = "input-295 input" })
+                  @Html.ValidationMessageFor(m => m.Address)
+              </span>
+          </div>
+          <div class="lag">
+              <label class="label-90">
+                  Phone</label>
+              <span class="field">
+                  @Html.TextBoxFor(m => m.Phone, new { @class = "input-295 input" })
+                  @Html.ValidationMessageFor(m => m.Phone)
+              </span>
+          </div>
+          <div class="lag">
+                  <label class="label-90">
+                      Contact Person</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.ContactPerson, new { @class = "input-295 input" })
+                      @Html.ValidationMessageFor(m => m.ContactPerson)
+                  </span>
+              </div>
+      </div>
+}
+@*<script type="text/javascript">
+    $("#Name").live("focusout", function () {
+        var name = $(this).val();
+        if (name != "") {
+            $.getJSON("/Master/IsGodownNameAvailable?name=" + name, "", function (data, status, xhr) {
+                if (data != '') {
+                    $("#MsgError").html(data);
+                    $("#Name").addClass("error");
+                    $("#Name").focus();
+                } else {
+                    $("#MsgError").html('');
+                    $("#Name").removeClass("error");
+                }
+            });
+        }
+    });
+    $("#ShortName").live("focusout", function () {
+        var name = $(this).val();
+        if (name != "") {
+            $.getJSON("/Master/IsGodownShortNameAvailable?name=" + name, "", function(data, status, xhr) {
+                if (data != '') {
+                    $("#MsgError").html(data);
+                    $("#ShortName").addClass("error");
+                    $("#ShortName").focus();
+                } else {
+                    $("#MsgError").html('');
+                    $("#ShortName").removeClass("error");
+                }
+            });
+        }
+    });
+       
+    
+</script>*@

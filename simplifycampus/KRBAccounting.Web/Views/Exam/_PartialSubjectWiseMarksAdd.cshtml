@@ -1,0 +1,101 @@
+@model KRBAccounting.Domain.Entities.ScExamMarksEntry
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("SubjectWiseMarksAdd", "Exam", new { controller = "Exam" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    <div class="lag">
+        <label>
+            Exam</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ExamId)
+            <input type="text" class="modallink input-150 input" href="@Url.Action("GetExames")"  valueid="ExamId" id="exam-id" />
+            @Html.ValidationMessageFor(m => m.ExamId)
+        </div>
+        <label>
+            Class</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ClassId)
+            <input type="text" class="modallink input-150 input" href="@Url.Action("GetClasses","School")" valueid="ClassId" id="class-id"/>
+            @Html.ValidationMessageFor(m => m.ClassId)
+        </div>
+        <label>
+            Subject</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.SubjectId)
+            <input type="text" class="modallink input-150 input" href="@Url.Action("GetSubjectByExamClasId")" parent="ExamId" parentnext="ClassId" valueid="SubjectId" id="suject-id"/>
+            @Html.ValidationMessageFor(m => m.SubjectId)
+        </div>
+    </div>
+    
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 350px; width: 100%">
+        <table class="listpopup" id="table-examroutine-detail" width="100%">
+            <tr>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th colspan="4">
+                    Theory
+                </th>
+                <th colspan="4">
+                    Practical
+                </th>
+            </tr>
+            <tr class="">
+                <th>
+                    s.no
+                </th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Roll No
+                </th>
+                <th>
+                    Full Mark
+                </th>
+                <th>
+                    Pass Mark
+                </th>
+                <th>
+                    Ob. Mark
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Full Mark
+                </th>
+                <th>
+                    Pass Mark
+                </th>
+                <th>
+                    Ob. Mark
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Total
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+         
+        </table>
+    </div>
+    <hr />
+    <div class="lag">
+        @Html.TextBoxFor(x => x.Remarks, new { @class = "input-450 input"})
+    </div>
+}

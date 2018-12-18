@@ -1,0 +1,51 @@
+﻿@model KRBAccounting.Web.ViewModels.School.ScTeacherScheduleViewModel  
+@Html.HiddenFor(m => m.SubjectId,new{@class="subject-id"})
+@Html.HiddenFor(m => m.Sno)
+<td colspan="2">
+    @Html.HiddenFor(x => x.SundayTeacherId, new { @class = "teacherid hdn_sundayteacher" })
+    <input type="text" value="@if (Model.SundayTeacher != null)
+                              {
+                                                                                          @Model.SundayTeacher.Description
+                              }
+                                                                                      " class="modallink sundayteacher input-150" href="@Url.Action("GetEmployeeBySubjectId", new {classId=Model.ClassId, sectionId=Model.SectionId, subjectId=Model.SubjectId})"   valueid="SundayTeacherId" id="SundayTeacherid"/>
+</td>
+<td colspan="2">
+    @Html.HiddenFor(x => x.MondayTeacherId, new { @class = "teacherid hdn_mondayteacher" })
+    <input type="text" value="@if (Model.MondayTeacher != null)
+                              {
+                                                                                          @Model.MondayTeacher.Description
+                              }
+                                                                                      " class="modallink mondayteacher input-150" href="@Url.Action("GetEmployeeBySubjectId", new { classId = Model.ClassId, sectionId = Model.SectionId, subjectId = Model.SubjectId })" valueid="MondayTeacherId" id="MondayTeacherid"/>
+</td>
+<td colspan="2">
+    @Html.HiddenFor(x => x.TuesdayTeacherId, new { @class = "teacherid hdn_tuesdayteacher" })
+    <input type="text" value="@if (Model.TuesdayTeacher != null)
+                              {
+                                                                                          @Model.TuesdayTeacher.Description
+                              }
+                                                                                      " class="modallink tuesdayteacher input-150" href="@Url.Action("GetEmployeeBySubjectId", new { classId = Model.ClassId, sectionId = Model.SectionId, subjectId = Model.SubjectId })" valueid="TuesdayTeacherId" id="TuesdayTeacherid"/>
+</td>
+<td colspan="2">
+    @Html.HiddenFor(x => x.WednesdayTeacherId, new { @class = "teacherid hdn_wednesdayteacher" })
+    <input type="text" value="@if (Model.WednesdayTeacher != null)
+                              {
+                                                                                          @Model.WednesdayTeacher.Description
+                              }
+                                                                                      " class="modallink wednesdayteacher input-150" href="@Url.Action("GetEmployeeBySubjectId", new { classId = Model.ClassId, sectionId = Model.SectionId, subjectId = Model.SubjectId })" valueid="WednesdayTeacherId" id="WednesdayTeacherid"/>
+</td>
+<td colspan="2">
+    @Html.HiddenFor(x => x.ThursdayTeacherId, new { @class = "teacherid hdn_thursdayteacher" })
+    <input type="text" value="@if (Model.ThursdayTeacher != null)
+                              {
+                                                                                          @Model.ThursdayTeacher.Description
+                              }
+                                                                                      "  class="modallink thursdayteacher input-150" href="@Url.Action("GetEmployeeBySubjectId", new { classId = Model.ClassId, sectionId = Model.SectionId, subjectId = Model.SubjectId })" valueid="ThursdayTeacherId" id="ThursdayTeacherid"/>
+</td>
+<td colspan="2">
+    @Html.HiddenFor(x => x.FridayTeacherId, new { @class = "teacherid hdn_fridayteacher" })
+    <input type="text" value="@if (Model.FridayTeacher != null)
+                              {
+                                                                                          @Model.FridayTeacher.Description
+                              }
+                                                                                      " class="modallink fridayteacher input-150" href="@Url.Action("GetEmployeeBySubjectId", new { classId = Model.ClassId, sectionId = Model.SectionId, subjectId = Model.SubjectId })" valueid="FridayTeacherId" id="FridayTeacherid"/>
+</td>

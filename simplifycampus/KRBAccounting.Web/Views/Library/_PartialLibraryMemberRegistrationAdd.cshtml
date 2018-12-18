@@ -1,0 +1,60 @@
+@model KRBAccounting.Domain.Entities.ScLibraryMemberRegistration
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("LibraryMemberRegistrationAdd", "Library", new { controller = "Library" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Type</label>
+            <span class="field">@Html.DropDownListFor(m => m.Type, Model.Typelist,"--Select--", new { @class = "input-150 input", entermsg = "Enter Type" })
+                @Html.ValidationMessageFor(m => m.Type) </span></span>@* <span class="stack">            <label class="label-90">                Class</label>            <span class="field">                @Html.HiddenFor(m => m.ClassId)                <input type="text" class="modallink input-120 input" href="@Url.Action("GetLibraryRegistrationClasses", "Library")" id="class-id" valueid="ClassId"/>                @Html.ValidationMessageFor(m => m.ClassId)            </span></span>*@</div>
+    <div class="clearfix">
+    </div>
+
+
+    <div class="lag detailEntryTable" style="height: 400px; width: 100%">
+        <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 100%">
+            <tr class="nodrop nodrag">
+                <th width="20px">
+                </th>
+                <th class="staff">
+                    Staff Name
+                </th>
+                <th class="staff">
+                    Code
+                </th>
+                <th class="staff">
+                    Designation
+                </th>
+                <th class="student">
+                    Student Name
+                </th>
+                <th class="student">
+                    Code
+                </th>
+                <th class="student">
+                    Section
+                </th>
+                <th class="student">
+                    Roll No.
+                </th>
+            </tr>
+        </table>
+    </div>
+    <div class="clearfix">
+    </div>
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#table-class-fee-rate-detail .student").show();
+        $("#table-class-fee-rate-detail .staff").hide();
+        $("#table-class-fee-rate-detail .detail-entry").remove();
+    });
+
+
+
+
+</script>

@@ -1,0 +1,73 @@
+﻿@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScProgramMaster>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Incharge
+                </th>
+                <th>
+                    Faculty Description
+                </th>
+                <th>
+                    Level Description
+                </th>
+                <th>
+                    University Description
+                </th>
+                <th>
+                    Schedule
+                </th>
+                @*                <th width="5%"></th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @{ var i = 1; }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>@item.Code
+                    </td>
+                    <td>@item.Description
+                    </td>
+                    <td>@item.Incharge
+                    </td>
+                    <td>@item.FacultyDescription
+                    </td>
+                    <td>@item.LevelDescription
+                    </td>
+                    <td>@item.UniversityDescription
+                    </td>
+                    <td>@item.Schedule
+                    </td>
+                    <td>
+                        @if (CheckPermission.GivePermission("Edit", "ScPM"))
+                        {
+                            <a href="javascript:void(0)" class="editProgramMaster icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    @*<div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "ProgramMastersList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "ProgramMasters-list" }))
+    </div>*@
+</div>
+@*<script type="text/javascript">
+    $("#tbl-list").dataTable({ "sPaginationType": "full_numbers", "bLengthChange": true, "bFilter": true, "bInfo": true, "bPaginate": true, "aoColumns": [{ "bSortable": true }, null, null, null, null, null,null,null,null, null,null,null] });
+</script>*@

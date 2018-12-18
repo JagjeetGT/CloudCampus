@@ -1,0 +1,30 @@
+@model KRBAccounting.Web.ViewModels.School.ScStaffSubjectMappingViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StaffSubjectMappingAdd", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "staffsubjectform-id" }))
+{
+    @Html.HiddenFor(x=>x.StaffSubjectMapping.Id)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-120">
+                Staff Name</label>
+            @Html.HiddenFor(m=>m.StaffSubjectMapping.StaffId)
+            <input type="text" class="modallink input-305" href="@Url.Action("GetStaffMasterForStaffSubjectMapping", "School")" parent="StaffSubjectMapping_Id" valueid="StaffSubjectMapping_StaffId" id="staffid"/>
+            @Html.ValidationMessageFor(m => m.StaffSubjectMapping.StaffId) 
+        </div>
+    </div>
+    
+    <div class="clearfix"></div>
+       <div class="checkboxs lag">
+      <label class="label-120">
+                Subjects</label>
+ 
+        <div class="stack" style="width: 40%;">
+          
+            <div class="field">
+                @Html.CheckBoxList("SubjectItemList", Model.SubjectList.ToList())
+            </div>
+        </div>
+    </div>
+    
+}

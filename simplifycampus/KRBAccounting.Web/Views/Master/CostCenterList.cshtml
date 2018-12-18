@@ -1,0 +1,53 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.CostCenter>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+    <thead>
+        <tr>
+            <th width="5%">S.N.</th>
+            <th width="20%">
+                Name
+            </th>
+            <th>
+                Short Name
+            </th>
+            @* <th>
+                    Address
+                </th>
+                <th>
+                    Phone
+                </th>
+                <th>
+                    Contact Person
+                </th>*@
+            <th width="5%"></th>
+            <th width="5%"></th>
+        </tr>
+    </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Name
+                    </td>
+                    <td>@item.ShortName
+                    </td>
+                    @*   <td>@item.Address
+                </td>
+                <td>@item.Phone
+                </td>
+                <td>@item.ContactPerson
+                </td>*@
+                    <td><a href="javascript:void(0)"  class="editCostCenter icon-pencil" data-id="@item.Id" title="Edit: @item.Name"></a></td>
+                    <td><a href="javascript:void(0);" class="CostCenterDelete icon-remove" data-id="@item.Id" title="Delete"></a></td>
+                </tr>
+                i++;
+            }
+        </tbody>
+</table>
+<div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "CostCenterList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "costcenter-list" }))
+    </div>
+</div>
+

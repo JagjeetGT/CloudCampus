@@ -1,0 +1,59 @@
+@model  KRBAccounting.Web.ViewModels.Payroll.PayrollCorporateSalaryMasterViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("CorporateSalaryMasterEdit", "Payroll", new { controller = "Payroll" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{ @Html.HiddenFor(x => x.CorporateSalaryMaster.Id)    @Html.HiddenFor(x => x.CorporateSalaryMaster.CreatedBy)@Html.HiddenFor(x => x.CorporateSalaryMaster.CreatedOn)
+  @Html.HiddenFor(x => x.CorporateSalaryMaster.FiscalYearId) 
+      @Html.HiddenFor(x => x.CorporateSalaryMaster.BranchId) 
+    <div id="error-msg"></div><div class="lag">
+    <div class="lag">
+        <div class="stack">
+            <label class="label-120">
+                Employee Position</label>
+            <div class="field">
+                @Html.DropDownListFor(m => m.CorporateSalaryMaster.EmployeePostId, Model.PositionList, new { @class = "input-190 input", entermsg = "Enter EmployeePostId" })
+                @Html.ValidationMessageFor(m => m.CorporateSalaryMaster.EmployeePostId)
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+       
+       
+        <div class="stack">
+            <label class="label-120">
+                Amount</label>
+            <div class="field">
+                @Html.TextBoxFor(m => m.CorporateSalaryMaster.Salary, new { @class = "input-190 input", entermsg = "Enter Salary" })
+                @Html.ValidationMessageFor(m => m.CorporateSalaryMaster.Salary)
+            </div>
+        </div>
+         <div class="clearfix">
+        </div>
+        
+         <div class="stack">
+            <label class="label-120">
+                Status</label>
+            <div class="field">
+                @Html.EditorFor(m => m.CorporateSalaryMaster.Status, new { @class = "input-190 input", entermsg = "Enter Status" })
+                @Html.ValidationMessageFor(m => m.CorporateSalaryMaster.Status)
+            </div>
+        </div>
+    </div></div>
+    <div class="lag checkboxs" style="width: auto">
+        <div class="stack" style="width: 100% ! important;">
+            <label class="label">
+                Allowance</label>
+            <div class="field" >
+                @Html.CheckBoxList("AllowancesId", Model.CheckBoxListInfos)
+                @*@Html.ValidationMessageFor(m => m.AllowanceId)*@
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+}

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.MenuItem>
+@{
+    var controllerName = ViewContext.RouteData.GetRequiredString("controller");
+    var actionName = ViewContext.RouteData.GetRequiredString("action");
+}
+<ul class="navigation">
+    @foreach (var item in Model.Where(x => x.ParentId == null).OrderBy(x=>x.Schedule))
+    {
+       
+        @*if (!string.IsNullOrEmpty(item.Action))
+        {
+            var className = string.Empty;
+            var url = "/" + item.Controller + "/" + item.Action;
+            if (item.Controller == controllerName)
+            {
+                className = "active";
+            }
+        <li class="@className"><a href="@url"><span class="isw-grid"></span><span class="text" controller="@item.Controller">@item.LinkText</span>
+        </a></li>
+        }
+        else
+        {
+            var className = string.Empty;
+            if (item.Controller == controllerName)
+            {
+                className = "active";
+            }
+        <li class="openable @className"><a href="#"><span class="isw-list"></span><span class="text"
+                                                                                 controller="@item.Controller">@item.LinkText</span>
+        </a>*@
+        var className = string.Empty;
+     
+        if (item.Controller == controllerName)
+        {
+            className = "active";
+        }
+        var url = "/" + item.Controller + "/DashBoard";
+           <li class="@className"><a href="@url"><span class="isw-grid"></span><span class="text" controller="@item.Controller">DashBoard</span>
+        </a></li>
+        foreach (var sub in Model.Where(x => x.ParentId == item.Id).OrderBy(x => x.Schedule))
+        {
+            className = string.Empty;
+            if (sub.Controller == controllerName && sub.Action == actionName)
+            {
+                className = "active";
+            }
+            url = "/" + sub.Controller + "/" + sub.Action;
+                    <li class="@className"><a href="@url"><span class="text" action="@sub.Action">
+                        @sub.LinkText</span> </a></li>
+        }
+          
+       @* </li>
+        }*@
+    }
+</ul>

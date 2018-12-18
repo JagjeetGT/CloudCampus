@@ -1,0 +1,67 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.CashBankSummaryReportViewModel
+@{
+    ViewBag.Title = "CashBankSummaryReport";
+}
+@{
+    decimal ReceiceGrandTotal = 0;
+    decimal PaymentGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+}
+
+    @Html.Partial("_PartialExcelReportHeader", Model.ReportHeader)
+    <br/>
+    <table style="font-size: 15px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold; border: 1px solid black ">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Opening
+                </th>
+               
+                <th>
+                    Receipt
+                </th>
+                <th>
+                    Payment
+                </th>
+                 <th>
+                    Balance
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.SpCashBankBookSummaries)
+        {
+            
+            <tr style="border: 1px solid black">
+                <td align="center">@item.VDate.ToString("dd/MM/yyyy")
+                </td>
+            <td align="right">
+                @item.Opening
+            </td>
+                <td align="right">
+                @item.Receive
+            </td>
+                <td align="right">
+                @item.Payment
+            </td>
+           <td align="right">
+                @item.Balance
+            </td>
+            
+           </tr>
+            ReceiceGrandTotal += item.Receive;
+            PaymentGrandTotal += item.Payment;
+            grandTotalBalance = item.Balance;
+        }
+        <tr style="border: 1px solid black">
+            <td align="right"><b>Grand Total</b></td>
+     <td></td>
+            <td align="right"><b>@ReceiceGrandTotal</b></td>
+            <td align="right"><b>@PaymentGrandTotal</b></td>
+            <td align="right"><b>@grandTotalBalance</b></td>
+        </tr>
+    </table>
+
+

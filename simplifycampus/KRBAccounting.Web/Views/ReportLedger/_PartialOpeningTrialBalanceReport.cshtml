@@ -1,0 +1,205 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.TrialBalanceOpening
+    <link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="print" />
+
+<div class="clearfix">
+</div>
+@{ decimal debittotal = 0; decimal credittotal = 0; decimal grandTotalDebit = 0; decimal grandTotalCredit = 0;}
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table width="100%" class="listpopup">
+        <thead>
+            <tr>
+                <th>
+                    Ledger
+                </th>
+                <th colspan="2">
+                    Opening
+                </th>
+            </tr>
+            <tr>
+                <th>
+                </th>
+                <th>
+                    Debit
+                </th>
+                <th>
+                    Credit
+                </th>
+            </tr>
+        </thead>
+        @if (Model.AccountGroup)
+        {
+            foreach (var item in Model.OpeningsGroups)
+            {
+                debittotal = 0;
+                credittotal = 0;
+            <tr>
+                <td>
+                    <b>@item.AccountName</b>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+                var ledger = Model.OpeningLedgers.Where(x => x.AccountGroupId == item.AccountGroupId);
+                foreach (var itemLedger in ledger)
+                {
+            <tr>
+                <td>
+                    &nbsp;&nbsp;&nbsp;@itemLedger.AccountName
+                </td>
+                <td class="numbericfield">
+                    @if (!Model.SubLedger)
+                    { @itemLedger.Debit
+                        debittotal += itemLedger.Debit;
+                    }
+                </td>
+                <td class="numbericfield">
+                    @if (!Model.SubLedger)
+                    { @itemLedger.Credit 
+                        credittotal += itemLedger.Credit;
+                    }
+                </td>
+            </tr>
+                    if (Model.SubLedger)
+                    {
+                        var subLedger = Model.OpeningsSubLedgers.Where(x => x.LedgerId
+                            == item.LedgerId); foreach (var sledger in subLedger)
+                        {
+            <tr>
+                <td>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@sledger.AccountName
+                </td>
+                <td class="numbericfield">
+                    @sledger.Debit
+                    @{
+                            debittotal += sledger.Debit;
+                    }
+                </td>
+                <td class="numbericfield">
+                    @sledger.Credit
+                    @{
+                            credittotal += sledger.Credit; 
+                    }
+                </td>
+            </tr>
+                        }
+                    }
+                }
+                 <tr>
+                <td class="numbericfield">
+                    <b>Total</b>
+                </td>
+                <td class="numbericfield">
+                    @debittotal
+                </td>
+                <td class="numbericfield">
+                    @credittotal
+                </td>
+            </tr>
+                grandTotalCredit += credittotal;
+                grandTotalDebit += debittotal;
+            }
+
+
+
+        }
+        else
+        {
+            foreach (var item in Model.OpeningLedgers)
+            {
+                debittotal = 0;
+                credittotal = 0;
+            <tr>
+                <td>
+                    @item.AccountName
+                </td>
+                <td class="numbericfield">
+                    @if (!Model.SubLedger)
+                    { @item.Debit  debittotal += item.Debit;
+                    }
+                </td>
+                <td class="numbericfield">
+                    @if (!Model.SubLedger)
+                    { @item.Credit  credittotal += item.Credit;
+                    }
+                </td>
+            </tr>
+                    if (Model.SubLedger)
+                    {
+                        var subLedger = Model.OpeningsSubLedgers.Where(x => x.LedgerId
+                            == item.LedgerId); foreach (var sledger in subLedger)
+                        {
+            <tr>
+                <td>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@sledger.AccountName
+                </td>
+                <td class="numbericfield">
+                    @sledger.Debit
+                    @{
+                            debittotal += sledger.Debit;
+                    }
+                </td>
+                <td class="numbericfield">
+                    @sledger.Credit
+                    @{
+                            credittotal += sledger.Credit;
+                    }
+                </td>
+            </tr>
+                        }
+                    }
+                     <tr>
+                <td class="numbericfield">
+                    <b>Total</b>
+                </td>
+                <td class="numbericfield">
+                    @debittotal
+                </td>
+                <td class="numbericfield">
+                    @credittotal
+                </td>
+            </tr>
+                    grandTotalCredit += credittotal;
+                    grandTotalDebit += debittotal;
+            }
+
+        }
+        <tr>
+            <td class="numbericfield">
+                <b>Grand Total</b>
+            </td>
+            <td class="numbericfield">
+                @grandTotalDebit
+            </td>
+            <td class="numbericfield">
+                @grandTotalCredit
+            </td>
+        </tr>
+        <tr>
+            <td class="numbericfield">
+               <b>Difference in Trial Balance</b> 
+            </td>
+            <td class="numbericfield">
+                @if (grandTotalCredit < grandTotalDebit)
+                {
+                    decimal debitdiff = grandTotalDebit - grandTotalCredit;
+                    @debitdiff
+                }
+     
+            </td>
+            <td class="numbericfield">
+                @if (grandTotalCredit > grandTotalDebit)
+                {
+                    decimal creditdiff = grandTotalCredit - grandTotalDebit;
+                    @creditdiff
+                }
+      
+            </td>
+        </tr>
+    </table>
+</div>

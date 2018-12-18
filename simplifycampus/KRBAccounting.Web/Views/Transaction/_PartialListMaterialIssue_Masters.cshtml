@@ -1,0 +1,45 @@
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScMaterialIssueMaster>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    VoucherNo
+                </th>
+                <th>
+                    VoucherDate
+                </th>
+                <th>
+                    VoucherMiti
+                </th>
+                <th>
+                    Remarks
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.VoucherNo
+                    </td>
+                    <td>@item.VoucherDate.ToString("MM/dd/yyyy")
+                    </td>
+                    <td>@item.VoucherMiti
+                    </td>
+                    <td>@item.Remarks
+                    </td>
+                    <td>
+                        @if (CheckPermission.GivePermission("Edit", "MIM"))
+                        {
+                            <a href="#" class="editMaterialIssue_Master icon-pencil" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    @* <td><a href="#" class="deleteMaterialIssue_Master icon-remove" data-id="@item.Id" title="Delete"></a></td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

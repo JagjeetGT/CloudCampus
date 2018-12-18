@@ -1,0 +1,41 @@
+﻿@model KRBAccounting.Domain.Entities.ScExamAttendanceDetail
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+           @ViewBag.i
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "hdn_Subject_Id first-col" })
+            <input type="text"  class = "modallink text_subject input-120 input" value="@if (Model.Studentinfo != null)
+                                                                                        {
+                                                                                            @Model.Studentinfo.StuDesc
+                                                                                        }
+                                                                                           "   title="Student List"  />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Studentinfo.StdCode, new { @class = "input-70 input", @readonly = "readonly" })
+        </td>
+      
+            <td>
+                @Html.TextBoxFor(x => x.StdRollNo, new {@class = "input-70 input", @readonly = "readonly"})
+            </td>
+        
+        <td>
+            @Html.TextBoxFor(x => x.PresentDays, new { @class = "input-70 input PresentDays" })
+        </td> 
+        <td>
+            @Html.TextBoxFor(x => x.AbsentDays, new { @class = "input-70 input AbsentDays", @readonly = "readonly" })
+        </td> 
+  
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "input-160 input", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

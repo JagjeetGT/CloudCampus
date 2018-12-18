@@ -1,0 +1,53 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.PriceListViewModel
+@{
+    decimal quantityGrandTotal = Convert.ToDecimal(Model.PriceLists.Sum(x => x.CurrentStock));
+    
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="table" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Product Description</th>
+                <th>Sales Price</th>
+                <th>Buy Price</th>
+                <th>Last Sales Price</th>
+                <th>Last Buy Price</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.PriceLists)
+        {
+            <tr>
+                <td>@item.ShortName</td>
+                <td>@item.Description</td>
+                <td style="text-align: right">@item.SalePrice</td>
+                <td style="text-align: right">@item.BuyPrice</td>
+                <td style="text-align: right">@item.LastSalePrice</td>
+                <td style="text-align: right">@item.LastBuyPrice</td>
+                <td>@item.Unit</td>
+                <td style="text-align: right">@item.CurrentStock</td>
+            </tr>
+        }
+         <tr>
+                <td></td>
+                 <td></td>
+                <td></td>
+                 <td></td>
+                <td></td>
+                <td></td>
+                <td style="font-weight: bold; text-align: right">Grand Total : </td>
+                <td style="font-weight: bold; text-align: right">@quantityGrandTotal</td>
+            </tr>
+    </table>
+</div>

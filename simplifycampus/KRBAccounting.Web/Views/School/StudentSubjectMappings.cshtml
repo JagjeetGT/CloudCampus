@@ -1,0 +1,277 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Student Subject Mapping";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Student Wise Subject Setup</h1>
+                    <ul class="buttons">
+                          @if (userRight.Create)
+                          {
+                               <li><a href="#" class="isw-plus addScClassSubject"></a></li>
+                          }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="StudentSubjectMapping-list">
+                    @Html.Action("StudentSubjectMappingList")
+                </div>
+                <div class="clearfix">
+                </div>
+                <hr />
+                  <div id="imgload" style="display: none" align="center">
+                <img src="/Content/themes/img/loaders/w_loader_gr.gif"/>
+            </div>
+
+                <div id="Detail-list">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalClasssubject" style="display: none;" title="Student With Subject Setup (+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    $("#modalClasssubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                $.blockUI({
+                    message: 'Please Wait..',
+                    css: {
+                        border: 'none',
+                        padding: '15px',
+                        backgroundColor: '#fff',
+                        '-webkit-border-radius': '10px',
+                        '-moz-border-radius': '10px',
+                        color: '#000'
+                    }
+                });
+
+
+                $("#form-id").submit();
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalClasssubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalClasssubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+
+    });
+    $("td._detail").live("click", function () {
+        var classid = $(this).attr("data-classid");
+        var studentid = $(this).attr("data-studentid");
+        $("div#imgload").css("display", "block");
+        $("#Detail-list").load("/School/StudentSubjectMappingDetailByClassId?classId=" + classid + "&&studentId=" + studentid, function () {
+            $("div#imgload").css("display", "none");
+        });
+    });
+    $('a.addScClassSubject').live('click', function () {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        var url = '@Url.Action("StudentSubjectMappingAdd", "School")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editScClassSubject').live('click', function () {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        var classid = $(this).attr("data-classid");
+        var studentid = $(this).attr("data-studentid");
+        var url = '@Url.Action("StudentSubjectMappingEdit", "School")?classId=' + classid + '&&studentId=' + studentid;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+        $("#StudentSubjectMapping-list").load("/School/StudentSubjectMappingList");
+        $('#modalClasssubject .block').load("/School/StudentSubjectMappingAdd");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#StudentSubjectMapping-list").load("/School/StudentSubjectMappingList");
+        $('#modalClasssubject').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+    $("#class-id").live("focusout", function () {
+
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+        if (id != 0 && id != '') {
+            url = '@Url.Action("GetClassesCodeById")?id=' + id;
+            $.getJSON(url, function (data) {
+                $("#class-code").val(data.Code);
+            });
+        }
+        var url = '@Url.Action("GetStudentsSubjectByClassId")?id=' + id;
+        $("#student-id").attr('href', url);
+    });
+    $("#student-id").live("focusout", function () {
+
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+        if (id != 0 && id != '') {
+            url = '@Url.Action("GetStudentCode")?id=' + id;
+            $.getJSON(url, function (data) {
+                $("#student-code").val(data);
+            });
+        }
+    });
+    $(".text_subject").live("focusout", function () {
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+        var element = $(this).closest("tr");
+        if (id != 0 && id != '') {
+            $.getJSON('@Url.Action("GetSubjectsById")', { id: id }, function (data) {
+
+                element.find('.hdn_ResultSystem_Id').val(data.ResultSystem);
+                element.find('.hdn_EvaluateForType_Id').val(data.EvaluateForType);
+                element.find('.hdn_SubjectType_Id').val(data.Type);
+                element.find('.hdn_ClassType_Id').val(data.ClassType);
+
+                $.getJSON('@Url.Action("GetSubjectChange")', { resultSystemId: data.ResultSystem, evaluateforPassId: data.EvaluateForType, subjectTypeId: data.Type, classTypeId: data.ClassType }, function (result) {
+                    element.find('.text_ResultSystem').val(result.resultType);
+
+
+                    element.find('.text_EvaluateForType').val(result.evaluateType);
+                    element.find('.text_SubjectType').val(result.subjectName);
+                    element.find('.text_ClassType').val(result.classType);
+                });
+
+            });
+        }
+    });
+    
+
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+            if (closestTr.find(".hdn_Subject_Id").val() != "") {
+                var link = $(this).attr("href");
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        if (closestTr.is(":last-child")) {
+                            $('#table-class-subject-detail tr:last').addClass("deletable");
+                            var id = $('#table-class-subject-detail tr:last').attr("id");
+                            $('#table-class-subject-detail tr:last').after(data);
+                            var arrString = id.split("_");
+                            var index = parseInt(arrString[1]) + 1;
+                            //var index = $(".narration").index(element) + 1;
+
+                            $(".text_subject:last").attr("id", "subject_" + index);
+                            $(".text_subject:last").closest("tr").attr("id", "tr_" + index);
+                            $(".text_subject:last").attr("valueId", $(".hdn_Subject_Id:last").attr("id"));
+
+
+                            $('.text_ResultSystem').attr("id", "ResultSystem_" + index);
+                            $('.text_EvaluateForType').attr("id", "EvaluateForType_" + index);
+                            $('.text_SubjectType').attr("id", "SubjectType_" + index);
+                            $('.text_ClassType').attr("id", "ClassType_" + index);
+                            $(".text_ResultSystem").attr("valueId", $(".hdn_ResultSystem_Id:last").attr("id"));
+                            $(".text_EvaluateForType").attr("valueId", $(".hdn_EvaluateForType_Id:last").attr("id"));
+                            $(".text_SubjectType").attr("valueId", $(".hdn_SubjectType_Id:last").attr("id"));
+                            $(".text_ClassType").attr("valueId", $(".hdn_ClassType_Id:last").attr("id"));
+                        }
+                        closestTr.next().find('.text_subject').focus();
+                        $('input[type="text"]').focus(function () {
+                            var closestTr = $(this).closest("tr");
+                            if ($(this).attr("entermsg")) {
+                                $(".enter-msg").html($(this).attr("entermsg"));
+                            } else {
+                                $(".enter-msg").html("");
+                            }
+                        });
+                    }
+                });
+            }
+            closestTr.find(".text_subject").addClass("error");
+            closestTr.find(".text_subject").focus();
+            return false;
+        }
+        return true;
+    });
+</script>

@@ -1,0 +1,173 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentFeeRateReportViewModel
+@{
+    decimal subtotal = 0;
+    decimal total = 0;
+    decimal gtotal = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+
+
+    
+                    
+ 
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+      
+        @foreach (var i in Model.StudentFeeRateGrouping)
+        {
+            <tr style="font-weight: bold" >
+                <td colspan="6">
+                    Class:
+                    @{
+            var schClass = i.FirstOrDefault().Class;
+                    }
+                    @if (schClass != null)
+                    {
+                        @schClass.Code
+                    }
+                    ,
+                    @if (schClass != null)
+                    {
+                        @schClass.Description
+                    }
+                </td>
+            </tr>
+            
+            
+
+                    var data = Model.StudentFeeRates.Where(x => x.ClassId == i.FirstOrDefault().ClassId);
+                    foreach (var ii in data)
+                    {
+                        <tr style="font-weight: bold">
+                            <td colspan="6">
+                                Student :
+                    
+                                @if (ii.Studentinfo != null)
+                                {
+                                    @ii.Studentinfo.StuDesc
+                                }
+                                ,
+                                @if (ii.Studentinfo != null)
+                                {
+                                    @ii.Studentinfo.StdCode
+                                }
+                            </td>
+                        </tr>
+                                subtotal = 0;
+
+    <tr align="center">
+                                        <th>
+                                            Fee/Term Code
+                                        </th>
+                                        <th>
+                                            Fee/Term Name
+                                        </th>
+                                        <th>
+                                            Fee Type/Type
+                                        </th>
+
+                                        <th>
+                                            Amount
+                                        </th>
+
+
+                                    </tr>
+                                foreach (var item in ii.ScStudentFeeRateDetails)
+                                {
+                                
+                                
+                             
+                            <tr align="center">
+                                <td>@item.FeeItem.Code
+                                </td>
+                                <td>@item.FeeItem.Description
+                                </td>
+                                <td>@Enum.GetName(typeof (FeeType), item.FeeItem.Type)
+                                </td>
+                                <td>@item.FeeRate
+                                </td>
+                                <td>
+                                </td>
+               
+                            </tr>
+                            subtotal += item.FeeRate;
+                            foreach (var term in ii.StudentFeeTerms.Where(x => x.DetailId == item.Id))
+                            {
+                                <tr>
+                                    <td style="padding-left: 30px">@term.FeeTerm.Code
+                                    </td>
+                                    <td style="padding-left: 30px">@term.FeeTerm.Description <span style="float: right; margin-right: 30px">@term.LocalRate %</span>
+                                    </td>
+                                    <td>@Enum.GetName(typeof (FeeTermType), term.FeeTerm.Type)
+                                    </td>
+                                    <td>@term.LocalAmount
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                subtotal += term.LocalAmount;
+
+                            }
+
+                        }
+
+                        <tr style="font-weight: bold" align="center">
+                            <td colspan="3" align="center">
+                                Sub Total 
+                            </td>
+                            <td>@subtotal
+                            </td>  <td></td>
+                        </tr>
+
+                        total = subtotal;
+
+                        foreach (var term in ii.StudentFeeTerms.Where(x => x.DetailId == 0))
+                        {
+                            <tr align="center">
+                                <td style="padding-left: 30px">@term.FeeTerm.Code
+                                </td >
+                                <td style="padding-left: 30px">@term.FeeTerm.Description <span style="float: right; margin-right: 30px">@term.LocalRate %</span>
+                                </td>
+                                <td>@Enum.GetName(typeof (FeeTermType), term.FeeTerm.Type)
+                                </td>
+                                <td>@term.LocalAmount
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            total += term.LocalAmount;
+
+                        }
+                        gtotal += total;
+                        <tr style="font-weight: bold">
+                            <td colspan="3" align="center">
+                                Total 
+                            </td>
+                            <td>
+                                @total
+                    
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+        }
+        <tr style="font-weight: bold">
+                <td colspan="3" align="center">
+                    Grand Total 
+                </td>
+                <td>
+                    @gtotal
+                    
+                </td>  <td></td>
+            </tr>
+    </table>
+</div>

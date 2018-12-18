@@ -1,0 +1,223 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Entry.CashBankVoucherPrintViewModel
+@{
+    ViewBag.Title = "CashBankVoucherPrint";
+}
+<div class="print">
+    <div>
+        <a href="Javascript:void(0)" id="print">
+            <img src="../../Content/img/print.png" style="opacity: 0.8" />
+        </a>
+        <hr />
+        <a href="@Url.Action("PdfCashBankVoucher", new { id = Model.CashBankMaster.Id })" target="_blank" >
+            <img src="../../Content/img/pdf.png" style="opacity: 0.8" />
+        </a>
+        <hr />
+        <a href="@Url.Action("ExcelCashBankVoucher", new { id = Model.CashBankMaster.Id })" target="_blank" >
+            <img src="../../Content/img/excel.png" style="opacity: 0.8" />
+        </a>
+    </div>
+</div>
+<div id="report">
+    <link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="print" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="screen" />
+    <div class="ReportHeader">
+        <table width="100%">
+            <tr align="center" style="font-size: 12px;">
+                <td>
+                    <b style="font-size: 16px">@Model.ReportHeader.CompanyName</b><br />
+                    @Model.ReportHeader.CompanyAddress<br />
+                    Tel.: @Model.ReportHeader.Phone
+                    <br />
+                    <b style="font-size: 14px">@Model.ReportHeader.ReportTitle</b>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <div style="float: left">
+                <p style="float: left">
+                    Cash Bank : <b>@Model.CashBankMaster.Ledger.AccountName</b>
+                </p>
+                <div style="clear: both">
+                </div>
+                @if (!string.IsNullOrEmpty(Model.CashBankMaster.ChequeNo))
+                {
+                    <p style="float: left">
+                        Cheque No :
+                        @Model.CashBankMaster.ChequeNo</p>
+                    <div style="clear: both">
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.CashBankMaster.ChequeNo))
+                {
+                    <p style="float: left">
+                        Date(BS) : @* @Convert.ToDateTime(Model.CashBankMaster.ChequeDate).ToString("MM/dd/yyyy") A.D. #*@
+                        @if (Model.CashBankMaster.ChequeDate != null)
+                        {
+                            <text>
+                            @Model.CashBankMaster.ChequeMiti Date : @Convert.ToDateTime(Model.CashBankMaster.ChequeDate).ToString("MM/dd/yyyy")</text>
+                        }
+                    </p>
+                    <div style="clear: both">
+                    </div>
+                }
+            </div>
+            <div style="float: right">
+                <p style="float: left">
+                    Voucher No.: @Model.CashBankMaster.VoucherNo
+                </p>
+                <div style="clear: both">
+                </div>
+                <p style="float: left;">
+                    @*  @Model.CashBankMaster.VoucherDate.ToString("MM/dd/yyyy") A.D. #*@ <span>Date(BS)
+                        :</span>@Model.CashBankMaster.VoucherMiti
+                </p>
+                <div style="clear: both">
+                </div>
+                <p style="float: left">
+                    Date :
+                    @Model.CashBankMaster.VoucherDate.ToString("MM/dd/yyyy")</p>
+            </div>
+            <div style="clear: both">
+            </div>
+            <table width="100%" class="listpopup">
+                <thead>
+                    <tr>
+                        <th class="" style="width: 1%;">
+                            SNo
+                        </th>
+                        <th width="50%">
+                            General Ledger
+                        </th>
+                        <th>
+                            Sub Ledger
+                        </th>
+                        <th style="width: 15%;">
+                            Rec Amount
+                        </th>
+                        <th style="width: 15%;">
+                            Pay Amount
+                        </th>
+                    </tr>
+                </thead>
+                @{
+                    var i = 1;
+                }
+                @foreach (var item in Model.CashBankMaster.CashBankDetails)
+                {
+                    <tr>
+                        <td class="sno">
+                            @i
+                        </td>
+                        <td style="text-align: left">
+                            @if (item.Ledger != null)
+                            {
+                                @item.Ledger.AccountName
+                            }
+                            @if (!string.IsNullOrEmpty(item.Narration))
+                            {
+                                <p style="margin-left: 10px">
+                                    Narr.: @item.Narration</p>
+                            }
+                        </td>
+                        <td>
+                            @if (item.SlCode != null)
+                            {
+                                @UtilityService.GetSubLedgerNameById(item.SlCode)
+                            }
+                        </td>
+                        <td class="number">
+                            @if (item.AmountType == 1)
+                            {
+                                @item.Amount
+                            }
+                        </td>
+                        <td class="number">
+                            @if (item.AmountType == 2)
+                            {
+                                @item.Amount
+                            }
+                        </td>
+                    </tr>
+                            i++;
+                }
+                <tr>
+                    <th colspan="3" class="number">
+                        TOTAL AMOUNT
+                    </th>
+                    @{
+                        var rec = @Model.CashBankMaster.CashBankDetails.Where(x => x.AmountType == 1).Sum(x => x.Amount);
+                        var pay = @Model.CashBankMaster.CashBankDetails.Where(x => x.AmountType == 2).Sum(x => x.Amount);
+                    }
+                    <th class="number">
+                        @rec
+                    </th>
+                    <th class="number">
+                        @pay
+                    </th>
+                </tr>
+            </table>
+            <div style="float: left">
+                <b>
+                @if (rec > pay)
+                {
+                
+                    <text> In Words: @NumberToEnglish.changeCurrencyToWords((rec - pay).ToString())
+                    </text>  
+           
+           
+                }@if (rec < pay)
+                 {
+                     <text> In Words: @NumberToEnglish.changeCurrencyToWords((pay - rec).ToString())
+                     </text>  
+                 }</b>
+            </div>
+            <div style="clear: both">
+            </div>
+            <div>
+                <p style="float: left;">
+                    Remarks : @Model.CashBankMaster.Remarks</p>
+                <br />
+                <br />
+                <div style="width: 100%; text-align: center;">
+                    <table width="100%">
+                        <tr>
+                            <td style="float: left;">
+                                <div>
+                                    @if (Model.CashBankMaster.CreatedBy != null)
+                                    {
+                                        @Model.CashBankMaster.CreatedBy.Username
+                               
+                                    }
+                                    <br />
+                                    <span style="border-top: 1px solid;">Prepared By </span>
+                                    <br />
+                                    <span>@Model.CashBankMaster.CreatedDate</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <br />
+                                    <span style="border-top: 1px solid;">Checked By </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <br />
+                                    <span style="border-top: 1px solid;">Received By </span>
+                                </div>
+                            </td>
+                            <td style="text-align: right">
+                                <div>
+                                    <br />
+                                    <span style="border-top: 1px solid;">Authorized By </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

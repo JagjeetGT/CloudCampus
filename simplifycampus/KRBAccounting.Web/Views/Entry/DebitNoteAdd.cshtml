@@ -1,0 +1,239 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.DebitNoteAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@{
+   // var date = Model.Date.ToString("MM/dd/yyyy");
+}
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("DebitNoteAdd", "Entry", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "debitnote-form" }))
+{@Html.HiddenFor(x=>x.DebitNoteMaster.Id)
+    <div id="MsgError">
+    </div>
+    <div style="min-width: 740px; max-width: 795px; height: 450px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Debit Note No.</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.DebitNoteMaster.DocId)
+                        @Html.TextBoxFor(x => x.DebitNoteMaster.Number, new { @class = "modaldoclink input-120  input", IsDetail = "True", module = "DN", valueId = "DebitNoteMaster_DocId", id = "debitno", entermsg = "Press F1 for choosing existing cash/bank list." })
+                        @Html.ValidationMessageFor(m => m.DebitNoteMaster.Number)<span class="loading DebitNoteMaster_Number">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                    </span></span><span class="stack" style="padding: 0 0 0 175px">
+                        <label class="label-90">
+                            Date</label>
+                        <span class="field">
+                            
+                            @Html.TextBoxFor(m => m.Date)
+                            @Html.ValidationMessageFor(m => m.Date)
+                            
+                        </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Party Name</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.DebitNoteMaster.GlCode)
+                        @Html.TextBoxFor(m => m.PartyName, new { @class = "input-245 modallink input", href = "/Master/GetLedgerExceptCategoryOther", title = "Party Ledgers", entermsg = "Press F1 for existing Party List.", valueId = "DebitNoteMaster_GlCode" })
+                        @Html.ValidationMessageFor(m => m.DebitNoteMaster.GlCode)
+                    </span></span>
+                <div style="padding: 0 0 0 408px">
+                    <label class="label-90">
+                        Current Balance</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.CurrentBalance, new { @class = "input-120 input", disabled = "disabled" })
+                    </span>
+                </div>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Agent Name</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.DebitNoteMaster.AgentCode)
+                        @Html.TextBoxFor(m => m.AgentName, new { @class = "input-245 input", entermsg = "Press F1 for existing Agents List.", disabled = "disabled" })
+                    </span></span>
+            </div>
+            <div class="lag">
+                <label class="label-90" style="margin-left: 50px;">
+                    Sub Ledger</label>
+                <span class="field">
+                    @Html.HiddenFor(x => x.DebitNoteMaster.SlCode)
+                    @Html.TextBoxFor(m => m.SubLedger, new { @class = "input-245 input", entermsg = "Press F1 for existing Sub Ledger List.", disabled = "disabled" })
+                </span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Ref. Bill No.</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.DebitNoteMaster.RefBillNo, new { @class = "input-90 input", entermsg = "Select Currency." })
+                    </span></span><span class="stack">
+                        <label class="label-37">
+                            Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.RefDate, new { @class = "input-90 input", entermsg = "Select Currency." })
+                        </span></span> 
+                        <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Currency</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.DebitNoteMaster.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                            <input type="text" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" valueId="DebitNoteMaster_CurrencyId" 
+                             id="CurrencyId" entermsg = "Press F1 for choosing existing cash/bank list." />
+                        </span></span><span class="stack">
+                            <label class="label-37">
+                                Rate</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.DebitNoteMaster.CurRate, new { @class = "input-45 input", entermsg = "Enter Rate." })
+                                @Html.ValidationMessageFor(m => m.DebitNoteMaster.CurRate)
+                            </span></span>
+                </div>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" id="table-cash-bank-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="260px">
+                        General Ledger
+                    </th>
+                    @if (Model.EntryControl != null && Model.EntryControl.SubLedger)
+                    {
+                        <th width="80px">
+                            Sub Ledger
+                        </th>
+                    }
+                    <th width="80px">
+                        Amount
+                    </th>
+                    <th width="260px">
+                        Narration
+                    </th>
+                </tr>
+                @{
+                    var viewModel = new KRBAccounting.Web.ViewModels.Entry.DebitNoteDetailEntryViewModel();
+                    viewModel.EntryControl = Model.EntryControl;
+                    
+                }
+                @Html.Partial("_PartialDebitNoteDetailEntry", viewModel)
+            </table>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-53">
+                    Gl Code</label>
+                @Html.TextBoxFor(x => x.GlCode, new { @class = "input-160 input", disabled = "disabled" })
+            </span><span class="stack">
+                <label class="label-53">
+                    Curr Bal</label>
+                @Html.TextBoxFor(x => x.GlDetailCurrBal, new { @class = "input-160 input", disabled = "disabled" })
+            </span>
+        </div>
+        <span class="clearfix"></span>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-40">
+                        Total Amt</label>
+                    @Html.TextBoxFor(x => x.TotalAmt, new { @class = "input-160 input", disabled = "disabled" })
+                </span><span class="stack">
+                           <label class="label-40">
+                               Total Amt in Rs</label>
+                           @Html.TextBoxFor(x => x.TotalAmtRs, new { @class = "input-160 input", disabled = "disabled" })
+                       </span>
+            </div>
+        </fieldset>
+         @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+         {
+             <div class="lag">
+                 <label class="label-90">
+                     Remarks</label>
+                 <span class="field">
+                     @Html.TextBoxFor(m => m.DebitNoteMaster.Remarks, new {@class = "input-370 input"})
+                 </span>
+             </div>
+         }
+    </div>
+                    @*if (Model.SystemControl.UDF == "1")
+                    {
+                        if (Model.UdfEntries.LongCount() != 0)
+                        {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry" style="display: none">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+                        }
+                    }*@
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var dateType = @Model.SystemControl.DateType.ToString();
+          if(dateType=="1") {
+            $("#Date").mask("99/99/9999");
+            $("#Date").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#Date").mask("9999/99/99");
+            $("#Date").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+        
+        if(dateType=="1") {
+            $("#RefDate").mask("99/99/9999");
+              $("#RefDate").live("blur", function() {
+                 var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                      });
+            }
+    else {
+            $("#RefDate").mask("9999/99/99");
+               $("#RefDate").live("blur", function() {
+                    var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                         });
+        }
+
+       // $("#DebitNoteMaster_Miti").val(nepDate);
+     
+        $(".text_ledger").attr("id", "detail_0");
+        $(".text_ledger").attr("valueId", $(".hdn_ledger_Id").attr("id"));
+         $(".text_ledger").closest("tr").attr("id","tr_0");
+        
+        $(".text_subledger").attr("id", "sub_0");
+        $(".text_subledger").attr("valueId", $(".hdn_subledger_Id").attr("id"));
+        
+        $(".text_ledger").getDetailCurrentBalance();
+    });
+</script>

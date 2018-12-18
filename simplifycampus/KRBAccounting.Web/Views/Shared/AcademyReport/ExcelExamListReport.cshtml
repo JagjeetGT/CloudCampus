@@ -1,0 +1,71 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportExaminationListReportViewModel
+
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 8px;">
+
+
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                <th>
+                    S.no.
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    End Date
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                   Memo
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.ExamList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>
+                    @item.Code
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>@item.StartDate.ToShortDateString()
+                </td>
+                <td>@item.EndDate.ToShortDateString()
+                </td>
+                <td>
+                  @Enum.GetName(typeof(ExamType), item.Type)
+                </td>
+                <td>@item.Memo
+                </td>
+
+            </tr>
+            i++;
+        }
+    </table>
+</div>

@@ -1,0 +1,169 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportMarkSheetReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var i in Model.ExamMarksGrouping)
+{
+    <div style="border: 1px solid; min-height: 900px;">
+        <div style="margin: 25px;">
+            <div style="text-align: center">
+                @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                <div class="clearfix">
+                </div>
+                <div>
+                    <p style="font-weight: bold; text-decoration: underline">
+                        MARKSHEET FOR THE @i.FirstOrDefault().Exam.Description.ToUpper() @Model.AcademicYear</p>
+                    <p align="left" style="font-weight: bold;">
+                        Class : @i.FirstOrDefault().Class.Description</p>
+                    <p align="left" style="font-weight: bold; float: left">
+                        Student Name : @i.FirstOrDefault().Studentinfo.StuDesc
+                    </p>
+                    @{
+    var student = UtilityService.GetStudentDetial(i.FirstOrDefault().StudentId, i.FirstOrDefault().AcademicYearId);
+                    }
+                    <p align="right" style="font-weight: bold;">
+                        Roll No. : @student.RollNo
+                    </p>
+                </div>
+            </div>
+               <table border="0.5" style="font-size: 8px;">
+                <thead>
+                     <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                        <th colspan="3">
+                            Theory
+                        </th>
+                        <th colspan="3">
+                            Practical
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            Code
+                        </th>
+                        <th width="40%">
+                            Subject Name
+                        </th>
+                        <th>
+                            Full Marks
+                        </th>
+                        <th>
+                            Pass Marks
+                        </th>
+                        <th>
+                            Obt. Marks
+                        </th>
+                        <th>
+                            Full Marks
+                        </th>
+                        <th>
+                            Pass Marks
+                        </th>
+                        <th>
+                            Obt. Marks
+                        </th>
+                        <th>
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.ExamMarksEntries.Where(x => x.ExamId == i.FirstOrDefault().ExamId && x.ClassId == i.FirstOrDefault().ClassId))
+                {
+                    var data = UtilityService.GetExamMarkSetup(item.ExamId, item.ClassId, item.SubjectId);
+                   
+                    <tr>
+                        <td>
+                            @if (item.Subject != null)
+                            {
+                                @item.Subject.Code
+                            }
+                        </td>
+                        <td>
+                            @if (item.Subject != null)
+                            {
+                                @item.Subject.Description
+                            }
+                        </td>
+                        <td>
+                            @data.TheoryFullMark
+                        </td>
+                        <td>
+                            @data.TheoryPassMark
+                        </td>
+                        <td>@item.TheoryObtainedMarks
+                        </td>
+                        <td>
+                            @data.PracticalFullMark
+                        </td>
+                        <td>
+                            @data.PracticalPassMark
+                        </td>
+                        <td>@item.PracticalStatus
+                        </td>
+                        <td>
+                            @item.Total
+                        </td>
+                    </tr>
+                }
+            </table>
+            <br/>
+            <div>
+                <table>
+                    <tr>
+                        <th>
+                            Full Marks
+                        </th>
+                        <th>
+                            Obtained Marks
+                        </th>
+                        <th>
+                            Percentage
+                        </th>
+                        <th>
+                            Result
+                        </th>
+                        <th>
+                            Division
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            @i.FirstOrDefault().TotalFullMarks
+                        </td>
+                        <td>@i.FirstOrDefault().TotalObtainedMarks
+                        </td>
+                        <td>
+                            @i.FirstOrDefault().Percentage
+                        </td>
+                        <td>
+                            @i.FirstOrDefault().Result
+                        </td>
+                        <td>
+                            @{
+                                var scDivision = i.FirstOrDefault().Division;
+                            }
+                            @if (scDivision != null)
+                            {
+                                <text>
+                                    @scDivision.Description
+                                </text>
+                        
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div>@i.FirstOrDefault().Remarks</div>
+        </div>
+    </div>
+<br/>
+    <hr />
+}

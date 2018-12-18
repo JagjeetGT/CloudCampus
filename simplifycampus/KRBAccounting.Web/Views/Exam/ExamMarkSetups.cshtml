@@ -1,0 +1,306 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Exam Mark Setup";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Exam Mark Setup </h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                             <li><a href="#" class="isw-plus addScExam"></a></li>
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="exam-list">
+                    @Html.Action("ExamMarkSetupList")
+                </div>
+                <div class="clearfix">
+                </div>
+                @*<hr/>
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Exam Mark Setup List</h1>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Detail-list">
+                </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalExam" style="display: none;" title="Exam Mark Setup(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("tr._detail").live("click", function () {
+        var classid = $(this).attr("data-classid");
+        var examId = $(this).attr("data-examid");
+        $("#Detail-list").load("/Exam/ExamMarkSetupDetail?classId=" + classid+"&&examId="+examId);
+    });
+
+
+
+    $("#modalExam").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                CheckRow();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    $(".TheoryPassMark").live('keyup', function (e) {
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        var elementt = $(this).closest("tr");
+        var themark = elementt.find(".TheoryPassMark").val();
+        var theoryFullmark = elementt.find(".TheoryFullMark").val();
+
+        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+            if (parseFloat(theoryFullmark) < parseFloat(themark)) {
+                elementt.find(".TheoryPassMark").val(0);
+                return false;
+            } else {
+                return true;
+            }
+
+        } else
+            if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+                return true;
+            } else {
+                return false;
+            }
+
+        });
+        $(".PracticalPassMark").live('keyup', function (e) {
+            var ev = e || event;
+            var keycode = ev.keyCode;
+            var elementt = $(this).closest("tr");
+            var themark = elementt.find(".PracticalPassMark").val();
+            var theoryFullmark = elementt.find(".PracticalFullMark").val();
+
+            if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+                if (parseFloat(theoryFullmark) < parseFloat(themark)) {
+                    elementt.find(".PracticalPassMark").val(0);
+                    return false;
+                } else {
+                    return true;
+                }
+
+            } else
+                if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+        });
+    function  CheckRow() {
+        var count = document.querySelectorAll(".text_subject").length;
+        if (count > 0) {
+            $("#form-id").submit();
+        }
+   }
+    
+ 
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalExam .block').html(data);
+                $(this).addClass("done");
+                $("#modalExam").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScExam').live('click', function () {
+        Begin();
+        var url = '@Url.Action("ExamMarkSetupAdd", "Exam")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editExam').live('click', function () {
+        Begin();
+        var classid = $(this).attr("data-classid");
+        var examid = $(this).attr("data-examid");
+
+        var url = '@Url.Action("ExamMarkSetupEdit", "Exam")?classId=' + classid + '&&examId=' + examid;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+        $("#exam-list").load("/Exam/ExamMarkSetupList");
+        $('#modalExam .block').load("/Exam/ExamMarkSetupAdd");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#exam-list").load("/Exam/ExamMarkSetupList");
+        $('#modalExam').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+
+    $("#class-id").live("blur", function () {
+
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+        var examid = $("#ExamMarkSetup_ExamId").val();
+
+
+
+        if (id != 0 && id != '') {
+            url = '@Url.Action("ExamMarkSetupSubjectByClassId")?classId=' + id + '&&examId=' + examid;
+            $.ajax({
+                url: url,
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                    if (data != '') {
+                        $("#table-examroutine-detail tr.detail-entry").remove();
+                        $("#table-examroutine-detail").append(data);
+                        $("#table-examroutine-detail").append();
+                        var ledgerElement = document.querySelectorAll(".text_subject");
+                        $.each(ledgerElement, function (index) {
+                            var element = $(this).closest("tr");
+                            element.attr("id", "tr_" + index);
+                            element.find(".sno").html(index + 1);
+                            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                            element.find(".text_subject").attr({
+                                "valueId": Subject_valueid,
+                                "id": "subject_" + index
+                            });
+
+                            var ResultSystem_valueid = element.find(".hdn_ResultSystem_Id").attr("id");
+
+                            element.find(".text_ResultSystem").attr({
+                                "valueId": ResultSystem_valueid,
+                                "id": "ResultSystem_" + index
+                            });
+                            var EvaluateForType_valueid = element.find(".hdn_EvaluateForType_Id").attr("id");
+
+                            element.find(".text_EvaluateForType").attr({
+                                "valueId": EvaluateForType_valueid,
+                                "id": "EvaluateForType_" + index
+                            });
+
+                        });
+
+                        $('.text_subject').first().focus();
+                    
+                    }
+                    else {
+                        alert("Subject is Not Exists !");
+                    }
+
+                }
+            });
+        }
+    });
+
+    $(".TheoryFullMark , .PracticalFullMark").live("blur", function () {
+        var elementt = $(this).closest("tr");
+        var themark = elementt.find(".TheoryFullMark").val();
+        var pracmark = elementt.find(".PracticalFullMark").val();
+        var total = parseFloat(themark) + parseFloat(pracmark);
+        elementt.find(".TotalMark").val(total);
+        CalcTheoryMark();
+        CalcPracticalMark();
+    });
+
+    function CalcTheoryMark() {
+        var total = parseFloat(0);
+        $.each($(".TheoryFullMark"), function () {
+            var mark = $(this).val();
+            total += parseFloat(mark);
+        });
+        $("#TotalTheoryMark").val(total);
+    }
+    function CalcPracticalMark() {
+        var total = parseFloat(0);
+        $.each($(".PracticalFullMark"), function () {
+            var mark = $(this).val();
+            total += parseFloat(mark);
+        });
+        $("#TotalPracticalMark").val(total);
+    }
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+
+            if (closestTr.find(".hdn_Subject_Id").val() != 0) {
+                closestTr.next().find('.text_subject').focus();
+                $('input[type="text"]').focus(function () {
+                    var closestTr = $(this).closest("tr");
+                    if ($(this).attr("entermsg")) {
+                        $(".enter-msg").html($(this).attr("entermsg"));
+                    } else {
+                        $(".enter-msg").html("");
+                    }
+                });
+                return true;
+            }
+            closestTr.find(".text_subject").addClass("error");
+            closestTr.find(".text_subject").focus();
+            return false;
+        }
+        return true;
+    });
+</script>

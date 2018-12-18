@@ -1,0 +1,253 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.LedgerListViewModel
+@{
+    ViewBag.Title = "Ledger List";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Ledger List</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfLedgerListReport", "ReportLedger")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelLedgerListReport", "ReportLedger")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("_PartialLedgerListReportForm", Model)
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+          });
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Ledger List',
+            buttons: {
+
+                "Ok": function () {
+                    var isChecked = $('#AllLedger').attr('checked') ? true : false;
+                    var groupBy = $('#GroupBy').val();
+                    var reportType = $('#ReportType').val();
+                    var inclideOpening = $('#InclideOpening').attr('checked') ? true : false;
+
+                    if (isChecked) {
+                        var elements = document.getElementsByName("ledgers");
+                        var len = elements.length;
+                        var arr = [];
+                        for (var i = 0; i < len; i++) {
+                            arr.push(elements[i].value);
+                        }
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/ReportLedger/LedgerListReport/?ledgersList=" + arr + "&&groupby=" + groupBy + "&&reportType=" + reportType + "&&inclideOpening=" + inclideOpening,
+                            success: function (data) {
+                                $("#report").html(data);
+                                $('#modalReportForm').modal('hide');
+                            }
+                        });
+                    } else {
+                        if (modalshow == true) {
+                            modalshow = false;
+                            selectedRows.removeAll();
+                            var link = "/ReportLedger/GetLedgerCategoryOther";
+                            $.ajax({
+                                url: link,
+                                dataType: "json",
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    var tableData = CreateTableViewList(data, "listpopup", true);
+                                    $('#modalbox-report .msg-body').html(tableData);
+                                   
+                                    $("#modalbox-report").dialog({
+                                        modal: true,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function () {
+                                                modalshow = true;
+                                                DisplayLedgerList();  ///////////////////////////////////////////
+                                                $(this).dialog("close");
+                                            },
+                                            Cancel: function () {
+                                                modalshow = true;
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });
+                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+                                    $('.selectable-table').tableSelect({
+                                        onClick: function (row) {
+                                            
+                                        },
+                                        onDoubleClick: function (rows) {
+                                            $.each(rows, function (i, row) {
+                                                var name = $(row).children('td').eq(0).attr("ledger-id");
+                                                if ($(row).hasClass('disabled')) {
+                                                    $(row).removeClass('disabled');
+                                                    selectedRows.remove(name);
+                                                } else {
+                                                    $(row).addClass('disabled');
+                                                    selectedRows.add(name);
+                                                }
+                                            });
+                                            updateList();
+                                        },
+                                        onChange: function (row) {
+                                            
+                                        }
+                                    });
+                                }
+                            });
+                            return true;
+
+                        } else {
+                            return false;
+                        }
+                    }
+                    $(this).dialog('close');
+                                        
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+  
+
+//    function OpenModal() {
+//        $('#modalReportForm').modal({
+//            keyboard: false,
+//            backdrop: "static"
+//        }).css({
+//            width: 'auto',
+//            'margin-left': function () {
+//                return -($(this).width() / 2);
+//            }
+//        });
+    //    }
+
+
+    $("#generate_report_btn").live('click', function (e) {
+        var isChecked = $('#AllLedger').attr('checked') ? true : false;
+        var groupBy = $('#GroupBy').val();
+        var reportType = $('#ReportType').val();
+        var inclideOpening = $('#InclideOpening').attr('checked') ? true : false;
+        
+        if (isChecked) {
+            var elements = document.getElementsByName("ledgers");
+            var len = elements.length;
+            var arr = [];
+            for (var i = 0; i < len; i++) {
+                arr.push(elements[i].value);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/ReportLedger/LedgerListReport/?ledgersList=" + arr + "&&groupby=" + groupBy + "&&reportType=" + reportType + "&&inclideOpening=" + inclideOpening,
+                success: function (data) {
+                    $("#report").html(data);
+                    $('#modalReportForm').modal('hide');
+                }
+            });
+        } else {
+            if (modalshow == true) {
+                modalshow = false;
+                var link = "/ReportLedger/GetLedgerCategoryOther";
+                $.ajax({
+                    url: link,
+                    dataType: "json",
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        var tableData = CreateTableViewList(data, "listpopup", true);
+                        $('#modalbox-report .msg-body').html(tableData);
+                        $.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                        //alert($(".jquery-msg-content").html());
+                        $(".jquery-msg-content .msg-footer #display-report").attr('onclick', 'DisplayCustomerLedger();');
+                        $('#modalbox-report .msg-body').html("");
+                        $('#modalbox-report .msg-footer .selectedRows').html("");
+                        $('.selectable-table').tableSelect({
+                            onClick: function (row) {
+                                //alert(row);
+                            },
+                            onDoubleClick: function (rows) {
+                                $.each(rows, function (i, row) {
+                                    var name = $(row).children('td').eq(0).attr("ledger-id");
+                                    if ($(row).hasClass('disabled')) {
+                                        $(row).removeClass('disabled');
+                                        selectedRows.remove(name);
+                                    } else {
+                                        $(row).addClass('disabled');
+                                        selectedRows.add(name);
+                                    }
+                                });
+                                updateList();
+                            },
+                            onChange: function (row) {
+                                //alert(row);
+                            }
+                        });
+                    }
+                });
+                return true;
+
+            } else {
+                return false;
+            }
+        }
+
+    });
+
+    function updateList() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="ledgers" value="' + this + '" />');
+        });
+    };
+
+    var selectedRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.removeAll = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+</script>

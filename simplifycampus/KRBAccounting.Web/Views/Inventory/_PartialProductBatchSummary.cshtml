@@ -1,0 +1,147 @@
+﻿@model KRBAccounting.Web.ViewModels.Inventory.ProductBatchSummaryFormViewModel
+@*<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>*@
+@{
+    var date = "";
+    var placeholder = "";
+    if (Model.SystemControl.DateType == 1)
+    {
+        date = "Date";
+        placeholder = "MM/DD/YYYY";
+    }
+    else
+    {
+        date = "Miti";
+        placeholder = "YYYY/MM/DD";
+    }
+}
+@using (Ajax.BeginForm("ProductBatchSummary", "Inventory", new { controller = "Inventory" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "report", OnComplete = "$('#modalReportForm').modal('hide'); $.unblockUI();" }, new { @class = "form-horizontal", id = "report-form" }))
+{
+    <div>
+        <div class="lag" style="width: 180px">
+            <label class="label-25">
+                @Html.CheckBoxFor(x => x.Mfg)
+            </label>
+            <span class="lag">
+                <label class="label-60">
+                    Manufacture
+                </label>
+            </span><span class="clearfix"></span><span class="lag">
+                <label class="label-60">
+                    Start @date:
+                </label>
+                @Html.TextBoxFor(x => x.MfgStartDate, new { @class = "input-90 date", @disabled = "disabled", placeholder=placeholder })
+            </span><span class="clearfix"></span><span class="lag">
+                <label class="label-60">
+                    End @date:
+                </label>
+                @Html.TextBoxFor(x => x.MfgEndDate, new { @class = "input-90 date", @disabled = "disabled", placeholder = placeholder })
+            </span>
+        </div>
+        <div style="float: left; width: 182px">
+            <label class="label-25">
+                @Html.CheckBoxFor(x => x.Exp)
+            </label>
+            <span class="lag">
+                <label class="label-60">
+                    Expiry
+                </label>
+            </span><span class="clearfix"></span><span class="lag">
+                <label class="label-60">
+                    Start @date:
+                </label>
+                @Html.TextBoxFor(x => x.ExpStartDate, new { @class = "input-90 date", @disabled = "disabled", placeholder = placeholder })
+            </span><span class="clearfix"></span><span class="lag">
+                <label class="label-60">
+                    End @date:
+                </label>
+                @Html.TextBoxFor(x => x.ExpEndDate, new { @class = "input-90 date", @disabled = "disabled", placeholder = placeholder })
+            </span>
+        </div>
+        <div style="float: right">
+            <label class="label-25">
+                @Html.CheckBoxFor(x => x.AllProducts)
+            </label>
+            <span class="lag">
+                <label class="label-100">
+                    All Products
+                </label>
+            </span><span class="clearfix"></span>
+            <label class="label-25">
+                @Html.CheckBoxFor(x => x.Expgoods)
+            </label>
+            <span class="lag">
+                <label class="label-100">
+                    Expired Goods
+                </label>
+            </span><span class="clearfix"></span>
+            <label class="label-100">
+                Remaining Days
+            </label>
+            <span class="lag">
+                @Html.TextBoxFor(x => x.RemainingDays, new { @class = "input-90" })
+            </span><span class="clearfix"></span><span class="lag"></span><span class="clearfix">
+            </span>
+            <label class="label-100">
+                Branch
+            </label>
+            <span class="lag">
+                @Html.DropDownListFor(x => x.BranchId, Model.BranchList, "All", new { @class = "input-90" })
+            </span><span class="clearfix"></span><span class="lag"></span>
+        </div>
+    </div>
+    <div class="selectedRows">
+    </div>
+}
+<script type="text/javascript" language="javascript">
+
+//    $(document).ready(function () {
+
+//        $("#MfgStartDate").val(null);
+//        $("#MfgEndDate").val(null);
+//        $("#ExpStartDate").val(null);
+//        $("#ExpEndDate").val(null);
+
+
+
+//    });
+
+    //$(".date").mask("99/99/9999");
+
+
+    $("#Mfg").live("click", function () {
+        if (!$(this).is(":checked")) {
+
+            $("#MfgStartDate").attr("disabled", "disabled");
+            $("#MfgEndDate").attr("disabled", "disabled");
+        } else {
+            $("#MfgStartDate").removeAttr("disabled");
+            $("#MfgEndDate").removeAttr("disabled", "disabled");
+        }
+    });
+    $("#Exp").live("click", function () {
+        if (!$(this).is(":checked")) {
+
+            $("#ExpStartDate").attr("disabled", "disabled");
+            $("#ExpEndDate").attr("disabled", "disabled");
+        } else {
+            $("#ExpStartDate").removeAttr("disabled");
+            $("#ExpEndDate").removeAttr("disabled", "disabled");
+        }
+
+
+
+    });
+
+    $(document).ready(function () {
+    var dateType = @Model.SystemControl.DateType.ToString();
+        if (dateType == "1") {
+            $(".date").mask("99/99/9999");
+        } else {
+        $(".date").mask("9999/99/99");
+       
+        }
+    });
+
+
+</script>

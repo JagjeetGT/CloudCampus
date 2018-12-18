@@ -1,0 +1,131 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.PrintMonthlyBillReportViewModel
+@{
+    decimal Total = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+    decimal totalOpening = 0;
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/PrintImg/BillFinal11.jpg/";
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var i in Model.BillStudents)
+{
+    Total = 0;
+    <div style="float: left;">
+        <img src="../../Content/PrintImg/Billprint.jpg" width="320px" />
+        <div class="ReportHeader" style="text-align: center">
+            <div style="position: relative; top: -355px; font-size: 10px; margin-left: 0px; margin-right: 9px;">
+                <div>
+                    <p align="left" style="font-weight: bold; float: left; margin-left: 52px;">
+                        @{
+    var Name = @UtilityService.FirstLetterToUpper(i.ScStudentinfo.StuDesc);
+                        }
+                        @Name</p>
+                    <p align="right" style="font-weight: bold;">
+                        @i.BillNo</p>
+                    <div class="clearfix">
+                    </div>
+                    <p align="left" style="font-weight: bold; float: left; margin-left: 52px; width: 120px">
+                        @i.Class.Description
+                    </p>
+                    <p align="left" style="font-weight: bold; float: left">
+                        A
+                    </p>
+                    <p align="right" style="font-weight: bold;">
+                        123</p>
+                    <div class="clearfix">
+                    </div>
+                    <p align="left" style="font-weight: bold; float: left; margin-left: 75px">
+                        @NepaliDateService.LongMonth(i.MonthMiti) @i.YearMiti</p>
+                    <p align="right" style="font-weight: bold;">
+                        @NepaliDateService.NepaliDate(DateTime.Now)
+                    </p>
+                </div>
+                <div style="text-align: left; min-height: 173px; margin-top: 25px; margin-left: 15px">
+                    <table cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th width="15%">
+                                </th>
+                                <th width="60%">
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+    var sno = 1;
+                            }
+                            @foreach (var c in i.MonthlyBills.Where(x => x.FeeAmount != 0))
+                            {
+               
+                                <tr>
+                                    <td>
+                                        @sno
+                                    </td>
+                                    <td>
+                                        @c.FeeItem.Description
+                                    </td>
+                                    <td>
+                                        @c.FeeAmount
+                                    </td>
+                                </tr>
+                                Total += c.FeeAmount;
+                                sno++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <table style="text-align: left">
+                    <tr style="font-weight: bold; line-height: 15px;">
+                        <td colspan="2" width="85%">
+                        </td>
+                        <td>
+                            @Total
+                        </td>
+                    </tr>
+                    <tr style="font-weight: bold; line-height: 15px;">
+                        <td colspan="2" align="center">
+                        </td>
+                        <td>
+                            @i.MonthlyBills.Sum(x => x.EducationTaxAmount)
+                        </td>
+                    </tr>
+                    <tr style="font-weight: bold">
+                        <td colspan="2" align="center">
+                            Grand Total
+                        </td>
+                        <td>
+                            @{
+                            grandTotalBalance = Total + i.MonthlyBills.Sum(x => x.EducationTaxAmount);
+                            }
+                            @grandTotalBalance
+                        </td>
+                    </tr>
+                </table>
+                <div class="clearfix">
+                </div>
+                <div>
+                    @NumberToEnglish.changeCurrencyToWords(grandTotalBalance.ToString())
+                </div>
+                <div style="float: right; margin-right: 20px; position: relative; top: -15px;">
+                    @i.PreparedBy.Username
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="clearfix">
+</div>
+<style>
+    .ReportHeader p
+    {
+        margin-bottom: 0;
+    }
+</style>

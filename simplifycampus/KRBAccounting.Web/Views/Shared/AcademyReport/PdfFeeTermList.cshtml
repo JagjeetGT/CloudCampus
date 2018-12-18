@@ -1,0 +1,83 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportFeeTermListReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th width="5%">
+                    S.N.
+                </th>
+                <th width="5%">
+                    Code
+                </th>
+                <th width="25">
+                    Description
+                </th>
+                <th>
+                    GL Code
+                </th>
+                <th>
+                    Category
+                </th>
+                <th>
+                    Rounded
+                </th>
+                <th width="7%">
+                    Sign
+                </th >
+                <th width="12%">
+                    Type
+                </th>
+                <th>
+                    Rate
+                </th>
+                <th>
+                    Formula
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.FeetermList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>@item.Code
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @if (item.Ledger != null)
+                    {
+                        @item.Ledger.AccountName
+                    }
+                </td>
+                <td>@Enum.GetName(typeof(FeeTermCategory), item.Category)
+                </td>
+                <td>@Enum.GetName(typeof(FeeTermRoundedOffType), item.Rounded)
+                </td>
+                <td>@Enum.GetName(typeof(SignEnum), item.Sign)
+                </td>
+                <td>@Enum.GetName(typeof(FeeTermType), item.Type)
+                    <td>@item.Rate
+                    </td>
+                    <td>@item.Formula
+                    </td>
+            </tr>
+                    i++;
+        }
+    </table>
+</div>

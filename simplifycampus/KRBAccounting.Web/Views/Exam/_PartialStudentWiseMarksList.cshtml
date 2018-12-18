@@ -1,0 +1,121 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<List<KRBAccounting.Domain.Entities.ScExamMarksEntry>>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Exam
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Total Obt.Mrk
+                </th>
+                <th>
+                    Percentage
+                </th>
+                <th>
+                    Division
+                </th>
+                <th>
+                    Result
+                </th>
+                <th>
+                    Rank
+                </th>
+                <th>
+                    Updated Date
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>
+                        @{
+                var scExam = item.FirstOrDefault().Exam;
+                        }
+                        @if (scExam != null)
+                        {
+                            @scExam.Description
+                        }
+                    </td>
+                    <td>
+                        @{
+                        var schClass = item.FirstOrDefault().Class;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Description
+                        }
+                    </td>
+                    <td>
+                        @{
+                        var scStudentinfo = item.FirstOrDefault().Studentinfo;
+                        }
+                        @if (scStudentinfo != null)
+                        {
+                            @scStudentinfo.StuDesc
+                        }
+                    </td>
+                    <td>
+                        @item.FirstOrDefault().TotalObtainedMarks
+                    </td>
+                    <td>
+                        @item.FirstOrDefault().Percentage
+                    </td>
+                    <td>
+                        @{
+                            var scDivision = item.FirstOrDefault().Division;
+                        }
+                        @if (scDivision != null)
+                        {
+                            @scDivision.Description
+                        }
+                    </td>
+                    <td>
+                        @item.FirstOrDefault().Result
+                    </td>
+                    <td>
+                        @item.FirstOrDefault().Rank
+                    </td>
+                    <td>@item.FirstOrDefault().UpdatedDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editExam icon-edit" data-classId="@item.FirstOrDefault().ClassId" data-examId="@item.FirstOrDefault().ExamId" data-studentId="@item.FirstOrDefault().StudentId" title="Edit">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "StudentWiseMarksList", "Exam", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "exam-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>
+*@

@@ -1,0 +1,52 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.SchBuildingRoomMapping>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>Building</th>
+                <th>Room</th>
+                <th>IsActive</th>
+                <th width="5%"></th>
+            </tr></thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@if (item.Building != null)
+                        {
+                            @item.Building.Description
+                        }
+                    </td>
+                    <td>@if (item.Room != null)
+                        {
+                            @item.Room.Description
+                        }
+                    </td>
+                    <td>@if(item.IsActive)
+                        {
+                            <input type="checkbox" disabled="disabled" checked="checked"/>
+                        }
+                        else
+                        {
+                            <input type="checkbox" disabled="disabled"/>
+                        }
+                    </td>
+                    <td>@if(userRight.Edit){<a href="#" class="editSchBuildingRoomMapping icon-edit" data-id="@item.Id" title="Edit"></a>}</td>
+
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+        <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BuildingRoomMappingsList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "BuildingRoomMappings-list" }))
+    </div>
+</div>

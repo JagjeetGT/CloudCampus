@@ -1,0 +1,50 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Master.ReportStuduentCountForView
+@{}           
+          
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    S.no.
+                </th>
+                <th>
+                    Student Category
+                </th>
+        
+                <th>
+                   Count
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+          
+        }
+        @foreach (var item in Model.StudentCategories)
+        {
+           
+            <tr>
+                <td>@i
+                </td>
+                <td>
+                    @item.Description
+                </td>
+               <td>@item.Count</td>
+               
+                
+            </tr>
+            i++;
+        }
+    </table>
+</div>

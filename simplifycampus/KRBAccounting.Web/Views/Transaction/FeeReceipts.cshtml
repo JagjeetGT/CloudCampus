@@ -1,0 +1,201 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = " Fee Receipt";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="@Url.Content("/Scripts/RawPrint.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/html2canvas.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/jquery.plugin.html2canvas.js")" type="text/javascript"></script>
+<applet name="jzebra" code="jzebra.PrintApplet.class" archive="@Url.Content("/Content/jzebra/lib/jzebra.jar")" width="1px" height="1px" id="jzebra"  style="visibility: hidden" >
+    <param name="printer" value="zebra">
+</applet>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Fee Receipt</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addsalaryScale"></a></li>
+                        }
+                       
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchFeeReceipt"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Bus-list">
+                    @Html.Action("FeeReceiptList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalSalaryScale" style="display: none;" title="Fee Receipt">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalSalaryScale").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                ValidationCheck();
+               
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function ValidationCheck() {
+        var recAmount = parseFloat($("#ReceiptAmount").val());
+        if(recAmount > 0) {
+             $("#form-id").submit();
+        } else {
+            $("#ReceiptAmount").addClass("error");
+        }
+    }
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSalaryScale .block').html(data);
+                $(this).addClass("done");
+                $("#modalSalaryScale").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $(".feeprint").live("click", function() {
+        var id = $(this).attr("data");
+    $.ajax({
+            url: '@Url.Action("FeeReceiptPrint")/?id='+id,
+            datatype:"Json",
+            success: function (data) {
+                PrintObjectElement = data.printfee;
+                 var result = confirm("Are you sure you wish to Print this?");
+        if (result) {
+            if(data.PrintData) {
+                 // DonboscoFeeReceiptprint();
+               FeeReceiptprint();
+            } else {
+                DonboscoFeeReceiptHtmlprint();
+              //  FeeReceiptHtmlprint();
+            }
+        
+
+            return false;
+        }
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    });
+    $('.addsalaryScale').live('click', function () {
+        var url = '@Url.Action("FeeReceiptAdd", "Transaction")';
+        Begin();
+        getRequest(url);
+        
+        return false;
+    });
+
+    function OnComplete(data) {
+        if (data.True == "True") {
+        
+            $.blockUI();
+            $("#modalSalaryScale .block").load("/Transaction/FeeReceiptAdd");
+            $("#Bus-list").load("/Transaction/FeeReceiptList");
+            
+                    PrintObjectElement = data.Print;
+                 var result = confirm("Are you sure you wish to Print this?");
+        if (result) {
+            if(data.PrintData) {
+               
+             FeeReceiptprint();
+            } else {
+                FeeReceiptHtmlprint();
+            }
+            return false;
+        }
+            $.unblockUI();
+        } else {
+            $.unblockUI();
+        }
+        return null;
+    }
+
+    function OnCompleteEdit(data) {
+        if (data.True == "True") {
+            $.unblockUI();
+            $("#modalSalaryScale").dialog("close");
+            $("#Bus-list").load("/Transaction/FeeReceiptList");
+            
+        } else {
+            $.unblockUI();
+        }
+
+    }
+    $("#ReceiptMiti").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+            //alert(1);
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            $("#ReceiptDate").val(engDate);
+        }
+    });
+
+    $("#ReceiptDate").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+            //alert(1);
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            $("#ReceiptMiti").val(nepDate);
+        }
+    });
+    $("#student-id").live("blur", function() {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+            var student = $("#StudentId").val();
+          //  var billno = $("#MonthlyBillStudentId").val();
+            var url = "@Url.Action("GetBalanceByStudentId")?studentId=" + student;
+            $.getJSON(url, function(data) {
+                
+                $(".student-bal").val(data.Balance);
+                $("#ReceiptAmount").val(0);
+            });
+    }
+    });
+       $(".SearchFeeReceipt").live("click", function () {
+            var searchText = $(".searchText").val();
+            var url = '/StudentSearch/FeeReceiptSearch?SearchText=' + searchText;
+            $.post(url, function (data) {
+                $("#Bus-list").html(data);
+            });
+        });
+
+</script>

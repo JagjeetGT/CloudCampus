@@ -1,0 +1,502 @@
+﻿@model KRBAccounting.Web.ViewModels.Transaction.MonthlyBillGenerationViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+ <script type='text/javascript' src='/Content/themes/js/plugins.js'></script>
+@{
+    ViewBag.Title = "Monthly Bill Generation";
+}
+
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Monthly Bill Generation</h1>
+                     <ul class="buttons">
+                   
+                         <li><a href="@Url.Action("MonthlyBillGenerationAdd")"  class="isw-left_circle" title="Back to  Monthly Bill Generation">   </a></li>
+                   
+                     
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="block-fluid" style="padding-top: 10px;">
+        @using (Ajax.BeginForm("MonthlyBillGenerationEdit", "Transaction", new { controller = "Transaction" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+        {
+            @Html.HiddenFor(x => x.MonthlyBill.Id)
+   
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-53">
+                        Class</label>
+                    <div class="field">@Html.HiddenFor(m => m.MonthlyBill.ClassId)
+                        <input type="text" class="modallink input-150 input" href="@Url.Action("GetClasses", "School")" id="class-id" valueid="MonthlyBill_ClassId"/>
+                        @Html.ValidationMessageFor(m => m.MonthlyBill.ClassId)
+                    </div>
+                </span><span class="stack">
+                    <label class="label-53">
+                        Shift</label>
+                    <div class="field">@Html.HiddenFor(m => m.MonthlyBill.ShiftId)
+                        <input type="text" class="modallink input-150 input" href="@Url.Action("GetShifts", "School")" id="shift-id" valueid="MonthlyBill_ShiftId"/>
+                        @Html.ValidationMessageFor(m => m.MonthlyBill.ClassId)
+                    </div>
+                </span><span class="stack">
+                    <label class="label-53">
+                        Boader</label>
+                    <div class="field">@Html.HiddenFor(m => m.MonthlyBill.BoaderId)
+                        <input type="text" class="modallink input-150 input" href="@Url.Action("GetBoaders", "School")" id="boader-id" valueid="MonthlyBill_BoaderId"/>
+                        @Html.ValidationMessageFor(m => m.MonthlyBill.ClassId)
+                    </div>
+                </span>
+                <label class="label-53">
+                    Month @if(Model.SystemControl.DateType ==1)
+                          {
+                              <text>(AD)</text>
+                          }
+                          else
+                          {
+                              <text>(BS)</text>
+                          }
+                </label>
+                <div class="field">@Html.TextBoxFor(m => m.Year, new { @class = "input-45 input" })
+                    @Html.ValidationMessageFor(m => m.Year)
+                </div>
+                <div class="field">@Html.DropDownListFor(m => m.Month, Model.MonthLists, new { @class = "input-120" })
+                    @Html.ValidationMessageFor(m => m.MonthlyBill.Month)
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+          
+            <div class="checkboxs lag">
+                <div class="stack">
+                    <label class="label">
+                        Monthly Fee</label>
+                    <div class="field">
+                        @Html.CheckBoxList("FeeItems", Model.MonthlyFeeList.ToList())
+                    </div>
+                </div>
+                <div class="stack">
+                    <label class="label">
+                        Admission Fee</label>
+                    <div class="field">
+                        @Html.CheckBoxList("FeeItems", Model.AdmissionFeeList.ToList())
+                    </div>
+                </div>
+                <div class="stack">
+                    <label class="label">
+                        Exam Fee</label>
+                    <div class="field">
+                        @Html.CheckBoxList("FeeItems", Model.ExamFeeList.ToList())</div>
+                </div>
+                <div class="stack">
+                    <label class="label">
+                        Others Fee</label>
+                    <div class="field">
+                        @Html.CheckBoxList("FeeItems", Model.OtherList.ToList())</div>
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+            <div class="lag detailEntryTable" style="height: 250px; width: 100%">
+                <table class="listpopup" id="table-class-fee-rate-detail" style="width: 100%">
+                    <tr class="nodrop nodrag">
+                        <th width="20px">
+                            S.N
+                        </th>
+                        <th align="center">
+                            <input type="checkbox" class="checkall" />
+                        </th>
+                        <th width="35%">
+                            Student
+                        </th>
+                        <th>
+                            Code
+                        </th>
+                        <th>
+                            Section
+                        </th>
+                        <th>
+                            Roll No
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                         <th>
+                            Education Tax (1%)
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th></th>
+                    </tr>
+                </table>
+            </div>
+            <div class="clearfix">
+            </div> 
+            <div class="lag">
+                <label>
+                    Remark</label>
+                <div class="field">
+                    @Html.TextBoxFor(x => x.MonthlyBill.Remarks, new { @class = "input input-450" })
+                </div>
+            </div>
+            <div class="clearfix">
+            </div> 
+            <div class="form-actions">
+                <a class="btn btn-info gen" disabled="disabled">
+                    <div class="isw-refresh input">
+                    </div>
+                    Generate</a> <a style="margin-left: 10px;" value="OK" class="btn btn-success submit input"
+                        disabled="disabled">
+                        <div class="isw-ok">
+                        </div>
+                        OK</a> <a style="margin-left: 10px;" value="Cancel" class="btn btn-primary cancel input">
+                            <div class="isw-cancel">
+                            </div>
+                            CANCEL</a>
+            </div>
+            
+        }
+        <div class="clearfix">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(".student_FeeTermDetails").live("click", function () {
+        var studentid = $(this).attr("data-id");
+        var x = $(this).offset();
+      //  alert("Top: " + x.top + " Left: " + x.left);
+        $("#bcPopupSearchs" + studentid).css("top", x.top-50+"px");
+        $("#bcPopupSearchs" + studentid).css("left", "770px");
+        if ($("#bcPopupSearchs" + studentid).is(":visible")) {
+            $("#bcPopupSearchs" + studentid).fadeOut(200);
+        } else {
+            $("#bcPopupSearchs" + studentid).fadeIn(300);
+        }
+        return false;
+    });
+    $(document).ready(function () {
+        $("#MonthlyBill_Year").mask("9999");
+
+    });
+    //CalcDate();
+    //    function CalcDate() {
+    //        var today = new Date();
+    //        var dd = today.getDate();
+    //        var mm = today.getMonth() + 1; //January is 0!
+
+    //        var yyyy = today.getFullYear();
+    //        if (dd < 10) {
+    //            dd = '0' + dd;
+    //        } if (mm < 10) {
+    //            mm = '0' + mm;
+    //        } today = mm + '/' + dd + '/' + yyyy;
+
+    //        var nepdate = convertToNepaliNew(today);
+    //        $("#Miti").val(nepdate);
+    //    }
+
+    $('.checkall').live('change', function () {
+        if ($(this).is(':checked')) {
+            $('.student-checkbox').attr('checked', "checked");
+        } else {
+            $('.student-checkbox').removeAttr('checked');
+        }
+
+
+
+    });
+
+    $(".cancel").live("click", function () {
+        var v = $("#Year").val();
+        $(this).closest('form').find("input[type=text], textarea,input[type=hidden]").val("");
+        $(this).closest('form').find("#table-class-fee-rate-detail .detail-entry").remove();
+        $("#Year").val(v);
+        $(".gen").attr("disabled", "disabled");
+        $(".submit").attr("disabled", "disabled");
+        //CalcDate();
+    });
+    $("input[type=text],textarea").live("blur", function () {
+
+        $(".gen").removeAttr("disabled");
+        //  CalcDate();
+    });
+
+    $("input[type=checkbox]").live('change', function () {
+        $(".gen").removeAttr("disabled");
+      //  $(".amount-display").html(0);
+     //   $(".student-Amount").val(0);
+    });
+    $(".submit").live("click", function () {
+        if (!$(this).attr("disabled")) {
+            var i = "";
+            var s = "";
+            var FeeItems = document.getElementsByName("FeeItems");
+            $.each(FeeItems, function () {
+                if ($(this).attr("checked")) {
+                    i = "true";
+                    return;
+                }
+            });
+            var studentcheckbox = document.getElementsByClassName("student-checkbox");
+            $.each(studentcheckbox, function () {
+                if ($(this).attr("checked")) {
+                    s = "true";
+                    return;
+                }
+            });
+            if (i != '' && s != '') {
+                var con = confirm('Are you sure you wish to Save this Generate Bills?');
+                if (con) {
+                    Begin();
+                    var form = $("#form-id");
+                    $.ajax({
+                        url: form.attr("action"),
+                        data: form.serialize(),
+                        type: "POST",
+                        error: function () {
+                            alert("An error occurred.");
+                            $.unblockUI();
+                        },
+                        success: function (data) {
+                            if (data == "True") {
+
+                                $(".cancel").click();
+                                $.unblockUI();
+                            } else {
+                                alert(data);
+                                $.unblockUI();
+                            }
+                        }
+                    });
+                }
+                else {
+                    $.unblockUI();
+                }
+
+
+            }
+        }
+
+
+    });
+    //    $(".btn-success").live("click", function () {
+    //        var result = confirm("Are you sure you wish to Print this?");
+    //        $.blockUI();
+    //        if (result) {
+    //            if (data.PrintData) {
+    //                FeeReceiptprint(); 
+    //            }
+    //            return false;
+    //        }
+    //        $("#form-id .block").load("/Transaction/FeeReceiptAdd");
+    //        $.blockUI();
+    //        return null;
+    //    });
+
+    $(".gen").live("click", function () {
+        if (!$(this).attr("disabled")) {
+            var i = "";
+            var s = "";
+            var m = "";
+            var FeeItems = document.getElementsByName("FeeItems");
+            $.each(FeeItems, function () {
+                if ($(this).attr("checked")) {
+                    i = "true";
+
+                    return;
+                }
+            });
+            var studentcheckbox = document.getElementsByClassName("student-checkbox");
+            var monthLists = document.getElementsByName("MonthId");
+            //            $.each(monthLists, function () {
+            //                if ($(this).attr("checked")) {
+
+            //                    m = "true";
+            //                    return;
+            //                }
+            //            });
+            //            if (m == '') {
+            //                alert("Please Checked Any Month ");
+
+            //            }
+            $.each(studentcheckbox, function () {
+                if ($(this).attr("checked")) {
+
+                    s = "true";
+                    return;
+                }
+            });
+            if (i == '') {
+                alert("Please Checked Any Fee Items");
+            }
+            if (s == '') {
+
+                alert("Please Checked Any Student");
+
+            }
+            if (i != '' && s != '') {
+                Begin();
+                var form = $("#form-id");
+                $.ajax({
+                    url: '@Url.Action("BillGenerateByStudentIdWithFeeItemId")',
+                    data: form.serialize(),
+                    dataType: "json",
+                    type: "POST",
+                    error: function () {
+                        alert(1);
+                        alert("An error occurred.");
+                        $.unblockUI();
+                    },
+                    success: function (data) {
+
+                        $.each(data.List, function (index) {
+
+
+                            // var totalAmt = this.Amount;
+                            //                            if (this.MonthList.length == 0) {
+                            //                                totalAmt = 0;
+                            //                            }
+
+                            //                            var id = "student-id-" + this.StudentId;
+                            //                            var element = $("." + id).closest('tr');
+                            //                            element.find(".amount-display").html(totalAmt * this.MonthList.length);
+                            //                            element.find(".student-Amount").attr({
+                            //                                "value": totalAmt
+                            //                            });
+                            //                            var collectionindex = element.find(".collection_index").val();
+                            //                            $.each(this.MonthList, function () {
+                            //                                // alert(this);
+                            //                                var item = "<input type='hidden' name ='subjectEntry[" + collectionindex + "].MonthList' value='" + this + "' id='subjectEntry_" + collectionindex + "__MonthList'/>";
+                            //                                element.find(".monthlist").append(item);
+
+                            //                            });
+                            //                            //  subjectEntry[8f160f82-d58f-40b4-8ee5-12fc6618649e].StudentId
+                            //                            //subjectEntry_8f160f82-d58f-40b4-8ee5-12fc6618649e__StudentId
+                            //                            var taxamount = this.EducationTax;
+                            //                            if (this.MonthList.length == 0) {
+                            //                                taxamount = 0;
+                            //                            }
+
+                            //                            element.find(".tax-display").html(taxamount * this.MonthList.length);
+                            //                            element.find(".student-EducationTax").attr({
+                            //                                "value": taxamount
+                            //                            });
+
+                            
+                                var id = "student-id-" + this.StudentId;
+
+                                var element = $("." + id).closest('tr');
+                                element.find(".amount-display").html(this.Amount);
+                                element.find(".student-Amount").attr({
+                                    "value": this.Amount
+                                });
+
+                                element.find(".tax-display").html(this.EducationTax);
+                                element.find(".student-EducationTax").attr({
+                                    "value": this.EducationTax
+                                });
+                                element.find(".icon-list").css("display", "none");
+                            
+
+
+                        });
+                        $.unblockUI();
+                        $(".gen").attr("disabled", "disabled");
+                        $(".submit").removeAttr("disabled");
+                    }
+                });
+            }
+        }
+    });
+    $("#MonthlyBill_Month").live("change", function () {
+        $("#class-id").blur();
+
+    });
+
+    $("#class-id , #boader-id ,#shift-id,#MonthlyBill_Year, #Month").live("blur", function () {
+        var classid = $("#MonthlyBill_ClassId").val();
+        var shiftId = $("#MonthlyBill_ShiftId").val();
+
+        var boardId = $("#MonthlyBill_BoaderId").val();
+        if (shiftId == '') {
+            shiftId = 0;
+        }
+        if (classid == '') {
+            classid = 0;
+        }
+        if (boardId == '') {
+            boardId = 0;
+        }
+        var year = $("#MonthlyBill_Year").val();
+        if (year == '') {
+            $("#MonthlyBill_Year").addClass("error");
+        }
+        var month = $("#MonthlyBill_Month").val();
+        if (classid != '' && classid != 0 && month != '' && month != 0 && year != '' && year != 0) {
+            var url = '@Url.Action("GetStudentByClassIdEdit")';
+            Begin();
+            var form = $("#form-id");
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    $("#table-class-fee-rate-detail .detail-entry").remove();
+                    if (data.value != 0) {
+                        $("#table-class-fee-rate-detail").append(data.view);
+                        var ledgerElement = document.querySelectorAll(".student-checkbox");
+                        $.each(ledgerElement, function (index) {
+                            var element = $(this).closest("tr");
+                            element.attr("id", "tr_" + index);
+                            element.find(".student-Amount").attr({
+                                "id": "amount-" + index
+
+                            });
+                            element.find(".student-EducatinTax").attr({
+                                "id": "tax-" + index
+
+                            });
+
+                        });
+                        $(".gen").removeAttr("disabled");
+                        $(".submit").attr("disabled", "disabled");
+                    } else {
+                        $(".gen").attr("disabled", "disabled");
+                        $(".submit").attr("disabled", "disabled");
+
+                    }
+
+
+                    $.unblockUI();
+
+                }
+            });
+        } else {
+            $("#table-class-fee-rate-detail .detail-entry").remove();
+
+        }
+    });
+//    $(".link_bcPopupSearchs").click(function () {
+//        if ($("#bcPopupSearchs").is(":visible")) {
+//            $("#bcPopupSearchs").fadeOut(200);
+//        } else {
+//            $("#bcPopupSearchs").fadeIn(300);
+//        }
+//        return false;
+//    });
+//    
+</script>

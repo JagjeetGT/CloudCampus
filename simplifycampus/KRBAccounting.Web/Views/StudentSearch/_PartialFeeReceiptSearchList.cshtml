@@ -1,0 +1,81 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+
+@model IEnumerable<KRBAccounting.Domain.Entities.ScFeeReceipt>
+      
+
+
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Receipt No
+                </th>
+                <th>
+                  Receipt Date
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Student
+                </th>
+                <th>
+                    Paid UpTo
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td>@item.ReceiptNo
+                    </td>
+                    @if (ViewBag.DateType ==1)
+                    {
+                         <td>@item.ReceiptDate.ToShortDateString()
+                    </td>
+                    }
+                    else
+                    {
+                     <td>@item.ReceiptMiti
+                    </td>
+                    }
+                   
+                    <td>@item.Class.Description
+                    </td>
+                    <td>@item.Studentinfo.StuDesc
+                    </td>
+                    <td>@NepaliDateService.LongMonth(item.PaidUpMonthMiti)
+                    </td>
+                    @{
+                        var amount = Convert.ToDouble(item.ReceiptAmount);
+                        var word = NumberToEnglish.changeCurrencyToWords(amount.ToString());
+                    }
+                    <td>@*<a href="javascript:void(0)" class="icon-print" title="Print" onclick="print()"></a>*@ <br/>
+                        @*  <a href="javascript:void(0)" class="icon-print" title="Print" onclick="FeeReceiptprint('@item.ReceiptNo','@item.ReceiptTimi','@if (item.Studentinfo != null)
+                                                                                                                                                      {
+                                                                                                                                                          @item.Studentinfo.StuDesc
+                                                                                                                                                      }
+                                                                                                  ','@word','cash','@item.ReceiptAmount /-', '@if (item.PreparedBy != null)
+                                                                                                                                                                                                                           {
+                                                                                                                                                                                                                               @item.PreparedBy.FullName
+                                                                                                                                                                                                                           }
+                                                                                                  ')"></a>*@ 
+                        <a href="javascript:void(0)" class="icon-print feeprint" data="@item.Id" title="print"></a>
+                        <br/>
+                  </td>@*  <td>
+                        <a href="#" class="editMaterialIssue_Master icon-pencil" data-id="@item.Id" title="Edit">
+                        </a>
+                    </td>
+                     <td><a href="#" class="deleteMaterialIssue_Master icon-remove" data-id="@item.Id" title="Delete"></a></td>*@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>
+

@@ -1,0 +1,10 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.StudentCategoryConsolidateLedgerSheetReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center;margin-top: 0">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)</div>
+<div class="clearfix">
+</div>
+<div>@Html.Raw(Model.HTMLDATA)</div>

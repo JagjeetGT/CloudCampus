@@ -1,0 +1,86 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.InventoryMaterialIssueReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Document No.
+                </th>
+                <th>
+                    Particular
+                </th>
+                <th>
+                    Alt Unit
+                </th>
+                <th>
+                    Alt Quantity 
+                </th>
+                <th>
+                    Unit
+                </th>
+                <th>
+                    Quantity
+                </th>
+                
+            </tr>
+        </thead>
+        @foreach (var item in Model.MaterialIssueMasters)
+        {
+            <tr style="font-weight: bold">
+                <td>
+                    @item.VoucherDate.ToShortDateString()
+                </td>
+                <td>
+                    @item.VoucherNo
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            foreach (var i in item.ScMaterialIssueDetailses)
+            {
+
+
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    @i.Product.Name
+                </td>
+                <td>
+                    @i.Product.AltUnitMaster.Description
+                </td>
+                <td>@i.Product.AltQuantity
+                </td>
+                <td>@i.Product.UnitMaster.Description
+                </td>
+                <td>
+                    @i.Quantity
+                </td>
+            </tr>
+            }
+        }
+    </table>
+</div>

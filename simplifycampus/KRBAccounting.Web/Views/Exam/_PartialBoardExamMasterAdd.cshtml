@@ -1,0 +1,354 @@
+﻿@model KRBAccounting.Web.ViewModels.BoardExamViewModel
+@*<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var placeholder = "MM/DD/YYYY";
+    var miti = "";
+    if (Model.SystemControl.DateType == 2)
+    {
+        miti = "(Miti)";
+        placeholder = "yyyy/mm/dd";
+    }
+}
+@using (Html.BeginForm("BoardExamMasterAdd", "Exam", FormMethod.Post, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    <div class="workplace">
+        <div class="head">
+            <h1>
+                Board Exam Mark Setup
+            </h1>
+            <div class="clearfix"></div>
+        </div>
+        <div class="block">
+            <div class="row-fluid">
+                <div class="lag">
+                    <label class="label-90">
+                        Program 
+                    </label>
+                    <div class="field">
+                        @Html.DropDownListFor(m => m.BoardExamMaster.ProgramId, Model.ProgramList)
+                        @Html.ValidationMessageFor(m => m.BoardExamMaster.ProgramId)
+                       
+                    </div>
+                    <label class="label-90">
+                        Student
+                    </label>
+                    <div class="field">
+                        @Html.DropDownListFor(m => m.BoardExamMaster.StudentId, Model.StudentList)
+                        @Html.ValidationMessageFor(m => m.BoardExamMaster.StudentId)
+                    </div>
+                   
+                    <div class="field">
+                        <div class="btn  submitbutton"> Find </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="board-detail">
+
+            </div>
+            <div class="board-master" style="display: none">
+
+                <hr />
+                <div class="clearfix"></div>
+                <div style="width:50%; float: left">
+                    <div class="lag">
+                        <label class="label-200">
+                            Graduation Year
+                        </label>
+                        <div class="field">
+                            @Html.TextBoxFor(x => x.BoardExamMaster.GraduationYear, new { @class = "input" })
+                        </div>
+                    </div>
+                    <div class="lag">
+                        <label class="label-200">
+                            Percentage
+                        </label>
+                        <div class="field">
+                            @Html.TextBoxFor(x => x.BoardExamMaster.Percentage, new { @class = "input" })
+                        </div>
+                    </div>
+                    <div class="lag">
+                        <label class="label-200">
+                            Division
+                        </label>
+                        <div class="field">
+                            @Html.DropDownListFor(x => x.BoardExamMaster.DivisionId,Model.DivisionList, new { @class = "input" })
+                        </div>
+                    </div>
+                </div>
+                <div style="width:  50%; float: left">
+                    <div class="lag">
+                        <label class="label-200">
+                            Charachter Certificate Issued Date
+                        </label>
+                        <div class="field">
+                            @Html.HiddenFor(x => x.BoardExamMaster.CharacterCertificateIssueDate)
+                            @Html.HiddenFor(x => x.BoardExamMaster.CharacterCertificateIssueMiti)
+                            @Html.TextBoxFor(x => x.CharacterDisplayDate, new { @class = "input", @placeholder = placeholder })
+                        </div>
+                    </div>
+                    <div class="lag">
+                        <label class="label-200">
+                            Charachter Certificate Number
+                        </label>
+                        <div class="field">
+                            @Html.TextBoxFor(x => x.BoardExamMaster.CharacterCertificateNumber, new { @class = "input" })
+                        </div>
+                    </div>
+                    <div class="lag">
+                        <label class="label-200">
+                            Transcript Issued Date
+                        </label>
+                        <div class="field">
+                            @Html.HiddenFor(x=>x.BoardExamMaster.TranscriptIssueDate)
+                            @Html.HiddenFor(x => x.BoardExamMaster.TranscriptIssueMiti)
+                            @Html.TextBoxFor(x => x.TranscriptDisplayDate, new { @class = "input" ,@placeholder=placeholder})
+                        </div>
+                    </div>
+                    <div class="lag">
+                        <label class="label-200">
+
+                            Transcript Number
+                        </label>
+                        <div class="field">
+                            @Html.TextBoxFor(x => x.BoardExamMaster.TranscriptNumber, new { @class = "input"})
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="lag">
+                    <label>Remarks </label>
+                    <div class="clearfix"></div>
+                    @Html.TextAreaFor(x => x.BoardExamMaster.Remarks,new{@rows="60",@cols="170",@class="input"})
+        
+                
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="lag save" style="display: none">
+            <label class="label-5">
+                &nbsp;
+            </label>
+            <span class="field" style="margin-left: -18px;">
+                <input type="button" value="Save" class="btn btn-info" id="save" onclick="Student()" />
+            </span>
+        </div>
+    </div>
+
+}
+<script>
+    $('.submitbutton').on('click', function () {
+        var studentid = $('#BoardExamMaster_StudentId').val();
+        var programid = $('#BoardExamMaster_ProgramId').val();
+        var url = '/Exam/GetSubjectByStudentIdAndClassId?studentid=' + studentid + '&&programid=' + programid;
+        $.getJSON(url, function (data) {
+            $(".board-detail").html(data);
+            $(".board-master").css("display", "block");
+            $(".save").css("display", "block");
+        });
+    });
+    
+   
+
+        
+
+
+    $(document).ready(function() {
+        var dateType = @Model.SystemControl.DateType;
+        if (dateType == "1") {
+            $("#TranscriptDisplayDate,#CharacterDisplayDate").mask("99/99/9999");
+            $("#TranscriptDisplayDate,#CharacterDisplayDate").live("blur", function() {
+                        
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#TranscriptDisplayDate,#CharacterDisplayDate").mask("9999/99/99");
+            $("#TranscriptDisplayDate,#CharacterDisplayDate").live("blur", function() {
+                var date = $(this).val();
+                       
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+                        
+            });
+        }
+    });
+        
+    $("#BoardExamMaster_ProgramId").live("change", function () {
+        var ProgramId = $(this).val();
+        var url = '@Url.Action("GetStudentByProgramId", "School")?id=' + ProgramId;
+        $.ajax({
+            url: url,
+            datatype: "JSON",
+            type: "POST",
+            error: function () {
+
+                alert("An error occurred.");
+                $.unblockUI();
+            },
+            success: function (data) {
+                var innerHtml = '';
+                $.each(data, function () {
+                    innerHtml += "<option value='" + this.StudentId + "'>" + this.StudentName + "</option>";
+                });
+                $("#BoardExamMaster_StudentId").html(innerHtml);
+            
+
+            }
+        });
+    });
+</script>
+
+<style>
+    .board-detail .listpopup td {
+        padding: 0px;
+    }
+
+        .board-detail .listpopup td input {
+            height: 19px;
+      
+            width: 97%;
+        }
+</style>
+<script type="text/javascript">
+    $('.MO').live('blur', function() {
+        if($(this).val() !="" && $(this).val() !=" ")
+            {
+       if (isNaN(parseFloat($(this).val()))) {
+           $(this).addClass("error");
+       }
+            }
+    });
+    $('.result').live('blur', function () {
+        var textbox = $(this).val();
+        var split=textbox[0].split();
+
+        var closestd = $(this).closest('td');
+        var prevalue = closestd.prev("td").find("input").val();
+        if(  prevalue !="")
+        {
+
+
+            if (textbox == "pass" ||textbox == "Pass"|| textbox == "absent" || textbox == "Absent" || textbox == "fail"|| textbox == "Fail" || textbox == "withheld"|| textbox == "Withheld") {
+                if (split == "p" || split == "P") {
+                    $(this).val("P");
+                } else if(split == "a" || split == "A") {
+                    $(this).val("Ab");
+                }
+                else if (split == "w" || split == "W") {
+                    $(this).val("W");
+                } else if(split == "f" || split == "F") {
+                    $(this).val("F");
+                }
+
+            } else {
+                $(this).val("");
+                //$(this).addClass("error");
+               
+            }
+        }else{
+            
+            if (textbox == textbox == "absent" || textbox == "Absent" ||textbox == "withheld"|| textbox == "Withheld") {
+                if (split == "p" || split == "P") {
+                    $(this).val("P");
+                } else if(split == "a" || split == "A") {
+                    $(this).val("Ab");
+                }
+                else if (split == "w" || split == "W") {
+                    $(this).val("W");
+                } 
+
+            }
+            //$(this).val("");
+        }
+    });
+    //$("#save").live('click',function(){
+    //    var university=$('#BoardExamMaster_UniversityRegistrationNo').val();
+    //    alert(university);
+    //    if(university==null || university==""){
+    //        $('#BoardExamMaster_UniversityRegistrationNo').focus();
+    //    }
+    
+    //});
+    function Student() {
+        Begin();
+        var form = $("#form-id");
+        var isValid = $(form).valid();
+        var university=$('#BoardExamMaster_UniversityRegistrationNo').val();
+        
+        if(university==null || university=="") {
+
+            $('#BoardExamMaster_UniversityRegistrationNo').focus();
+            $.unblockUI();
+        }
+
+
+        
+     else {
+            $.ajax({
+                url: form.attr("action"),
+                type: "post",
+                data: form.serialize(),
+                success: function(data) {
+             
+                    OnSuccess();
+                },
+                complete: function() {
+                    $.unblockUI();
+                }
+            });
+        }
+
+
+    }
+    function OnSuccess() {
+        //$('#BoardExamMaster_UniversityRegistrationNo').focus();
+        window.location.reload(true);
+        //$("#student-info").unmask();
+        //GenerateRegistrationNo();
+        //var className = $('#CurrClsCode').val();
+        //var secCode = $('#SecCode').val();
+        ////var nationality = $('#Nationality').val();
+        ////var religion = $('#Religion').val();
+        //var student_category = $('#student_category').val();
+
+        //$('#frm-addstudent').find(':input').each(function () {
+        //    var type = this.type, tag = this.tagName.toLowerCase();
+        //    if (type == 'text' || tag == 'textarea')
+        //        this.value = '';
+
+
+        //});
+        //$('#CurrClsCode').val(className);
+        //$('#SecCode').val(secCode);
+        //$('#student_category').val(student_category);
+        //$('#MartialStatus').val('');
+        //$('#SexDropDown').val('');
+        //$('#BloodGroup').val('');
+        //$('#Nationality').val('');
+        //$('#Religion').val('');
+        //$('#GurdainRelation').val('');
+        //$('#MPercent').val('0');
+
+        //$(".t-upload-files").remove();
+
+        //$("#StudentPhoto").attr("src", "/Content/img/NoImage.jpg");
+        //$("#ImageGuid ,#Ext").val("");
+        $.unblockUI();
+    }
+</script>

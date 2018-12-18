@@ -1,0 +1,39 @@
+﻿@model KRBAccounting.Domain.Entities.SchBuildingRoomMapping
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("BuildingRoomMappingEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+@Html.HiddenFor(m=>m.Id)
+@Html.HiddenFor(m => m.OldRoomId)@Html.HiddenFor(m => m.OldBuildingId)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Building</label>
+            <span class="field">
+                @Html.DropDownListFor(x => x.BuildingId, Model.BuildingList)
+                @Html.ValidationMessageFor(m => m.BuildingId)
+            </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Room</label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.RoomId, Model.RoomList)
+                @Html.ValidationMessageFor(m => m.RoomId)
+            </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                IsActive</label>
+            <span class="field">
+                @Html.EditorFor(m => m.IsActive, new { @class = "input-100 input", entermsg = "Enter IsActive" })
+                @Html.ValidationMessageFor(m => m.IsActive)
+            </span></span>
+    </div>
+}

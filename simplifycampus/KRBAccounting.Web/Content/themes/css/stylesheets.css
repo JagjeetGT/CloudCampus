@@ -1,0 +1,132 @@
+@import "icons.css";
+@import "bootstrap.css";
+@import "bootstrap-responsive.css";
+@import "fullcalendar.css";
+@import "ui.css";
+@import "select2.css";
+@import "uniform.default.css";
+@import "validation.css";
+@import "mCustomScrollbar.css";
+@import "cleditor.css";
+@import "fancybox/jquery.fancybox.css";
+@import "login.css";
+@import "stylesheet.css";
+
+
+html { height: 100%; }
+body { min-height: 100%; font-family: Arial, Helvetica, sans-serif, ; font-size: 12px; line-height: 22px; position: relative; background: #ECECEC;}
+
+
+@media only screen and (max-width: 1350px) {
+    body > .menu{display: block;}
+}
+
+@media only screen and (max-width: 1024px) {
+    body > .menu{display: block;}
+}
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+    body > .menu {display: none; position: absolute; left: 50%; margin-top: 0px; margin-left: -110px !important; top: 15px; z-index: 999; height: auto; min-height: auto;}
+    body > .menu .breadLine .arrow {display: block;}
+    body > .content{margin-left: 0px;}
+        .header .header_menu li.list_icon{display: block;}
+}
+
+@media only screen and (min-width: 481px) {
+    
+}
+
+@media only screen and (max-width: 768px) {
+
+}
+
+@media only screen and (min-width: 769px) {
+    
+}
+
+@media only screen and (min-width: 769px) and (max-width: 980px) {
+    body > .menu {display: none; position: absolute; left: 50%; margin-top: 0px; margin-left: -110px !important; top: 15px;  z-index: 999; height: auto; min-height: auto;}
+    body > .menu .breadLine .arrow {display: block;}
+    body > .content{margin-left: 0px;}
+        .header .header_menu li.list_icon{display: block;}
+}
+
+@media only screen and (min-width: 320px) and (max-width: 480px) {
+    body > .menu {display: none; position: absolute; left: 50%; margin-top: 0px; margin-left: -110px !important; top: 15px; z-index: 999; height: auto; min-height: auto;}
+    body > .menu .breadLine .arrow {display: block;}
+    body > .content{margin-left: 0px;}
+        .header .header_menu li.list_icon{display: block;}
+}
+
+
+
+.checklist {
+    border: 1px solid #ccc;
+    list-style: none;
+    height: 20em;
+    overflow: auto;
+    width: 53.5em;
+    margin-bottom: 10px;
+}
+
+.checklist, .checklist li { margin: 0; padding: 0; }
+
+.checklist label {
+    display: block;
+    padding-left: 25px;
+    text-indent: -25px;
+}
+
+.checklist label:hover { background: #777; color: #fff; }
+.header h1 {
+color: #FFFFFF;
+display: block;
+float: left;
+font-size: 20px;
+font-weight: bold;
+line-height: 22px;
+margin: 0 0 0 10px;
+padding: 8px 0;
+text-shadow: 0 1px 0 #333333;
+}
+.checkboxs {
+    width: 100%;
+}
+.checkboxs .stack {
+    border: 1px solid;
+    margin-left: 5px;
+    width: 24%;
+}
+.checkboxs .field label {
+    cursor: pointer;
+    line-height: 2;
+    padding: 0;
+    width: 100%;
+}
+.checkboxs .field label:hover {
+    background-color: rgb(73, 175, 205);
+    color: white;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.checkboxs .field {
+    float: left;
+    height: 150px;
+    overflow-y: auto;
+    width: 100%;
+}
+.checkboxs input[type="checkbox"] {
+    float: left;
+    margin: 5px;
+}
+.checkboxs .stack .label {
+    background: url("../img/backgrounds/menu-item.jpg") repeat-x scroll left top transparent;
+    clear: both;
+    float: left;
+    line-height: 3;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+}
+.print div a img:hover {
+    opacity: 1 !important;
+}

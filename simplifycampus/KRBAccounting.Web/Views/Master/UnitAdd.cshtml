@@ -1,0 +1,57 @@
+﻿@model KRBAccounting.Domain.Entities.Unit
+@{
+    ViewBag.Title = "Log On";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("UnitAdd", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "MsgError",OnSuccess = "success"}, new { @class = "form-horizontal", id = "unit-form" }))
+{@Html.HiddenFor(x=>x.Id)
+    <div id="MsgError"></div>
+      <div style="width: 445px;">
+       <div class="lag">
+                  <label class="label-90">
+                      Code</label>
+                  <span class="field">
+                       @Html.TextBoxFor(m => m.Code, new { @class = "input" })
+                      @Html.ValidationMessageFor(m => m.Code)<span class="loading Code">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                      Description</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.Description, new { @class = "input" })
+                      @Html.ValidationMessageFor(m => m.Description)<span class="loading Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+             
+      </div>
+}
+@*<script type="text/javascript" >
+    $("#Description").live("focusout", function () {
+        var name = $(this).val();
+        $.getJSON("/Master/IsProductUnitNameAvailable?name=" + name , "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#Description").focus();
+            } else {
+                $("#MsgError").html('');
+            }
+        });
+    });
+    $("#Code").live("focusout", function () {
+        var name = $(this).val();
+        $.getJSON("/Master/IsProductUnitCodeAvailable?name=" + name , "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#Code").focus();
+            }
+            else {
+                $("#MsgError").html('');
+            }
+        });
+    });
+</script>*@

@@ -1,0 +1,27 @@
+﻿@model KRBAccounting.Domain.Entities.SchBuilding
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("AddBuilding", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnComplete" }, new { @class = "form-horizontal from-custom", id = "building-frm" }))
+{@Html.HiddenFor(x=>x.Id)
+    <div style="width: 500px;">
+        <div class="lag">
+            <label class="label-160">
+                Code</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Code, new {@class = "input input-253"})
+                @Html.ValidationMessageFor(model => model.Code)<span class="loading Code">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </span>
+        </div>
+        
+        <div class="lag">
+            <label class="label-160">
+                Description</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Description, new {@class = "input input-253"})
+                @Html.ValidationMessageFor(model => model.Description)<span class="loading Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+            </span>
+        </div>
+    </div>
+}

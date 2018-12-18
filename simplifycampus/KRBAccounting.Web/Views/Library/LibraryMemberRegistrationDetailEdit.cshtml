@@ -1,0 +1,56 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.ScLibraryMemberRegistration
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+         @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.ClassId, new { @class = "c_ClassId" })
+        @Html.HiddenFor(x => x.Type, new { @class = "t_Type" })
+        if (Model.Type == "staff")
+        {
+        <td>
+            @Html.HiddenFor(x => x.StaffId, new { @class = "hdn_StaffId_Id first-col" })
+            <input type="text" class="input modallink text_staff input-100" value="@if (Model.StaffMaster != null)
+                                                                                   {
+                                                                                      @Model.StaffMaster.Description
+                                                                                   }
+                                                                                     " href="@Url.Action("GetEmployeeInfo", "EmployeeManagement")" valueid="StaffId"/>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.StaffMaster.Code, new { @class = "Code input-100", @readonly = "readonly" })
+        </td>
+                                                                                   
+        <td>
+            <input type="text" value="@if (Model.StaffMaster.EmployeePost != null)
+                                      {
+                                          @Model.StaffMaster.EmployeePost.Description
+                                      }
+                                         " class="Designation input-100" readonly="readonly"/>
+        </td>
+        }
+        else
+        {
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "hdn_StudentId_Id first-col" })
+            <input type="text" class="input modallink text-student input-100" value="@if (Model.Studentinfo != null)
+                                                                                     {
+                                                                                       @Model.Studentinfo.StuDesc
+                                                                                     }
+                                                                                      " href="@Url.Action("GetStudentByTypeClassId")" parent="ClassId" parentnext="Type" valueid="student-id"/>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Studentinfo.StdCode, new { @class = "Code input-100", @readonly = "readonly" })
+        </td>
+        <td>
+            <input type="text" value="@Model.Section" class="Section input input-100" readonly="readonly" />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.RollNo, new { @class = "RollNo input-100", @readonly = "readonly" })
+        </td>
+        }
+      
+    }
+</tr>

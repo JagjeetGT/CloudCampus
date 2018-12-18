@@ -1,0 +1,131 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportClassFeeRateReportViewModel
+           @{
+               decimal total = 0;
+               decimal gtotal = 0;
+           }
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+            
+                <th>
+                    Class/Fee Code
+                </th>
+                <th>
+                    Class/Fee Name
+                </th>
+                <th>
+                    Fee Type
+                </th>
+                <th>
+                    Ledger
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Naration
+                </th>
+            </>
+        </thead>
+        @foreach (var i in Model.ClassFeeRateGrouping)
+        {
+            <tr style="font-weight: bold">
+                <td colspan="6">
+                    Class: 
+                    @{
+            var schClass = i.FirstOrDefault().Classes;
+                    }
+                    @if (schClass != null)
+                    {
+                               @schClass.Code
+                    }
+                    , 
+                    @{
+                    var classes = i.FirstOrDefault().Classes;
+                    }
+                    @if (classes != null)
+                    {
+                          @classes.Description
+                    }
+
+                    | Shift : 
+                    @{
+                    var scShift = i.FirstOrDefault().Shifts;
+                    }
+                    @if (scShift != null)
+                    {
+                                  @scShift.Description
+                    }
+                    | Boader : 
+                    @{
+                    var scBoader = i.FirstOrDefault().Boaders;
+                    }
+                    @if (scBoader != null)
+                    {
+                                   @scBoader.Description
+                    }
+
+                </td>
+            </tr>
+                    foreach (var item in Model.ClassFeeRates.Where(x => x.ClassId == i.FirstOrDefault().ClassId && x.BoaderId == i.FirstOrDefault().BoaderId && x.ShiftId == i.FirstOrDefault().ShiftId))
+                    {
+            <tr>
+                <td>
+                    @item.ScFeeItem.Code
+                </td>
+                <td>
+                    @item.ScFeeItem.Description
+                </td>
+                <td>@Enum.GetName(typeof(FeeType), item.ScFeeItem.Type)
+                </td>
+                <td>
+                    @if(@item.ScFeeItem.Ledger!=null)
+                    {
+                          @item.ScFeeItem.Ledger.AccountName
+                    }
+                  
+                </td>
+                <td>@item.FeeRate
+                </td>
+                <td>@item.Remarks
+                </td>
+            </tr>
+                        total += item.FeeRate;
+                    }
+            <tr align="center">
+                <td colspan="4">
+                    Class Total
+                </td>
+                
+                <td>@total
+                </td>
+                <td>
+                </td>
+            </tr>
+            gtotal += total;
+        }
+        
+        <tr style="font-weight: bold">
+            <td colspan="4">
+                Grand Total
+            </td>
+                
+            <td>@gtotal
+            </td>
+            <td>
+            </td>
+        </tr>
+
+    </table>
+</div>

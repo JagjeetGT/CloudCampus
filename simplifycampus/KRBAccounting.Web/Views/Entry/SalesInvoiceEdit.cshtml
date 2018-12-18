@@ -1,0 +1,604 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models.Sales
+@model  KRBAccounting.Service.Models.Sales.SalesInvoiceAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@{
+    var billingTerms = ((List<BillingTermDetail>)ViewBag.BillingTermList).Where(x => !x.IsProductWise);
+    string display = "display:none;";
+    string billTermClass = "";
+    if (ViewBag.AllowProductWiseBillTerm == 1)
+    {
+        display = "";
+        billTermClass = "rate-bill-term";
+    }
+    var SalesType = @Model.SystemControl.SalesDeriveFrom;
+    var changeRate = Model.EntryControl != null && Model.EntryControl.ChangeRate;
+}
+@using (Ajax.BeginForm("SalesInvoiceEdit", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnCompleteEdit" }, new { @class = "form-horizontal form-custom", id = "sales-invoice-form" }))
+{
+    @Html.HiddenFor(x => x.SalesInvoice.CreatedById)
+    @Html.HiddenFor(x => x.SalesInvoice.BranchId)
+    @Html.HiddenFor(x => x.SalesInvoice.Id)
+    @Html.HiddenFor(x => x.SalesInvoice.CreatedDate)
+    @Html.HiddenFor(x => x.SalesInvoiceOtherDetail.SalesInvoiceId)
+    @Html.HiddenFor(x => x.SalesInvoiceOtherDetail.Id)
+    @Html.HiddenFor(x => x.SalesInvoice.IsApproved)
+    @Html.HiddenFor(x => x.SalesInvoice.ApprovedBy)
+    @Html.HiddenFor(x => x.SalesInvoice.ApprovedDate)
+    <div id="billing-term-list" style="display: none">
+        @foreach (var term in billingTerms.Where(x => !x.IsProductWise))
+        {
+            @Html.Action("InsertBillTermEdit", term)
+        }
+    </div>
+    <div style="width: 1317px; height: 517px">
+        <fieldset>
+            <div style="float: left; width: 100%;" class="one-row">
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Invoice No.</label>
+                        <span class="field">@*<input type="text" value="@Model.SalesInvoice.InvoiceNo" class="input-90" readonly="readonly"/>*@
+                            @Html.TextBoxFor(m => m.SalesInvoice.InvoiceNo, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                            @Html.ValidationMessageFor(m => m.SalesInvoice.InvoiceNo)<span class="loading SalesInvoice_InvoiceNo">
+                                <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                        </span></span><span class="stack">
+                            <label class="label-37">
+                                Date</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.InvoiceDate, new { @class = "InvoiceDate" })
+                                @Html.ValidationMessageFor(m => m.InvoiceDate)
+                            </span></span>
+                </div>
+            </div>
+            <div style="float: left; width: 475px" class="left">
+                <div>
+                    @*@if (SalesType == 1)
+                    {
+                        <div class="lag">
+                            <label class="label-70">
+                                Challan No</label>
+                            <span class="field">
+                                @Html.HiddenFor(m => m.SalesInvoice.ChallanId)
+                                @Html.TextBoxFor(x => x.ChallanNo, new { @class = "modallink_custom input-346 input", displaytext = "ChallanNo", href = "/Entry/GetSalesChallanForPickList", valueid = "SalesInvoice_ChallanId" })
+                            </span>
+                        </div>
+                    }
+                     @if (SalesType == 2)
+                    {
+                        <div class="lag">
+                            <label class="label-70">
+                                Order No</label>
+                            <span class="field">
+                                @Html.HiddenFor(m => m.SalesOrderId)
+                                @Html.TextBoxFor(x => x.OrderNo, new { @class = "modallink_custom input-346 input", displaytext = "OrderNo", href = "/Entry/GetSalesOrderForPickList", valueid = "SalesInvoice_OrderId", valueType="order" })
+                            </span>
+                        </div>
+                    }*@
+                    <div class="lag">
+                        <label class="label-70">
+                            Customer</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.SalesInvoice.GlCode)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SalesInvoice.GlCode)" class="modallink_custom input-346 input" href="@Url.Action("GetCustomerList", "Entry")" valueId="SalesInvoice_GlCode" id="customer" valuetype="ledger" entermsg = "Press F1 for choosing existing Account list." />
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-70">
+                                Due Days</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoice.DueDay, new { @class = "input-25 input DueDay", entermsg = "Enter Voucher Date." })
+                            </span></span><span class="stack">
+                                              <label class="label-25">
+                                                  Date</label>
+                                              <span class="field">
+                                                  @Html.TextBoxFor(m => m.DueDate, new { @class = "input-80 input", entermsg = "Enter Voucher Date." })
+                                              </span></span>
+                    </div>
+                    @if (Model.EntryControl != null && Model.EntryControl.Agent)
+                    {
+                        <div class="lag">
+                            <label class="label-70">
+                                Agent</label>
+                            <span class="field">
+                                @Html.HiddenFor(m => m.SalesInvoice.AgentCode, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                                <input type="text" value="@UtilityService.GetAgentNameById(Model.SalesInvoice.AgentCode)" class = "modallink input-346" href="@Url.Action("GetAgent", "Master")" valueId="SalesInvoice_AgentCode" id="agent" entermsg = "Press F1 for choosing existing cash/bank list." />
+                            </span>
+                        </div>
+                    }
+                    @if (Model.EntryControl != null && Model.EntryControl.SubLedger)
+                    {
+                        <div class="lag">
+                            <label class="label-70">
+                                Sub Ledger</label>
+                            <span class="field">
+                                @Html.HiddenFor(m => m.SalesInvoice.SlCode, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                                <input type="text" value="@UtilityService.GetSubLedgerNameById(Model.SalesInvoice.SlCode)" class = "modallink input-346" href="@Url.Action("GetSubLedger", "Master")" valueId="SalesInvoice_SlCode" id="subledger" entermsg = "Press F1 for choosing existing cash/bank list." />
+                            </span>
+                        </div>
+                    }
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Currency</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.SalesInvoice.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                            <input type="text"  value="@Model.SalesInvoice.CurrCode" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" valueId="SalesInvoice_CurrencyId" 
+                             id="CurrencyId" entermsg = "Press F1 for choosing existing cash/bank list." />
+                        </span></span><span class="stack">
+                            <label class="label-37">
+                                Rate</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoice.CurrRate, new { @class = "input-45 input CurrRate", entermsg = "Enter Rate." })
+                                @Html.ValidationMessageFor(m => m.SalesInvoice.CurrRate)
+                            </span></span>
+                </div>
+            </div>
+            <div class="right thumbnail" style="width: 300px; float: right">
+                @*<fieldset>*@
+                <div class="lag">
+                    <label class="label-120">
+                        Credit Limit</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.CreditLimit, new { @class = "input-120", disabled = "disabled" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-120">
+                        Current Balance</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.CurrentBalance, new { @class = "input-120", disabled = "disabled" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-120">
+                        Outstanding Challan</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.OutstandingChallan, new { @class = "input-120", disabled = "disabled" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-120">
+                        Total Outstanding</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.TotalOutstanding, new { @class = "input-120", disabled = "disabled" })
+                    </span>
+                </div>
+                <div class="clearfix">
+                </div>
+                @*</fieldset>*@
+            </div>
+        </fieldset>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Product Details</a></li>
+                <li><a href="#tabs-2">Import/Transport Details</a></li>
+            </ul>
+            <div id="tabs-1">
+                <div class="lag detailEntryTable">
+                    <table class="table-bordered" style="width: 800px" id="table-detail">
+                        <tr class="nodrop nodrag">
+                            <th width="20px">
+                            </th>
+                            <th width="250px">
+                                Particular
+                            </th>
+                            @if (Model.EntryControl != null && Model.EntryControl.Godown)
+                            {
+                                <th>
+                                    Godown
+                                </th>
+                            }
+                            <th width="80px">
+                                Qty
+                            </th>
+                          @*  @if (Model.EntryControl != null && Model.EntryControl.Unit)
+                            {*@
+                                <th>
+                                    Unit
+                                </th>
+                            @*}*@
+                            <th width="80px">
+                                Atl Qty
+                            </th>
+                            @*@if (Model.EntryControl != null && Model.EntryControl.AltUnit)
+                            {*@
+                                <th>
+                                    Alt Unit
+                                </th>
+                           @* }*@
+                            @* <th>
+                                Free Qty
+                            </th>
+                            <th>
+                                Free Unit
+                            </th>*@
+                            <th width="80px">
+                                Rate
+                            </th>
+                           
+                                <th width="80px">
+                                    Basic Amt
+                                </th>
+                            
+                            <th width="80px" style="@display">
+                                Term Amt
+                            </th>
+                            <th width="80px" style="@display">
+                                Net Amt
+                            </th>
+                        </tr>
+                        <tbody id="body-invoice-detail">
+                            @foreach (var detail in Model.SalesInvoice.SalesDetails)
+                            {
+                                detail.Unitlist = UtilityService.DropdownlistByProductId(detail.ProductCode, detail.UnitId);
+                                detail.EntryControl = Model.EntryControl;
+                                detail.DetailGuid = Guid.NewGuid().ToString();
+
+                                var batch = ((IEnumerable<ProductBatchListForSales>)ViewBag.PurchaseProductBatchViewModels).Where(x => x.DetailId == detail.Id).FirstOrDefault();
+
+                                if (batch != null)
+                                {
+                                    detail.BatchSerialNo = batch.BatchSerialNo;
+                                    detail.BatchId = batch.BatchId;
+                                    detail.StockQty = batch.StockQty;
+                                }
+                                @Html.Partial("_PartialSalesDetailEdit", detail)
+                            }
+                            @{
+                                var salesDetail = new KRBAccounting.Domain.Entities.SalesDetail();
+                                salesDetail.Index = (int)ViewBag.Index;
+                                salesDetail.Unitlist = Model.Unitlist;
+                                salesDetail.EntryControl = Model.EntryControl;
+                                salesDetail.DetailGuid = Guid.NewGuid().ToString();
+                            }
+                            @Html.Partial("_PartialSalesDetailEdit", salesDetail)
+                        </tbody>
+                    </table>
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-90">
+                            Short Name</label>
+                        @Html.TextBoxFor(x => x.ShortName, new { @class = "input-100", disabled = "disabled" })
+                    </span><span class="stack" style="padding-left: 40px">
+                               <label class="label-90">
+                                   Stock Qty</label>
+                               @Html.TextBoxFor(x => x.StockQty, new { @class = "input-100", disabled = "disabled" })
+                           </span><span class="stack" style="padding-left: 40px">
+                                      <label class="label-90">
+                                          Alt Stock Qty</label>
+                                      @Html.TextBoxFor(x => x.AltStockQty, new { @class = "input-100", disabled = "disabled" })
+                                  </span>
+                </div>
+                <div class="lag">
+                    <span class="stack" style="padding-left: 264px">
+                        <label class="label-90">
+                            Total Qty</label>
+                        @Html.TextBoxFor(x => x.TotalQty, new { @class = "input-100", disabled = "disabled" })
+                    </span><span class="stack" style="padding-left: 40px">
+                               <label class="label-90">
+                                   Total Alt Qty</label>
+                               @Html.TextBoxFor(x => x.TotalAltQty, new { @class = "input-100", disabled = "disabled" })
+                           </span>
+                </div>
+            </div>
+            <div id="tabs-2">
+                <div class="left" style="float: left; width: 358px">
+                    <div class="lag">
+                        <label class="input-80">
+                            Transport</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.Transport, new { @class = "input-240 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-80">
+                                Vehicle No</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.VehicleNo, new { @class = "input-74 input" })
+                            </span></span><span class="stack">
+                                              <label class="label-60">
+                                                  Package</label>
+                                              <span class="field">
+                                                  @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.Package, new { @class = "input-74 input" })
+                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-80">
+                                C/N No.</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.CnNo, new { @class = "input-74 input" })
+                            </span></span><span class="stack">
+                                              <label class="label-60">
+                                                  C/N Date</label>
+                                              <span class="field">
+                                                  @Html.TextBoxFor(m => m.CnDate, new { @class = "input-74 input" })
+                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-80">
+                                C/N Freight</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.CnFreight, new { @class = "input-74 input" })
+                            </span></span><span class="stack">
+                                              <label class="label-60">
+                                                  Advance</label>
+                                              <span class="field">
+                                                  @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.CnAdvance, new { @class = "input-74 input" })
+                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-80">
+                                Bal. Freight</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.CnBalance, new { @class = "input-74 input" })
+                            </span></span><span class="stack">
+                                              <label class="label-60">
+                                                  C/N Type</label>
+                                              <span class="field">
+                                                  @Html.DropDownListFor(m => m.SalesInvoiceOtherDetail.CnType, Model.CnTypeList, new { @class = "select-82 input" })
+                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <label class="input-80">
+                            Driver's Name</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.DriverName, new { @class = "input-240 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="input-80">
+                            License No</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.LicenseName, new { @class = "input-240 input" })
+                        </span>
+                    </div>
+                </div>
+                <div class="right" style="margin-left: 20px; float: right; width: 358px">
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-105">
+                                Contract No. & Dt.</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.ContractNo, new { @class = "input-130 input" })
+                            </span></span><span class="stack"><span class="field">
+                                                                  @Html.TextBoxFor(m => m.ContractDate, new { @class = "input-70 input", @style = "margin-left:5px" })
+                                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-105">
+                                Export Inv. No. & Dt.</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.ExportInvoiceNo, new { @class = "input-130 input" })
+                            </span></span><span class="stack"><span class="field">
+                                                                  @Html.TextBoxFor(m => m.ExportInvoiceDate, new { @class = "input-70 input", @style = "margin-left:5px" })
+                                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="input-105">
+                                P.O. No. & Dt.</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.PONo, new { @class = "input-130 input" })
+                            </span></span><span class="stack"><span class="field">
+                                                                  @Html.TextBoxFor(m => m.PODate, new { @class = "input-70 input", @style = "margin-left:5px" })
+                                                              </span></span>
+                    </div>
+                    <div class="lag">
+                        <label class="input-105">
+                            Doc Bank</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.DocBank, new { @class = "input-215 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="input-105">
+                            L/C No</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.LCNumber, new { @class = "input-215 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="input-105">
+                            Custom Name</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.CustomName, new { @class = "input-215 input" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="input-105">
+                            CoFD</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.SalesInvoiceOtherDetail.COFDDesc, new { @class = "input-215 input" })
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="clearfix"></div>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-70">
+                        Basic Amt</label>
+                    @Html.TextBoxFor(x => x.SalesInvoice.BasicAmt, new { @class = "input-80 MasterBasicAmt", @readonly = "readonly" })
+                </span><span class="stack" style="padding-left: 15px">
+                           <label class="label-60">
+                               Term Amt</label>
+                           @Html.TextBoxFor(x => x.SalesInvoice.TermAmt, new { @class = "input-80 MasterTermAmt", @readonly = "readonly" })
+                       </span><span class="stack" style="padding-left: 15px">
+                                  <label class="label-60">
+                                      Total Amt</label>
+                                  @Html.TextBoxFor(x => x.SalesInvoice.NetAmt, new { @class = "input-80 MasterNetAmt", @readonly = "readonly" })
+                              </span><span class="stack" style="padding-left: 15px">
+                                         <label class="label-85">
+                                             Total Amt in Rs</label>
+                                         @Html.TextBoxFor(x => x.TotalAmtRs, new { @class = "input-90", disabled = "disabled" })
+                                     </span>
+            </div>
+        </fieldset>
+        <br/>
+        @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+        {
+            <div class="lag">
+                <label class="label-90">
+                    Remarks</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.SalesInvoice.Remarks, new {@class = "input-245 input"})
+                </span>
+            </div>
+        }
+    </div>
+@*                        if (Model.SystemControl.UDF == "1")
+                        {
+                            if (Model.UdfEntries.LongCount() != 0)
+                            {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry" style="display: none">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+                            }
+                        }*@
+}
+
+@if (changeRate)
+{
+    <script type="text/javascript">
+        changeRate = true;
+    </script>
+}
+<script type="text/javascript">
+     var totalAmt = parseFloat(0);
+ var totalQty = parseFloat(0);
+ var rate = 0;
+ $(document).ready(function() {
+  var dateType = @Model.SystemControl.DateType.ToString();
+     if(dateType=="1") {
+            $("#InvoiceDate").mask("99/99/9999");
+            $("#InvoiceDate").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#InvoiceDate").mask("9999/99/99");
+            $("#InvoiceDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+       
+     
+       if(dateType=="1") {
+            $("#DueDate,#CnDate,#PODate,#ContractDate,#ExportInvoiceDate").mask("99/99/9999");
+            $("#DueDate,#CnDate,#PODate,#ContractDate,#ExportInvoiceDate").live("blur", function() {
+                if($(this).val()!="__/__/____"&& $(this).val()!=" ") 
+                    {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                    }
+            });
+            }
+    else {
+            $("#DueDate,#CnDate,#PODate,#ContractDate,#ExportInvoiceDate").mask("9999/99/99");
+            $("#DueDate,#CnDate,#PODate,#ContractDate,#ExportInvoiceDate").live("blur", function() {
+                if($(this).val()!="____/__/__"&& $(this).val()!=" ")
+                    {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                    }
+            });
+        }
+
+     var qty = document.querySelectorAll(".qty");
+     var altQty = document.querySelectorAll(".altQty");
+     var rate = document.querySelectorAll(".rate");
+     var basicAmt = document.querySelectorAll(".basicAmt");
+//     $.each(qty, function(i, item) {
+//         if (item.value == 0) {
+//             $(this).val('');
+//         }
+//     });
+//     $.each(altQty, function(i, item) {
+//         if (item.value == 0) {
+//             $(this).val('');
+//         }
+//     });
+//     $.each(rate, function(i, item) {
+//         if (item.value == 0) {
+//             $(this).val('');
+//         }
+//     });
+//     $.each(basicAmt, function(i, item) {
+//         if (item.value == 0) {
+//             $(this).val('');
+//         }
+//     });
+     $("#tabs").tabs();
+     var ledgerElement = document.querySelectorAll(".text_product");
+     var i = 0;
+     $.each(ledgerElement, function(index) {
+
+                      var closestTr = $(this).closest('tr');
+            closestTr.attr('id', "tr_" + i);
+         
+         var valueid = $(".productId").get(index);
+
+         $(this).attr("id", "product_" + index);
+         $(this).attr("valueId", valueid.id);
+         i++;
+     });
+     
+          var goDownElement = document.querySelectorAll(".godown");
+     $.each(goDownElement, function(index) {
+
+         var valueid = $(".value").get(index);
+
+         $(this).attr("id", "godown_" + index);
+         $(this).attr("valueId", valueid.id);
+     });
+
+     var glCode = $("#SalesInvoice_GlCode").val();
+     if (glCode != "") {
+         $.getJSON("/Entry/GetVendorDetails?glCode=" + glCode, null, function(data) {
+             $("#CreditLimit").val(data.creditLimit);
+             $("#CurrentBalance").val(data.balance);
+             $("#OutstandingChallan").val(data.outstandingChallan);
+             $("#TotalOutstanding").val(data.totalOutstanding);
+         });
+     }
+ });
+        
+</script>

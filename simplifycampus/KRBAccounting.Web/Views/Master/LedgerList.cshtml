@@ -1,0 +1,77 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service.Helpers
+@using KRBAccounting.Service.Models
+@model PagedList<KRBAccounting.Domain.Entities.Ledger>
+@{
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th width="20%">
+                    Name
+                </th>
+                <th>
+                    Short Name
+                </th>
+                <th>
+                    Group
+                </th>
+                <th>
+                    Sub Group
+                </th>
+                <th>
+                    Category
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var ledger in Model)
+            {
+                var category = new StringEnum(typeof(KRBAccounting.Enums.LedgerCategoryEnum)).GetStringValue(ledger.Category);
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@ledger.AccountName
+                    </td>
+                    <td>@ledger.ShortName
+                    </td>
+                    <td>@KRBAccounting.Service.UtilityService.GetAccountGroupById(Convert.ToInt32(ledger.AccountGroupId))
+                    </td>
+                    <td>@KRBAccounting.Service.UtilityService.GetAccountSubGroupById(ledger.AccountSubGroupId)
+                    </td>
+                    <td>
+                        @category
+                    </td>
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="javascript:voi(0);" class="editLedger icon-pencil" data-id="@ledger.Id" title="Edit: @ledger.AccountName">
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)"  class="LedgerDelete icon-remove" data-id="@ledger.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "LedgerList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "ledger-list" }))
+    </div>
+</div>

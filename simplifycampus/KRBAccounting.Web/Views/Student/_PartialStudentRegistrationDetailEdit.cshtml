@@ -1,0 +1,89 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentRegistrationDetail
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+      @Html.HiddenFor(x => x.OldRollNo, new { @class = "OldRollNo" })
+       @Html.HiddenFor(x => x.OldSectionId, new { @class = "OldSectionId" })
+        @Html.HiddenFor(x => x.UserId)
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "hdn_Subject_Id first-col" })
+            <input type="text"  class = "modallink text_subject input-120 input" value="@if (Model.Studentinfo != null)
+                                                                                        {
+                                                                                            @Model.Studentinfo.StuDesc
+                                                                                        }
+                                                                                           "  href="@Url.Action("GetStudentsIdForRegistrationByClassId", "Student")" parent="ClassId"  title="Student List"  />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Studentinfo.StdCode, new { @class = "input-100", @readonly = "readonly" })
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.SectionId, new { @class = "hdn_SectionId" })
+
+           
+
+            <input type="text"  class = "modallink text_section input-120 input" value="@if (Model.Section != null)
+                                                                                        {
+                                                                                            @Model.Section.Description
+                                                                                        }
+                                                                                           "   href="@Url.Action("GetSections", "School")" title="Section"  />
+        </td>   
+        <td>
+            @Html.HiddenFor(x => x.CurrentStatus, new { @class = "hdn_CurrentStatus" })
+            @{
+       var status = string.Empty;
+       if (Model.CurrentStatus != 0)
+       {
+           status = Enum.GetName(typeof(StudentCurrentStatus), Model.CurrentStatus);
+       }
+            }
+            <input type="text"  class = "modallink text_status input-120 input" value="@status"   href="@Url.Action("GetStudentCurrentStatus", "School")" title="Current Status "  entermsg = "Press F1 for existing Account list." />
+        </td>  
+                                                                                                   if (Model.RegMasterId != 0)
+                                                                                                   {
+            <td>
+                @Html.TextBoxFor(x => x.RollNo, new { @class = "input-45 rollno", @readonly = "readonly" })
+            </td>
+        
+                                                                                                   }
+
+        <td>
+            @Html.HiddenFor(x => x.StudentType, new { @class = "hdn_StudentType" })
+            @{  var type = string.Empty;
+                if (Model.StudentType != 0)
+                {
+                    type = Enum.GetName(typeof(StudentType), Model.StudentType);
+                }
+                }
+            <input type="text"  class="modallink text_type input-120 input" value="@type"   href="@Url.Action("GetStudentType", "School")" title="Student Type "  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ShiftId, new { @class = "hdn_ShiftId" })
+            <input type="text"  class = "modallink text_shift input-120 input" value="@if (Model.Shift != null)
+                                                                                      {
+                                                                                          @Model.Shift.Description
+                                                                                      }
+                                                                                         "   href="@Url.Action("GetShifts", "School")" title="Shift"  />
+        </td>   
+        <td>
+            @Html.HiddenFor(x => x.BoaderId, new { @class = "hdn_BoarderId" })
+            <input type="text"  class = "modallink text_boader input-120 input" value="@if (Model.Boader != null)
+                                                                                       {
+                                                                                          @Model.Boader.Description
+                                                                                       }
+                                                                                         "   href="@Url.Action("GetBoaders", "School")" title="Boarder"  />
+        </td>   
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "last-col-custom input-160 input", href = "/Student/StudentRegistrationDetailAdd", tableid = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row" onclick="$(this).closest('tr').remove()">
+        </td>
+
+    }
+</tr>

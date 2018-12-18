@@ -1,0 +1,194 @@
+@model KRBAccounting.Web.ViewModels.Library.LibraryBookIssueViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Book Issued</h1>
+                    @*<ul class="buttons">
+                        <li><a href="#" class="isw-plus addBookIssued"></a></li>
+                    </ul>*@
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div id="error-msg">
+                    </div>
+                    <div class="lag searchbook" style="margin: 20px 0 0 25%">
+                        <label>
+                            Enter Book Accession No. </label>
+                        <div class="field">
+                            @Html.TextBoxFor(x => x.BookNo, new { @placeholder = "Accession No" })
+                        </div>
+                        <input type="button" class="btn" id="searchbook" value="Search" />
+                    </div>
+                    <div class="clear">
+                    </div>
+                    <hr />
+                    <div class="clear">
+                    </div>
+                    <div class="book-issue " style="display: none">
+                        
+                        <div id="BookIssued-list" class="span5">
+                        </div>
+                        
+
+                        <div style="border-left: 1px solid black; float: left; height: 200px;">
+                            <div class="lag">
+                                <label>
+                                    Search By Card No.
+                                </label>
+                                <div class="field">
+                                    @Html.TextBoxFor(x => x.CardNo, new { @class = "input-240 ", @placeholder="Card No (expect prefix & suffix)" })
+                                    
+                                       @* <label>
+                                            Student</label>
+                                        <div class="field">
+                                            @Html.RadioButton("TypeList", "Student", true)
+                                        </div>
+                                        <label>
+                                            Employee</label>
+                                        <div class="field">
+                                            @Html.RadioButton("TypeList", "Staff", false)
+                                        </div>*@
+                                        
+                                     
+                                            <input type="button" class="btn" value="Search" id="IssueSearch" style="margin-left: 20px" />
+                                    
+                                    </div>
+                                </div>
+                                <div id="IssuetoDetail">
+                                </div>
+                            
+                        </div>
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function writeError(control, msg) {
+ 
+        var err_msg = '<div class="alert-error alert"><a class="close" href="javascript:void(0);" class="close">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    $(".close").live("click", function() {
+        $(".alert-error").remove();
+    });
+    $("#searchbook").live("click", function () {
+        Begin();
+        var accno = $("#BookNo").val();
+        if (accno != 0 || accno != "") {
+            var url = '@Url.Action("BookIssueDetail")/?accNo=' + accno;
+            $.ajax({
+                url: url,
+                context: document.body,
+                success: function (data) {
+                    if (data.msgerr == "") {
+                        $('#BookIssued-list').html(data.partialView);
+                        $(".book-issue").css("display", "block");
+                        $('#error-msg').html(data.msgerr);
+                        $("#IssuetoDetail").html("");
+                        $("#CardNo").val("");
+                    } else {
+                        writeError('error-msg', data.msgerr);
+
+                        $(".book-issue").css("display", "none");
+                    }
+
+                },
+                error: function (err) {
+                    writeError('error-msg', err);
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+            $.unblockUI();
+
+        }
+    });
+    $("#IssueSearch").live("click", function () {
+        Begin();
+        var cardno = $("#CardNo").val();
+        var type = $('input[name=TypeList]:radio:checked').val();
+
+        if (cardno != 0 && cardno != "") {
+//            var url = '@Url.Action("GetLibraryRegistrationDetailByCardNo")/?cardNo=' + cardno + "&type=" + type;
+            var url = '@Url.Action("GetLibraryRegistrationDetailByCardNo")/?cardNo=' + cardno;
+          $.ajax({
+                url: url,
+                context: document.body,
+                success: function (data) {
+                    if (data.msgerr == "") {
+                        $('#IssuetoDetail').html(data.partialView);
+                        $("#Name").val(data.name);
+                        $("#CardName").val(data.cardno);
+                        $("#CardId").val(data.cardid);
+                    } else {
+
+                        writeError('IssuetoDetail', data.msgerr);
+                    }
+
+                },
+                error: function (err) {
+                    writeError('IssuetoDetail', err);
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+            $.unblockUI();
+  
+        }
+    });
+    $("#IssueSubmit").live("click", function () {
+        Begin();
+        var cardid = $("#CardId").val();
+        if (cardid != 0 && cardid != "") {
+            var form = $(this).closest("form");
+
+            var url = form.attr("action");
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.msgerr == "") {
+                        $('#BookIssued-list').html("");
+                        $(".book-issue").css("display", "none");
+                        writeError('error-msg', data.success);
+                        $("#IssuetoDetail").html("");
+                        $("#CardNo").val("");
+                    } else {
+
+                        writeError('error-msg', data.msgerr);
+                    }
+
+                },
+                error: function (err) {
+                    writeError('error-msg', err);
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+
+            writeError('error-msg', "Please Select Card");
+            $("#CardNo").focus(); $.unblockUI();
+        }
+
+    });
+</script>

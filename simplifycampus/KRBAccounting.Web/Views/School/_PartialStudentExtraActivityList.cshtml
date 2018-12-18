@@ -1,0 +1,102 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScStudentExtraActivity>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr><th width="5%">S.N</th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                   Activity
+                </th>
+               @*<th>
+                    Created Date
+                </th>
+                <th>
+                    Created By
+                </th>*@
+                <th>
+                    Updated Date
+                </th>
+                <th>
+                    Updated By
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                
+                <tr align="center">
+                    <td >@i</td>
+                    <td>@if (item.Class != null)
+                        {
+                            @item.Class.Description
+                        }
+
+                    </td>
+                    
+                    <td>@if (item.SectionId != 0)
+                        {
+                            if (item.Section != null)
+                            {
+                                @item.Section.Description
+                            }
+                        }
+                    </td>
+                    <td>@if (item.ExtraActivity != null)
+                        {
+                            @item.ExtraActivity.Description
+                        }
+
+                  @*
+                    <td>@item.CreateDate.ToShortDateString()
+                    </td>
+                    <td>@if (item.CreateBy != null)
+                        {
+                            @item.CreateBy.Username
+                        }
+
+                    </td>*@
+                    <td>@item.UpdateDate.ToShortDateString()
+                    </td>
+                    <td>@if (item.UpdateBy != null)
+                        {
+                            @item.UpdateBy.Username
+                        }
+
+                    </td>
+                    <td>  @if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editScClassFeeRate icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>  @if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("StudentExtraActivitiesDelete", new {id = item.Id})" onclick = "return confirm('Are you sure you wish to delete this record?');" class="icon-remove" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "StudentExtraActivityList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "StudentExtraActivity-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@

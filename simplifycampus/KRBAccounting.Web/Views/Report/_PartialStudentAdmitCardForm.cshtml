@@ -1,0 +1,62 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.StudentAdmitCardForm
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Html.BeginForm("StudentAdmitCard", "Report", new { controller = "Report" }, FormMethod.Post, new { @class = "form-horizontal", id = "report-form" }))
+{
+   
+        
+  @*  <div class="lag">
+       <label class="label-120">
+            Date From(English)</label>
+        <span class="field">
+            @Html.DateTextBoxFor(x => x.DateFrom, new { @class = "input-100" ,@placeholder="MM-dd-yyyy"})
+            @Html.ValidationMessageFor(m => m.DateFrom)
+        </span>
+        <label class="label-120">
+            Date To(English)</label>
+        <span class="field">
+            @Html.DateTextBoxFor(x => x.DateTo, new { @class = "input-100",@placeholder="MM-dd-yyyy" })
+            @Html.ValidationMessageFor(m => m.DateTo)
+        </span>
+    </div>*@
+       
+ 
+    <div style="width: 400px; height: 140px">
+   
+    <div class="lag">
+        <label class="label-120">
+            Class</label>
+        <span class="field">
+            @Html.DropDownListFor(m => m.ClassId, Model.ClassList, new { @class = "input-100 chzn-select" })
+            @Html.ValidationMessageFor(m => m.ClassId)
+        </span>
+       @* <label class="label-120">
+            Categroy</label>
+        <span class="field">
+            @Html.DropDownListFor(m => m.CategoryId, Model.CategoryList, new { @class = "input-190" })
+            @Html.ValidationMessageFor(m => m.CategoryId)
+        </span>*@
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-120">
+            Section</label>
+        <span class="field">
+            @Html.DropDownListFor(m => m.SectionId, Model.SectionList, new { @class = "input-100 chzn-select" })
+            @Html.ValidationMessageFor(m => m.SectionId)
+        </span>
+         </div>
+        <div class="clearfix"></div>
+        <div class="lag">
+            <label class="label-120">
+                Exam</label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.ExamId, Model.ExamList, new { @class = "input-100 chzn-select" })
+                @Html.ValidationMessageFor(m => m.ExamId)
+            </span>
+        </div>
+   
+     </div>
+    }
+   

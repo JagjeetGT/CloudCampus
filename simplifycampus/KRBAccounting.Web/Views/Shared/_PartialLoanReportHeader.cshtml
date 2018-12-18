@@ -1,0 +1,45 @@
+﻿@model KRBAccounting.Web.ViewModels.Cooperative.LoanReportHeader
+<div class="workplace">
+    <h4>@Model.CompanyName</h4>
+    <p>@Model.CompanyAddress</p>
+    <div class="accountingperiod">
+        <p>
+            Accounting Period
+        </p>
+        @Model.AccountingPeriod
+    </div>
+    <div class="reporttitle">
+    <h5>
+        @Model.ReportTitle
+    </h5>
+    <p>
+        @Model.ReportDate
+    </p>
+</div>
+    <div class="clearfix">
+    </div>
+    <div class="loan-subheader">
+        <div class="accholder-detail">
+            <p>
+                @Html.Raw(Model.AccHolderDetail)
+            </p>
+        </div>
+        <div class="loan-detail-right">
+            <p>
+                <span class="loan-detail-title">Loan Type: </span>@Model.LoanType</p>
+            <p>
+                <span class="loan-detail-title">Loan Start Date:</span> @Model.LoanStartDate</p>
+            <p>
+                <span class="loan-detail-title">Loan Maturity Date: </span>@Model.LoanMaturityDate</p>
+            <p>
+                <span class="loan-detail-title">Interest Rate: </span>@Model.InterestRate</p>
+            <p>
+                <span class="loan-detail-title">Installment Frequency: </span>@Model.InstallmentFrequency</p>
+            <p>
+                <span class="loan-detail-title">Approved Amount: </span>@Model.ApprovedAmount</p>
+            <br/>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+</div>

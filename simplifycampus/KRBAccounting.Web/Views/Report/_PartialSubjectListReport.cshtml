@@ -1,0 +1,75 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportSubjectListReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th style="text-align:center">
+                    S.no.
+                </th>
+                <th style="text-align:center">
+                    Description
+                </th>
+                <th style="text-align:center">
+                    Code
+                </th>
+             
+                <th style="text-align:center">
+                    Class Type
+                </th>
+                <th style="text-align:center">
+                    Type
+                </th>
+              
+              
+                <th style="text-align:center">
+                    Memo
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.SubjectList)
+        {
+            <tr>
+                <td style="text-align:center">
+                    @i
+            </td>
+                <td style="text-align:center">
+                    @item.Description
+                </td>
+                <td style="text-align:center">
+                    @item.Code
+                </td>
+                
+                <td style="text-align:center">
+                    @Enum.GetName(typeof(ClassType), item.ClassType)
+            </td>
+                <td style="text-align:center">
+                    @Enum.GetName(typeof(SubjectType), item.Type)
+                </td>
+               
+              
+                <td style="text-align:center">
+                    @item.Memo
+            </td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>

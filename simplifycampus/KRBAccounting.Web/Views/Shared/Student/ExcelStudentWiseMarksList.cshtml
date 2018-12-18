@@ -1,0 +1,391 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Student.StudentGeneralInformationViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var i in Model.ExamMarksGrouping)
+{
+    <div class="ReportList" style="border: 1px solid; min-height: 900px;">
+        <div style="margin: 25px;">
+            <div class="ReportHeader" style="text-align: center">
+                @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                <p style="font-weight: bold; text-decoration: underline">
+                    MARKSHEET
+                </p>
+                <div class="clearfix">
+                </div>
+            </div><div class="clearfix">
+            </div>
+            <div>
+                <span style="font-size:8px;">
+                    NAME : @i.FirstOrDefault().Studentinfo.StuDesc
+                </span>
+
+                <span style="font-size:8px;">
+                    STUDENT CODE : @i.FirstOrDefault().Studentinfo.StdCode
+                </span>
+                <span style="font-size:8px;">
+                    REGISTRATION NO. : @i.FirstOrDefault().Studentinfo.Regno
+                </span>
+                <div class="clearfix"></div>
+
+                <div class="clearfix"></div>
+                <div>
+                    <span style="float: left; width: 20% !important; font-size: 8px;">
+                        CLASS :
+                        @{
+    var schClass = i.FirstOrDefault().Class;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Description
+                        }
+                    </span>
+                    @{
+    var student = UtilityService.GetStudentDetial(i.FirstOrDefault().StudentId, i.FirstOrDefault().AcademicYearId);
+                    }
+                    <span style="float: left; width: 20% !important; font-size: 8px;">
+                        SECTION : @student.RollNo
+                    </span>
+                    <span style="float: left; width: 20% !important; font-size: 8px;">
+                        ROLL NO. : @student.RollNo
+                    </span>
+                    <span style="float: left; width: 20% !important; font-size: 8px;">
+                        YEAR : @Model.AcademicYear
+                    </span>
+                    <div class="clearfix"></div>
+                    <span style="text-align: left; font-size: 8px;">EXAM : @i.FirstOrDefault().Exam.Description.ToUpper()</span>
+                </div>
+            </div>
+
+            @{
+    decimal thfull = 0;
+    decimal thpass = 0;
+    decimal thobt = 0;
+    decimal parfull = 0;
+
+    decimal parpass = 0;
+    decimal parobt = 0;
+    decimal total = 0;
+    decimal highest = 0;
+            }
+            <br />
+            <table border="0.5" style="font-size: 8px;">
+                <thead>
+                    <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                        <th rowspan="2" style="font-size:8px">
+                            Code
+                        </th>
+                        <th rowspan="2" style="font-size:8px">
+                            Subject
+                        </th>
+                        <th colspan="3" style="font-size:8px">
+                            Theory
+                        </th>
+                        <th colspan="3" style="font-size:8px">
+                            Practical
+                        </th>
+                        <th rowspan="2" style="font-size:8px">
+                            Total
+                        </th>
+                        <th rowspan="2" style="font-size:8px">
+                            Highest Mark
+                        </th>
+                    </tr>
+                    <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                        <th style="font-size:8px">
+                            Full Marks
+                        </th>
+                        <th style="font-size:8px">
+                            Pass Marks
+                        </th>
+                        <th style="font-size:8px">
+                            Obt. Marks
+                        </th>
+                        <th style="font-size:8px">
+                            Full Marks
+                        </th>
+                        <th style="font-size:8px">
+                            Pass Marks
+                        </th>
+                        <th style="font-size:8px">
+                            Obt. Marks
+                        </th>
+
+                    </tr>
+                </thead>
+                @foreach (var item in Model.ExamMarksEntries.Where(x => x.ExamId == i.FirstOrDefault().ExamId && x.ClassId == i.FirstOrDefault().ClassId && x.StudentId == i.FirstOrDefault().StudentId))
+                {
+                    var data = UtilityService.GetExamMarkSetup(item.ExamId, item.ClassId, item.SubjectId);
+
+                    <tr>
+                        <td>
+                            @if (item.Subject != null)
+                            {
+                                @item.Subject.Code
+                            }
+                        </td>
+                        <td>
+                            @if (item.Subject != null)
+                            {
+                                @item.Subject.Description
+                            }
+                        </td>
+                        <td>
+                            @if (data != null)
+                            {
+                                @data.TheoryFullMark
+                            }
+                        </td>
+                        <td>
+                            @if (data != null)
+                            {
+                                @data.TheoryPassMark
+                            }
+                        </td>
+                        <td>
+                            @if (@item.TheoryStatus == 2)
+                            {
+                                <text><font color="red">Abs</font> </text>
+                            }
+                            @if (item.TheoryStatus == 3)
+                            {
+                                <text><font color="red">W</font> </text>
+                            }
+                            @if (data != null && item.TheoryObtainedMarks < data.TheoryPassMark)
+                            {
+                                <text> @item.TheoryObtainedMarks <font class="red">*</font> </text>
+                            }
+                            else
+                            {
+                                @item.TheoryObtainedMarks
+                            }
+
+
+                        </td>
+                        <td>
+                            @if (data != null)
+                            {
+                                @data.PracticalFullMark
+                            }
+                        </td>
+                        <td>
+                            @if (data != null)
+                            {
+                                @data.PracticalPassMark
+                            }
+                        </td>
+                        <td>
+                            @if (@item.PracticalStatus == 2)
+                            {
+                                <text><font color="red">Abs</font> </text>
+                            }
+                            @if (item.PracticalStatus == 3)
+                            {
+                                <text><font color="red">W</font> </text>
+                            }
+                            @if (data != null && item.PracticalObtainedMarks < data.PracticalPassMark)
+                            {
+                                <text> @item.PracticalObtainedMarks <font class="red">*</font> </text>
+                            }
+                            else
+                            {
+                                @item.PracticalObtainedMarks
+                            }
+                        </td>
+                        <td>
+                            @item.Total
+                        </td>
+                        <td>
+                            @item.HighestMarks
+                        </td>
+                    </tr>
+                            thfull += data.TheoryFullMark;
+                            thpass += data.TheoryPassMark;
+                            thobt += item.TheoryObtainedMarks;
+                            parfull += data.PracticalFullMark;
+
+                            parpass += data.PracticalPassMark;
+                            parobt += item.PracticalObtainedMarks;
+                            total += item.Total;
+                            highest += item.HighestMarks;
+
+                }
+                <tr>
+                    <td colspan="2" style="text-align: center">
+                        Total
+                    </td>
+                    <td>
+                        @thfull
+                    </td>
+                    <td>
+                        @thpass
+                    </td>
+                    <td>
+                        @thobt
+                    </td>
+                    <td>
+                        @parfull
+                    </td>
+                    <td>
+                        @parpass
+                    </td>
+                    <td>
+                        @parobt
+                    </td>
+                    <td>
+                        @total
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <div class="clearfix">
+            </div>
+            <div style="width: 100%">
+                <div style="border: 1px solid; width: 30%; padding: 10px; margin-top: 10px; float: left">
+                    <table border="0.5" style="font-size:8px;">
+                        <tr>
+                            <th colspan="2">
+                                DIVISION SYSTEM
+                            </th>
+                        </tr>
+                        @foreach (var item in Model.Division)
+                        {
+                            <tr>
+                                <td>@item.Description</td>
+                                <td>@item.PercentageFrom % - @item.PercentageTo %</td>
+                            </tr>
+
+
+                        }
+                        @*   <tr>
+                                <th colspan="2">
+                                    Division SYSTEM
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Distinction:
+                                </td>
+                                <td>
+                                    80% and above
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    B - Good:
+                                </td>
+                                <td>
+                                    60% and below 80%
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    C - Average:
+                                </td>
+                                <td>
+                                    50% to below 60%
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    D - Fair:
+                                </td>
+                                <td>
+                                    Below 40%
+                                </td>
+                            </tr>*@
+                    </table>
+                </div>
+                <br />
+                <div style="border: 1px solid; width: 30%; padding: 10px; margin-top: 10px; float: right">
+                    <table>
+                        <tr>
+                            <td style="font-size:8px;">
+                                Result : @i.FirstOrDefault().Result
+                            </td>
+                            <td style="font-size:8px;">
+                                Percentage : @i.FirstOrDefault().Percentage
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:8px;">
+                                Division :
+                                @{
+    var scDivision = i.FirstOrDefault().Division;
+                                }
+                                @if (scDivision != null)
+                                {
+                                    <text>
+                                        @scDivision.Description
+                                    </text>
+
+                                }
+                            </td>
+                            <td style="font-size:8px;">
+                                Rank :
+                                @if (i.FirstOrDefault().Result == "Pass")
+                                {
+                                    if (i.FirstOrDefault().Rank != 0)
+                                    {
+                                        @i.FirstOrDefault().Rank
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size:8px;">
+                                Total No of the Students in the Class: @if (i.FirstOrDefault().OutOf != 0)
+                                {
+                                    @i.FirstOrDefault().OutOf
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:8px;">
+                                Remark
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:8px;">
+                                @i.FirstOrDefault().Remarks
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+            <br />
+            <table width="100%">
+                <tr>
+                    <td width="50%" float="left">
+                        PRINCIPAL
+                    </td>
+                    <td width="10%" float="right">
+                        Class Teacher
+                    </td>
+                </tr>
+            </table>
+            <div style="border-top:  1px solid; text-align: center; display: inline-block; width: 170px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   margin-top: 80px;">
+
+            </div>
+            <div style="border-top: 1px solid; float: right; text-align: center; width: 170px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   margin-top: 80px;">
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+}

@@ -1,0 +1,118 @@
+﻿@model KRBAccounting.Domain.StoredProcedures.SP_StudentWiseMarksDetail
+@using KRBAccounting.Enums
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("SubjectWiseMarksDetailctEntry"))
+    {
+        <td class="sno">@ViewBag.sno
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.SubjectId, new { @class = "hdn_StudentId" })
+            <input type="text"  class = "modallink text_student input-120 input" value="@Model.SubDesc"  title="Subject "  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Code, new { @class = "StdCode input input-70", @readonly = "readonly" })
+        </td>
+        var ResultSystem = "";
+        if (Model.ResultSystem != 0)
+        {
+            ResultSystem = Enum.GetName(typeof(ResultSystem), Model.ResultSystem);
+        }
+        <td>
+            <input type="text" value="@ResultSystem" class="input-45 input"  readonly="readonly"/>
+        </td>
+        var EvaluateForType = "";
+        if (Model.EvaluateForType != 0)
+        {
+            EvaluateForType = Enum.GetName(typeof(EvaluateForPass), Model.EvaluateForType);
+        }
+        <td>
+            <input type="text" value="@EvaluateForType" class="input-45 input" readonly = "readonly"/>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TheoryFullMark, new { @class = "TheoryFullMark input-45 input", @readonly = "readonly" })
+            @Html.ValidationMessageFor(x => x.TheoryFullMark)
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TheoryPassMark, new { @class = "TheoryPassMark input-45 input", @readonly = "readonly" })
+            @Html.ValidationMessageFor(x => x.TheoryPassMark)
+        </td>
+            
+        if (Model.ClassType == 1 || Model.ClassType == 3)
+        {
+        <td>
+            @Html.TextBoxFor(x => x.TheoryObtainedMarks, new { @class = "TheoryObtainedMarks input-45 input" })
+            @Html.ValidationMessageFor(x => x.TheoryObtainedMarks)
+        </td>
+            var theorystatus = "";
+            if (Model.TheoryStatus != 0)
+            {
+                theorystatus = Enum.GetName(typeof(ExamAttendanceStatus), Model.TheoryStatus);
+            }
+        <td>
+            @Html.HiddenFor(x => x.TheoryStatus, new { @class = "Theory-Status" })
+            <input type="text"  class = "modallink text_TheoryStatus input-100 input" value="@theorystatus" href="@Url.Action("GetExamAttendanceStatus")" title="Theory Status"  entermsg = "Press F1 for existing Account list." />
+            @Html.ValidationMessageFor(x => x.TheoryStatus)
+        </td>
+        }
+        else
+        {
+
+        <td>
+            @Html.TextBoxFor(x => x.TheoryObtainedMarks, new { @class = "TheoryObtainedMarks input-45 input", @disabled = "disabled" })
+            @Html.ValidationMessageFor(x => x.TheoryObtainedMarks)
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TheoryStatus, new { @class = "TheoryStatus input-45 input", @disabled = "disabled" })
+            @Html.ValidationMessageFor(x => x.TheoryStatus)
+        </td>
+        }
+        <td>
+            @Html.TextBoxFor(x => x.PracticalFullMark, new { @class = "PracticalFullMark input-45 input", @disabled = "disabled" })
+            @Html.ValidationMessageFor(x => x.PracticalFullMark)
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.PracticalPassMark, new { @class = "PracticalPassMark input-45 input", @disabled = "disabled" })
+            @Html.ValidationMessageFor(x => x.PracticalPassMark)
+        </td>
+            
+        if (Model.ClassType == 2 || Model.ClassType == 3)
+        {
+               
+        <td>
+            @Html.TextBoxFor(x => x.PracticalObtainedMarks, new { @class = "PracticalObtainedMarks input-45 input" })
+            @Html.ValidationMessageFor(x => x.PracticalObtainedMarks)
+        </td>
+            var PracticalStatus = "";
+            if (Model.PracticalStatus != 0)
+            {
+                PracticalStatus = Enum.GetName(typeof(ExamAttendanceStatus), Model.PracticalStatus);
+            }
+        <td>
+            @Html.HiddenFor(x => x.PracticalStatus, new { @class = "Practical-Status" })
+            <input type="text"  class = "modallink text_PracticalStatus input-100 input" value="@PracticalStatus" href="@Url.Action("GetExamAttendanceStatus")" title="Practical Status"  entermsg = "Press F1 for existing Account list." />
+            @Html.ValidationMessageFor(x => x.PracticalStatus)
+        </td>
+        }
+        else
+        {
+        <td>
+            @Html.TextBoxFor(x => x.PracticalObtainedMarks, new { @class = "PracticalObtainedMarks input-45 input", @disabled = "disabled" })
+            @Html.ValidationMessageFor(x => x.PracticalObtainedMarks)
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.PracticalStatus, new { @class = "PracticalStatus input-45 input", @disabled = "disabled" })
+            @Html.ValidationMessageFor(x => x.PracticalStatus)
+        </td>
+        }
+        <td>
+            @Html.TextBoxFor(x => x.Total, new { @class = "TotalMark input-45 input" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "input-100 input", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+@* <td>
+                <img src="../../Content/img/delete.png" width="15px" class="del-row">
+            </td>*@
+
+    }
+</tr>

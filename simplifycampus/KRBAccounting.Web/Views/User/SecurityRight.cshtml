@@ -1,0 +1,149 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.SecurityRight>
+@{
+    ViewBag.Title = "Security Rights";
+}
+<div class="workplace">
+    <div class="head">
+        <div class="isw-grid">
+        </div>
+        <h1>
+            Security Right</h1>
+        <ul class="buttons">
+            <li><a class="isw-left_circle" title="Back" href="javascript: history.go(-1)"></a>
+            </li>
+        </ul>
+        <div class="clear">
+        </div>
+    </div>
+    <div id="ledger-list">
+        @using (Html.BeginForm())
+        {
+            var roleid = ViewBag.Role;
+            <div class="block-fluid table-sorting" id="tbl-list">
+         
+                <input type="hidden" name="role" id="role" value="@roleid"/>
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+                    <thead>
+                        <tr>
+                            <th width="260px">
+                                Module Name
+                            </th>
+                            <th>
+                                <input type="checkbox" id="create_checkall" />
+                                Create
+                            </th>
+                            <th>
+                                <input type="checkbox" id="edit_checkall" />
+                                Edit
+                            </th>
+                            <th>
+                                <input type="checkbox" id="delete_checkall" />
+                                Delete
+                            </th>
+                            <th>
+                                <input type="checkbox" id="navigate_checkall" />
+                                Navigate
+                            </th>
+                            <th>
+                                <input type="checkbox" id="approve_checkall" />
+                                Approve
+                            </th>
+                        </tr>
+                    </thead>
+                   <tbody>
+                    @{
+                        var parent = Model.Where(x => x.ParentId == null);
+                        var children = Model.Where(x => x.ParentId != null);
+                       
+                        var i = 1;
+                        bool isParent = true;
+                    }
+                    
+                    @foreach (var securityRight in parent)
+                    {
+                        isParent = true;
+                        ViewBag.ParentId = "c" + i;
+                        ViewBag.Isparent = isParent;
+                        @Html.Partial("_PartialSingleSecurityRight", securityRight)
+                        foreach (var s in children.Where(x => x.ParentId == securityRight.MenuItemId))
+                        {
+                            isParent = false;
+                            ViewBag.Isparent = isParent;
+                            @Html.Partial("_PartialSingleSecurityRight", s)
+
+                        }
+                       
+                       
+                        i++;
+                    }
+                    @foreach (var s in children.Where(x => x.MenuItemId==0))
+                    {
+                        @Html.Partial("_PartialSingleSecurityRight", s)
+
+                    }
+                    </tbody>
+                    
+                </table>
+            </div>
+            <div class="form-actions">
+                <p>
+                    <input type="submit" value="Save" class="btn" /></p>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("table tr:not(.accordion)").hide();
+        $("table tr:first-child").show();
+        $("table tr.accordion").css("cursor", "pointer");
+        $("table tr.accordion").click(function () {
+            $(this).nextAll("tr:not(.accordion)." + $(this).attr("id")).toggle();
+        });
+    });
+    $('tr input').live("click", function () {
+        var childclass = $(this).closest("tr").attr("class");
+        if ($(this).is(":checked")) {
+            // var childclass = $(this).closest("tr").attr("class");
+            $("#" + childclass + " input").attr('checked', this.checked);
+        } else {
+            if(childclass=="") {
+                childclass = $(this).closest("tr").attr("id");
+            }
+            var checked = $("tr." + childclass);
+            var count = 0;
+            $.each(checked, function () {
+                var dd = $(this).find("td input").is(":checked");
+                if (dd) {
+                    count = count + 1;
+                }
+            });
+            //alert(count);
+            
+            if (count> 0) {
+                $("#" + childclass + " input").attr('checked', "checked");
+               
+            } else {
+               
+                $("#" + childclass + " input").removeAttr('checked');
+            }
+        }
+    });
+    $('#create_checkall').click(function () {
+        $('.chkcreate').attr('checked', this.checked);
+    });
+
+    $('#edit_checkall').click(function () {
+        $('.chkedit').attr('checked', this.checked);
+    });
+    $('#delete_checkall').click(function () {
+        $('.chkdelete').attr('checked', this.checked);
+    });
+    $('#navigate_checkall').click(function () {
+        $('.chknavigate').attr('checked', this.checked);
+    });
+    $('#approve_checkall').click(function () {
+        $('.chkapprove').attr('checked', this.checked);
+    });
+</script>

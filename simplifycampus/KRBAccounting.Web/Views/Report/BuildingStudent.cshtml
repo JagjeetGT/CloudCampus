@@ -1,0 +1,129 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.BuildingStudentViewModel
+@Html.Partial("_PartialStudentReportBreadCrumb")
+
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Building Student</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfBuildingStudentCountReport", "Report")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelBuildingStudentCountReport", "Report")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("_partialBuildingStudentSearch", Model)</div>
+</div>
+<script type="text/javascript">
+    $("#modalReportForm").dialog({
+        autoOpen: true,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                Save();
+               
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+   
+
+    function Save() {
+
+
+        var form = $("#report-form");
+        var url = form.attr("action");
+        Begin();
+        $.ajax({
+            url: url,
+            data: form.serialize(),
+            datatype: "JSON",
+            type: "POST",
+            error: function () {
+
+                alert("An error occurred.");
+                $.unblockUI();
+            },
+            success: function (data) {
+
+                //alert(data.view.html);
+                $("#report").html(data.view);
+
+
+
+                $("#modalReportForm").dialog("close");
+                $.unblockUI();
+
+            }
+        });
+    }
+
+    $("#generate_report").live('click', function () {
+
+        $("#modalReportForm").dialog('open');
+    });
+
+    $(".BuildingList").live("change", function () {
+        var closestTr = $(this).closest('tr');
+        var id = $(this).val();
+
+
+        if (id != 0) {
+
+            $(".ListRoom").show();
+            var url = '/Report/NewRoomList';
+            $.ajax({
+                url: url,
+                type: "Post",
+                data: { id: id },
+                success: function(result) {
+
+                    var innerHtml = '<option value="0">All</option>';
+                    $.each(result, function() {
+                        innerHtml += "<option value='" + this.Id + "'>" + this.Description + "</option>";
+
+                    });
+                    $(".RoomList").html(innerHtml);
+                }
+            });
+      } 
+        else {
+            $(".ListRoom").hide();
+        }
+
+    });
+
+//    $("#buildingList").live('change', function () {
+//        var closestTr = $(this).closest('tr');
+//        var buildingId = $(this).val();
+
+
+//        if (buildingId != 0) {
+
+//            $(".ListRoom").show();
+//        }
+//        else {
+
+//            $(".ListRoom").hide();
+//        }
+//    });
+</script>

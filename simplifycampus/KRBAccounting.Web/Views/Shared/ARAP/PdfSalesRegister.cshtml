@@ -1,0 +1,76 @@
+﻿@using System.Data
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.SalesRegisterViewModel
+@{
+    
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+<br/>
+<div class="ReportList">
+  <table border="0.5" style="font-size: 7px;">
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Bill No
+                </th>
+                <th>
+                    Party Name
+                </th>
+                <th>
+                    Vat No
+                </th>
+                <th>
+                    Total Sale
+                </th>
+                <th>
+                    Tax Free Sale
+                </th>
+                <th>
+                    Taxable Value
+                </th>
+                <th>
+                    Vat
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.SalesRegisters)
+        {
+            <tr>
+                <td>
+                    @if (Model.DateType == 1)
+                    {
+                        <text>@item.InvoiceDate.ToShortDateString()</text>
+                    }
+                    else
+                    {
+                        <text>@item.InvoiceMiti</text>
+                    }
+                </td>
+                <td>@item.InvoiceNo
+                </td>
+                <td>@item.AccountName
+                </td>
+                <td>@item.VatNo
+                </td>
+                <td>@item.TotalSale
+                </td>
+                <td>@item.TaxFreeSale
+                </td>
+                <td>@item.TaxableValue
+                </td>
+                <td>@item.SaleTax
+                </td>
+            </tr>
+                
+        }
+    </table>
+</div>

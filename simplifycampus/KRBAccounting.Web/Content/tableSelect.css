@@ -1,0 +1,18 @@
+.tableSelect tr.selected td {
+    background: #DFE8F6;
+}
+
+.tableSelect tr.disabled td {
+    background: #5B7EA4 !important;
+    color: #fff;
+}
+
+.tableSelect tr.disabledSelected td {
+    border-top: 1px solid #62b7ff;
+    border-bottom: 1px solid #62b7ff;
+}
+
+.tableSelect td:hover {
+    color: #06C;
+}
+

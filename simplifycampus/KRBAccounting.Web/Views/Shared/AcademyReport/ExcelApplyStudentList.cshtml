@@ -1,0 +1,92 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportApplyStudentListViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialExcelReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Apply Date
+                </th>
+                <th>
+                    Std. Code
+                </th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Sex
+                </th>
+                <th>
+                    Religion
+                </th>
+                <th>
+                    Category
+                </th>
+                <th>
+                    District
+                </th>
+                <th>
+                    Country
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.StudentList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>
+                    @item.Class.Description
+                </td>
+                <td>
+                     @{
+            DateTime date = Convert.ToDateTime(item.ApplyDate);
+                        
+                    }
+                    @date.ToString("dd/MM/yyyy")
+                </td>
+                <td>
+                    @item.StdCode
+                </td>
+                <td>
+                    @item.StuDesc
+                </td>
+                <td>@item.Sex
+                </td>
+                <td>@item.Religion
+                </td>
+                <td>
+                    @if (item.StudentCategory != null)
+                    {
+                        @item.StudentCategory.Description
+                    }
+                </td>
+                <td>
+                    @item.PerDistrict
+                </td>
+                <td>
+                    @item.PerCountry
+                </td>
+            </tr>
+                    i++;
+        }
+    </table>
+</div>

@@ -1,0 +1,32 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentRegistrationDetail
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("StudentListEntry"))
+    {
+        
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "student-id-" + Model.StudentId })
+            @Html.CheckBoxFor(x => x.Checkbox, new { @class = "student-checkbox" })
+        </td>
+        <td>
+            @if (Model.Studentinfo.StuDesc != null)
+            {
+                @Model.Studentinfo.StuDesc
+            }
+        </td>
+        <td>
+            @if (Model.Studentinfo.StdCode != null)
+            {
+                @Model.Studentinfo.StdCode
+            }
+        </td>
+        <td>
+            @Model.RollNo
+        </td> 
+        <td>
+            @Enum.GetName(typeof(StudentCurrentStatus), Model.CurrentStatus)
+        </td>
+
+    }
+</tr>

@@ -1,0 +1,239 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Web.Helpers
+@model KRBAccounting.Web.ViewModels.Entry.PurchaseInvoicePrintViewModel
+@{
+    ViewBag.Title = "Sales Invoice Print";
+
+}
+<div id="report">
+    <link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="print" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="screen" />
+    <div class="ReportHeader">
+        <table width="100%">
+            <tr align="center" style="font-size: 12px;">
+                <td>
+                    <b style="font-size: 16px">@Model.ReportHeader.CompanyName</b><br />
+                    @Model.ReportHeader.CompanyAddress<br />
+                    @if (!string.IsNullOrEmpty(Model.ReportHeader.Phone))
+                    {
+                        <text> Tel.:
+                        @Model.ReportHeader.Phone
+                        <br />
+                        </text>
+                    }
+                    <b style="font-size: 12px">PAN No : @Model.ReportHeader.PanNo</b>
+                    <br />
+                    <b style="font-size: 14px">@Model.ReportHeader.ReportTitle</b>
+                </td>
+            </tr>
+        </table>
+        <table width="50%" style="float: left">
+            <tr>
+                <td style="text-align: left" width="100%">
+                    Vendor Name: @Model.SalesInvoice.Ledger.AccountName
+                </td>
+            </tr>
+            @if (!string.IsNullOrEmpty(Model.SalesInvoice.Ledger.Address))
+            {
+                <tr>
+                    <td style="text-align: left" width="100%">
+                        Address: @Model.SalesInvoice.Ledger.Address
+                    </td>
+                </tr>
+            }
+            @if (!string.IsNullOrEmpty(Model.SalesInvoice.Ledger.PanNo))
+            {
+                <tr>
+                    <td style="text-align: left" width="100%">
+                        PAN: @Model.SalesInvoice.Ledger.PanNo
+                    </td>
+                </tr>
+            }
+        </table>
+        <table width="50%" style="float: right">
+            <tr>
+                <td style="text-align: right" width="100%">
+                    Invoice No.: @Model.SalesInvoice.InvoiceNo
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right" width="100%">
+                    <span>Date :</span>@Model.SalesInvoice.InvoiceDate.ToString("MM/dd/yyyy") Date(BS)
+                    :@Model.SalesInvoice.InvoiceMiti
+                </td>
+            </tr>
+        </table>
+        <div style="clear: both">
+        </div>
+        <table width="100%" class="listpopup" border="1" style="border:  1px solid #000">
+            <tr>
+                <th>
+                    SNo
+                </th>
+                <th>
+                    Particulars
+                </th>
+                <th>
+                    Qty
+                </th>
+                <th>
+                    Rate
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Term Amount
+                </th>
+                <th>
+                    Total
+                </th>
+            </tr>
+            @{
+                var i = 1;
+                var amount = Model.SalesInvoice.SalesDetails.Sum(x => x.NetAmt);
+                var basicAmt = Model.SalesInvoice.SalesDetails.Sum(x => x.BasicAmt);
+            }
+            @foreach (var item in Model.SalesInvoice.SalesDetails)
+            {
+                <tr>
+                    <td width="5%">
+                        @item.SNo
+                    </td>
+                    <td width="30%">@if (item.Product != null)
+                                    {
+                                        @item.Product.Name
+                                    }
+
+                    </td>
+                    <td width="10%">
+                        @item.Qty
+                    </td>
+                    <td width="15%">
+                        @item.Rate
+                    </td>
+                    <td width="15%">
+                        @item.BasicAmt
+                    </td>
+                    <td width="15%">
+                        @{
+                            
+                   var termRate = Model.InvoiceBillingTerms.Where(x => x.Type == "P" && x.DetailId == item.Id);
+                   //if (termRate != null)
+                   //{
+                            <text>@termRate.Sum(x=>x.TermAmount)</text>
+                  @* }
+                   else
+                   {
+                            <text> - </text>
+                   }*@
+                        }
+                    </td>
+                    <td width="15%">
+                        @item.NetAmt
+                    </td>
+                </tr>
+                //i++;
+            }
+            <tr align="right">
+                <td colspan="6">
+                    Total :
+                </td>
+                <td style="font-weight: bold">
+                    @amount
+                </td>
+            </tr>
+            @foreach (var term in Model.InvoiceBillingTerms.Where(x => x.Type == "B").OrderBy(x => x.DisplayOrder))
+            {
+                <tr align="right">
+                    <td colspan="6">
+                        @term.TermName (@term.TermRate %)
+                    </td>
+                    <td style="font-weight: bold">@term.TermAmount
+                    </td>
+                </tr>
+                                             amount += term.TermAmount;
+            }
+            <tr align="right">
+                <td colspan="6">
+                    Grand Total :
+                </td>
+                <td style="font-weight: bold">
+                    @amount
+                </td>
+            </tr>
+        </table>
+        <div style="float: left">
+            <b>In Words: @NumberToEnglish.changeCurrencyToWords(Convert.ToDouble(amount))</b>
+        </div>
+        <div style="clear: both">
+        </div>
+        <p style="float: left;">
+            Remarks : @Model.SalesInvoice.Remarks</p>
+        <br />
+        <br />
+        <div style="width: 100%; text-align: center;">
+            <table width="100%">
+                <tr>
+                    <td style="float: left;">
+                        <table>
+                            <tr>
+                                <td>
+                                    @if (Model.SalesInvoice.User != null)
+                                    {
+                                        @Model.SalesInvoice.User.Username
+
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid;">
+                                    Prepared By
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>@Model.SalesInvoice.CreatedDate.ToShortDateString()
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid;">
+                                    Checked By
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid;">
+                                    Authorized By
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

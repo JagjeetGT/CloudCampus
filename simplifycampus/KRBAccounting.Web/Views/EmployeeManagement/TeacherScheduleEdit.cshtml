@@ -1,0 +1,172 @@
+﻿@model KRBAccounting.Web.ViewModels.School.ScTeacherScheduleViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<script src="../../Content/TimePicker/jquery.timepicker.js" type="text/javascript"></script>
+<link href="../../Content/TimePicker/jquery.timepicker.css" rel="stylesheet" type="text/css" />
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Teacher Schedules</h1>
+                    <ul class="buttons">
+                        <li><a href="@Url.Action("TeacherSchedule")" class="isw-left"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div style="padding-top: 10px">
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    @using (Html.BeginForm("TeacherScheduleEdit", "EmployeeManagement", new { controller = "EmployeeManagement" }, FormMethod.Post, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+                    {
+                        @Html.HiddenFor(x=>x.OldClassId)
+                        @Html.HiddenFor(x=>x.OldSectionId)
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-90">
+                                    Class</label>
+                                @Html.HiddenFor(m => m.ClassId)
+                                <input type="text" class="modallink input-250"  value="@if (Model.Class != null)
+                                                                                       {
+                                                                                          @Model.Class.Description
+                                                                                       }
+                                                                                      " href="@Url.Action("GetClassMasterForScheduling", "EmployeeManagement")" valueid="ClassId" id="classid"/>
+                            </span><span class="stack">
+                                       <label class="label-90">
+                                           Section</label>
+                                       @Html.HiddenFor(m => m.SectionId)
+                                       <input type="text" class="modallink input-100"  value="@if (Model.Section != null)
+                                                                                              {
+                                                                                                  @Model.Section.Description
+                                                                                              }
+                                                                                      " href="@Url.Action("GetSections", "School")"  valueid="SectionId" id="Sectionid"/>
+                                   </span>
+                                   <span class="stack">
+                                <label class="label-90">
+                                    Class Teacher</label>
+                                @Html.HiddenFor(m => m.ClassTeacherId)
+                                <input type="text" class="modallink input-250" href="@Url.Action("GetEmployeeInfo", "EmployeeManagement")"  valueid="ClassTeacherId" id="teacher-id" value="@Model.TeacherName"/>
+                            </span>
+
+                        </div>                        
+                        <div class="clearfix">
+                        </div>                        
+                        <div class="lag" style="height: auto; width: 100%">
+                            <table class="listpopup" id="bus-route-list" width="100%">
+                                <tr class="nodrop nodrag">
+                                    <th>
+                                        S.No
+                                    </th>
+                                    <th width="20%">
+                                        Subjects
+                                    </th>
+                                    <th colspan="2">
+                                        Sunday
+                                    </th>
+                                    <th colspan="2">
+                                        Monday
+                                    </th>
+                                    <th colspan="2">
+                                        Tuesday
+                                    </th>
+                                    <th colspan="2">
+                                        Wednesday
+                                    </th>
+                                    <th colspan="2">
+                                        Thursday
+                                    </th>
+                                    <th colspan="2">
+                                        Friday
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="clearfix">
+                        </div>                        
+                        <div class="form-actions">
+                            <input type="button" value="Save" class="schedulesave btn btn-info" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var classid = $("#ClassId").val();
+        var sectionid = $("#SectionId").val();
+       
+        if (classid != 0 && sectionid != 0) {
+            Begin();
+            var url = '@Url.Action("GetTimeScheduleByClassForTeacherEdit")?classid=' + classid + '&&sectionid=' + sectionid;
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function (data) {
+                    if (data.msg == "false") {
+                        alert("Data for this class and section already saved");
+                        $(".listsubject").remove();
+                        $("#bus-route-list").append(data);
+                        $.unblockUI();
+                    } else {
+                        $(".listsubject").remove();
+                        $("#bus-route-list").append(data);
+                        $.unblockUI();
+                    }
+                }
+            });
+        }
+    });
+
+    $("#Sectionid,#classid").live("blur", function () {
+        var classid = $("#ClassId").val();
+        var sectionid = $("#SectionId").val();
+        var oldClassid = $("#OldClassId").val();
+        var oldsectionid = $("#OldSectionId").val();
+        if (classid != 0 && sectionid != 0) {
+            Begin();
+            var url = '@Url.Action("GetTimeScheduleByClassForTeacher", "EmployeeManagement")?classid=' + classid + '&&sectionid=' + sectionid + '&&oldClassid=' + oldClassid + '&&oldsectionid=' + oldsectionid;
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function (data) {
+                    if (data.msg == "false") {
+                        alert("Data for this class and section already saved");
+                        $(".listsubject").remove();
+                        $(".daytime").remove();
+                        $.unblockUI();
+                    } else {
+                        $(".listsubject").remove();
+                        $(".daytime").remove();
+                        $("#bus-route-list").append(data);
+                        $.unblockUI();
+                    }
+                }
+            });
+        }
+    });
+
+    $(".schedulesave").live('click', function () {
+        var teacheridList = document.querySelectorAll('.teacherid');
+        var i = 0;
+        $.each(teacheridList, function () {
+            var test = $(this).val();
+            if (test == 0) {
+                i++;
+            }
+        });
+        if (i == 0) {
+            $("#form-id").submit();
+        } else {
+            alert("Please assign all the teachers");
+        }
+    });
+    
+</script>

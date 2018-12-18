@@ -1,0 +1,105 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<IGrouping<int, KRBAccounting.Domain.Entities.ScStudentRegistration>>
+           @{var userRight = (UserRight) ViewBag.UserRight;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    S.N.
+                </th>
+                @* <th>
+                    Student Name
+                </th>*@
+                <th>
+                    Class
+                </th>
+                <th>
+                    Class Code
+                </th>
+                @* <th>
+                    Section
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Apply Date
+                </th>*@
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var d in Model)
+            {
+                var item = d.FirstOrDefault();
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    @*<td>
+                        
+                       
+                                                           
+                        @item.Studentinfo.StuDesc
+                                                           
+                    </td>*@
+                    <td class="_details ttLT" reg-id="@item.Id" title="Total Students: @item.StudentRegistrationDetails.Count()" style="cursor: pointer">
+                        @if (item != null && item.Class != null)
+                        {
+                            @item.Class.Description
+                        }
+                    </td>
+                    <td>
+                        @if (item != null && item.Class != null)
+                        {
+                            @item.Class.Code
+                        }
+                    </td>
+                    @*     <td>
+                        @if (item.Section != null)
+                        {
+                            @item.Section.Description
+                        }
+                    </td>
+                    <td>
+                        @Enum.GetName(typeof(StudentType),item.StudentType)
+                    </td>
+                    <td>
+                        @Enum.GetName(typeof(StudentCurrentStatus),item.CurrentStatus)
+                    </td>
+                    <td>@Convert.ToDateTime(item.Studentinfo.ApplyDate).ToShortDateString()
+                    </td>*@
+                    <td>
+                       @if (userRight.Edit){
+                            <a href="javascript:void(0)" class="editScStaffGroup icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    @* <td>@if (CheckPermission.GivePermission("Delete", "scStReg"))
+                        {
+                            <a href="javascript:void(0)" class="deleteScStaffGroup icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>*@
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="clearfix">
+    </div>
+</div>
+@*<div class="pagination">
+    @Html.Raw(Html.AjaxPager(Model, "StudentRegistrationList", "Student", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "housekeeper-list", OnBegin = "BeginRequest", OnComplete = "EndRequest" }))
+</div>*@
+@*<script type="text/javascript">
+    $("#tbl-list").dataTable({ "sPaginationType": "full_numbers", "bLengthChange": true, "bFilter": true, "bInfo": true, "bPaginate": true, "aoColumns": [{ "bSortable": true }, null, null, null, null, null, null, { "bSortable": false }, { "bSortable": false}] });
+</script>*@

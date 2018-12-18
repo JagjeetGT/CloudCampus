@@ -1,0 +1,61 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.Agent>
+@using KRBAccounting.Service
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+    <thead>
+        <tr>
+            <th width="5%">S.N.</th>
+            <th width="20%">
+                Name
+            </th>
+            <th>
+                Short Name
+            </th>
+            <th>
+                Address
+            </th>
+            <th>
+                Phone
+            </th>
+            <th>
+                Area
+            </th>
+            <th>
+                Active
+            </th>
+            <th width="5%"></th>
+            <th width="5%"></th>
+        </tr>
+       </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Name
+                    </td>
+                    <td>@item.ShorName
+                    </td>
+                    <td>@item.Address
+                    </td>
+                    <td>@item.PhoneNo
+                    </td>
+                    <td>@UtilityService.GetAreaById(item.Area)</td>
+                    <td>@UtilityService.GetActive(item.IsActive)</td>
+                    <td>
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "CAS"))
+                        {
+                            <a href="javascript:void(0);" class="editAgent icon-pencil" data-id="@item.Id"></a>
+                        }
+                    </td>
+                    <td><a href="javascript:void(0);" class="AgentDelete icon-remove" data-id="@item.Id" title="Delete"></a></td>
+                </tr>
+                i++;
+            }
+        </tbody>
+</table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "AgentList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Agent-list"}))
+    </div>
+</div>

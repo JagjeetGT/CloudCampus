@@ -1,0 +1,190 @@
+﻿@model KRBAccounting.Domain.Entities.EntryControlPurchase
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Html.BeginForm("EntryControlPurchase", "Setup", FormMethod.Post, new { @class = "form-horizontal", id = "entry-control" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div id="MsgError">
+    </div>
+    <div style="width: 445px;">
+        <div class="row">
+            <div class="lag span4">
+                <div class="lag">
+                    <label class="label-90">
+                        SubLedger</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.SubLedger, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Agent</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Agent, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Godown</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Godown, new { @class = "input-295 input" })
+                    </span>
+                </div>
+               @* <div class="lag">
+                    <label class="label-90">
+                        Class</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Class, new { @class = "input-295 input" })
+                    </span>
+                </div>*@
+                <div class="lag">
+                    <label class="label-90">
+                        Unit</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Unit, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Alt Unit</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.AltUnit, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Order</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Order, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Challan</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Challan, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Currency</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Currency, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Basic Amount</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.BasicAmount, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Remarks</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Remarks, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Auto Desc</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.AutoDesc, new { @class = "input-295 input" })
+                    </span>
+                </div>
+                <div class="lag">
+                    <label class="label-90">
+                        Change Rate</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.ChangeRate, new { @class = "input-295 input" })
+                    </span>
+                </div>
+            </div>
+            @*<div class="lag span4">
+                <fieldset>
+                    <legend>Required</legend>
+                    <div class="lag">
+                        <label class="label-90">
+                            Order</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.OrderReqd, new { @class = "input-295 input Order" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Challan</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.ChallanReqd, new { @class = "input-295 input Challan" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            SubLedger</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.SubLedgerReqd, new { @class = "input-295 input SubLedger" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Agent</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.AgentReqd, new { @class = "input-295 input Agent" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Godown</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.Godown, new { @class = "input-295 input Godown" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Class</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.ClassReqd, new { @class = "input-295 input Class" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Currency</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.CurrencyReqd, new { @class = "input-80 input Currency" })
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Remarks</label>
+                        <span class="field">
+                            @Html.CheckBoxFor(m => m.RemarksReqd, new { @class = "input-295 input Remarks" })
+                        </span>
+                    </div>
+                </fieldset>
+            </div>*@
+        </div>
+    </div>
+}
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $("input:not(:checked)").each(function () {
+            var className = $(this).attr("id");
+            $("." + className).attr("disabled", "disabled");
+        });
+
+
+        $('.input:checkbox').live('change', function () {
+            var className = $(this).attr("id");
+            if ($(this).is(':checked')) {
+                $("." + className).removeAttr('disabled');
+            } else {
+                $("." + className).attr('disabled', 'disabled');
+
+            }
+
+        }
+    );
+    })
+</script>*@
+

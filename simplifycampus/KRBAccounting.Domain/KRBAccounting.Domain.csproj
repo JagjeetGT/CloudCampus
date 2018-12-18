@@ -1,0 +1,929 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EB87EBA9-486E-4921-9A0D-E63E5FBBF212}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KRBAccounting.Domain</RootNamespace>
+    <AssemblyName>KRBAccounting.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.4.1.10331.0\lib\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Common">
+      <HintPath>..\packages\Ninject.Web.Common.3.0.0.7\lib\net40-full\Ninject.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Mvc">
+      <HintPath>..\packages\Ninject.MVC3.3.0.0.6\lib\net40-full\Ninject.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SimplifyAccounting\KRBAccounting.Web\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebActivator">
+      <HintPath>..\packages\WebActivator.1.5.1\lib\net40\WebActivator.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\AcademicBackground.cs" />
+    <Compile Include="Entities\AcademicYear.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\AccountGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\AccountSubGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\AccountTransaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\AccountWatchList.cs" />
+    <Compile Include="Entities\AdminInfo.cs" />
+    <Compile Include="Entities\Agent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Area.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\AttendanceLog.cs" />
+    <Compile Include="Entities\BillingTerm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\BillingTermDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\BillOfMaterial.cs" />
+    <Compile Include="Entities\BillOfMaterialDetail.cs" />
+    <Compile Include="Entities\BoardExamDetail.cs" />
+    <Compile Include="Entities\BoardExamMaster.cs" />
+    <Compile Include="Entities\CashBankDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\CashBankMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\CertificateTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\CheckPoints.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ClassScheduleDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ClassTeacherMapping.cs" />
+    <Compile Include="Entities\CompanyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Consolidate.cs" />
+    <Compile Include="Entities\ConsolidateDetail.cs" />
+    <Compile Include="Entities\Design.cs" />
+    <Compile Include="Entities\Device.cs" />
+    <Compile Include="Entities\DeviceLog.cs" />
+    <Compile Include="Entities\ScStudentRegistrationNumbering.cs" />
+    <Compile Include="Entities\ScAssignment.cs" />
+    <Compile Include="Entities\ScCalendarEvent.cs" />
+    <Compile Include="Entities\ScClassTeacherMapping.cs" />
+    <Compile Include="Entities\DatabaseInfo.cs" />
+    <Compile Include="Entities\EmployeeTransaction.cs" />
+    <Compile Include="Entities\ExpiryBreakageDetail.cs" />
+    <Compile Include="Entities\ExpiryBreakageMaster.cs" />
+    <Compile Include="Entities\FinishedGoodReceive.cs" />
+    <Compile Include="Entities\FinishedGoodReceiveDetail.cs" />
+    <Compile Include="Entities\FinishedGoodReturn.cs" />
+    <Compile Include="Entities\FinishedGoodReturnDetail.cs" />
+    <Compile Include="Entities\GodownTransfer.cs" />
+    <Compile Include="Entities\GodownTransferDetail.cs" />
+    <Compile Include="Entities\MaterialIssue.cs" />
+    <Compile Include="Entities\MaterialIssueDetail.cs" />
+    <Compile Include="Entities\MaterialReturn.cs" />
+    <Compile Include="Entities\MaterialReturnDetail.cs" />
+    <Compile Include="Entities\ProductLedgerInfo.cs" />
+    <Compile Include="Entities\PurchaseChallanDetail.cs" />
+    <Compile Include="Entities\PurchaseChallanImpTransDoc.cs" />
+    <Compile Include="Entities\PurchaseChallanMaster.cs" />
+    <Compile Include="Entities\PurchaseOrderBillingAddress.cs" />
+    <Compile Include="Entities\PurchaseOrderDetail.cs" />
+    <Compile Include="Entities\PurchaseOrderImpTransDoc.cs" />
+    <Compile Include="Entities\PurchaseOrderMaster.cs" />
+    <Compile Include="Entities\PurchaseProductBatch.cs" />
+    <Compile Include="Entities\SalesChallanBillingAddress.cs" />
+    <Compile Include="Entities\SalesChallanDetail.cs" />
+    <Compile Include="Entities\SalesChallanImpTransDoc.cs" />
+    <Compile Include="Entities\SalesChallanMaster.cs" />
+    <Compile Include="Entities\SalesOrderAddress.cs" />
+    <Compile Include="Entities\SalesOrderDetail.cs" />
+    <Compile Include="Entities\SalesOrderMaster.cs" />
+    <Compile Include="Entities\SalesOrderOtherDetail.cs" />
+    <Compile Include="Entities\Scheme.cs" />
+    <Compile Include="Entities\SchemeFreeProduct.cs" />
+    <Compile Include="Entities\SchemeProduct.cs" />
+    <Compile Include="Entities\ScMessage.cs" />
+    <Compile Include="Entities\ScRollNumberingScheme.cs" />
+    <Compile Include="Entities\CostCenter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\CreditNoteDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\CreditNoteMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Currency.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\DayBookModule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\DebitNoteDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\DebitNoteMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\DocumentNumberingScheme.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\EntryControlInventory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\EntryControlPL.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\EntryControlPurchase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\EntryControlSales.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ExtraCharge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ExtraTerm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\FiscalYear.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Godown.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\JournalVoucher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\JournalVoucherDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Ledger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\MenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ModuleList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Narration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\OpeningLedger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\OpeningStudent.cs" />
+    <Compile Include="Entities\Product.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ProductGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ProductImages.cs" />
+    <Compile Include="Entities\ProductOpening.cs" />
+    <Compile Include="Entities\ProductSubGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ProductUnitConversion.cs" />
+    <Compile Include="Entities\PurchaseDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PurchaseImpTransDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PurchaseInvoice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PurchaseReturnDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PurchaseReturnImpTransDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PurchaseReturnMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyAllowanceMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyEmployeeSalaryAllowanceMapping.cs" />
+    <Compile Include="Entities\PyCorporateAllowanceMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyCorporateSalaryMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyDeductionMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyEmployeeDeductionMapping.cs" />
+    <Compile Include="Entities\PyEmployeeDeductionMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyEmployeeSalaryMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyPaymentSlip.cs" />
+    <Compile Include="Entities\PyPayrollGeneration.cs" />
+    <Compile Include="Entities\PyPayrollGenerationDetail.cs" />
+    <Compile Include="Entities\PyPFEmployeeMapping.cs" />
+    <Compile Include="Entities\PyPFEmployeeMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\PyTaxDeductionEmployeeMapping.cs" />
+    <Compile Include="Entities\PyTaxDeductionPattern.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\QueuedJob.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Role.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SalesDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SalesInvoice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SalesInvoiceOtherDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SalesReturnDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SalesReturnMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SalesReturnOtherDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScAbsentApplication.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBillTransaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBoaderMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBook.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBookIssued.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBookIssueReturn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBookReceived.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBookReceivedDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBusRouteDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScBusStop.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScClassFeeRate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScClassRoomMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScClassSchedule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScClassSubjectMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScConsolidatedMarksSetup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScDivision.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScEmployeeCategory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScEmployeeDepartment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScEmployeeInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScEmployeePost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExam.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExamAttendanceDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExamAttendanceMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExamMarksEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExamMarkSetup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExamRoutine.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScExtraActivity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScFeeItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScFeeReceipt.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScFeeTerm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScFineScheme.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScFineSchemeDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScGrade.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SchBuilding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SchBuildingClassMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SchBuildingRoomMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SchClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SchClassSectionMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScHouseGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScHouseMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScLibraryCard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScLibraryLateFine.cs" />
+    <Compile Include="Entities\ScLibraryMemberRegistration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScLibrarySetting.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScMaterialIssueDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScMaterialIssueMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScMaterialReturnDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScMaterialReturnMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScMonthlyBill.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScMonthlyBillStudent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScNationality.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScPrePaidScheme.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScPrePaidSchemeDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScProgramMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScReligion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScRoom.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScSalaryHead.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScSection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScShift.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStaffAttendance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStaffSubjectMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentAttendance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentCategory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentExtraActivity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentExtraActivityDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentFeeRateDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentFeeRateMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentFeeTerm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentinfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentRegistration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentRegistrationDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScStudentSubjectMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScSubject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScTeacherSchedule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ScTransportMapping.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SecurityRight.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\ShortNameDetail.cs" />
+    <Compile Include="Entities\SmsGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SmsGroupDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SmsLog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SMSSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SmsTemplates.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\StockAdjustmentDetail.cs" />
+    <Compile Include="Entities\StockAdjustmentMaster.cs" />
+    <Compile Include="Entities\StockTransaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\StockTransferDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\StockTransferMaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\StudentDocument.cs" />
+    <Compile Include="Entities\StudentSlcInfo.cs" />
+    <Compile Include="Entities\SubLedger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\SystemControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\UDFData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\UDFEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\UDFEntryDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\Unit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Entities\User.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoredProcedures\EditDRCRAmountInJournalDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\ExtraActivityInformation.cs" />
+    <Compile Include="StoredProcedures\GetStudentByProgramId.cs" />
+    <Compile Include="StoredProcedures\GetStudentFeeRate.cs" />
+    <Compile Include="StoredProcedures\GetSubjectByStudentIdandClassId.cs" />
+    <Compile Include="StoredProcedures\SP_AccountStatement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_AccountWatchList.cs" />
+    <Compile Include="StoredProcedures\SP_AmountDepositedDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_AmountWithdrewByDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_AnalysisMonthly.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_AnalysisYearly.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_BankFlowMonthly.cs" />
+    <Compile Include="StoredProcedures\SP_BOMRegister.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_BSAccountGroupWise.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_BSLedgerWise.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_BSPeriodic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_CashBankBook.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_CashBankOpening.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_CashBankSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_CashFlow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_CashFlowMonthly.cs" />
+    <Compile Include="StoredProcedures\SP_CollectionByDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\Sp_DailyAttendance.cs" />
+    <Compile Include="StoredProcedures\SP_DayBookDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_DayBookHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_DayBookOpening.cs" />
+    <Compile Include="StoredProcedures\SP_DaySummaryCoOperative.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\Sp_DepositDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_DepositHeaders.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_EmployeeSalaryCreditSlipDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_EmployeeSalaryCreditSlipHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_GetAccountForShare.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_GetAmtFromAccTrans.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_GetInstallmentPeriod.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_GetIsFixedAccount.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_GetStudentCountByCategoryId.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\Sp_GetSubjectByClassIdandStudentIdResult.cs" />
+    <Compile Include="StoredProcedures\SP_InterestPosting.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_JournalVoucherDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_JournalVourcherHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LedgerListByCategory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_Ledgers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LibraryDueAmount.cs" />
+    <Compile Include="StoredProcedures\SP_LibraryInformation.cs" />
+    <Compile Include="StoredProcedures\SP_LoanAssignmentByDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LoanDashBoard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LoanInstallmentAsOnDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LoanMaturation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LoanPaymentDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_LoanTypeHeaders.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_MaterialIssueRegister.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_MaterialReturnRegister.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_MonthlyBillFeeWise.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_MonthlyBillGenerate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_OpeningTrialBalance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_OutStanding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PartyLedgers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PartyLedgersSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PaymentSlipsByDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PLAcGroupHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PLLedgerTotals.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PLPeriodicLedgers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PLTotalByGroupSide.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PLTotalForDashBoard.cs" />
+    <Compile Include="StoredProcedures\SP_PriceList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_ProductBatchSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\Sp_PurchaseBillTerms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseChallanDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseDetailProducts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseFooterTermSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseGodownHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseOrderDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseReturnDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseReturnDetailProducts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseReturnGodownHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurchaseVatRegister.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_PurhaseProductTerms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_ReOrderStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_ReportCourseWise.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\Sp_SalesBillTerms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesChallanDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesChallanSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesDetailProducts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesFooterTermSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesGodownHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesOrderDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesProductTerms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesReturnDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesReturnDetailProducts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesReturnGodownHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SalesVatRegister.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StockLedgerProducts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StockLedgerProductWise.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StockLedgerSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StockProductOpening.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StocLedgerGodowns.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StudentCashCollectionSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StudentDeviceAttendance.cs" />
+    <Compile Include="StoredProcedures\SP_StudentInfoHeader.cs" />
+    <Compile Include="StoredProcedures\SP_StudentLedgerSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StudentMonthlyBill.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StudentWiseHouse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_StudentWiseMarksDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\Sp_SubjectWiseMarksDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_SubLedgers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_TopItems.cs" />
+    <Compile Include="StoredProcedures\SP_TrialBalanceAcGroupWiseAsOnDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_TrialBalanceLedgerWiseAsOnDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_TrialBalancePeriodic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\SP_UnpaidLoanDashBoard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedures\StudentBuildingCount.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Start\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

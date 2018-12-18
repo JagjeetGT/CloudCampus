@@ -1,0 +1,60 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Web.ViewModels.Library.LibraryBookIssueReturnDetialViewModel
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+@*        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>*@
+        <td>@Html.CheckBoxFor(x=>x.IsIssued)</td>
+     
+        @Html.HiddenFor(x => x.Class.Id, new { @class = "c_ClassId" })
+        @Html.HiddenFor(x => x.Type, new { @class = "t_Type" })
+        @Html.HiddenFor(x=>x.Book.Id)
+        @Html.HiddenFor(x=>x.BookIssued.Id)
+        @Html.HiddenFor(x=>x.BookIssued.CardType)
+        @Html.HiddenFor(x=>x.RegistrationDetail.StudentId)
+        @Html.HiddenFor(x => x.BookIssueReturn.Id)
+        <td>
+            @Model.BookIssued.ExpRetDate
+        </td>
+        <td>
+            @if (Model.Book != null)
+            {
+                @Model.Book.Name
+            }
+
+        </td>
+        <td>
+            @if (Model.Book != null)
+            {
+                @Model.Book.ShortName
+            }
+
+        </td>
+            <td>@if (Model.RegistrationDetail != null)
+                {
+                    @Model.RegistrationDetail.Studentinfo.StuDesc
+                }
+            </td>
+            <td>@if (Model.Class != null)
+                {
+                    @Model.Class.Description
+                }
+                </td>
+            <td>@if (Model.RegistrationDetail != null && Model.RegistrationDetail.Section != null)
+                {
+                    @Model.RegistrationDetail.Section.Description
+                }
+                </td>
+
+        <td>@if (Model.BookIssued != null)
+            {
+                @Model.BookIssued.CardType
+            }
+            </td>
+        
+
+       
+    }
+</tr>

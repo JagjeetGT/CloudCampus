@@ -1,0 +1,29 @@
+﻿@model KRBAccounting.Domain.Entities.ScBookReceivedDetails
+
+
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.BookId, new { @class = "hdn_BookId_Id first-col" })
+            <input type="text"  class = "modallink text_Book input-120 input" href="@Url.Action("GetBooks")" value="@Model.Book.Name"  title="Student List"  />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Book.MFNNumber, new { @class = "MFNNo input-100"})
+        </td>
+         <td>
+            @Html.TextBoxFor(x => x.AccessionNo, new { @class = "AccessionNo input-100 input" })
+        </td> 
+
+        <td>
+            @Html.TextBoxFor(x => x.Remarks, new { @class = "last-col-custom input-160 input",href="", tableid = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

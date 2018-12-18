@@ -1,0 +1,83 @@
+﻿@using KRBAccounting.Service.Models
+@model IEnumerable<KRBAccounting.Domain.Entities.AcademicYear>
+@{
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Start Date Nep
+                </th>
+                <th>
+                    Satrt Date
+                </th>
+                <th>
+                    End Date Nep
+                </th>
+                <th>
+                    End Date
+                </th>
+                <th>
+                    Created By
+                </th>
+                <th>
+                    Update By
+                </th>
+                <th>
+                    Is Defaut
+                </th>
+                <th width="10%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+        
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@item.StartDateNep
+                    </td>
+                    <td>@item.StartDate.ToShortDateString()
+                    </td>
+                    <td>@item.EndDateNep
+                    </td>
+                    <td>@item.EndDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @if (item.CreateUser != null)
+                        {
+                            @item.CreateUser.Username
+                        }
+                    </td>
+                    <td>
+                        @if (item.UpdateUser != null)
+                        {
+                            @item.UpdateUser.Username
+                        }
+                    </td>
+                    <td>@item.IsDefalut
+                        @if (!item.IsDefalut)
+                        {
+                            <a href="javascript:void();" data-id="@item.Id" class="setFiscalYear">set</a>
+                        }
+                    </td>
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="Javascript:void(0)" data-id="@item.Id" class="editFiscalYear icon-pencil">
+                            </a> }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+</div>

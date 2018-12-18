@@ -1,0 +1,153 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportExamRoutineReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+ <div id="examroutine">
+
+@if (!Model.ExamRoutineGrouping.Any())
+{
+    <div class="row-fluid">
+      
+        <h3 class="page-title">
+            <span style="float: right">
+                Exam  @Html.DropDownListFor(x => x.ExamId, Model.ExamList, new { @class_id = ViewBag.Class_Id, subject_id = ViewBag.Subject_Id })
+            </span>
+       <div class="clearfix"></div>
+            <div class="social-box">
+                <div class="body">
+                    Exam Rountine
+                </div>
+            </div>
+       </h3>
+       
+    </div>
+<div class="row-fluid">
+    <div class="social-box">
+        <table class="table table-condensed">
+            <b>
+            The Exam Routine  wasn't published yet.
+          </b>
+        </table>
+        <div class="clearfix">
+        </div>
+    </div>
+</div>
+}
+else
+{
+
+    foreach (var i in Model.ExamRoutineGrouping)
+    {
+        
+            
+       
+    <div class="row-fluid">
+    
+        <h3 class="page-title">
+            Class : @i.FirstOrDefault().Class.Description 
+            <span style="float: right">
+                Exam  @Html.DropDownListFor(x => x.ExamId, Model.ExamList, new { @class_id = ViewBag.Class_Id, subject_id = ViewBag.Subject_Id })
+            </span>
+          
+                                                        
+            
+            
+            
+          
+            <div class="social-box">
+                <div class="body">
+                    <p align="center" style="font-weight: bold; text-decoration: underline">
+                        ROUTINE FOR THE @i.FirstOrDefault().ScExam.Description.ToUpper() @Model.AcademicYear</p>
+                         
+                </div>
+            </div>
+        </h3>
+    </div>
+    <div class="row-fluid">
+            <div class="social-box">
+            <table class="table" style="font-size: 14px">
+                <thead>
+                    <tr>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Day
+                        </th>
+                        <th>
+                            Subject Name
+                        </th>
+                        <th>
+                            Start Time
+                        </th>
+                        <th>
+                            End Time
+                        </th>
+                        <th>
+                            Hour
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.ExamRoutines.Where(x => x.ExamId == i.FirstOrDefault().ExamId && x.ClassId == i.FirstOrDefault().ClassId))
+                {
+                    DateTime date = new DateTime();
+                    if (item.ExamDate != null)
+                    {
+                        date = Convert.ToDateTime(item.ExamDate);
+                    }
+                    <tr>
+                        <td>
+                           @date.ToShortDateString()
+                        </td>
+                        <td>
+                            @date.DayOfWeek
+                        </td>
+                        <td>
+                            @item.Subject.Description
+                        </td>
+                        <td>@item.StartTime
+                        </td>
+                        <td>@item.EndTime
+                        </td>
+                        <td>
+                            @item.ExamHour
+                        </td>
+                    </tr>
+                }
+            </table>
+      
+        
+       
+        @Html.Raw(Model.ExamRoutineFooter)
+          </div>
+    </div>
+   
+   
+    }
+
+
+}
+ </div>
+
+<script type="text/javascript" language="javascript">
+
+    $("#ExamId").change(function () {
+        var examId = $(this).val();
+        var subjectId = $(this).attr("subject-id");
+        var classId = $(this).attr("class-id");
+        var url = '@Url.Action("TP_ExamRoutineListss","Teacher")/?examId=' + examId + '&&subjectId=' + subjectId + '&&classId=' + classId;
+        $.getJSON(url, function (data) {
+            if (data.view != "") {
+             
+
+                $("#examroutine").html(data.view);
+            }
+        });
+
+    });
+
+
+</script>
+

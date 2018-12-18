@@ -1,0 +1,160 @@
+﻿@{
+    ViewBag.Title = "Employee Deduction Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("_PartialPayrollBreadCrumb")
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                     Employee Deduction Master
+                    </h1>
+                    <ul class="buttons">
+                        <li><a href="#" class="isw-plus addRooms"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Rooms-list">
+                    @Html.Action("EmployeeDeductionMastersList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalRooms" style="display: none;" title="Employee Deduction Master">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#IsFlat").live("click", function () {
+        if ($(this).is(":checked")) {
+            $(".percent-value").html("Percentage");
+        } else {
+            $(".percent-value").html("Value");
+        }
+
+    });
+
+    $("#modalRooms").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-error alert"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalRooms .block').html(data);
+                $(this).addClass("done");
+                $("#modalRooms").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $("#IsFlat").live("click", function () {
+        if ($(this).is(":checked")) {
+            $(".percent-value").html("Amount");
+        } else {
+            $(".percent-value").html("Percentage");
+        }
+
+    });
+
+    $('.addRooms').live('click', function () {
+        var url = '@Url.Action("EmployeeDeductionMasterAdd", "Payroll")';
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete() {
+
+        $('#modalRooms .block').load("/Payroll/EmployeeDeductionMasterAdd");
+        $("#Rooms-list").load("/Payroll/EmployeeDeductionMastersList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#Rooms-list").load("/Payroll/EmployeeDeductionMastersList");
+        $('#modalRooms').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        Begin();
+
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            writeError('error-msg', data);
+            $.unblockUI();
+
+
+        }
+    }
+    function successEdit(data) {
+        Begin();
+        if (data == "True") {
+            OnCompleteEdit();
+        } else {
+            writeError('error-msg', data); $.unblockUI();
+        }
+    }
+
+    $('.editScRoom').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("EmployeeDeductionMasterEdit", "Payroll")?id=' + id;
+        Begin();
+        getRequest(url);
+        return false;
+    });
+    $('a.deleteClass').live('click', function () {
+        var result = confirm("Are you sure you wish to delete this Employee Deduction?");
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("EmployeeDeductionMasterDelete", "Payroll")?id=' + id;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Employee Deduction is already in use. Cannot delete."); $.unblockUI();
+                } else {
+                    $("#Rooms-list").load("/Payroll/EmployeeDeductionMastersList"); $.unblockUI();
+                }
+            });
+
+            return false;
+        }
+
+    });
+</script>

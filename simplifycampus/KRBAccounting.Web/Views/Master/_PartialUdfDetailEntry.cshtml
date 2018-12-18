@@ -1,0 +1,10 @@
+﻿@model KRBAccounting.Domain.Entities.UDFEntryDetail
+
+    <tr class="UDF-detail-entry">
+        @using (Html.BeginCollectionItem("UDFDetailEntry"))
+        {
+            <td>
+                @Html.TextBoxFor(x => x.Value, new { @class = "description input-245 input", href = "/Master/GetUDFDetailEntry", entermsg = "Enter Description or press F1 for existing Narration List." })
+            </td>
+        }
+    </tr>

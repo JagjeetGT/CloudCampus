@@ -1,0 +1,48 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service.Helpers
+@model IEnumerable<KRBAccounting.Domain.Entities.UDFEntry>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+    <thead>
+        <tr>
+            <th width="5%">S.N.</th>
+            <th width="20%">
+                Field Name
+            </th>
+            <th>
+                Entry Module
+            </th>
+            <th>
+                Control Type
+            </th>
+            <th>
+                Body Length
+            </th>
+            @*<th width="10%"></th>*@
+        </tr>
+       </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+      
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.FieldName
+                    </td>
+                    <td>@((EntryModuleEnum)item.EntryModuleId)
+
+                    </td>
+                    <td>@((ControlTypeEnum)item.ControlTypeId)
+
+                    </td>
+                    <td>@item.BodyLength
+                    </td>
+                    <td><a href="javascript:void(0);" class="editUdf icon-pencil" data-id="@item.Id" title="Edit: @item.FieldName"></a></td>
+                </tr>
+                i++;
+            }
+        </tbody>
+</table>
+</div>
+

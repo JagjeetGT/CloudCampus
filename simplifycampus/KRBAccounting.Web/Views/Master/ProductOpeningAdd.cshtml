@@ -1,0 +1,294 @@
+﻿@using KRBAccounting.Data.Repositories
+@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.ProductOpening
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<div id="MsgError">
+</div>
+<div>
+    <div class="clearfix">
+    </div>
+    <div id="tabs-1">
+        @using (Ajax.BeginForm("ProductOpeningAdd", "Master", new { Controller = "Master" }, new AjaxOptions { UpdateTargetId = "MsgError", OnSuccess = "sucess", HttpMethod = "POST" }, new { @class = "form-custom", id = "Openingproduct-form" }))
+        {
+            <fieldset style="width: 1077px;">
+                <div class="lag activity_detail">
+                    <table class="table-bordered" id="openingproduct-list">
+                        <tr class="nodrop nodrag">
+                            <th>
+                            </th>
+                            <th>
+                                Product
+                            </th>
+                            <th>
+                                Opening Date
+                            </th>
+                            <th>
+                                Opening Miti
+                            </th>
+                            <th>
+                                Quantity
+                            </th>
+                            <th>
+                                Unit
+                            </th>
+                            <th>
+                                Alt Quantity
+                            </th>
+                            <th>
+                                Alt Unit
+                            </th>
+                            <th>
+                                GoDown
+                            </th>
+                            <th>
+                                Rate
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                           
+                            <th>
+                                                           </th>
+                        </tr>
+                        @foreach (var item in Model.ProductOpenings)
+                        {
+
+                            item.UnitList = new SelectList(Model.UnitList, "Value", "Text", item.UnitId);
+                            item.GodownList = Model.GodownList;
+                            @Html.Partial("PartialProductOpening", item)
+                        }
+                        @{
+                        var model = new ProductOpening();
+                        model.UnitList = Model.UnitList;
+                        model.GodownList = Model.GodownList;
+                        model.OpeningDate = Model.OpeningDate;
+                        }
+                        @Html.Partial("PartialProductOpening", model)
+                    </table>
+                    <div class="clear">
+                    </div>
+                    <input type="button" value="Save" class="btn productopening" style="margin-top: 10px;
+                        margin-left: 3px;" />
+                </div>
+            </fieldset>
+        }
+    </div>
+    <div class="clearfix">
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tabs").tabs();
+         //$(".first-col").closest("tr").attr("id", "tr_0");
+        RemovePlus();
+
+
+        var textproblem = document.querySelectorAll(".text_product");
+        $.each(textproblem, function (index) {
+            var element = $(this);
+            var closestTr = element.closest("tr");
+            closestTr.attr("id", "tr_" + index);
+
+            var problemId = closestTr.find(".product_opening").attr("id");
+
+            closestTr.find(".text_product").attr({
+                valueid: problemId,
+                id: "text_product_" + index
+            });
+
+            var value = closestTr.find(".product_opening").val();
+            if (value != 0) {
+                closestTr.addClass("deletable");
+            }
+
+        });
+        
+
+         $(".addNewProduct").live('click', function (e) {
+        var tableClass = $(this).attr("tableid");
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        var disable = 0;
+
+        var closestTr = element.closest("tr");
+        closestTr.find("input[type='text']").each(function () {
+            if ($(this).val() == "" && $(this).attr("isrequired")) {
+                disable = 1;
+            }
+        });
+        if (disable == 0) {
+            var link = $(this).attr("href");
+            $.ajax({
+                url: link,
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                        $('#' + tableClass + ' tr:last').addClass("deletable");
+                        var id = $('#' + tableClass + ' tr:last').attr("id");
+                        $('#' + tableClass + ' tr:last').after(data);
+                        var arrString = id.split("_");
+                        var index = parseInt(arrString[1]) + 1;
+                        $(".first-col:last").closest("tr").attr("id", "tr_" + index);
+                      NewRowDetailList(element, index);
+                        RemovePlus();
+
+                    closestTr.next().find('.first-col').focus();
+
+                    $('input[type="text"]').focus(function () {
+                        if ($(this).attr("entermsg")) {
+                            $(".enter-msg").html($(this).attr("entermsg"));
+                        } else {
+                            $(".enter-msg").html("");
+                        }
+                    });
+                }
+            });
+            closestTr.next().find('.first-col').focus();
+        }
+        else {
+            closestTr.find("input[type='text']").each(function () {
+                if ($(this).val() == "" && $(this).attr("isrequired")) {
+                    $(this).addClass("error");
+                    $(this).focus();
+                }
+            });
+        }
+        return false;
+    });
+
+
+    function RemovePlus() {
+        var deletabl = document.querySelectorAll(".deletable");
+        $.each(deletabl, function () {
+            $(this).find(".PlusUnit").css("display", "none");
+        });
+    }
+    });
+
+
+    function NewRowDetailList(element, index) {
+        var closestTable = element.closest("table");
+        //alert(closestTable.html());
+        //element.closest("tr").attr("id", "tr_" + index);
+
+        var problemId = $(".product_opening:last").attr("id");
+        $(closestTable).find(".text_product:last").attr({
+            valueid: problemId,
+            id: "text_product_" + index
+        });
+    }
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+    });
+
+    $(".productopening").live("click", function () {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        $("#Openingproduct-form").submit();
+    });
+
+
+    $(".rate").live("blur", function () {
+        var element = $(this);
+        var rate = element.val();
+        var quantity = element.closest("tr").find(".qty").val();
+        var amount = parseFloat(quantity) * parseFloat(rate);
+        element.closest("tr").find(".amount").val(amount);
+    });
+
+
+
+    $(".text_product").live("focus", function () {
+        var element = $(this);
+        var productId = $(this).closest("tr").find(".product_opening").val();
+        if (productId != "" && productId != 0) {
+            
+            $.getJSON("/Entry/GetLowestUnit?id=" + productId, null, function (code) {
+                element.closest("tr").find(".unit").val(code);
+                element.closest("tr").find(".altunit").val(code);
+            });
+
+            $.getJSON("/Entry/GetDropDownlist?productId=" + productId, null, function (code) {
+                var innerhtml = '';
+                $.each(code, function () {
+                    innerhtml += '<option value="' + this.Id + '">' + this.Code + '</option>';
+
+                });
+                element.closest("tr").find(".unit").html(innerhtml);
+            });
+
+        }
+    });
+    
+
+     $(".unit").live("change", function() {
+       var element = $(this);
+       var closestTr = element.closest("tr");
+       var unit = $(this).val();
+       var productId = closestTr.find(".product_opening").val();
+       var lowestUnit = closestTr.find(".altunit").val();
+       var quantity = closestTr.find(".qty").val();
+              if(quantity!="" && quantity!=0 && productId!=0) {
+                  var url = "@Url.Action("GetConversionDetail", "Entry")?productId=" + productId + "&&quantity=" + quantity + "&&Unit=" + unit + "&&LowestUnit=" + lowestUnit;
+                  $.getJSON(url, function(success) {
+                      closestTr.find(".altqty").val(success.convertvalue);
+
+                      var rate = closestTr.find(".rate").val();
+
+                      var basic = parseFloat(quantity) * parseFloat(rate);
+                      closestTr.find(".amount").val(basic);
+                  });
+              }
+        else {
+           alert("Enter the quantity and product");
+       }
+       
+   });
+   
+
+   
+   $(".qty").live("blur", function() {
+       var element = $(this);
+       var closestTr = element.closest("tr");
+       var unit = closestTr.find(".unit").val();
+       var productId = closestTr.find(".product_opening").val();
+       var lowestUnit = closestTr.find(".altunit").val();
+       var quantity = $(this).val();
+       if(quantity!="" && quantity!=0 && productId!=0) {
+           var url = "@Url.Action("GetConversionDetail", "Entry")?productId=" + productId + "&&quantity=" + quantity + "&&Unit=" + unit + "&&LowestUnit=" + lowestUnit;
+           $.getJSON(url, function(success) {
+               closestTr.find(".altqty").val(success.convertvalue);
+
+                      var rate = closestTr.find(".rate").val();
+
+                      var basic = parseFloat(quantity) * parseFloat(rate);
+                      closestTr.find(".amount").val(basic);
+           });
+       }
+       else {
+           alert("Enter the quantity and product");
+       }
+   });
+
+
+
+
+   
+
+       
+</script>

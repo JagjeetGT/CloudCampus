@@ -1,0 +1,290 @@
+﻿@model KRBAccounting.Web.ViewModels.Inventory.BOMRegisterFormViewModel
+@{
+    ViewBag.Title = "Bill Of Material Register";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Ledger</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfLedgerReport", "ReportLedger")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelLedgerReport", "ReportLedger")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("_PartialBOMRegisterForm", Model)</div>
+</div>
+<div id="modalbox-finishedgood" style="display: none" class="dialog">
+    <div class="msg-body block" style="padding: 0; height: 325px">
+    </div>
+    <div class="msg-footer">
+        <input type="text" class="search-box" name="search-box" placeholder="Search" />
+        <div class="selectedRows">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //OpenModal();
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+
+        //        $("#saveForm").live("click", function () {
+        //            $("#report-form").submit();
+        //        });
+
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Bill Of Material Register Report',
+            buttons: {
+                "OK": function () {
+                    var allCostCenter = $('#AllCostCenter').attr('checked') ? true : false;
+                    //var subLedger = $('#SubLedger').attr('checked') ? true : false;
+                    var allFinishedGoods = $('#AllFinishedGoods').attr('checked') ? true : false;
+                    if (allCostCenter) {
+                        var reportLink = "";
+                        //if (subLedger) {
+                        if (allFinishedGoods) {
+                            reportLink = "/Inventory/BOMRegister/?finishedgoods=&&costcenters=";
+                            $.ajax({
+                                type: "POST",
+                                url: reportLink,
+                                success: function (data) {
+                                    $("#report").html(data);
+                                    $('#modalReportForm').dialog("close");
+                                }
+                            });
+                        }
+                        else {
+                            if (modalshow == true) {
+                                ShowFinishedGoodsPickList();
+                            } else {
+                                return false;
+                            }
+                        }
+                    } else {
+                        if (modalshow == true) {
+                            modalshow = false;
+                            selectedRows.deleteall();
+                            var link = "/Master/GetCostCenterList";
+                            $.ajax({
+                                url: link,
+                                dataType: "json",
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    var tableData = CreateTableViewList(data, "listpopup", true);
+                                    $('#modalbox-report .msg-body').html(tableData);
+                                    $("#modalbox-report").dialog({
+                                        modal: true,
+                                        closeOnEscape: false,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function () {
+                                                modalshow = true;
+                                                if (!allFinishedGoods) {
+                                                    DisplayReportBOMRegister();
+                                                }
+                                                $(this).dialog("close");
+                                            },
+                                            Cancel: function () {
+                                                modalshow = true;
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });
+                                    //$.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                                    //$('#modalbox-report .msg-body').html("");
+
+                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+                                    $('.selectable-table').tableSelect({
+                                        onClick: function (row) {
+                                            //alert(row);
+                                        },
+                                        onDoubleClick: function (rows) {
+                                            $.each(rows, function (i, row) {
+                                                var name = $(row).children('td').eq(0).attr("ledger-id");
+                                                if ($(row).hasClass('disabled')) {
+                                                    $(row).removeClass('disabled');
+                                                    selectedRows.remove(name);
+                                                } else {
+                                                    $(row).addClass('disabled');
+                                                    selectedRows.add(name);
+                                                }
+                                            });
+                                            updateListCostCenter();
+                                        },
+                                        onChange: function (row) {
+                                            //alert(row);
+                                        }
+                                    });
+                                }
+                            });
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    //$(this).dialog('close');
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+    function OpenModal() {
+        $('#modalReportForm').modal({
+            keyboard: false,
+            backdrop: "static"
+        }).css({
+            width: 'auto',
+            'margin-left': function () {
+                return -($(this).width() / 2);
+            }
+        });
+    }
+
+
+    function updateListCostCenter() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="costcenters" value="' + this + '" />');
+        });
+    };
+    function updateListFinishedGoods() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="finishedgoods" value="' + this + '" />');
+        });
+    };
+    var selectedRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.deleteall = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+
+    var selectedsubledgerRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.deleteall = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+
+    function ShowFinishedGoodsPickList(url) {
+        modalshow = false;
+        selectedsubledgerRows.deleteall();
+        $.ajax({
+            url: "/Entry/GetFinishedGoodsList",
+            dataType: "json",
+            type: "GET",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+                var tableData = CreateTableViewList(data, "listpopup", true);
+                $('#modalbox-finishedgood .msg-body').html(tableData);
+                $("#modalbox-finishedgood").dialog({
+                    modal: true,
+                    closeOnEscape: false,
+                    width: 'auto',
+                    buttons: {
+                        "Ok": function () {
+                            modalshow = true;
+                            DisplayReportFinishedGoods(url);
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            modalshow = true;
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+                //$.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                //$('#modalbox-report .msg-body').html("");
+
+                $('#modalbox-finishedgood .msg-footer .selectedRows').html("");
+                $('.selectable-table').tableSelect({
+                    onClick: function (row) {
+                        //alert(row);
+                    },
+                    onDoubleClick: function (rows) {
+                        $.each(rows, function (i, row) {
+                            var name = $(row).children('td').eq(0).attr("ledger-id");
+                            if ($(row).hasClass('disabled')) {
+                                $(row).removeClass('disabled');
+                                selectedsubledgerRows.remove(name);
+                            } else {
+                                $(row).addClass('disabled');
+                                selectedsubledgerRows.add(name);
+                            }
+                        });
+                        updateListFinishedGoods();
+                    },
+                    onChange: function (row) {
+                        //alert(row);
+                    }
+                });
+            }
+        });
+        return true;
+    }
+
+    //    $("#SubLedger").live("click", function () {
+    //        if ($(this).is(":checked")) {
+    //            $("#AllSubLedger").removeAttr("disabled");
+    //        } else {
+    //            $("#AllSubLedger").attr("disabled", "disabled");
+    //        }
+    //    });
+</script>

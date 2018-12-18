@@ -1,0 +1,439 @@
+﻿@using System.Configuration
+@using KRBAccounting.Enums
+@using KRBAccounting.Web.Controllers
+@using KRBAccounting.Web.CustomFilters
+@using KRBAccounting.Web.Services
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title EmeronCampusERP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    <link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/chosen/chosen.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/jquery-msg/jquery.msg.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/Content/tablesorter/style.css" />
+    <link href="/Content/tableSelect.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/SimpleModal/css/basic.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/SimpleModal/css/basic_ie.css" rel="stylesheet" type="text/css" />
+    <link href="../../Content/rowdragger/tablednd.css" rel="stylesheet" type="text/css" />
+    <script src="../../Scripts/jquery-1.7.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/jquery-ui-1.9.2.min.js" type="text/javascript"></script>
+    <script src="/Content/bootstrap/js/bootstrap.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.unobtrusive-ajax.js" type="text/javascript"></script>
+    <script src="/Scripts/json.htmTable.js"></script>
+    <script src="/Content/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/dateconvert.js"></script>
+    <script src="/Scripts/custom.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.tableSelect.js" type="text/javascript"></script>
+    <script src="/Content/SimpleModal/js/jquery.simplemodal.js" type="text/javascript"></script>
+    <script src="~/Content/rowdragger/js/jquery.tablednd.js"></script>
+    <script src="/Scripts/jquery-print.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.blockUI.js" type="text/javascript"></script>
+
+
+
+    <script type='text/javascript' src='/Content/themes/js/plugins/select2/select2.min.js'></script>
+    <script type='text/javascript' src='/Content/themes/js/plugins/uniform/uniform.js'></script>
+    <script type='text/javascript' src='/Content/themes/js/plugins/maskedinput/jquery.maskedinput-1.3.min.js'></script>
+
+    <script src="../../Content/themes/js/plugins/qtip/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>
+    <script type='text/javascript' src='/Content/themes/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js'></script>
+
+
+    <script type='text/javascript' src='/Content/themes/js/plugins/dataTables/jquery.dataTables.min.js'></script>
+
+    <script type='text/javascript' src='/Content/themes/js/actions.js'></script>
+
+    <script type='text/javascript' src='/Content/themes/js/plugins.js'></script>
+    <link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/Style.css" rel="stylesheet" />
+
+    <script src="../../Scripts/json2.js" type="text/javascript"></script>
+
+</head>
+<style>
+    .headermenu a i {
+        padding: 0px;
+        margin: 2px 7px 0px -7px;
+    }
+
+    .isw-dashboard {
+        background: url("../../Content/img/dashboard.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-home {
+        background: url("../../Content/img/home.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-accounting {
+        background: url("../../Content/img/accounting.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-library {
+        background: url("../../Content/img/library.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-payroll {
+        background: url("../../Content/img/payroll.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-academy {
+        background: url("../../Content/img/academy.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-sms {
+        background: url("../../Content/img/SMS.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+
+    .isw-inventory {
+        background: url("../../Content/img/inventory.png") no-repeat scroll center center rgba(0, 0, 0, 0);
+    }
+</style>
+<body>
+    <div class="header" id="headerHeader">
+        <h1>
+            EmeronCampusERP @ConfigurationManager.AppSettings["version"]
+        </h1>
+        <ul class="header_menu">
+            <li class="list_icon"><a href="#"></a></li>
+        </ul>
+
+
+        <div class="headermenu" style="text-align: center; float: left; margin-top: 5px; width: 68%;">
+
+            @foreach (var item in MenuHelper.HeaderMenu(User.Identity.Name))
+            {
+
+                var controllerName = ViewContext.RouteData.GetRequiredString("controller");
+
+                var action = Enum.GetName(typeof(HeaderMenu), item.CategoryId);
+                var className = string.Empty;
+                var url = "/" + item.Controller + "/" + item.Action;
+                if (item.Controller == controllerName)
+                {
+                    className = "active";
+                }
+
+                <a href="@url"
+                   class="btn @className"><i class=" isw-accounting"></i>@action</a>
+            }
+            
+        </div>
+        
+         
+        <div style="float: right;">
+            <a href="#">
+                <p style="margin: -4px 12px -10px 0px !important; font-size: 10px; color: white !important">
+                    Amar Info Solutions
+                </p>
+                <p style="margin: 0 12px -10px 0px !important; font-size: 10px; color: white !important">
+                    Email: Salman@amarcp.ae
+                </p>
+                <p style="margin: 0 12px -10px 0px !important; font-size: 10px; color: white !important">
+                    Phone: +971 563006575
+                </p>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="menu">
+        <div class="breadLine">
+            <div class="arrow">
+            </div>
+            <div class="adminControl">
+                Hi, @User.Identity.Name, @KRBAccounting.Service.UtilityService.GetBranchNameByUserName(User.Identity.Name)
+            </div>
+        </div>
+        <div class="admin" style="display: none">
+            <div class="image">
+                <img src="@KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name)" class="img-polaroid" width="50" />
+            </div>
+            <ul class="control">
+                <li><span class="icon-off"></span>@Html.ActionLink(" Logout", "LogOff", "Account")</li>
+                <li>
+                    <span class="icon-cog"></span><a href="@Url.Action("Setting", "Account")">Settings</a>
+                </li>
+            </ul>
+        </div>
+        <div class="menulist">
+            @if (ViewBag.CategoryId != HeaderMenu.Dashboard || ViewBag.CategoryId != 0)
+            {
+                var categoryId = 0;
+                var cookie = HttpContext.Current.Request.Cookies["Category"];
+                if (cookie != null)
+                {
+                    categoryId = Convert.ToInt32(cookie.Value);
+                }
+                var cached = User.Identity.Name + "." + categoryId;
+                var menu = Cache[cached] as string;
+                @(menu != null ? Html.Partial("_PartialMenu2",menu) : Html.Action("MenuList", "Home", new { userName = User.Identity.Name }))
+            }
+
+        </div>
+    </div>
+
+    <div class="content">
+        
+        @if (CheckPermission.GivePermission("Edit", "STDSM"))
+        {
+            <div class="breadLine">
+                <ul class="buttons">
+                    <li>
+                        <a href="javascript:void(0)" class="link_bcPopupSearch">
+                            <span class="icon-search">
+                            </span><span class="text">Student Search</span>
+                        </a>
+                        @*@Html.Action("StudentSearchMaster", "Student")*@
+                        @{
+                            var viewModel=new KRBAccounting.Web.ViewModels.Student.StudentSearchViewModel();
+                            viewModel.SrClassList = KRBAccounting.Service.UtilityService.GetClassList();
+                            viewModel.ProgramMasters = KRBAccounting.Service.UtilityService.GetProgramList();
+                          
+
+                           
+                        }
+                       
+                        @Html.Partial("_PartialStudentSearchMaster", viewModel)
+                    </li>
+                </ul>
+            </div>
+        }
+        @RenderBody()
+        <div class="clearfix">
+        </div>
+    </div>
+    <div class="dialog" id="modalbox" style="display: none;">
+        <div class="block msg-body" style="padding: 0; height: 325px">
+        </div>
+        <div class="msg-footer">
+            <input type="text" class="search-box" name="search-box" placeholder="Search" />
+        </div>
+    </div>
+    <div id="modalbox-report" style="display: none" class="dialog">
+        <div class="msg-body block" style="padding: 0; height: 325px">
+        </div>
+        <div class="msg-footer">
+            <input type="text" class="search-box" name="search-box" placeholder="Search" />
+            <div class="selectedRows">
+            </div>
+        </div>
+    </div>
+    <div id="modalboxCreate" style="display: none" class="modalboxCreate">
+        <div class="block msg-body" style="padding: 0;">
+        </div>
+    </div>
+    <div id="modalbox-billingterm" class="dialog" style="display: none">
+        <div class="block msg-body" style="padding: 0;">
+            <table class="listpopup">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Description
+                        </th>
+                        <th scope="col">
+                            Sign
+                        </th>
+                        <th scope="col">
+                            Rate
+                        </th>
+                        <th scope="col">
+                            Amount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="modalbox-billingterm-productwise" style="display: none">
+        <div class="block msg-body" style="padding: 0;">
+            <table class="listpopup">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Description
+                        </th>
+                        <th scope="col">
+                            Sign
+                        </th>
+                        <th scope="col">
+                            Rate
+                        </th>
+                        <th scope="col">
+                            Amount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div style="display: none" class="modal-dialog dialog">
+        <div class="block">
+        </div>
+    </div>
+    <div style="display: none" class="modal-dialog-edit dialog">
+        <div class="block">
+        </div>
+    </div>
+
+    <div id="online-modalbox">
+    </div>
+    <br />
+    <div class="clearfix">
+    </div>
+    <footer class="navbar-fixed-bottom">
+        <p>Developed by <a href="http://www.amartechinfo.com" target="_blank">Amar Info Solutions</a><span style="float:right;margin-right:20px">@KRBAccounting.Web.Helpers.EncryptionService.GetRemTime(HttpContext.Current)</span></p>
+
+    </footer>
+</body>
+</html>
+<style>
+    #modalbox .msg-body table tbody tr.active td {
+        border: 1px solid #EEE;
+       
+        color: #FFF !important;
+        background: rgb(72, 107, 145);
+    }
+    #modalbox-report .msg-body table tbody tr.active td {
+        color: #FFF !important;
+        background: #DDD !important;
+    }
+    
+</style>
+<script>
+    var active = 0;
+    //$('#navigate tr').each(function(idx){$(this).html(idx);});
+    //rePosition();
+
+    $(document).live("keydown",function (e) {
+        if (e.keyCode == 115) {
+           
+           
+            if ($(".ui-dialog").length !=0) {
+                if ($(".ui-dialog").css("display") == "none") {
+                    $("a.isw-plus").click();
+                }
+            } else {
+            window.location.href =    $("a.isw-plus").attr("href");
+            }
+        }
+
+        
+            
+        
+        
+
+
+     reCalculate(e);
+       
+       // return false;
+    });
+
+    $('#modalbox .msg-body table tbody tr , #modalbox-report .msg-body table tbody tr').click(function () {
+        active = $(this).closest('table').find('tr').index(this);
+        rePosition();
+    });
+
+
+    function reCalculate(e) {
+
+        var rows = $('#modalbox .msg-body table tbody tr, #modalbox-report .msg-body table tbody tr').length;
+        var columns = $('#modalbox .msg-body table tbody tr:eq(0), #modalbox-report .msg-body table tbody tr:eq(0)').length;
+        var a = $('#modalbox').closest(".ui-dialog");
+        if ($('#modalbox').closest(".ui-dialog").css("display") == "none")
+            return
+        
+        if (e.keyCode != 38 && e.keyCode != 40 && e.keyCode != 13)
+            return
+
+        if (e.keyCode == 38) { // move up
+
+            active = (active - columns >= 0) ? active - columns : rows-1;
+        }
+
+        if (e.keyCode == 40) { // move down
+            active = (active + columns <= (rows * columns) - 1) ? active + columns : 0;
+        }
+        if (e.keyCode == 13) {
+            $('#modalbox .msg-body table tbody tr.active a').click();
+          $("#modalbox-report .msg-body table tbody tr").eq(active).click()
+
+        }
+        rePosition(e);
+        // alert(columns + 'x' + rows);
+    }
+
+    function rePosition(e) {
+        $('#modalbox .msg-body table tbody tr.active ,#modalbox-report .msg-body table tbody tr.active').removeClass('active');
+        if ($('#modalbox .msg-body table tbody tr, #modalbox-report .msg-body table tbody tr').eq(active).css("display") != "none")
+        {
+            $('#modalbox .msg-body table tbody tr , #modalbox-report .msg-body table tbody tr').eq(active).addClass('active');
+        } else {
+            if (e.keyCode == 38) { // move up
+
+                active -=1 ;
+            }
+
+            if (e.keyCode == 40) { // move down
+                active += 1;
+            }
+            reCalculate(e)
+        }
+        
+       scrollInView();
+    }
+
+    function scrollInView() {
+        var target = $('#modalbox .msg-body table tbody tr , #modalbox-report .msg-body table tbody tr').eq(active);
+       // var target = $('#modalbox .msg-body table tbody tr eq(' + active + ')');
+        if (target.length) {
+            var top = target.offset().top;
+
+            $('#modalbox .msg-body ,#modalbox-report .msg-body ').stop().animate({ scrollTop: top - 100 }, 400);
+            return false;
+        }
+    }
+    $(".link_bcPopupSearch").click(function () {
+        if ($("#bcPopupSearch").is(":visible")) {
+            $("#bcPopupSearch").fadeOut(200);
+        } else {
+            $("#bcPopupSearch").fadeIn(300);
+        }
+        return false;
+    });
+
+
+    $(
+        function () {
+
+            // Hook up the print link.
+            $("#print").attr("href", "javascript:void(0)").live("click", function () {
+                $("#report link").remove();
+                $("#report").prepend('<link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" /><link href="/Content/print.css" rel="stylesheet" type="text/css" media="print" />');
+                $("#report .ReportList table").removeAttr("class");
+                $("#report  .ReportList table").addClass("listpopup");
+
+                // Print the DIV.
+                $("#report").print(
+                    {
+                        importCSS: false
+                    });
+
+                return (false);
+            });
+
+        });
+    $(".chzn-select").select2();
+
+</script>
+<style>
+    .chzn-select {
+        width: 190px !important;
+    }
+</style>

@@ -1,0 +1,22 @@
+﻿@model KRBAccounting.Web.ViewModels.InvoiceHeader
+@{
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/img/NoImage.jpg";
+}
+<div style="text-align: center">
+    <div>
+        <b>@Model.CompanyName</b><br />
+        @Model.CompanyAddress<br />
+        Sales Invoice
+    </div>
+    <div class="clearfix"></div>
+    <div>
+        <div style="float: left">
+            To M/S : @Model.PartyName
+        </div >
+        <div style="float: right">
+        Invoice No.(Date) : @Model.InvoiceNo (@Model.InvoiceDate)</div>
+    </div>
+ 
+    
+</div>
+

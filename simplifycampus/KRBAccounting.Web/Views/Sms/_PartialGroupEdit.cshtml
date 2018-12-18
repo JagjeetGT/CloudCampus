@@ -1,0 +1,196 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.SmsGroup
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<script src="../../Content/themes/whitelabel/js/wl_Multiselect.js" type="text/javascript"></script>
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Edit Group</h1>
+                <ul class="buttons">
+                    <li><a href="@Url.Action("Groups")" class="isw-left addScSubject" title="Add Student Information">
+                    </a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="block-fluid">
+        <div id="student-info">
+            @using (Ajax.BeginForm("GroupEdit", "Sms", new { controller = "Sms" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCompleteEdit" }, new { @class = "form-horizontal from-custom", id = "smsGroup-frm" }))
+            {
+                @Html.HiddenFor(x => x.Id)
+                @Html.HiddenFor(x => x.CreatedOn)
+                @Html.HiddenFor(x => x.CreatedBy)
+                <div id="student-details">
+                    <div class="row" style="padding-top: 10px;">
+                        <div class="span7">
+                            <div>
+                                <div class="lag">
+                                    <label class="label-90">
+                                        Name
+                                    </label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(model => model.Name, new { @class = "input input-253" })
+                                        @Html.ValidationMessageFor(model => model.Name)<span class="loading Code">
+                                            <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                                    </span>
+                                </div>
+                                <div class="clearfix">
+                                </div>
+                                <div class="lag">
+                                    <label class="label-90">
+                                        Group
+                                    </label>
+                                    <span class="field">
+                                        @Html.DropDownListFor(model => model.SmsGroupTypeId, Model.GroupList, new { @class = "input input-253" })
+                                        @Html.ValidationMessageFor(model => model.SmsGroupTypeId) </span>
+                                    <div class="classlist" style="display: none">
+                                        <label class="label-90">
+                                            Class
+                                        </label>
+                                        <span class="field">
+                                            @Html.DropDownListFor(model => model.ClassId, Model.Classlist, new { @class = "input input-253" })
+                                            @Html.ValidationMessageFor(model => model.ClassId) </span>
+                                    </div>
+                                </div>
+                                <div class="clearfix">
+                                </div>
+                                <label class="label-160" style="padding-left: 10px; font-size: 15px;">
+                                    Chose to add to group</label>
+                                <div class="clearfix">
+                                </div>
+                                <div class="span7">
+                                    <div class="clearfix">
+                                    </div>
+                                    <section>
+                                        <label for="multiselect"></label>
+                                        <div>					
+                                            <select name="multiselect" id="multiselect"  multiple>
+                                                @foreach (var i in Model.Stafflist)
+                                                {
+                                                    var value = i.Value + "_Staff";
+                                                    <option value="@value">@i.Text</option>
+                                                }
+
+                                                @foreach (var item in Model.SmsGroupDetailList)
+                                                {
+                                                    if (item.ReferenceType == (int)GroupType.Staff)
+                                                    {
+                                                        var value = @item.ReferenceId + "_Staff";
+                                                        <option selected="selected" value="@value">@UtilityService.GetNameByReferenceIdForSMSStaff(item.ReferenceId)</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        var value = @item.ReferenceId + "_Student";
+                                                        <option selected="selected" value="@value">@UtilityService.GetNameByReferenceIdForSMSStudent(item.ReferenceId)</option>
+                                                    }
+
+                                                }
+  
+                                           
+                                   
+                                            </select>
+
+                                        </div>
+                                    </section>
+                                    <div class="clearfix">
+                                    </div>
+                                    <input type="submit" value="Save" class="btn" style="margin-top: 20px;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#multiselect").wl_Multiselect();
+
+    $("#SmsGroupTypeId, #ClassId").live("change", function () {
+        var _this = $("#multiselect");
+        var id = $("#SmsGroupTypeId").val();
+        if (id == 2) {
+            $(".classlist").css("display", "block");
+            var classId = $("#ClassId").val();
+            var url = '/School/GetStudentByClassId/' + classId;
+            var innerHtml = '';
+            $.getJSON(url, function (sucess) {
+                $(".wsws").html("");
+
+                $.each(sucess, function (i) {
+                    var value = this.Id + "_Student";
+                    innerHtml += '<option value="' + this.Id + '_Student">' + this.Description + '</option>';
+                    var data = this.Id + "_Student";
+                    var item = $('<li data-id="' + data + '"><a>' + this.Description + '</a></li>').append('<a class="add"></a>').data({
+                        'pos': i,
+                        'value': value,
+                        'name': this.Description,
+                        'native': _this
+                    }).appendTo(opts.pool);
+                    opts.items[value] = item;
+
+                });
+
+                $("#multiselect").append(innerHtml);
+            });
+
+        } else {
+            var urlstaff = '/Sms/GetStaffMasters/';
+            var innerHtmls = '';
+            $.getJSON(urlstaff, function (sucess) {
+                $(".wsws").html("");
+
+                $.each(sucess, function (i) {
+                    innerHtmls += '<option value="' + this.Id + '_Staff">' + this.Description + '</option>';
+                    var data = this.Id + "_Staff";
+                    var item = $('<li data-id="' + data + '"><a>' + this.Description + '</a></li>').append('<a class="add"></a>').data({
+                        'pos': i,
+                        'value': data,
+                        'name': this.Description,
+                        'native': _this
+                    }).appendTo(opts.pool);
+                    opts.items[data] = item;
+
+                });
+
+                //$("#multiselect").append(innerHtmls);
+            });
+
+            $(".classlist").css("display", "none");
+        }
+    });
+
+    $(".add").live("click", function () {
+        var value = $(this).closest("li").attr('data-id');
+        $("#multiselect option").each(function (index, element) {
+            if (element.value == value) {
+                $(this).attr('selected', 'selected');
+            }
+        });
+    });
+
+    $(".remove").live("click", function () {
+        var value = $(this).closest("li").attr('data-id');
+        $(this).closest("li").remove();
+        $("#multiselect option").each(function (index, element) {
+            if (element.value == value) {
+                $(this).removeAttr('selected');
+            }
+        });
+    });
+
+
+    function OnCompleteEdit() {
+        var url = '@Url.Action("Groups", "Sms")';
+        window.location.href = url;
+    }
+</script>

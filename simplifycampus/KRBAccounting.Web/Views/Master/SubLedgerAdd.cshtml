@@ -1,0 +1,96 @@
+﻿@model KRBAccounting.Domain.Entities.SubLedger
+@{
+    ViewBag.Title = "Log On";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("SubLedgerAdd", "Master", new AjaxOptions { UpdateTargetId = "MsgError",OnSuccess = "sucess"}, new { @class = "form-horizontal", id = "subledger-form" }))
+{@Html.HiddenFor(x=>x.Id)
+    <div id="MsgError"></div>
+      <div style="width: 445px;">
+              <div class="lag">
+                    <label class="label-90">
+                                Description</label>
+                   <span class="field">
+                      @Html.TextBoxFor(m => m.Description, new { @class = "input-295 input" })
+                      @Html.ValidationMessageFor(m => m.Description)<span class="loading Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                                Short Name</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.ShortName, new { @class = "input-90 input" })
+                      @Html.ValidationMessageFor(m => m.ShortName)<span class="loading ShortName">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+              <div class="lag">
+                 <label class="label-90">
+                                Address</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.Address, new { @class = "input-295 input" })
+                      @Html.ValidationMessageFor(m => m.Address)
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                                City</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.City, new { @class = "input-160 input" })
+                      @Html.ValidationMessageFor(m => m.City)
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                                Phone No</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.PhoneNo, new { @class = "input-160 input" })
+                      @Html.ValidationMessageFor(m => m.PhoneNo)
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                               Interest Rate</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.InterestRate, new { @class = "input-80 input" })
+                      @*@Html.ValidationMessageFor(m => m.InterestRate)*@
+                  </span>
+              </div>
+      </div>
+}
+<script type="text/javascript">
+//    $("#Description").live("focusout", function () {
+//        var name = $(this).val();
+
+//        $.getJSON("/Master/IsSubAccountNameAvailable?name=" + name, "", function (data, status, xhr) {
+//            if (data != '') {
+//                $("#MsgError").html(data).css({
+//                    'display': 'block',
+//                    'color': 'red'
+//                });
+//                $("#Description").focus();
+//            } else {
+//                $("#MsgError").html('').css("display", 'none');
+//            }
+//        });
+
+//    });
+//    $("#ShortName").live("focusout", function () {
+//        var name = $(this).val();
+
+//        $.getJSON("/Master/IsSubShortNameAvailable?name=" + name, "", function (data, status, xhr) {
+//            if (data != '') {
+//                $("#MsgError").html(data).css({
+//                  'display': 'block',
+//                  'color':'red'
+//                });
+//                $("#ShortName").focus();
+//            } else {
+//                $("#MsgError").html('').css('display', 'none');
+//            }
+//        });
+//    });
+</script>

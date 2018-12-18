@@ -1,0 +1,204 @@
+﻿@using KRBAccounting.Enums
+@model IEnumerable<KRBAccounting.Web.ViewModels.Student.StudentSearchReportViewModel>
+<script src="@Url.Content("/Scripts/RawPrint.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/html2canvas.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/jquery.plugin.html2canvas.js")" type="text/javascript"></script>
+<applet name="jzebra" code="jzebra.PrintApplet.class" archive="@Url.Content("/Content/jzebra/lib/jzebra.jar")" width="1px" height="1px" id="jzebra" style="visibility: hidden">
+    <param name="printer" value="zebra">
+</applet>
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Student Bill Pay
+                </h1>
+
+                <div class="clear">
+                </div>
+            </div>
+            <div class="block-fluid table-sorting">
+                <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+                    <thead>
+                        <tr>
+                            <th>
+                                S.N
+                            </th>
+                            <th>
+                                Student Name
+                            </th>
+                            <th>
+                                Class
+                            </th>
+                            <th>
+                                Section
+                            </th>
+                            <th>
+                                Roll No
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Apply Date
+                            </th>
+                            <th>
+                                Due Amount
+                            </th>
+                            <th>
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{var i = 1;}
+                        @foreach (var d in Model)
+                        {
+                            if (d.ScStudentRegistrationDetail != null)
+                            {
+                                var item = d.ScStudentRegistrationDetail;
+                                <tr>
+                                    <td align="center">
+                                        @i
+                                </td>
+                                <td>
+                                    @item.Studentinfo.StuDesc
+                                </td>
+                                <td>
+                                    @if (item.StudentRegistration != null && item.StudentRegistration.Class != null)
+                                    {
+                                        @item.StudentRegistration.Class.Description
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Section != null)
+                                    {
+                                        @item.Section.Description
+                                    }
+                                </td>
+                                <td>
+                                    @item.RollNo
+                                </td>
+                                <td>
+                                    @Enum.GetName(typeof(StudentType), item.StudentType)
+                                </td>
+                                <td>
+                                    @Enum.GetName(typeof(StudentCurrentStatus), item.CurrentStatus)
+                                </td>
+                                <td>
+                                    @Convert.ToDateTime(item.Studentinfo.ApplyDate).ToShortDateString()
+                            </td>
+                            <td>
+                                @d.DueAmount
+                            </td>
+                            <td>
+                                <a href="/Student/StudentMoreDetail/?studentid=@item.StudentId" class=" icon-align-justify ttLT" title="More Detail ...">
+                                </a>
+                            </td>
+                            <td>
+                                @if (d.DueAmount > 0)
+                                {
+                                    <a href="Javascript:void(0)" data-studentid="@item.StudentId" title="Due Payment" data-classid="@item.StudentRegistration.Class.Id" class="studentFeeReceipt ttLT" data-amount="@d.DueAmount">
+                                        <img src="../../Content/img/payment.ico"></img>
+                                    </a>
+
+                                }
+                            </td>
+                        </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="dialog" id="modalStudentFeeReceipt" style="display: none;" title="Student Fee Receipt">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    //    $("#tbl-list").dataTable({ "sPaginationType": "full_numbers", "bLengthChange": true, "bFilter": true, "bInfo": true, "bPaginate": true, "aoColumns": [{ "bSortable": true }, null, null, null,null,null,null, null, { "bSortable": true }, { "bSortable": false}] });
+
+
+    $("#modalStudentFeeReceipt").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                StudentFeeReceipSave();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function StudentFeeReceipSave() {
+        var form = $("#form-id");
+        $.ajax({
+            url: form.attr("action"),
+            type: "post",
+            data: form.serialize(),
+            success: function (data) {
+
+
+                if (data.True == "True") {
+                    $("#modalStudentFeeReceipt").dialog('close');
+                    PrintObjectElement = data.Print;
+                    var result = confirm("Are you sure you wish to Print this?");
+                    if (result) {
+                        if (data.PrintData) {
+                            FeeReceiptprint();
+                        } else {
+                            FeeReceiptHtmlprint();
+                        }
+
+                    }
+                    window.location.href = "/Transaction/FeeReceiptList";
+
+                }
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            type: "post",
+            success: function (data) {
+                $('#modalStudentFeeReceipt .block').html(data);
+                $(this).addClass("done");
+                $("#modalStudentFeeReceipt").dialog('open');
+
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+
+        });
+    }
+    $("a.studentFeeReceipt").live("click", function () {
+        var studentId = $(this).attr("data-StudentId");
+        var classId = $(this).attr("data-ClassId");
+        var amount = $(this).attr("data-Amount");
+        var url = '@Url.Action("StudentFeeReceipt")/?studentId=' + studentId + "&&classId=" + classId + "&&dueAmount=" + amount;
+        getRequest(url);
+    });
+</script>

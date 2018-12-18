@@ -1,0 +1,70 @@
+﻿@using KRBAccounting.Service
+@model PagedList<KRBAccounting.Domain.Entities.JournalVoucher>
+<div class="block-fluid table-sorting" id="tbl-accepted">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Voucher No.
+                </th>
+                <th>
+                    Currency Code
+                </th>
+                <th>
+                    Currency Rate
+                </th>
+                <th>
+                    Create By
+                </th>
+                <th>
+                    Voucher Date
+                </th>
+                <th>
+                    Create Date
+                </th>
+                <th>
+                    Approved Date
+                </th>
+                <th>
+                    Approved By
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.JVNumber
+                    </td>
+                    <td>@item.CurCode
+                    </td>
+                    <td>@item.CurRate
+                    </td>
+                    <td>@item.Users.Username
+                    </td>
+                    <td>@item.JVDate.ToShortDateString()
+                    </td>
+                    <td>@item.CreatedDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @if (item.ApprovedDate.HasValue)
+                        {
+                            <text>@Convert.ToDateTime(item.ApprovedDate).ToShortDateString()</text>
+                        }
+                    </td>
+                    <td>@UtilityService.GetUserNameById(item.ApprovedBy)
+                    </td>
+                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "JV"))
+                    {
+                        <td>
+                            <a href="Javascript:void(0)" class="EditJournalVoucher" data-id="@item.Id">Edit</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "JournalVoucherAcceptedList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-accepted" }))
+    </div>
+</div>

@@ -1,0 +1,131 @@
+﻿@using KRBAccounting.Service.Helpers
+@using KRBAccounting.Service.Models
+@model PagedList<KRBAccounting.Domain.Entities.DocumentNumberingScheme>
+@{
+    var i = 1;
+    var userRight = (UserRight) ViewBag.UserRight;
+}
+<div class="workplace">
+    <div class="head">
+        <div class="isw-grid">
+        </div>
+        <h1>
+            Document Numbering Scheme</h1>
+            @if (userRight.Create)
+            {
+                <ul class="buttons">
+                    <li><a href="#" class="isw-plus addDocNumScheme"></a></li>
+                </ul>
+            }
+        <div class="clear">
+        </div>
+    </div>
+    <div id="ledger-list">
+        <div class="block-fluid table-sorting" id="tbl-list">
+            <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" style="width: 100%">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>
+                            Modul Name
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                        <th>
+                            Numbering Style
+                        </th>
+                        <th>
+                            Prefix
+                        </th>
+                        <th>
+                            Suffix
+                        </th>
+                        <th>
+                            Body Length
+                        </th>
+                        <th>
+                            Total Length
+                        </th>
+                        <th>
+                            Numeric Left Fill
+                        </th>
+                        <th>
+                            Fill Character
+                        </th>
+                        <th>
+                            Start No
+                        </th>
+                        <th>
+                            End No
+                        </th>
+                        <th>
+                            Current No
+                        </th>
+                        <th width="3%">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var ModuleEnum = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum));
+                        var DocumentNumberStyleTypeEnum = new StringEnum(typeof(KRBAccounting.Enums.DocumentNumberStyleTypeEnum));
+                        var DocumentCashBankBookTypeEnum = new StringEnum(typeof(KRBAccounting.Enums.DocumentCashBankBookTypeEnum));
+                        <tr>
+                            <td>@i
+                            </td>
+                            <td>@ModuleEnum.GetStringValue(item.ModuleName)
+                            </td>
+                            <td>@item.DocDesc
+                            </td>
+                            <td>@DocumentCashBankBookTypeEnum.GetStringValue(item.DocType)
+                            </td>
+                            <td>@DocumentNumberStyleTypeEnum.GetStringValue(item.DocMode)
+                            </td>
+                            <td>@item.DocPrefix
+                            </td>
+                            <td>@item.DocSuffix
+                            </td>
+                            <td>@item.DocBodyLen
+                            </td>
+                            <td>@item.DocTotalLen
+                            </td>
+                            <td>@item.DocNumFill
+                            </td>
+                            <td>@item.DocCharFill
+                            </td>
+                            <td>@item.DocStartNo
+                            </td>
+                            <td>@item.DocEndNo
+                            </td>
+                            <td>@item.DocCurrNo
+                            </td>
+                            <td>
+                                  @if (userRight.Edit)
+                                  {
+                                      <a href="Javascript:void(0)" data-id="@item.Id" title="Edit" class="editDocNumScheme icon-pencil">
+                                      </a>
+                                  }
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+            <div class="pagination">
+                @Html.Raw(Html.AjaxPager(Model, "DocumentNumberingSchemeList", "Setup", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "DocNumScheme-list", OnBegin = "BeginRequest", OnComplete = "EndRequest" }))
+            </div>
+        </div>
+        <script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+        </script>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tbl-list").tablesorter({ widgets: ['zebra'] });
+    }); 
+</script>

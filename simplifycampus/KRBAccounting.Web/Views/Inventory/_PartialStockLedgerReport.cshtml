@@ -1,0 +1,485 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.StockLedgerViewModel
+@{
+    decimal openingQtyGrandTotal = 0;
+    decimal receivedQtyGrandTotal = 0;
+    decimal deliveredQtyGrandTotal = 0;
+    decimal grandTotalQtyBalance = 0;
+
+    decimal openingValGrandTotal = 0;
+    decimal receivedValGrandTotal = 0;
+    decimal deliveredValGrandTotal = 0;
+    decimal grandTotalValBalance = 0;
+    
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+     @if (Model.WithValue == 0)
+     {
+         <table class="table" cellspacing="0" cellpadding="0" width="100%">
+             <thead>
+                 <tr>
+                     <th width="10%">
+                         Date
+                     </th>
+                     <th>
+                         Code
+                     </th>
+                     <th>
+                         Customer/Vendor
+                     </th>
+                     <th>
+                         Opening
+                     </th>
+                     <th>
+                         Received
+                     </th>
+                     <th>
+                         Delivered
+                     </th>
+                     <th>
+                         Balance
+                     </th>
+                 </tr>
+             </thead>
+             @foreach (var item in Model.Products.OrderBy(x => x.ShortName))
+             {
+                 var ledgers = Model.ProcuctLedgers.Where(x => x.ProductCode == item.Id).ToList();
+                 decimal receivedTotal = ledgers.Sum(x => x.ReceivedQty);
+                 decimal deliveredTotal = ledgers.Sum(x => x.DeliveredQty);
+                 decimal openingBalance = decimal.Zero;
+                 decimal qtybalance = decimal.Zero;
+                 var opening = Model.ProductOpenings.Where(x => x.ProductId == item.Id).ToList();
+                 foreach (var openqty in opening)
+                 {
+                     if (opening != null)
+                     {
+                         openingBalance += @openqty.OpeningQty;
+
+                     }
+                 }
+                 if (openingBalance != 0 || receivedTotal != 0 || deliveredTotal != 0)
+                 {
+                     //var product = UtilityService.GetProductById(item);
+                     receivedQtyGrandTotal += receivedTotal;
+                     deliveredQtyGrandTotal += deliveredTotal;
+                     openingQtyGrandTotal += openingBalance;
+                     decimal balance = openingBalance + receivedTotal - deliveredTotal;
+                     qtybalance = openingBalance ;
+                     grandTotalQtyBalance += balance;
+
+                     <tr>
+                         <td>
+                         </td>
+                         <td style="font-weight: bold">
+                             @item.ShortName
+                         </td>
+                         <td style="font-weight: bold">
+                             @item.Description
+                             @if (Model.Batch.HasValue && Model.Batch == true)
+                             {
+                                 string batch = string.IsNullOrEmpty(item.BatchSerialNo) ? "No Batch" : item.BatchSerialNo;
+                                 <text> : @batch</text>
+                             }
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @if (openingBalance != 0)
+                             {
+                                 @openingBalance
+                             }
+                         </td>
+                         <td style="font-weight: bold; text-align: center">
+                             @if (Model.ProductCode == "")
+                             {
+                                 @item.Code
+                             }
+                             else
+                             {
+                                 @UtilityService.GetPorductUnitCode(item.Id, item.Code, Model.ProductCode)
+                             }
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                             foreach (var ledger in ledgers.OrderBy(x => x.VDate).ToList())
+                             {
+                                 var rowBalance = ledger.ReceivedQty - ledger.DeliveredQty;
+                                  qtybalance +=ledger.ReceivedQty - ledger.DeliveredQty;
+                                 if (ledger.ReceivedQty != 0 || ledger.DeliveredQty != 0)
+                                 {
+                             <tr>
+                                 <td>
+                                     @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                                 </td>
+                                 <td>
+                                     @ledger.Source - @ledger.VNo
+                                 </td>
+                                 <td>
+                                     @ledger.AccountName
+                                 </td>
+                                 <td>
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.ReceivedQty
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.DeliveredQty
+                                 </td>
+                                 <td style="text-align: right">
+                                     @*@rowBalance*@
+                                     @qtybalance
+                                 </td>
+                             </tr>
+                                 }
+                             }
+                     <tr>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             Product Total :
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @openingBalance
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @receivedTotal
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @deliveredTotal
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @balance
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                     </tr>
+                 }
+             }
+             <tr>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     Grand Product Total :
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @openingQtyGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @receivedQtyGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @deliveredQtyGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @grandTotalQtyBalance
+                 </td>
+             </tr>
+         </table>
+     }
+     else
+     {
+         <table class="table" cellspacing="0" cellpadding="0" width="100%">
+             <thead>
+             <tr>
+                 <th width="10%" rowspan="2">
+                     Date
+                 </th>
+                 <th>
+                     Code
+                 </th>
+                 <th>
+                     Product Description
+                 </th>
+                 <th rowspan="2">
+                     Unit
+                 </th>
+                 <th colspan="2">
+                     Opening
+                 </th>
+                 <th colspan="2">
+                     Received
+                 </th>
+                 <th colspan="2">
+                     Delivered
+                 </th>
+                 <th colspan="2">
+                     Balance
+                 </th>
+             </tr>
+             <tr>
+                      <th>
+                         Document No
+                     </th>
+                     <th>
+                         Customer/Vendor
+                     </th>
+                     <th>
+                         Qty
+                     </th>
+                     <th>
+                         Value
+                     </th>
+                     <th>
+                         Qty
+                     </th>
+                     <th>
+                         Value
+                     </th>
+                     <th>
+                         Qty
+                     </th>
+                     <th>
+                         Value
+                     </th>
+                     <th>
+                         Qty
+                     </th>
+                     <th>
+                         Value
+                     </th>
+                 </tr>
+             </thead>
+             @foreach (var item in Model.Products.OrderBy(x => x.ShortName))
+             {
+                 var ledgers = Model.ProcuctLedgers.Where(x => x.ProductCode == item.Id).ToList();
+                 decimal openingQtyBalance = ledgers.Sum(x => x.OpeningQty);
+                 decimal openingValBalance = ledgers.Sum(x => x.OpeningValue);
+                 decimal receivedQtyTotal = ledgers.Sum(x => x.ReceivedQty);
+                 decimal receivedValTotal = ledgers.Sum(x => x.ReceivedValue);
+                 decimal deliveredQtyTotal = ledgers.Sum(x => x.DeliveredQty);
+                 decimal deliveredValTotal = ledgers.Sum(x => x.DeliveredValue);
+                 decimal totQtyBalance = ledgers.Sum(x => x.BalanceQty);
+                 decimal totValBalance = ledgers.Sum(x => x.BalanceValue);
+                 decimal qtyrunbalance = decimal.Zero;
+                 decimal Valrunbalance = decimal.Zero;
+                 
+                 var opening = Model.ProductOpenings.Where(x => x.ProductId == item.Id).ToList();
+                 foreach (var openqty in opening)
+                 {
+                     if (opening != null)
+                     {
+                         openingQtyBalance += @openqty.OpeningQty;
+                         openingValBalance += @openqty.OpeningValue;
+                     }
+                 }
+                 if (openingQtyBalance != 0 || receivedQtyTotal != 0 || deliveredQtyTotal != 0)
+                 {
+                     //var product = UtilityService.GetProductById(item);
+                     receivedQtyGrandTotal += receivedQtyTotal;
+                     receivedValGrandTotal += receivedValTotal;
+                     deliveredQtyGrandTotal += deliveredQtyTotal;
+                     deliveredValGrandTotal += deliveredValTotal;
+                     openingQtyGrandTotal += openingQtyBalance;
+                     openingValGrandTotal += openingValBalance;
+                     decimal balanceQty = openingQtyBalance + receivedQtyTotal - deliveredQtyTotal;
+                     grandTotalQtyBalance += balanceQty;
+                     decimal balanceVal = openingValBalance + receivedValTotal - deliveredValTotal;
+                     qtyrunbalance += openingQtyBalance;
+                     Valrunbalance += openingValBalance;
+                     grandTotalValBalance += balanceVal;
+
+                     <tr>
+                         <td>
+                         </td>
+                         <td style="font-weight: bold">
+                             @item.ShortName
+                         </td>
+                         <td style="font-weight: bold">
+                             @item.Description
+                             @if (Model.Batch.HasValue && Model.Batch == true)
+                             {
+                                 string batch = string.IsNullOrEmpty(item.BatchSerialNo) ? "No Batch" : item.BatchSerialNo;
+                                 <text> : @batch</text>
+                             }
+                         </td>
+                         <td style="font-weight: bold; text-align: center">
+                             @if (Model.ProductCode == "")
+                             {
+                                 @item.Code
+                             }
+                             else
+                             {
+                                 @UtilityService.GetPorductUnitCode(item.Id, item.Code, Model.ProductCode)
+                             }
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @if (openingQtyBalance != 0)
+                             {
+                                 @openingQtyBalance
+                             }
+                         </td>
+                         <td>
+                              @if (openingValBalance != 0)
+                             {
+                                 @openingValBalance
+                             }
+                         </td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                     </tr>
+                             foreach (var ledger in ledgers.OrderBy(x => x.VDate).ToList())
+                             {
+                                 qtyrunbalance += ledger.ReceivedQty - ledger.DeliveredQty;
+                                 Valrunbalance += ledger.ReceivedValue - ledger.DeliveredValue;
+                                 var rowBalance = ledger.ReceivedQty - ledger.DeliveredQty;
+                                 if (ledger.ReceivedQty != 0 || ledger.DeliveredQty != 0)
+                                 {
+                             <tr>
+                                 <td>
+                                      @*@ledger.VDate.ToShortDateString()*@
+                                      @(Model.Datetype == 1 ? @ledger.VDate.ToString("MM/dd/yyyy") : @ledger.VMiti)
+                                 </td>
+                                 <td>
+                                     @ledger.Source - @ledger.VNo
+                                 </td>
+                                 <td>
+                                     @ledger.AccountName
+                                 </td>
+                                 <td>
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.OpeningQty
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.OpeningValue
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.ReceivedQty
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.ReceivedValue
+                                 </td>
+                                 <td style="text-align: right">
+                                     @ledger.DeliveredQty
+                                 </td>
+                                  <td style="text-align: right">
+                                     @ledger.DeliveredValue
+                                 </td>
+                                 <td style="text-align: right">
+                                     @* @rowBalance*@
+                                     @qtyrunbalance
+                                 </td>
+                                 <td style="text-align: right">
+                                    @Valrunbalance
+                                 </td>
+                             </tr>
+                                 }
+                             }
+                     <tr>
+                         <td>
+                         </td>
+                         <td>
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             Product Total :
+                         </td>
+                         <td></td>
+                         <td style="font-weight: bold; text-align: right">
+                             @openingQtyBalance
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @openingValBalance
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @receivedQtyTotal
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @receivedValTotal
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @deliveredQtyTotal
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @deliveredValTotal
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @balanceQty
+                         </td>
+                         <td style="font-weight: bold; text-align: right">
+                             @balanceVal
+                         </td>
+                     </tr>
+                     <tr>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                         <td></td>
+                     </tr>
+                 }
+             }
+             <tr>
+                 <td>
+                 </td>
+                 <td>
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     Grand Product Total :
+                 </td>
+                 <td></td>
+                 <td style="font-weight: bold; text-align: right">
+                     @openingQtyGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @openingValGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @receivedQtyGrandTotal
+                 </td>
+                  <td style="font-weight: bold; text-align: right">
+                     @receivedValGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @deliveredQtyGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @deliveredValGrandTotal
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @grandTotalQtyBalance
+                 </td>
+                 <td style="font-weight: bold; text-align: right">
+                     @grandTotalValBalance
+                 </td>
+             </tr>
+         </table>
+     }
+</div>

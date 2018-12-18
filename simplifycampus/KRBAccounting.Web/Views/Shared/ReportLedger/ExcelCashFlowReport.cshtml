@@ -1,0 +1,91 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.CashFlowReportViewModel
+@using KRBAccounting.Service;
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+    
+</div>
+<div class="ReportList">
+     <table border="1" style="font-size: 12px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Description
+                </th>
+                <th>
+                    Receipt
+                </th>
+                <th>
+                    Payment
+                </th>
+            </tr>
+        </thead>   
+               
+        @{
+            decimal TotalReceive = 0;
+            decimal TotalPayment = 0;
+
+            decimal TotalRec = 0;
+            decimal TotalPay = 0;
+
+            decimal TotalRec1 = 0;
+
+            var cashBanklist = UtilityService.GetCashFlowSummary(Model.StartDate, Model.EndDate, Model.LedgerId, Model.FYId, Model.branchId);            
+        }
+                 
+                @foreach (var list in cashBanklist)
+                {
+                    <tr>
+                        <td>@list.AccountName
+                        </td>
+                        <td class="numbericfield">
+                            @if (list.Receive != 0)
+                            {
+                                @list.Receive
+                           TotalReceive = TotalReceive + list.Receive;
+                            }
+                        </td>
+                        
+                        <td class="numbericfield">
+                        @if (list.Payment != 0)
+                        {
+                            @list.Payment
+                       TotalPayment = TotalPayment + list.Payment;
+                        }                        
+                        </td>
+                    </tr>                                        
+                }          
+                
+        <tr>
+            
+            <td class="numbericfield bold"> Day Closing &gt;&gt;</td>
+            <td class="numbericfield">
+            @{
+                TotalRec = TotalPayment - TotalReceive;
+            }
+             
+            @TotalRec
+                 
+            </td>
+            <td class="numbericfield"></td>
+        </tr>  
+        
+        <tr>
+            
+            <td class="numbericfield bold"> Total &gt;&gt;</td>
+            <td class="numbericfield bold">
+            @{
+                TotalRec1 = TotalRec + TotalReceive;
+            }
+             
+            @TotalRec1
+                 
+            </td>
+            <td class="numbericfield bold">@TotalPayment</td>
+        </tr>  
+    </table>
+</div>

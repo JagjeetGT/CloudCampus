@@ -1,0 +1,86 @@
+﻿@model KRBAccounting.Domain.Entities.User
+<script src="../../Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+@using (Ajax.BeginForm("UserInfo", "Account", new { controller = "Account" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnsuccessUserInfo" }, new { id = "User-form" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    
+    @Html.HiddenFor(x => x.ImageGuid)
+    @Html.HiddenFor(x => x.Ext)
+    <div id="MsgErrorUserInfo">
+    </div>@Html.ValidationSummary(true)
+    <div class="image">
+        <img src="@KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name)" class="img-polaroid user-image" width="125"/>
+    </div>
+    <div style="width: 368px;">
+        <div class="lag">
+            <label class="label-120">
+                User Name :</label>
+            <span class="field">
+                @Html.EditorFor(m => m.Username, new { @class = "input-295 input" })
+                @Html.ValidationMessageFor(m => m.Username)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-120">
+                Full Name :</label>
+            <span class="field">
+                @Html.EditorFor(m => m.FullName, new { @class = "input-295 input" })
+                @Html.ValidationMessageFor(m => m.FullName)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-120">
+                Email Address :</label>
+            <span class="field">
+                @Html.EditorFor(m => m.EmailAddress, new { @class = "input-295 input" })
+                @Html.ValidationMessageFor(m => m.EmailAddress)
+            </span>
+        </div>
+        <div class="lag">
+            <input name="attachments" id="attachments" type="file" />
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="form-actions">
+        <p>
+            <input type="submit" class="btn btn-info" value="Save" /></p>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        //kendo ui plugin
+        //for uploading files
+        $("#attachments").kendoUpload({
+            upload: onUpload,
+            remove: onRemove,
+            multiple: false,
+            async: {
+                saveUrl: ('/Account/UploadImages'),
+                removeUrl: ('/remove-images/UserImages'),
+                autoUpload: true
+            },
+
+            success: function (data) {
+
+                if (data.response.success != null) {
+                    alert(data.response.success);
+                    //window.location.reload(true);
+
+                }
+                var imageGuid = data.response.guid;
+                if (imageGuid.toString() == '') {
+                    alert('upload failed please try again');
+                } else {
+                    var name = "hddimage" + data.response.filename;
+                    var classname = "hddimage" + data.response.filename.replace('.', '');
+                    $('#User-form').append('<input type="hidden" class="' + classname + '" value="' + imageGuid + '" name="' + name + '" id="' + name + '" />');
+                    $("#ImageGuid").val(data.response.guid);
+                    $("#Ext").val(data.response.ext);
+                }
+            }
+        });
+    });
+    
+</script>

@@ -1,0 +1,147 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Payroll.EmployeeSalaryReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center; margin-top: 0">
+   
+   <br/>
+    @foreach (var item in Model.EmployeeInfos)
+    {
+         @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+    <hr />
+        <table width="100%">
+            <tr>
+                <td align="left" >
+                    Employee Name:
+                </td>
+               <td align="left">
+                    @item.Description
+                </td>
+               <td align="left">
+                    Salary Type
+                </td>
+                 <td align="left">
+                    @item.EmployeeCategory.Description
+                </td>
+            </tr>
+            <tr>
+                 <td align="left">
+                    Address :
+                </td>
+               <td align="left">
+                    @item.Address
+                </td>
+                <td align="left">
+                    Date of Joining:
+                </td>
+                 <td align="left">
+                    @item.DateOfJoin.ToShortDateString() A.D. || @item.MitiofJoin B.S.
+                </td>
+            </tr>
+            <tr>
+                <td align="left">
+                    Post:
+                </td>
+                <td align="left">
+                    @item.EmployeePost.Description
+                </td>
+                 <td align="left">
+                    Department
+                </td>
+                 <td align="left">@item.EmployeeDepartment.Description
+                </td>
+            </tr>
+        </table>
+        <hr />
+        <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+            <thead>
+                <tr>
+                    <th>
+                        Earning
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Deductions
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                             var list = UtilityService.GeneratingEmployeeSalaryDetail(item.Id, Model.MonthId, Model.Year, Model.AYear).AsQueryable();
+                          
+                             decimal pos = 0;
+                             decimal neg = 0; 
+                }
+                @foreach (var li in list)
+                {
+                   
+                    if (li.Operation == "+")
+                    {
+                    <tr>
+                        <td>@li.SalaryHeadDesc
+                        </td>
+                        <td align="right">@li.Amount
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        @{
+                       pos = pos + li.Amount;
+                        }
+                    </tr>
+                     
+                    }
+                    else
+                    {
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>@li.SalaryHeadDesc
+                        </td>
+                        <td align="right">@li.Amount
+                        </td>
+                        @{
+                       neg = neg + li.Amount;
+                        }
+                    </tr>
+  
+                    }
+                }
+                @{
+                var netTotal = pos - neg;
+                }
+                <tr>
+                    <td>
+                        <b>Total Earning</b>
+                    </td>
+                    <td align="right">
+                        <b>@pos</b>
+                    </td>
+                    <td> <b>Total Deduction</b>
+                    </td>
+                    <td align="right">
+                      <b>@neg</b>
+                    </td>
+                </tr>
+               
+                <tr ><td colspan="3" align="right"> <b> Net Total >> </b></td><td align="right"> <b>@netTotal</b></td> </tr>
+            </tbody>
+        </table>
+        
+        
+        
+        
+    }
+</div>
+<div class="clearfix">
+</div>

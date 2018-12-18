@@ -1,0 +1,27 @@
+﻿@using KRBAccounting.Enums
+@model IEnumerable<KRBAccounting.Domain.Entities.ScTransportMapping>  
+@foreach (var item in Model)
+{
+    item.StatusList = new SelectList(
+                Enum.GetValues(typeof (Status)).Cast<Status>().Select(x => new SelectListItem {Text = x.ToString(), Value = ((int) x).ToString()}), "Value", "Text");
+    @Html.Partial("BusTransportMappingInfoEdit", item)
+    
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-examroutine-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-examroutine-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+        
+
+    });
+
+</script>

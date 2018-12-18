@@ -1,0 +1,24 @@
+﻿@model KRBAccounting.Web.ViewModels.PrintDialogViewModel
+
+<div>
+    <div class="lag">
+        <label>Printer</label>
+        <div class="field">
+            @Html.DropDownListFor(x=>x.PrintName,Model.PrintList)
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="lag">
+        <label>Paper Size</label>
+        <div class="field">
+            @Html.DropDownListFor(x=>x.PaperSize,Model.PaperSizeList)
+        </div>
+    </div>
+     <div class="clearfix"></div>
+    <div class="lag">
+        <label>Orientation</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.Orientation, Model.OrientationList)
+        </div>
+    </div>
+</div>

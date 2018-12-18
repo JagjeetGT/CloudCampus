@@ -1,0 +1,117 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScClassSubjectMapping>
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ClassSubjectMappingEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+
+    var scClassSubjectMapping = Model.FirstOrDefault();
+
+    <div style="width: 800px;">
+        <div class="lag">
+            <label class="label-90 ">
+                Class
+            </label>
+            <div class="field">
+                @Html.HiddenFor(x => x.FirstOrDefault().ClassId)
+                <input type="text" class="modallink input-305" createhref="@Url.Action("AddClass")" value="
+                       @if (scClassSubjectMapping != null && scClassSubjectMapping.Class != null) { @(Model.FirstOrDefault().Class.Description)  }
+                       " href=" @Url.Action("GetClasses") " valueid=" classid" id="class-id" title="Class"/>
+                @Html.ValidationMessageFor(m => m.FirstOrDefault().ClassId)
+            </div>
+            <label class="label-90">
+                Code
+            </label>
+            <div class="field">
+                <input type="text" class="input-100" value="
+                       @if (scClassSubjectMapping != null && scClassSubjectMapping.Class != null) { @(Model.FirstOrDefault().Class.Code)   }
+                       " readonly=" readonly" id="class-code" />
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag detailEntryTable" style="height: 400px">
+            <table class="table-bordered" id="table-class-subject-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="220px">
+                        Subject
+                    </th>
+                    <th width="80px">
+                        Result System
+                    </th>
+                    <th width="90px">
+                        Evaluation
+                    </th>
+                    <th width="90px">
+                        Subject Type
+                    </th>
+                    <th width="90px">
+                        Class Type
+                    </th>
+                    <th width="220px">
+                        Narration
+                    </th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    @Html.Partial("_PartialClassSubjectEntryEdit", item)
+                }
+                @{
+    var modellink = new KRBAccounting.Domain.Entities.ScClassSubjectMapping();
+                }
+                @Html.Partial("_PartialClassSubjectEntry", modellink)
+            </table>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var ledgerElement = document.querySelectorAll(".text_subject");
+      
+        $.each(ledgerElement, function (index) {
+            var element = $(this).closest("tr");
+            element.attr("id", "tr_" + index);
+
+            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+            element.find(".text_subject").attr({
+                "valueId": Subject_valueid,
+                "id": "subject_" + index
+            });
+
+            var ResultSystem_valueid = element.find(".hdn_ResultSystem_Id").attr("id");
+
+            element.find(".text_ResultSystem").attr({
+                "valueId": ResultSystem_valueid,
+                "id": "ResultSystem_" + index
+            });
+            var EvaluateForType_valueid = element.find(".hdn_EvaluateForType_Id").attr("id");
+
+            element.find(".text_EvaluateForType").attr({
+                "valueId": EvaluateForType_valueid,
+                "id": "EvaluateForType_" + index
+            });
+            var SubjectType_valueid = element.find(".hdn_SubjectType_Id").attr("id");
+
+            element.find(".text_SubjectType").attr({
+                "valueId": SubjectType_valueid,
+                "id": "SubjectType_" + index
+            });
+            var ClassType_valueid = element.find(".hdn_ClassType_Id").attr("id");
+
+            element.find(".text_ClassType").attr({
+                "valueId": ClassType_valueid,
+                "id": "ClassType_" + index
+            });
+        });
+
+
+
+    });
+
+
+</script>

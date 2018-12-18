@@ -1,0 +1,82 @@
+﻿@using System.Data
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.PeriodicAnalysisViewModel
+@{
+    decimal totalPurchaseAmt = 0;
+    decimal totalPurchaseReturnAmt = 0;
+    decimal totalSalesAmt = 0;
+    decimal totalSalesReturnAmt = 0;
+    int Sno = 1;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="table tbl-list" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    Day
+                </th>
+                <th>
+                    Purchase
+                </th>
+                <th>
+                    Sales
+                </th>
+                <th>
+                    Purchase Return
+                </th>
+                <th>
+                    Sales Return
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.AnalysisMonthly)
+        {
+
+
+            <tr>
+                <td>
+                    @Sno
+                </td>
+                <td>
+                    @item.Purchase
+                </td>
+                <td>
+                    @item.Sales
+                </td>
+                <td>
+                    @item.PurchaseReturn
+                </td>
+                <td>
+                    @item.SalesReturn
+                </td>
+            </tr>
+               Sno++;
+
+        }
+        <tr>
+            <td style="font-weight: bold">
+                Total
+            </td>
+            <td style="font-weight: bold">
+                @Model.AnalysisMonthly.Sum(x => x.Purchase)
+            </td>
+            <td style="font-weight: bold">
+                @Model.AnalysisMonthly.Sum(x => x.PurchaseReturn)
+            </td>
+            <td style="font-weight: bold">
+                @Model.AnalysisMonthly.Sum(x => x.Sales)
+            </td>
+            <td style="font-weight: bold">
+                @Model.AnalysisMonthly.Sum(x => x.SalesReturn)
+            </td>
+        </tr>
+    </table>
+</div>

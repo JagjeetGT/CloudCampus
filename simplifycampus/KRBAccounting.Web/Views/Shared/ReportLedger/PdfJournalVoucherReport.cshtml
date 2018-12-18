@@ -1,0 +1,169 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.LedgerReport.JournalVoucherViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix"></div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 7px;">
+        <thead>
+          <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Voucher No
+                </th>
+                <th>
+                    Particulars
+                </th>
+                <th>
+                    Dr Amount
+                </th>
+                <th>
+                    Cr Amount
+                </th>
+            </tr>
+        </thead>
+        @foreach (var date in Model.JVDateList)
+        {
+            var asOnDate = date.ToString("yyyy-MM-dd");
+            var details = 0;
+            if (Model.DisplayDetails)
+            {
+                details = 1;
+            }
+            var JournalVoucherList = UtilityService.JournalVouchersByDate(asOnDate, Model.FYId,details);
+            decimal dayDrTotal = 0;
+            decimal dayCrTotal = 0;
+            foreach (var jv in JournalVoucherList)
+            {
+                decimal drTotal = 0;
+                decimal crTotal = 0;
+                <tr>
+                    <td>
+                        @if (JournalVoucherList.IndexOf(jv) == 0)
+                        {<text>
+                         @(Model.Datetype == 1 ? @Convert.ToDateTime(@jv.VDate).ToString("MM/dd/yyyy") : jv.VMiti)
+                         </text>
+                        }
+                    </td>
+                    <td>@jv.VNo
+                    </td>
+                    <td style="font-weight: bold">
+                        @jv.Particulars
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+               
+                
+                var JVDetails = UtilityService.JournalVoucherDetailsById(@jv.VNo,@jv.Source);
+                foreach (var detail in JVDetails)
+                {
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            @detail.AccountName
+                        </td>
+                        <td style="text-align: right">
+                            @*@if (detail.JVAmountType == 1)
+                            {
+                                drTotal += detail.Amount;<text>@detail.Amount</text>
+                            }*@
+                            <text>@detail.DrAmt</text>
+                        </td>
+                        <td style="text-align: right">
+                           <text>@detail.CrAmt</text>
+                        </td>
+                        
+                    </tr>
+                    drTotal += detail.DrAmt;
+                    crTotal += detail.CrAmt;
+                     if (Model.DisplaySubLedger)
+                    {
+                        if (detail.SubLedName != null)
+                        {
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td style="padding-left: 20px; ">
+                                   Sub Ledger : @detail.SubLedName 
+                                </td> 
+                                <td></td>
+                                <td></td>  
+                            </tr>
+                        }
+                    }
+                     if (Model.DisplayRemarks)
+                     {
+                         if (detail.Narration != null)
+                         {
+                            <tr>
+                                <td ></td>
+                                <td style="text-align: right;  font-size: 11px">Narration :</td>
+                                <td colspan="3" style="padding-left: 40px; font-size: 11px">
+                                    @detail.Narration 
+                                </td>   
+                            </tr>
+                         }
+                     }
+                }
+                if (Model.DisplayRemarks)
+                {
+                    if (jv.Remarks != null)
+                    {
+                        <tr>
+                            <td ></td>
+                            <td  style="text-align: right; font-size: 11px">Remarks :</td>
+                            <td colspan="3" style="padding-left: 40px; font-size: 11px">
+                                @jv.Remarks 
+                            </td> 
+                        </tr>
+                    }
+                }
+                if (drTotal != 0 || crTotal != 0)
+                {
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            Total :
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@drTotal
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@crTotal
+                        </td>
+                    </tr>
+                }
+                dayDrTotal += drTotal;
+                dayCrTotal += crTotal;
+            }
+            if (dayDrTotal != 0 || dayCrTotal != 0)
+            {
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        Day Total :
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@dayDrTotal
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@dayCrTotal
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</div>

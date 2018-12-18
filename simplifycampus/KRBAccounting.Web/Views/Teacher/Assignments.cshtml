@@ -1,0 +1,292 @@
+﻿@model KRBAccounting.Domain.Entities.ScAssignment
+@{
+    ViewBag.Title = "Assignments";
+}
+<script src="/Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="/Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+<link href="/Content/KendoUI/kendo.common.min.css" rel="stylesheet" type="text/css" />
+<link href="/Content/KendoUI/kendo.default.min.css" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<script type='text/javascript' src='/Content/themes/js/plugins/maskedinput/jquery.maskedinput-1.3.min.js'></script>
+<div style="padding-top: 15px" class="row-fluid" id="social-timeline">
+    <div class="span12">
+        <div class="social-box">
+            <div class="header">
+                <h4>
+                    Assignments</h4>
+            </div>
+            <div class="body">
+                <div class="media social-box social-composer media-body social-body ">
+                    <a href="@Url.Action("Profile", new { name = User.Identity.Name })" class="pull-left social-users-avatars">
+                        <img width="55" height="55" alt="Julio Marquez" src="@KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name)"
+                             class="media-object">
+                    </a>
+                    @using (Html.BeginForm("Assignments", "Teacher", FormMethod.Post, new { @class = "form-horizontal", id = "assignment-form" }))
+                    {
+                        <div class="media-body social-body">
+                            <div class="control-group" style="margin-bottom: 2px">
+                                <label class="label-160 control-label" style="text-align: left; width: 100px; margin-left: 0px">
+                                    Class</label>
+                                <span class="field controls" style="margin-left: 0px">
+                                    @Html.DropDownListFor(x => x.ClassTeacherId, Model.ClassList, "--Select--", new { @class = "span2", style = "border:1px solid #BDC7D8;margin-left: 0px; min-height: 25px ! important; font-size: 12px;" })
+                                </span>
+                            </div>
+                            <div class="control-group" style="margin-bottom: 2px">
+                                <label class="label-160 control-label" style="text-align: left; width: 100px; margin-left: 0px">
+                                    Subject</label>
+                                <span class="field controls" style="margin-left: 0px">
+                                    <select id="subject-id" name="SubjectId">
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="control-group" style="margin-bottom: 2px">
+                                <label class="label-160 control-label" style="text-align: left; width: 100px;">
+                                    Title</label>
+                                <span class="field controls" style="margin-left: 0px">
+                                    @Html.TextBoxFor(x => x.Title, new { placeholder = "Assignment Title", @class = "span7", style = "margin-left: 0px; min-height: 25px ! important; font-size: 12px;" })
+                                    @Html.ValidationMessageFor(m => m.Title)
+                                </span>
+                            </div>
+                            <div class="control-group" style="margin-bottom: 2px">
+                                <label class="label-160 control-label" style="text-align: left; width: 100px; margin-left: 0px">
+                                    Description</label>
+                                <span class="field controls" style="margin-left: 0px">
+                                    @Html.TextAreaFor(x => x.Description, new { rows = "3", placeholder = "Assignment Description", @class = "span7", style = "border:1px solid #BDC7D8; margin-left: 0px; min-height: 25px ! important; font-size: 12px;" })
+                                </span>
+                            </div>
+                            <div class="control-group" style="margin-bottom: 2px">
+                                <label class="label-160 control-label" style="text-align: left; width: 100px; margin-left: 0px">
+                                    Due Date</label>
+                                <span class="field controls" style="margin-left: 0px">
+                                    @Html.TextBoxFor(x => x.DueDate, new { placeholder = "Assignment Due Date", @class = "span7", style = "border:1px solid #BDC7D8;margin-left: 0px; min-height: 25px ! important; font-size: 12px;" })
+                                    @Html.ValidationMessageFor(m => m.DueDate)
+                                </span>
+                            </div>
+                            <div class="social-footer">
+                                <div class="lag" id="images">
+                                    <input name="attachmentsroom" id="attachments" type="file" />
+                                    @Html.HiddenFor(m => m.FileName)
+                                    @Html.HiddenFor(x => x.TempUrl)
+                                </div>
+                                <button type="button" class="btn btn-primary pull-right assignment-submit">
+                                    Post</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .progress
+    {
+        position: relative;
+        width: 400px;
+        border: 1px solid #ddd;
+        padding: 1px;
+        border-radius: 3px;
+    }
+    .bar
+    {
+        background-color: #B4F5B4;
+        width: 0%;
+        height: 20px;
+        border-radius: 3px;
+    }
+    .percent
+    {
+        position: absolute;
+        display: inline-block;
+        top: 3px;
+        left: 48%;
+    }
+    .t-button
+    {
+        border-radius: 0px;
+        float: left;
+    }
+    .t-button:hover
+    {
+        color: #FFF;
+        background-color: #3B5998;
+        background-image: none;
+        border-color: #324E78 #324E78 #003781;
+    }
+    .t-upload-files .t-button
+    {
+        float: none;
+        margin-left: 3px;
+    }
+</style>
+<script type="text/javascript" language="javascript">
+    kendo.ui.Upload.fn._supportsDrop = function () { return false; };
+    $("#attachments").kendoUpload({
+        upload: onUpload,
+        remove: onRemove,
+        multiple: false,
+        progress: onProgress,
+        async: {
+            saveUrl: ('/Teacher/FileUpload'),
+            removeUrl: ('/Teacher/RemoveFile'),
+            autoUpload: true
+        },
+        localization: {
+            select: 'Upload File',
+            remove: ''
+
+        },
+        success: function (data) {
+            if (data.response != null) {
+                var imageGuid = data.response.path;
+                if (imageGuid == '') {
+                    alert('upload failed please try again');
+                } else {
+
+                    $("#TempUrl").val(imageGuid);
+                    $("#FileName").val(data.response.filename);
+                    $("#assignment-form").append('<input type="hidden" class="hddimage' + data.response.filenamewithoutext + '" ext="' + data.response.ext + '" value="' + data.response.GuidWithExt + '" />');
+                }
+            }
+        }
+    });
+
+
+
+
+    function onProgress(e) {
+        // Array with information about the uploaded files
+        var files = e.files;
+
+        console.log(e.percentComplete);
+    }
+    function onRemove(e) {
+        $("#TempUrl").val("");
+        $("#FileName").val("");
+        for (var i = 0; i < e.files.length; i++) {
+            var classname = "hddimage" + e.files[i].name.split('.')[0];
+            e.files[i].name = $("." + classname).val();
+        }
+    }
+    function getGuid(id) {
+        var newValue = "hddimage" + id.replace('.', '');
+        var returnvalue = $("." + newValue).val();
+        return returnvalue;
+    }
+    function onUpload(e) {
+        var files = e.files;
+        // Check the extension of each file and abort the upload if it is not .jpg
+        $.each(files, function () {
+
+        });
+
+    }
+    $(".assignment-submit").live("click", function () {
+        var form = $("#assignment-form");
+        var valid = true;
+        var validDate = isDate($("#DueDate").val(), "/", 1, 0, 2);
+        if (!validDate) {
+            $("#DueDate").addClass("error");
+            valid = false;
+        }
+        else {
+            $("#DueDate").removeClass("error");
+        }
+        if ($("#Title").val() == "") {
+            $("#Title").addClass("error");
+            valid = false;
+        }
+
+        if ($("#subject-id").val() == "" || $("#subject-id").val() == 0 || $("#subject-id").val() == null) {
+            alert($("#subject-id").val());
+            $("#subject-id").addClass("error");
+            valid = false;
+        }
+        if (form.valid() && valid) {
+
+            $.ajax({
+                url: form.attr("action"),
+                data: form.serialize(),
+                type: "POST",
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+
+
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        }
+    });
+    $(document).ready(function () {
+
+        $("#DueDate").val("");
+        $("#DueDate").mask("99/99/9999");
+    });
+    $("#Title").live("blur", function () {
+        if ($(this).val() == "") {
+            $(this).addClass("error");
+
+        } else {
+            $(this).removeClass("error");
+        }
+    });
+    $("#DueDate").live("blur", function () {
+        var validDate = isDate($(this).val(), "/", 1, 0, 2);
+        if (!validDate) {
+            $($(this).addClass("error"));
+        }
+        else {
+            $($(this).removeClass("error"));
+        }
+    });
+    $("#ClassTeacherId").live("change", function () {
+        var classteacherMappingId = $(this).val();
+        var item = "";
+        if (classteacherMappingId != 0 && classteacherMappingId != "") {
+            var url = '@Url.Action("GetSubjectList")?classteacherMappingId=' + classteacherMappingId;
+            $.ajax({
+                url: url,
+
+                datatype: "JSON",
+                type: "POST",
+
+                error: function () {
+
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+
+                    if (data == "") {
+                        item = '<option value="0"> -- </option>';
+                        $("#subject-id").addClass("error");
+                    } else {
+
+                        $.each(data, function () {
+                            item += '<option value="' + this.Value + '">' + this.Text + '</option>';
+
+                        });
+                        $("#subject-id").removeClass("error");
+                    }
+
+
+                    $("#subject-id").html(item);
+
+
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+            $("#subject-id").html('<option value="0"> -- </option>');
+        }
+    });
+
+</script>

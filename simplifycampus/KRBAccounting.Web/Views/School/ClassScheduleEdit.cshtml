@@ -1,0 +1,197 @@
+﻿@model KRBAccounting.Web.ViewModels.School.ScClassScheduleViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<script src="../../Content/TimePicker/jquery.timepicker.js" type="text/javascript"></script>
+<link href="../../Content/TimePicker/jquery.timepicker.css" rel="stylesheet" type="text/css" />
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Class Schedules</h1>
+                    <ul class="buttons">
+                        <li><a href="@Url.Action("ClassSchedules", "School")" class="isw-left"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div style="padding-top: 10px">
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    @using (Html.BeginForm("ClassScheduleEdit", "School", new { controller = "School" }, FormMethod.Post, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+                    {
+                         @Html.HiddenFor(m => m.OldClassId)
+                        @Html.HiddenFor(m => m.OldSectionId)
+                        <div class="lag">
+                            <span class="stack">
+                                <label class="label-90">
+                                    Class</label>
+                                @Html.HiddenFor(m => m.ClassSchedule.ClassId)
+                                <input type="text" class="input-250" value="@if (Model.ClassSchedule.Class != null)
+                                                                                      {
+                                                                                          @Model.ClassSchedule.Class.Description
+                                                                                      }
+                                                                                      " href="@Url.Action("GetClasses", "School")" valueid="ClassSchedule_ClassId" id="ClassScheduleclassid" readonly="readonly"/>
+                            </span><span class="stack">
+                                <label class="label-90">
+                                    Section</label>
+                                @Html.HiddenFor(m => m.ClassSchedule.SectionId)
+                                <input type="text" class="input-250" value="@if (Model.ClassSchedule.Section != null)
+                                                                                      {
+                                                                                                 @Model.ClassSchedule.Section.Description
+                                                                                      }
+                                                                                                " href="@Url.Action("GetSections", "School")"  valueid="ClassSchedule_SectionId" id="ClassScheduleSectionid" readonly="readonly"/>
+                            </span>
+                        </div>
+                        
+
+                        <div class="clearfix">
+                        </div>
+                        
+
+                        <div class="lag" style="height: auto; width: 100%">
+                            <table class="listpopup" id="bus-route-list" width="100%">
+                                <tr class="nodrop nodrag">
+                                    <th>
+                                        S.No
+                                    </th>
+                                    <th width="20%">
+                                        Subjects
+                                    </th>
+                                    <th colspan="2">
+                                        Sunday
+                                    </th>
+                                    <th colspan="2">
+                                        Monday
+                                    </th>
+                                    <th colspan="2">
+                                        Tuesday
+                                    </th>
+                                    <th colspan="2">
+                                        Wednesday
+                                    </th>
+                                    <th colspan="2">
+                                        Thursday
+                                    </th>
+                                    <th colspan="2">
+                                        Friday
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                    </th>
+                                    <th>
+                                    </th>
+                                    <th>
+                                        Start Time
+                                    </th>
+                                    <th>
+                                        End Time
+                                    </th>
+                                    <th>
+                                        Start Time
+                                    </th>
+                                    <th>
+                                        End Time
+                                    </th>
+                                    <th>
+                                        Start Time
+                                    </th>
+                                    <th>
+                                        End Time
+                                    </th>
+                                    <th>
+                                        Start Time
+                                    </th>
+                                    <th>
+                                        End Time
+                                    </th>
+                                    <th>
+                                        Start Time
+                                    </th>
+                                    <th>
+                                        End Time
+                                    </th>
+                                    <th>
+                                        Start Time
+                                    </th>
+                                    <th>
+                                        End Time
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="clearfix">
+                        </div>
+                        
+
+                        <div class="form-actions">
+                            <input type="button" value="Save" class="btn btn-info scheduleSave" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    
+    $(document).ready(function () {
+        var classid = $("#ClassSchedule_ClassId").val();
+        var sectionid = $("#ClassSchedule_SectionId").val();
+        if (classid != 0) {
+            Begin();
+            var url = '@Url.Action("GetTimeScheduleByClassEdit", "School")?classid=' + classid + "&&sectionid=" + sectionid;
+            $.ajax({
+                url: url,
+                type: 'POST',
+                success: function (data) {
+                    $("#bus-route-list").append(data);
+                    $.unblockUI();
+                }
+            });
+            $.unblockUI();
+        }
+    });
+
+
+    $(".scheduleSave").live("click", function () {
+    
+        var data = document.querySelectorAll("#bus-route-list .input");
+        var i = 0;
+        $.each(data, function () {
+            if ($(this).val() == "") {
+                i += 1;
+            }
+        });
+        $("#form-id").submit();
+        //if (i == 0) {
+        //    $("#form-id").submit();
+        //} else {
+        //    alert("Fields cannot be blank.");
+        //}
+
+    });
+
+//    $("#classid").live("blur", function () {
+//        var classid = $("#ClassId").val();
+//        if (classid != 0 && classid != '@Model.ClassId') {
+//            var url = '@Url.Action("GetTimeScheduleByClass", "School")?classid=' + classid;
+//            $.ajax({
+//                url: url,
+//                type: 'POST',
+//                success: function (data) {
+//                    $(".listsubject").remove();
+//                    $("#bus-route-list").append(data);
+//                }
+//            });
+//        }
+//    });
+</script>

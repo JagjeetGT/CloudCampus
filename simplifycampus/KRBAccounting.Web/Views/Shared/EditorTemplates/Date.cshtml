@@ -1,0 +1,12 @@
+﻿@model DateTime?
+@{
+    var date = Model;
+}
+@if (date == null)
+{
+    @Html.TextBox("", Model, new { @class = "input-100 input" })
+}
+else
+{
+    @Html.TextBox("", Convert.ToDateTime(Model).ToString("MM/dd/yyyy"), new { @class = "input-100 input" })
+}

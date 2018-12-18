@@ -1,0 +1,333 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Exam Routine Master";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="../../Content/TimePicker/jquery.timepicker.js" type="text/javascript"></script>
+<link href="../../Content/TimePicker/jquery.timepicker.css" rel="stylesheet" type="text/css" />
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Exam Routine</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                               <li><a href="#" class="isw-plus addScExam"></a></li>
+                        }
+                     
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="exam-list">
+                    @Html.Action("ExamRoutineList")
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalExam" style="display: none;" title="Exam Routine(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    $("#modalExam").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalExam .block').html(data);
+                $(this).addClass("done");
+                $("#modalExam").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScExam').live('click', function () {
+        Begin();
+        var url = '@Url.Action("ExamRoutineAdd", "Exam")';
+        getRequest(url);
+        $("#StartTime, #EndTime").timepicker({
+            'timeFormat': 'h:i A',
+            'step': 15,
+            'showDuration': true,
+            'forceRoundTime': true
+        });
+        return false;
+    });
+    $('a.editExam').live('click', function () {
+        Begin();
+        var classid = $(this).attr("data-classid");
+        var examid = $(this).attr("data-examid");
+
+        var url = '@Url.Action("ExamRoutineEdit", "Exam")?classId=' + classid + '&&examId=' + examid;
+        getRequest(url);
+        
+        return false;
+    });
+    function OnComplete() {
+        $("#exam-list").load("/Exam/ExamRoutineList");
+        $('#modalExam .block').load("/Exam/ExamRoutineAdd");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#exam-list").load("/Exam/ExamRoutineList");
+        $('#modalExam').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+
+
+    $("#class-id").live("blur", function () {
+        var examid = $("#ExamRoutine_ExamId").val();
+       
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+        if (id != 0 && id != '') {
+            url = '@Url.Action("ClassWithSubjectByClassId")?classId=' + id+"&&examid="+examid;
+            $.ajax({
+                url: url,
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                    $("#table-examroutine-detail tr.detail-entry").remove();
+                    $("#table-examroutine-detail").append(data);
+
+                    //$("#table-examroutine-detail").append();
+                    var ledgerElement = document.querySelectorAll(".text_subject");
+                    $.each(ledgerElement, function (index) {
+                        var element = $(this).closest("tr");
+                        element.attr("id", "tr_" + index);
+
+                        var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                        element.find(".text_subject").attr({
+                            "valueId": Subject_valueid,
+                            "id": "subject_" + index
+                        });
+
+                        var ResultSystem_valueid = element.find(".hdn_ResultSystem_Id").attr("id");
+
+                        element.find(".text_ResultSystem").attr({
+                            "valueId": ResultSystem_valueid,
+                            "id": "ResultSystem_" + index
+                        });
+                        var EvaluateForType_valueid = element.find(".hdn_EvaluateForType_Id").attr("id");
+
+                        element.find(".text_EvaluateForType").attr({
+                            "valueId": EvaluateForType_valueid,
+                            "id": "EvaluateForType_" + index
+                        });
+                        var ClassType_valueid = element.find(".hdn_ClassType_Id").attr("id");
+
+                        element.find(".text_ClassType").attr({
+                            "valueId": ClassType_valueid,
+                            "id": "ClassType_" + index
+                        });
+                    });
+
+                    DateTime();
+                }
+            });
+        }
+    });
+
+
+    function DateTime() {
+
+
+        $(".ExamDate").mask("99/99/9999");
+
+
+        //        $('.StartTime').timepicker({
+        //            stepMinute: 5,
+        //            onClose: function (dateText, inst) {
+        //                var endDateTextBox = $('.EndTime');
+        //                if (endDateTextBox.val() != '') {
+        //                    var testStartDate = new Date(dateText);
+        //                    var testEndDate = new Date(endDateTextBox.val());
+        //                    if (testStartDate > testEndDate)
+        //                        endDateTextBox.val(dateText);
+        //                } else {
+        //                    endDateTextBox.val(dateText);
+        //                }
+        //            },
+        //            onSelect: function (selectedDateTime) {
+        //                $('.EndTime').val(selectedDateTime);
+        //            }
+        //        });
+     
+        $(".StartTime, .EndTime").timepicker({
+            'timeFormat': 'h:i A',
+            'step': 15,
+            'showDuration': true,
+            'forceRoundTime': true
+        });
+    }
+    
+    $(".text_subject").live("focusout", function () {
+        var valueid = $(this).attr("valueid");
+        var id = $("#" + valueid).val();
+        var element = $(this).closest("tr");
+        if (id != 0 && id != '') {
+            $.getJSON('@Url.Action("GetSubjectsById","School")', { id: id }, function (data) {
+
+                element.find('.hdn_ResultSystem_Id').val(data.ResultSystem);
+                element.find('.hdn_EvaluateForType_Id').val(data.EvaluateForType);
+
+                element.find('.hdn_ClassType_Id').val(data.ClassType);
+
+                $.getJSON('@Url.Action("GetSubjectChange","School")', { resultSystemId: data.ResultSystem, evaluateforPassId: data.EvaluateForType, subjectTypeId: data.Type, classTypeId: data.ClassType }, function (result) {
+                    element.find('.text_ResultSystem').val(result.resultType);
+                    element.find('.text_EvaluateForType').val(result.evaluateType);
+                    element.find('.text_ClassType').val(result.classType);
+                });
+
+            });
+        }
+    });
+
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        //e.preventDefault();
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+
+            if (closestTr.find(".hdn_Subject_Id").val() != 0) {
+                var link = $(this).attr("href");
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        if (closestTr.is(":last-child")) {
+                            $('#table-examroutine-detail tr:last').addClass("deletable");
+                            var id = $('#table-examroutine-detail tr:last').attr("id");
+                            $('#table-examroutine-detail tr:last').after(data);
+                            var arrString = id.split("_");
+                            var index = parseInt(arrString[1]) + 1;
+                            //var index = $(".narration").index(element) + 1;
+
+                            $(".text_subject:last").attr("id", "subject_" + index);
+                            $(".text_subject:last").closest("tr").attr("id", "tr_" + index);
+                            $(".text_subject:last").attr("valueId", $(".hdn_Subject_Id:last").attr("id"));
+
+
+                            $('.text_ResultSystem').attr("id", "ResultSystem_" + index);
+                            $('.text_EvaluateForType').attr("id", "EvaluateForType_" + index);
+                            $('.text_ClassType').attr("id", "ClassType_" + index);
+                            $(".text_ResultSystem").attr("valueId", $(".hdn_ResultSystem_Id:last").attr("id"));
+                            $(".text_EvaluateForType").attr("valueId", $(".hdn_EvaluateForType_Id:last").attr("id"));
+                            $(".text_ClassType").attr("valueId", $(".hdn_ClassType_Id:last").attr("id"));
+                        }
+                        closestTr.next().find('.text_subject').focus();
+                        $('input[type="text"]').focus(function () {
+                            var closestTr = $(this).closest("tr");
+                            if ($(this).attr("entermsg")) {
+                                $(".enter-msg").html($(this).attr("entermsg"));
+                            } else {
+                                $(".enter-msg").html("");
+                            }
+                        });
+                    }
+                });
+            }
+            closestTr.find(".text_subject").focus();
+            return false;
+        }
+        return true;
+    });
+    $(".ExamDate").live("blur", function() {
+        var d = $(this).val();
+        var closestr = $(this).closest("tr");
+        var date = convertToNepaliNew(d);
+        closestr.find(".ExamMiti").val(date);
+    });
+
+    $(".EndTime ").live("changeTime", function () {
+        var starttime = $(this).closest("tr").find(".StartTime").val();
+        var endtime = $(this).val();
+        var result = starttime - endtime;
+        var str0 = "01/01/1970 " + starttime;
+        var str1 = "01/01/1970 " + endtime;
+
+        var diff = (Date.parse(str1) - Date.parse(str0)) / 1000 / 60;
+        var hours = String(100 + Math.floor(diff / 60)).substr(1);
+        var mins = String(100 + diff % 60).substr(1);
+        var different = hours + ":" + mins;
+
+        $(this).closest("tr").find(".ExamHour").val(different);
+//        alert(different);
+//        alert(hours + "." + mins);
+
+
+    });
+    $(".StartTime").live("changeTime", function () {
+        var value = $(this).val();
+        $(this).closest("tr").find(".EndTime").timepicker({
+            'timeFormat': 'h:i A',
+            'minTime': value,
+            'step': 15,
+            'showDuration': true,
+            'forceRoundTime': true
+        });
+    });
+
+</script>

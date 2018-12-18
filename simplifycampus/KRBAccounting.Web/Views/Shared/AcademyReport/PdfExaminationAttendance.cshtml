@@ -1,0 +1,111 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportExamAttendanceReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+        <table border="0.5" style="font-size: 8px;">
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Exam
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Std. Code
+                </th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    T. Days
+                </th>
+                <th>
+                    Pre. Days
+                </th>
+                <th>
+                    Abs. Days
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.AttendanceDetails)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>
+                    @if (item.ExamAttendanceMaster.Classes != null)
+                    {
+                        @item.ExamAttendanceMaster.Classes.Description
+                    }
+
+                </td>
+                <td>
+                    @if (item.ExamAttendanceMaster.Section != null)
+                    {
+                        @item.ExamAttendanceMaster.Section.Description
+                    }
+
+                </td>
+                <td>@if (item.ExamAttendanceMaster.Exam != null)
+                    {
+                        @item.ExamAttendanceMaster.Exam.Description
+                    }
+
+                </td>
+                <td>@item.ExamAttendanceMaster.EntryDate.ToShortDateString()
+                </td>
+                <td>
+                    @if (item.Studentinfo != null)
+                    {
+                        @item.Studentinfo.StdCode
+                    }
+
+                </td>
+                <td>
+                    @if (item.Studentinfo != null)
+                    {
+                        @item.Studentinfo.StuDesc
+                    }
+
+                </td>
+                <td>
+                    @item.ExamAttendanceMaster.TotalDays
+                </td>
+                <td>
+                    @item.PresentDays
+                </td>
+                <td>
+                    @item.AbsentDays
+                </td>
+                <td>
+                    @item.Narration
+                </td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>

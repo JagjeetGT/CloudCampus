@@ -1,0 +1,58 @@
+﻿@model KRBAccounting.Domain.Entities.ProductGroup
+@{
+    ViewBag.Title = "Log On";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("ProductGroupEdit", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "MsgError",OnSuccess = "successEdit"}, new { @class = "form-horizontal", id = "product-group-form" }))
+{
+    <div id="MsgError"></div>
+    @Html.HiddenFor(x=>x.CreatedById)
+    @Html.HiddenFor(x => x.CreatedDate)
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.BranchId)
+      <div style="width: 445px;">
+
+              <div class="lag">
+                  <label class="label-90">
+                      Description</label>
+                  <span class="field">
+                      @Html.TextBoxFor(m => m.Description, new { @class = "input-295 input" })
+                      @Html.ValidationMessageFor(m => m.Description)<span class="loading Description">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                      Short Name</label>
+                  <span class="field">
+                       @Html.TextBoxFor(m => m.ShortName, new { @class = "input-80 input" })
+                      @Html.ValidationMessageFor(m => m.ShortName)<span class="loading ShortName">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+      </div>
+}
+@*<script type="text/javascript" >
+    $("#Description").live("focusout", function () {
+        var name = $(this).val();
+        $.getJSON("/Master/IsProductGroupNameAvailable?name=" + name + "&id=@Model.Id", "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#Description").focus();
+            }
+        });
+    });
+    $("#ShortName").live("focusout", function () {
+        var name = $(this).val();
+        $.getJSON("/Master/IsProductGroupNameAvailable?name=" + name + "&id=@Model.Id", "", function (data, status, xhr) {
+            if (data != '') {
+                $("#MsgError").html(data);
+                $("#ShortName").focus();
+            } else {
+                $("#MsgError").html('');
+            }
+        });
+    });
+</script>*@

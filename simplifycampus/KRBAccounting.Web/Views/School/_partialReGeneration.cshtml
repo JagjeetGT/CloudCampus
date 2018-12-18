@@ -1,0 +1,30 @@
+﻿@model KRBAccounting.Web.ViewModels.ResultGenerationViewModel
+<tr>
+    @using (@Html.BeginCollectionItem("Rereneration"))
+    {
+        <td>
+            @Html.CheckBoxFor(x => x.Checkbox, new { @class = "student-checkbox" })
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId)
+             @Html.HiddenFor(x => x.RollNo)
+            @Html.DisplayTextFor(x => x.StudentName)
+        </td>
+     
+        <td>
+            @Model.TotalMark
+        </td>
+        <td>
+            @Model.ObtMark
+        </td>
+        <td>
+            @Model.Percentage
+        </td>
+        <td>
+            @Model.Division
+        </td>
+        <td>
+            @Model.Result
+        </td>
+    }
+</tr>

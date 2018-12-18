@@ -1,0 +1,58 @@
+﻿@using KRBAccounting.Service
+@model PagedList<KRBAccounting.Domain.Entities.CashBankMaster>
+
+<div class="block-fluid table-sorting" id="tbl-accepted">
+    <table class="tablesorter table table-condensed" style="width: 100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th width="15%">
+                    Voucher No.
+                </th>
+                <th width="20%">
+                    Cash/Bank
+                </th>
+                <th width="12%">
+                    Date
+                </th>
+                <th width="15%">
+                    Received Amt
+                </th>
+                <th width="15%">
+                    Paid Amt
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.VoucherNo
+                    </td>
+                    <td>@item.Ledger.AccountName
+                    </td>
+                    <td>@item.VoucherDate.ToString("MMM dd, yyyy")
+                    </td>
+                    <!--1='received', 2='payment' -->
+                    <td>@item.CashBankDetails.Where(x => x.AmountType == 1).Sum(x => x.Amount)
+                    </td>
+                    <td>@item.CashBankDetails.Where(x => x.AmountType == 2).Sum(x => x.Amount)
+                    </td>
+                    <td>
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "CB"))
+                        {
+                            <a href="Javascript:void(0);" class="editCashBankVoucher" data-id="@item.Id">Edit</a>
+                            <text>&nbsp;</text>
+                        }
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "CB"))
+                        {
+                            <a href="Javascript:void(0);" class="approvedCashBankVoucher" data-id="@item.Id">Approve</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+<div class="pagination">
+    @Html.Raw(Html.AjaxPager(Model, "CashBankVoucherAcceptedList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-accepted" }))
+</div>
+</div>

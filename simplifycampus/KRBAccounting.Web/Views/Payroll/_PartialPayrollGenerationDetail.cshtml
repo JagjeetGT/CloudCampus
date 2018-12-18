@@ -1,0 +1,143 @@
+@using System.Diagnostics
+@using System.Web.Script.Serialization
+@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@using KRBAccounting.Web.ViewModels.Payroll
+@model PayrollGenerationViewModel
+@{
+    var seralizer = new JavaScriptSerializer();
+    List<string> amount = new List<string>();
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Emplyee
+                </th>
+                <th>
+                    Position
+                </th>
+                <th>
+                    Department
+                </th>
+                @foreach (var type in Model.SalaryHeadList.Select(item => new StringEnum(typeof(SalaryHeadType)).GetStringValue(item.Head.ToString())))
+                {
+                    <th>
+                        @type
+                    </th>
+                }
+                <th>
+                    Net Amount
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var e in Model.GroupingPayrollGenerations)
+        {
+            decimal netamount = 0;
+            var employeinfo = UtilityService.GetEmployeeInfo(e.FirstOrDefault().EmployeeId);
+            <tr>
+                <td>
+                    @employeinfo.Description
+                </td>
+                <td>
+                    @employeinfo.EmployeePost.Description
+                </td>
+                <td>
+                    @employeinfo.EmployeeDepartment.Description
+                </td>
+                @foreach (var item in Model.PayrollGenerations.Where(x => x.EmployeeId == e.FirstOrDefault().EmployeeId))
+                {
+                    <td>
+                        @Math.Round(item.Amount, 4)
+                        @if (item.Operation == "+")
+                        {
+
+                            netamount += item.Amount;
+                        }
+                        else
+                        {
+                            netamount -= item.Amount;
+
+                        }
+                    </td>
+
+                    
+
+
+                }
+                <td>
+                    @Math.Round(netamount, 4)
+                </td>
+            </tr>
+                i++;
+            var a = e.FirstOrDefault().EmployeeId.ToString() +"/"+ netamount;
+                amount.Add(a);
+        }
+    </table>
+    <div class="clearfix">
+    </div>
+    <div class="form-actions">
+        @{
+            PayrollGenerationAddViewModel first = Model.PayrollGenerations.FirstOrDefault();
+        }
+       
+        
+       @if (first != null)
+       {
+           if (!first.IsUse)
+            {
+                <input type="button" value="Approved" class="btn" data-bind="click:SavePayroll" />
+            }
+       }
+        <input type="button" value="PDF Print" class="btn" onclick="printpayroll()" />
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.unblockUI();
+
+    });
+    function ViewModel() {
+        
+        this.PayrollGenerationViewModel = ko.observableArray(@Html.Json(Model.PayrollGenerations));
+        this.amount = ko.observableArray();
+        this.SavePayroll = function() {
+            this.amount = @Html.Json(amount);
+            //alert(amount);
+            Begin();
+            var url = '@Url.Action("SavePayrollGeneration")';
+            $.ajax({
+                url:url,
+                type:"post",
+                data:ko.toJSON(this),
+                contentType:"application/json",
+                success:function (data) {
+                    if(data =="False") {
+                        writeError("error-msg", "Please Generate Document Numbering System For Payroll Generation");
+                    } else {writeError("error-msg", "Payroll Successfully Approved");
+  window.location.reload(true);
+                    }
+                    
+                },
+                complete:function () {
+                    
+                    $.unblockUI();
+                }
+            });
+        };
+    }
+
+    ko.applyBindings(new ViewModel());
+
+    
+    function printpayroll() {
+        var win = window.open('@Url.Action("PdfPayrollGenerationReport")', '_blank');
+        win.focus();
+    }
+</script>

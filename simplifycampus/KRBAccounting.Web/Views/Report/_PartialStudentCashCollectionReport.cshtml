@@ -1,0 +1,102 @@
+﻿@using System.Globalization
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentCashCollectionReportViewModel
+@{
+ 
+    decimal grandTotalBalance = 0;
+    var i = 1;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    S.N
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Receipt No
+                </th>
+                <th>
+                    Class 
+                </th>
+                <th>
+                    Student Code
+                </th>
+                <th width="30%">
+                    Student Name
+                </th>
+                <th>
+                    Amount
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.StudentCashCollectionList.Where(x => x.ReceiptAmount != 0))
+        {
+            var miti = NepaliDateService.NepaliDate(item.Date);
+            //var month = new DateTime(item.Year, item.Month, 1).ToString("MMM", CultureInfo.InvariantCulture);
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>
+                    @*     @miti.Year @NepaliDateService.LongMonth(miti.Month)
+                    (@item.Date.ToString("yyyy", CultureInfo.InvariantCulture) @item.Date.ToString("MMM", CultureInfo.InvariantCulture))*@
+                    @item.BMiti B.S.
+                    (@item.Date.ToShortDateString() A.D.)
+                </td>
+                <td>
+                    @item.BillNo
+                </td>
+                <td>
+                    @if (item.Studentinfo != null)
+                    {
+                        if (item.Studentinfo.Class != null)
+                        {
+                        @item.Studentinfo.Class.Description
+                        }
+                    }
+                </td>
+                <td>
+                    @if (item.Studentinfo != null)
+                    {
+                        @item.Studentinfo.StdCode
+                    }
+                </td>
+                <td>
+                    @if (item.Studentinfo != null)
+                    {
+                        @item.Studentinfo.StuDesc
+                    }
+                </td>
+                <td>
+                    @item.ReceiptAmount
+                </td>
+            </tr>
+          
+                    grandTotalBalance += item.ReceiptAmount;
+                    i++;
+        }
+        @if (Model.StudentCashCollectionList.Any())
+        {
+            <tr style="font-weight: bold">
+                <td colspan="6" align="center">
+                    Grand Total
+                </td>
+                <td>
+                    @grandTotalBalance
+                </td>
+            </tr>
+        }
+    </table>
+</div>

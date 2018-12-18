@@ -1,0 +1,17 @@
+﻿@model KRBAccounting.Web.ViewModels.Master.OpeningLedgerAddViewModel
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+
+<tr class="opening-Ledger-Entry">
+    @using (Html.BeginCollectionItem("openingLedgerEntry"))
+    {
+
+        <td>
+            @Html.DropDownListFor(x=>x.OpeningLedger.AmountType, Model.AmountType)
+            
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.OpeningLedger.Amount, new { @class = "narration Amt input-100", href = "/Master/OpeningLedgerEntry", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+    }
+</tr>

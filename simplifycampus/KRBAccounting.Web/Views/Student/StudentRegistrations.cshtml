@@ -1,0 +1,330 @@
+﻿@using KRBAccounting.Service.Models
+@model KRBAccounting.Domain.Entities.ScStudentRegistrationDetail
+@{
+    ViewBag.Title = "Student Admission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="../../Content/loadmask/jquery.loadmask.min.js" type="text/javascript"></script>
+<link href="../../Content/loadmask/jquery.loadmask.css" rel="stylesheet" type="text/css" />
+<script src="../../Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+<!--Breadcurmb goes here-->
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Student Registration Information</h1>
+                <ul class="buttons">
+                    @if (userRight.Create)
+                    {
+                        
+               
+                    <li><a href="Javascript:void(0)" class="isw-plus addScSubject" title="Add Student Information">
+                        </a></li>     }
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="boader-list">
+                @Html.Action("StudentRegistrationList", "Student")
+            </div>
+            <div class="clearfix">
+            </div>
+            <div class="head" id="stuHeader" style="display: none">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Registered Wise Student</h1>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="imgload" style="display: none" align="center">
+                <img src="/Content/themes/img/loaders/w_loader_gr.gif" />
+            </div>
+            <div id="listReg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title="Student Registration">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+               checkValidationError(); 
+                Save();
+                
+                
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function Save() { 
+        Begin();
+ if($("#form-id").valid()) {
+    if( $("#ClassId").val() !=0)
+     {
+         $("#form-id").submit(); $.unblockUI();
+     }
+
+  $.unblockUI();
+ 
+ }else {
+      $.unblockUI();
+ }
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            },
+            complete:function () {
+                $.unblockUI();
+            }
+        });
+    }
+
+      $("tr._detail").live("click", function () {
+        Begin();
+        var classid = $(this).attr("data-classid");
+
+        $("#Detail-list").load("/School/ClassWiseFeeRateDetailByClassId?classId=" + classid, function () {
+            $.unblockUI();
+        });
+    });
+      
+    $('a.addScSubject').live('click', function () {
+        Begin();
+        var url = '@Url.Action("StudentRegistrationAdd", "Student")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editScStaffGroup').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("StudentRegistrationEdit", "Student")?id=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalsubject .block').load("/Student/StudentRegistrationAdd");
+        $("#boader-list").load("/Student/StudentRegistrationList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#boader-list").load("/Student/StudentRegistrationList");
+        $('#modalsubject').dialog("close"); 
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+            $.unblockUI();
+        }
+        else {
+
+           var result= confirm(data + "\n Are you want to generate Roll Numbering scheme?? ");
+          
+            if (result) {
+                    var url5 = "@Url.Action("RollNumberingScheme", "Management")";
+                   var win=  window.open(url5,"_blank");
+                win.focus();
+                }
+           
+            OnComplete();
+            $.unblockUI();
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data); 
+            $.unblockUI();
+        }
+    }
+  
+//    $(".deleteScStudentRegistration").live("click", function() {
+//        ele = $(this).closest("tr");
+//        ele.remove();
+//    });
+    $("#feeitemledger").live("keydown", function (e) {
+        var ClassId = $("#ClassId").val();
+        var Id = $("#Id").val();
+
+        e.preventDefault();
+        if (ClassId != 0 && ClassId != '') {
+           var url1 = "@Url.Action("GetClassesCodeById", "School")?id=" + ClassId;
+          
+            $.getJSON(url1, function (data) {
+                
+                if (data != null) {
+                    $("#Code").val(data.Code);
+                }
+            });
+            var url = '@Url.Action("StudentRegistrationDetail")';
+
+            Begin();
+
+            $.ajax({
+                url: url,
+                data: { ClassId: ClassId, Id: Id },
+                type: "GET",
+                error: function () {
+                   alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+               
+                    if (data == "ExistData") {
+                        e.preventDefault();
+                        $.unblockUI();
+                        $("#ClassId").val("");
+                        $("#feeitemledger").val("");
+                        $("#feeitemledger").addClass('error');
+                        alert("Student Registration For Selected Class is Already Exists !");
+                        return false;
+
+                    }
+                    if (data != "false") {
+                        $("#table-class-fee-rate-detail tr.detail-entry").remove();
+                        $("#table-class-fee-rate-detail").append(data);
+                        $("#table-class-fee-rate-detail").append();
+
+                        var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+                        $.each(ledgerElement, function (index) {
+                          var element = $(this).closest("tr");
+                            element.attr("id", "tr_" + index);
+                   
+                            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                            element.find(".text_subject").attr({
+                                "valueId": Subject_valueid,
+                                "id": "text_subject_" + index
+                            });
+                            var hdn_CurrentStatus = element.find(".hdn_CurrentStatus").attr("id");
+
+                            element.find(".text_status").attr({
+                                "valueId": hdn_CurrentStatus,
+                                "id": "text_status_" + index
+                            });
+                            var hdn_ShiftId = element.find(".hdn_ShiftId").attr("id");
+
+                            element.find(".text_shift").attr({
+                                "valueId": hdn_ShiftId,
+                                "id": "text_shift_" + index
+                            });
+                            var hdn_BoarderId = element.find(".hdn_BoarderId").attr("id");
+
+                            element.find(".text_boader").attr({
+                                "valueId": hdn_BoarderId,
+                                "id": "text_boader_" + index
+                            });
+                            var hdn_SectionId = element.find(".hdn_SectionId").attr("id");
+
+                            element.find(".text_section").attr({
+                                "valueId": hdn_SectionId,
+                                "id": "text_section_" + index
+                            }); var hdn_StudentType = element.find(".hdn_StudentType").attr("id");
+
+                            element.find(".text_type").attr({
+                                "valueId": hdn_StudentType,
+                                "id": "text_type_" + index
+                            });
+                        });
+                    }
+                    return false;
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+        }
+    });
+
+        function NewRowDetailList(element, index) {
+
+                element = element.closest("tr").next("tr");
+
+                element.attr("id", "tr_" + index);
+                 // element.find(".rollno").val(index +1);
+                var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                element.find(".text_subject").attr({
+                    "valueId": Subject_valueid,
+                    "id": "text_subject_" + index
+                });
+                                        var hdn_CurrentStatus = element.find(".hdn_CurrentStatus").attr("id");
+
+                            element.find(".text_status").attr({
+                                "valueId": hdn_CurrentStatus,
+                                "id": "text_status_" + index
+                            });
+                            var hdn_ShiftId = element.find(".hdn_ShiftId").attr("id");
+
+                            element.find(".text_shift").attr({
+                                "valueId": hdn_ShiftId,
+                                "id": "text_shift_" + index
+                            });
+                             var hdn_SectionId = element.find(".hdn_SectionId").attr("id");
+
+                            element.find(".text_section").attr({
+                                "valueId": hdn_SectionId,
+                                "id": "text_section_" + index
+                            }); var hdn_StudentType = element.find(".hdn_StudentType").attr("id");
+
+                            element.find(".text_type").attr({
+                                "valueId": hdn_StudentType,
+                                "id": "text_type_" + index
+                            });
+             var hdn_BoarderId = element.find(".hdn_BoarderId").attr("id");
+
+                            element.find(".text_boader").attr({
+                                "valueId": hdn_BoarderId,
+                                "id": "text_boader_" + index
+                            });
+            }
+
+       
+        $("td._details").live("click", function () {
+            $("div#imgload").css("display","block");
+        var id = $(this).attr("reg-id");
+            $("div#studHeader").attr("display","block");
+        $("div#listReg").load("/Student/StudentRegDetailById?studentRegId=" + id,function () {
+            $("div#imgload").css("display","none");
+        });
+            
+            
+    });
+</script>

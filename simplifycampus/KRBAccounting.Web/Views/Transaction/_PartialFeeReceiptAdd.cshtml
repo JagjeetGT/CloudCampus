@@ -1,0 +1,141 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.ScFeeReceipt
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("FeeReceiptAdd", "Transaction", new { controller = "Transaction" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+     @Html.HiddenFor(x => x.MonthlyBillStudentId)
+    <div class="lag input-305">
+        <div class="lag">
+            <div class="stack">
+                <label class="label-100">
+                    Voucher No</label>
+                <div class="field">@Html.TextBoxFor(m => m.ReceiptNo, new { @class = "input-150", entermsg = "Enter VoucherNo" })
+                    @Html.ValidationMessageFor(m => m.ReceiptNo)
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <label class="label-100">
+                Cash/Bank
+            </label>
+            <div class="field">
+                @Html.HiddenFor(x => x.GLCode)
+                <input type="text" class="modallink input input-150" value="@UtilityService.GetLedgerNameById(Model.GLCode)" id="glcode-id" valueId="GLCode" href="@Url.Action("GetCashBankLedger", "Master")"/>
+                @Html.ValidationMessageFor(m => m.GLCode)
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <label class="label-100">
+                Class
+            </label>
+            <div class="field">
+                @Html.HiddenFor(x => x.ClassId)
+                <input type="text" class="modallink input input-150" id="class-id" valueId="ClassId" href="@Url.Action("GetClasses", "School")"/>
+                @Html.ValidationMessageFor(m => m.ClassId)
+            </div>
+        </div>
+    </div>
+    <fieldset style="float: right">
+        <legend>Receipt Date</legend><span class="stack">
+            <label class="label-100">
+                (B.S.)(YYYY-MM-DD)</label>
+            <span class="field">@Html.TextBoxFor(m => m.ReceiptMiti, new { @class = "input-90 input", entermsg = "Enter ReceiptMiti" })
+                @Html.ValidationMessageFor(m => m.ReceiptMiti) </span></span>
+        <div class="clearfix">
+        </div>
+        <span class="stack">
+            <label class="label-100">
+                (A.D.)(MM-DD-YYYY)</label>
+            <span class="field">@Html.DateTextBoxFor(m => m.ReceiptDate, new { @class = "input-90 input", entermsg = "Enter ReceiptDate" })
+                @Html.ValidationMessageFor(m => m.ReceiptDate) </span></span>
+    </fieldset> <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Student
+        </label>
+        <div class="field">
+            @Html.HiddenFor(x => x.StudentId)
+            <input type="text" class="modallink input input-250" id="student-id" valueId="StudentId" href="@Url.Action("GetStudentByClassId", "School")" parent="ClassId"/>
+            @Html.ValidationMessageFor(m => m.StudentId)
+             <input type="text" class="student-bal input-100" readonly="readonly" />
+        </div>
+    </div> <div class="clearfix">
+    </div>
+      @*<div class="lag">
+      <label class="label-100">
+            Ref. Bill No
+        </label>
+        <div class="field">
+            @Html.HiddenFor(x => x.MonthlyBillStudentId)
+            @Html.TextBoxFor(x => x.BillNo, new { valueId = "MonthlyBillStudentId", parent = "StudentId", href = "/Transaction/GetBillByStudentId", @class = "modallink input input-150" })
+            @Html.ValidationMessageFor(m => m.BillNo)
+        </div>
+        <label class="label-100">
+            Balance
+        </label>
+        <div class="field">
+            <input type="text" class="student-bal" readonly="readonly" />
+        </div>
+    </div>*@
+    <div class="clearfix">
+    </div> 
+@*    <div class="lag">
+        <label class="label-100">
+               Penalty
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.FineAmount, new { @class = "input-150 input" })
+        </div>
+        <label class="label-100">
+            Discount
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.DiscountAmount, new { @class = "input-150 input" })
+        </div>
+    </div> *@
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Rec. Amount
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.ReceiptAmount, new { @class = "input-150 input" })
+        </div>
+        <label class="label-100">
+            Paid UpTo
+        </label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.Month, Model.MonthList, new { @class = "input-150" })
+        </div>
+    </div> <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100 ">
+            Remarks
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.Remarks, new { @class = "input-370 input" })
+        </div>
+    </div> <div class="clearfix">
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ReceiptMiti").mask("9999/99/99");
+        $("#ReceiptDate").mask("99/99/9999");
+        if (!$("#ReceiptDate").hasClass("error") && $("#ReceiptDate").val() != "") {
+
+            var date = $("#ReceiptDate").val();
+            var engDate = convertToNepaliNew(date);
+            $("#ReceiptMiti").val(engDate);
+        }
+
+    });
+</script>

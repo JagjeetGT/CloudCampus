@@ -1,0 +1,454 @@
+﻿@using KRBAccounting.Web.Helpers
+@model KRBAccounting.Domain.Entities.ScStudentinfo
+@{
+    var imageUrl = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + FileHelper.GetStudentImageShortLink(Model.StdPhotoFileName, Model.StdPhotoExt);                  
+
+}
+
+    <h2 align="center">
+        Student Detail Information</h2>
+    <table style="font-size: 9px;">
+        <tr>
+            <td align="left" colspan="3">
+                <h4>@Model.StuDesc</h4>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                <label class="label-120">
+                    Registration No.
+                </label>
+                : @Model.Regno
+
+            </td>
+            <td>
+          
+                <label class="label-120">
+                    Student Code :</label>@if (Model.StdCode != null)
+                                          {@Model.StdCode}
+            </td>
+            <td rowspan="7" align="right">
+                <img src="@imageUrl" width="65" height="65"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              
+                <label class="label-120">
+                    Current Class :</label>@Model.CurrClsCode
+              
+            </td>
+            <td>
+             
+                <label class="label-120">
+                    Date Of Birth :</label>@Convert.ToDateTime(Model.DBO).ToShortDateString()
+            </td>
+        </tr>
+        <tr>
+            <td>
+             
+                <label class="label-120">
+                    Sex :</label>
+                @Model.Sex
+               
+            </td>
+        </tr>
+        <tr>
+            <td>
+             
+                <label class="label-120">
+                    Category Name :
+                </label>@Model.StudentCategory.Description
+                
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Nationality :
+                    </label>@Model.Nationality
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Marital Status :
+                    </label>@Model.MaritialSt
+                
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Religion :</label>
+                    @Model.Religion
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Height :
+                    </label>@Model.StHeight
+                
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Weight :
+                    </label>@Model.StWeight
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Phone No. :
+                    </label>@Model.Phone
+                
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Email Address :</label>
+                    @Model.EmailId
+                
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Apply Date :</label>
+                    @Convert.ToDateTime(Model.ApplyDate).ToShortDateString()
+                
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+    <br/>
+<table style="font-size: 9px;">
+    <tr>
+        <td colspan="2">
+            <h3 align="center">
+                General Information</h3>
+        </td>
+    </tr>
+        
+    <tr>
+        <td colspan="2">
+            <h4>
+                Permanent Address</h4>
+        </td>
+    </tr>
+    <tr>
+        <td>
+                
+            <label class="label-120">
+                Address :
+            </label>@Model.PerAdd
+        </td>
+        <td>
+                
+            <label class="label-120">
+                Ward No. :</label>
+            @Model.PerWardNo
+        </td>
+    </tr>
+    <tr>
+        <td>
+             
+            <label class="label-120">
+                City/Village :</label>
+            @Model.PerCity
+        </td>
+        <td>
+                
+            <label class="label-120">
+                District :
+            </label>@Model.PerDistrict
+        </td>
+    </tr>
+    <tr>
+        <td>
+                
+            <label class="label-120">
+                State/Zone :</label>@Model.PerState
+        </td>
+        <td>
+                
+            <label class="label-120">
+                Country :</label>@Model.PerCountry
+        </td>
+    </tr>
+    <tr>
+        <td>
+               
+            <label class="label-120">
+                Phone No. :</label>
+            @Model.PerPhone
+        </td>
+        <td>
+        </td>
+    </tr>
+        
+        
+</table>
+<br/>
+    <table style="font-size: 9px;">
+        <tr colspan="2">
+            <td>
+                <h4>
+                    Temporary Address</h4>
+            </td>
+        </tr>
+        <tr>
+            <td>
+               
+                    <label class="label-120">
+                        Address:
+                    </label>@Model.TmpAdd
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Ward No. :
+                    </label>@Model.TmpWardNo
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        City/Village :</label>
+                    @Model.TmpCity
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        District :</label>
+                    @Model.TmpDistrict
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        State/Zone :</label>@Model.TmpState
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Country :</label>@Model.TmpCountry
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Phone No. :
+                    </label>@Model.TmpPhone
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table><br/>
+    <table style="font-size: 9px;">
+        
+        <tr>
+            <td colspan="2">
+                <h4>
+                    Father's Information</h4>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Name :</label>@Model.FName
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Profession :</label>
+                    @Model.FProff
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                         Phone(Res) :</label>@Model.FPhoneRes
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Mobile :</label>@Model.FMobile
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Email :</label>
+                    @Model.FEmail
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Office :</label>@Model.FOff
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Address :</label>@Model.FOffAdd
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Phone :
+                    </label>@Model.FPhoneOff
+            </td>
+        </tr>
+    </table><br/>
+    <table style="font-size: 9px;">
+        <tr>
+            <td colspan="2">
+                <h4>
+                    Mother's Information</h4>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Name :</label>@Model.MName
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Profession :
+                    </label>@Model.MOff
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Phone(Res) :</label>@Model.MPhoneRes
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Mobile :</label>@Model.MMobile
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Email :</label>
+                    @Model.MEmail
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Office :</label>@Model.MOff
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Address :</label>@Model.MOffAdd
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Phone :</label>
+                    @Model.MPhoneOff
+            </td>
+        </tr>
+    </table><br/>
+    <table style="font-size: 9px;">
+        <tr>
+            <td colspan="2">
+                <h4>
+                    Guardian's Information</h4>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Name :</label>@Model.GName
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Profession :
+                    </label>@Model.GProff
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                <label class="label-120">
+                    Relation :</label>
+                    @{var relation = "";}
+                    @if(Model.GRelation =="--Relation--")
+                    {
+                        @relation;
+                    }else
+                    {
+                        @Model.GRelation
+                    }
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Phone(Res) :</label>@Model.GPhoneRes
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Mobile :</label>@Model.GMobile
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Email :</label>
+                    @Model.GEmail
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Office :</label>@Model.GOff
+            </td>
+            <td>
+                
+                    <label class="label-120">
+                        Address :</label>@Model.GOffAdd
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                
+                    <label class="label-120">
+                        Phone :
+                    </label>@Model.GPhoneOff
+            </td>
+        </tr>
+    </table>
+

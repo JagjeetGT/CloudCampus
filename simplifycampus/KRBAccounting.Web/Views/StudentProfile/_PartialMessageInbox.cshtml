@@ -1,0 +1,85 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Web.Helpers
+@model IEnumerable<KRBAccounting.Domain.Entities.ScMessage>
+<div class="header" align="center">
+    Inbox
+</div>
+<div id="tableListData">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table table-hover table-bordered "
+        id="msg-List">
+        <thead>
+            <tr>
+                <th>
+                    Sender
+                </th>
+                <th width="15%">
+                    Subject
+                </th>
+                <th width="55%">
+                    Messages
+                </th>
+                <th width="10%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                var senderName = "";
+                senderName = @UtilityService.GetStudentbyUserId(item.SenderId).StuDesc + " (S)";
+                if (senderName == " (S)")
+                {
+                    senderName = @UtilityService.GetTeacherbyUserId(item.SenderId).Description + " (T)";
+                }
+
+                if (item.IsRead)
+                {
+                <tr align="center" class="msgDetails" data-id="@item.Id" style="cursor: pointer">
+                    <td>
+                        @senderName
+                    </td>
+                    <td>
+                        @item.MsgSubject
+                    </td>
+                    <td>
+                       @{
+                                                       var data = HtmlTagsRemoval.StripTagsRegex(item.MsgBody);
+                                                   }
+                                                   @Utility.TrimText(data,10)
+                    </td>
+                    <td>
+                        @item.MsgDate.ToShortDateString()
+                    </td>
+                </tr>
+            
+                }
+                else
+                {
+                <tr align="center" class="msgDetails" data-id="@item.Id" style="cursor: pointer">
+                    <td>
+                        <b>@senderName</b>
+                    </td>
+                    <td>
+                        <b>@item.MsgSubject</b>
+                    </td>
+                    <td>
+                        <b>@{
+                                                       var data = HtmlTagsRemoval.StripTagsRegex(item.MsgBody);
+                                                   }
+                                                   @Utility.TrimText(data,10)</b>
+                    </td>
+                    <td>
+                        <b>@item.MsgDate.ToShortDateString()</b>
+                    </td>
+                </tr>
+  
+        
+                }
+
+
+
+            }
+        </tbody>
+    </table>
+</div>

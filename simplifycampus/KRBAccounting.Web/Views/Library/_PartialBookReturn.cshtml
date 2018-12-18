@@ -1,0 +1,96 @@
+﻿@model KRBAccounting.Domain.Entities.ScBookIssued
+@using (Ajax.BeginForm("BookIssueReturnAdd", "Library", new { controller = "Library" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.BookReceivedDetails.Id)
+    <div class="lag">
+        <label class="label-100">
+            Book Title
+        </label>
+        <div class="field">
+            @Model.BookReceivedDetails.BookReceived.Book.Name
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Accession No
+        </label>
+        <div class="field">
+            @Model.BookReceivedDetails.AccessionNo
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Name
+        </label>
+        <div class="field">
+            @if (Model.LibraryCard.LibraryMemberRegistration.Type == "student")
+            {
+                <text>@Model.LibraryCard.LibraryMemberRegistration.Studentinfo.StuDesc</text>
+            }
+            else
+            {
+                <text>@Model.LibraryCard.LibraryMemberRegistration.StaffMaster.Description</text>
+            }
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Type
+        </label>
+        <div class="field">
+            @Model.LibraryCard.LibraryMemberRegistration.Type
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        @Html.HiddenFor(x => x.CardId)
+        <label class="label-100">
+            Card Number
+        </label>
+        <div class="field">
+            @Model.LibraryCard.CardNo
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Issue Date
+        </label>
+        <div class="field">
+            @Model.Date.ToString("MM/dd/yyyy")
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-100">
+            Due Date
+        </label>
+        <div class="field">
+            @Model.BookDueDate.ToString("MM/dd/yyyy")
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    
+    <div class="lag fineamount">
+        <label class="label-100">
+            Fine Amount
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x=>x.FineAmount,new{@class="input input-190"})
+        </div>
+    </div>
+    <div class="field">
+        <input type="button" value="Return" id="ReturnSubmit" class="btn" style="margin-left: 25%" />
+    </div>
+}

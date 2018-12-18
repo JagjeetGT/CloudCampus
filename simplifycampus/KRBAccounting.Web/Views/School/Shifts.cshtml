@@ -1,0 +1,151 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Shift Master";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Shift Master</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addScSubject"></a></li>
+                        }
+                    </ul>
+                    <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  ShiftSearch"><i
+                            class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="shift-list">
+                    @Html.Action("ShiftsList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title="Shift Master">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                $("#form-id").submit();
+                $.blockUI();
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScSubject').live('click', function () {
+
+        var url = '@Url.Action("ShiftAdd", "School")';
+        $.blockUI();
+        getRequest(url);
+
+        return false;
+
+    });
+    $('a.editScShift').live('click', function () {
+
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("ShiftEdit", "School")?shiftId=' + id;
+        $.blockUI();
+        getRequest(url);
+        return false;
+    });
+
+
+    $('a.deleteShift').live('click', function () {
+        var result = confirm('Are you sure you wish to delete this Shift?');
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("ShiftDelete", "School")?shiftId=' + id;
+            $.getJSON(url, function (data) {
+                if (!data) {
+                    alert("This Shift is already in use. Cannot delete.");
+                } else {
+                    $("#shift-list").load("/School/ShiftsList");
+                }
+            });
+            return false;
+        }
+
+    });
+
+
+    function OnComplete() {
+        $.blockUI();
+        $('#modalsubject .block').load("/School/ShiftAdd");
+        $("#shift-list").load("/School/ShiftsList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+        $.blockUI();
+        $("#shift-list").load("/School/ShiftsList");
+        $('#modalsubject').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+
+    $(".ShiftSearch").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/AcademySearch/ShiftSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#shift-list").html(data);
+        });
+    });
+</script>

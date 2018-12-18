@@ -1,0 +1,161 @@
+﻿@model KRBAccounting.Web.ViewModels.Library.LibraryBookSearchViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<div class="head">
+    <div class="isw-grid">
+    </div>
+    <h1>
+        Book Search</h1>
+    <div class="clear">
+    </div>
+</div>
+<div class="block-fluid">
+    <div id="error-msg">
+    </div>
+    <div class="lag searchbook" style="padding: 25px;">
+        <label class="label-100">
+            Search Book</label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.Book, new { @class = "input input-250", @placeholder = "Name, Keywords, AccessionNo, Author, BarCode" })
+        </div>
+        <input type="button" class="btn" id="searchbook" value="Search" />
+        <div class="lag">
+            <label class="label-100">
+                Search By Card No.
+            </label>
+            <div class="field">
+                @Html.TextBoxFor(x => x.Name, new { @class = "input input-250", @placeholder = "Card Number" })
+            </div>
+            <input type="button" class="btn" value="Search" id="NameSearch" />
+        </div>
+    </div>
+    <div class="clear">
+    </div>
+    <hr />
+    <div class="clear">
+    </div>
+    <div class="book-issue" style="display: none">
+        <div id="BookIssued-list">
+        </div>
+    </div>
+    <div class="clear">
+    </div>
+</div>
+
+<script>
+    function writeError(control, msg) {
+
+        var err_msg = '<div class="alert-error alert"><a class="close" href="javascript:void(0);" class="close">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    $(".close").live("click", function () {
+        $(".alert-error").remove();
+    });
+    $("#searchbook").live("click", function () {
+        Begin();
+        var book = $("#Book").val();
+        if (book != 0 || book != "") {
+            var url = '@Url.Action("BookSearch")/?book=' + book;
+            $.ajax({
+                url: url,
+                type: "POST",
+                context: document.body,
+                success: function (data) {
+                    if (data.msgerr == "") {
+                        $('#BookIssued-list').html(data.partialView);
+                        $(".book-issue").css("display", "block");
+                        $('#error-msg').html(data.msgerr);
+                    } else {
+                        writeError('error-msg', data.msgerr);
+
+                        $(".book-issue").css("display", "none");
+                    }
+
+                },
+                error: function (err) {
+                    writeError('error-msg', err);
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+            $.unblockUI();
+
+        }
+    });
+    $("#NameSearch").live("click", function () {
+        Begin();
+        var name = $("#Name").val();
+        //  var type = $('input[name=TypeList]:radio:checked').val();
+
+        if (name != 0 && name != "") {
+            //   var url = '@Url.Action("BookSearchByName")/?name=' + name + "&type=" + type;
+            var url = '@Url.Action("BookSearchByName")/?name=' + name;
+            $.ajax({
+                url: url,
+                context: document.body,
+                success: function (data) {
+                    if (data.msgerr == "") {
+                        $('#BookIssued-list').html(data.partialView);
+                        $(".book-issue").css("display", "block");
+                        $('#error-msg').html(data.msgerr);
+                    } else {
+                        writeError('error-msg', data.msgerr);
+
+                        $(".book-issue").css("display", "none");
+                    }
+
+                },
+                error: function (err) {
+                    writeError('error-msg', data.msgerr);
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+            $.unblockUI();
+
+        }
+    });
+    $("#IssueSubmit").live("click", function () {
+        Begin();
+        var cardid = $("#CardId").val();
+        if (cardid != 0 && cardid != "") {
+            var form = $(this).closest("form");
+
+            var url = form.attr("action");
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: form.serialize(),
+                success: function (data) {
+                    if (data.msgerr == "") {
+                        $('#BookIssued-list').html("");
+                        $(".book-issue").css("display", "none");
+                        writeError('error-msg', data.success);
+                        $("#IssuetoDetail").html("");
+                        $("#CardNo").val("");
+                    } else {
+
+                        writeError('error-msg', data.msgerr);
+                    }
+
+                },
+                error: function (err) {
+                    writeError('error-msg', err);
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+        } else {
+
+            writeError('error-msg', "Please Select Card");
+            $("#CardNo").focus(); $.unblockUI();
+        }
+
+    });
+</script>

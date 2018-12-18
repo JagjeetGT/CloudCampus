@@ -1,0 +1,28 @@
+@model KRBAccounting.Domain.Entities.SmsTemplates
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("TemplatesEdit", "Sms", new { controller = "sms" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCompleteEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{        
+    @Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(x=>x.CreatedBy)
+    @Html.HiddenFor(x=>x.CreatedOn)
+    <div class="lag">
+    <label class="label-90">
+        Name</label>
+    <div class="field">
+        @Html.TextBoxFor(m => m.Name, new { @class = "input-253 input", entermsg = "Enter Desc" })
+        @Html.ValidationMessageFor(m => m.Name)<span class="loading Desc">
+            <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+    </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Body</label>
+        <div class="field">
+            @Html.TextAreaFor(m => m.Body, new { @class = "input-253 input", entermsg = "Enter Desc" })
+            @Html.ValidationMessageFor(m => m.Body)
+        </div>
+    </div>
+}

@@ -1,0 +1,277 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Exam Attendance";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Exam Attendance</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                             <li><a href="Javascrip:void(0)" class="isw-plus addScSubject"></a></li>
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="boader-list">
+                    @Html.Action("ExamAttendanceList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title="Exam Attendance">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+             
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function CheckRow() {
+        var element = document.querySelectorAll(".text_subject");
+
+        //        alert(element.length);
+        //alert($(".text_subject"));
+        if (element.length > 0) {
+            $("#form-id").submit();
+        }
+        else {
+            alert("No information");
+        }
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScSubject').live('click', function () {
+        Begin();
+        $.unblockUI();
+        var url = '@Url.Action("ExamAttendanceAdd", "Exam")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editScClassFeeRate').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-id");
+
+        var url = '@Url.Action("ExamAttendanceEdit", "Exam")?id=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalsubject .block').load("/Exam/ExamAttendanceAdd");
+        $("#boader-list").load("/Exam/ExamAttendanceList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#boader-list").load("/Exam/ExamAttendanceList");
+        $('#modalsubject').dialog("close"); $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(".text_subject").live("blur", function() {
+        elementt = $(this).closest('tr');
+      var studentId=  elementt.find('.hdn_Subject_Id').val();
+        if(studentId !=0 && studentId != '') {
+            var url = "@Url.Action("GetStudentCode","School")?id=" + studentId;
+
+            $.getJSON(url, function(data) {
+                elementt.find(".stdCode").val(data);
+            });
+        }
+    });
+
+    $(".text_subject").live("blur", function() {
+        elementt = $(this).closest('tr');
+      var studentId=  elementt.find('.hdn_Subject_Id').val();
+        if(studentId !=0 && studentId != '') {
+            var url = "@Url.Action("GetStudentRollno","School")?id=" + studentId;
+
+            $.getJSON(url, function(data) {
+                elementt.find(".stdCode").val(data);
+            });
+        }
+    });
+    
+    $(".del-row").live("click", function() {
+        ele = $(this).closest("tr");
+        ele.remove();
+    });
+    $("#ExamMasterId ,#TotalDays").live("blur", function (e) {
+        var ClassId = $("#ClassId").val();
+        var SectionId = $("#SectionId").val();
+        var ExamId = $("#ExamId").val();
+        var Id = $("#Id").val();
+        if(SectionId =='') {
+            SectionId = 0;
+            $("#SectionId").val(0);
+        }
+        e.preventDefault();
+        if (ClassId != 0 && ClassId != '' && ExamId != 0 && ExamId != '') {
+            var url = '@Url.Action("ExamAttendanceDetail")';
+            Begin();
+            
+            
+            $.ajax({
+                url: url,
+                data: { ClassId: ClassId, SectionId: SectionId, ExamId: ExamId,Id:Id },
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    if(data =="ExistData") { 
+                        e.preventDefault();
+                        alert('already Exists');
+                
+                         $.unblockUI();
+                        return false;
+                    
+                    }
+                    if (data != "false") {
+                        $("#table-class-fee-rate-detail tr.detail-entry").remove();
+
+                        $("#table-class-fee-rate-detail ").append(data);
+             
+
+                        var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+                        $.each(ledgerElement, function (index) {
+                            var element = $(this).closest("tr");
+                            element.attr("id", "tr_" + index);
+
+                            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                            element.find(".text_subject").attr({
+                                "valueId": Subject_valueid,
+                                "id": "text_subject_" + index
+                            });
+                           
+                        }); 
+                    } $.unblockUI();
+                }
+            });
+        }
+        
+    });
+    
+     
+
+    $("#EntryDate").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            $("#EntryMiti").val(nepDate);
+
+          
+        }
+    });
+
+    $("#EntryMiti").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "") {
+        
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            $("#EntryDate").val(engDate);
+            
+        }
+    });
+
+
+    function NewRowDetailList(element, index) {
+     
+        element = element.closest("tr").next("tr");
+   
+        element.attr("id", "tr_" + index);
+
+                            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                            element.find(".text_subject").attr({
+                                "valueId": Subject_valueid,
+                                "id": "text_subject_" + index
+                            });
+                            var hdn_Status = element.find(".hdn_Status").attr("id");
+
+                            element.find(".text_status").attr({
+                                "valueId": hdn_Status,
+                                "id": "text_status_" + index
+                            });
+                            
+
+                            }
+
+    $(".PresentDays").live("blur", function(e) {
+        var ele = $(this).closest('tr');
+       var p = parseInt(ele.find(".PresentDays").val());
+        var t = parseInt($("#TotalDays").val());
+        if(p>t) {
+            e.preventDefault();
+            alert("Present Days Cannot be Greater Than Total Attendance");
+            return false;
+        } else {
+            var a = t - p;
+            ele.find(".AbsentDays").val(a);
+        }
+    });
+
+</script>

@@ -1,0 +1,60 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.SalesOrderMaster>
+       <div class="block-fluid table-sorting" id="tbl-pending">
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                 <th width="20%">
+                                Order No.
+                            </th>
+                            <th>
+                                Order Date
+                            </th>
+                            <th>
+                                Customer
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th>
+                                Created By
+                            </th>
+                            <th width="10%">
+                            </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                     <td>@item.OrderNo
+                                </td>
+                                <td>@item.OrderDate.ToShortDateString()
+                                </td>
+                                <td>@item.Ledger.AccountName
+                                </td>
+                                <td>@item.SalesOrderDetails.Sum(x => x.NetAmt)
+                                </td>
+                                <td>@item.User.Username
+                                </td>
+                     <td>
+                                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "SB"))
+                                    {
+                                        <a href="javascript:void(0);" class="editSalesOrder icon-edit" data-id="@item.Id">
+                                        </a><text>&nbsp;|</text>
+                                    }
+                                   @* @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "SB"))
+                                    {
+                                        <a href="javascript:void(0);" class="approvedSalesOrder icon-ok" data-id="@item.Id">
+                                      </a><text>&nbsp;|</text>
+                                    }*@
+                         
+                            <a href="javascript:void(0);" class="SalesOrderDelete icon-remove" data-id="@item.Id" title="Delete"></a>
+                                </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "SalesOrderPendingList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

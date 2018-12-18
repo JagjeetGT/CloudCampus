@@ -1,0 +1,254 @@
+﻿@{
+    ViewBag.Title = "Opening Ledger";
+}
+
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "UT"))
+        {
+            <li><a href="@Url.Action("OpeningLedger", "Master")">Ledger Opening</a> <span class="divider">|</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PG"))
+        {
+            <li><a href="@Url.Action("ProductOpening", "Master")">Product Opening</a> <span class="divider">
+                |</span></li>
+        }
+         @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "OS"))
+        {
+            <li><a href="@Url.Action("OpeningStudents", "Master")">Student Opening</a> <span class="divider">
+                |</span></li>
+        }
+    </ul>
+</div>
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Ledger Opening Balance</h1>
+                    <ul class="buttons">
+                      
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="OpeningLegder-list">
+                    @Html.Action("OpeningLegerAdd")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="my-modal" class="modal hide fade">
+    <div class="modal-body">
+        <p class="body">
+            <img alt="Saved Correctly" src="/Content/img/1346139566_check.png" width="48" height="48" /><h4>
+                <strong>Data Saved Sucessfully.</strong></h4>
+        </p>
+    </div>
+</div>
+<div class="dialog" id="modalOpeningLegder">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function clearErrors() {
+        $('#msgErrorNewLocationDetails').html('');
+        $('#msgError').html('');
+    }
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalOpeningLegder .block').html(data);
+                $(this).addClass("done");
+                $('#modalOpeningLegder').dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addOpeningLegder').live('click', function () {
+        var url = '@Url.Action("OpeningLegerAdd", "Master")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    function OnComplete() {
+
+        $.unblockUI();
+        $('#my-modal').modal('show');
+        $.unblockUI();
+        setTimeout(function () {
+            $('#my-modal').modal('hide');
+        }, 1200);
+        $.unblockUI();
+//        $("#modalOpeningLegder").dialog("close");
+//        $("#OpeningLegder-list").load("/Master/OpeningLegerList");
+    }
+
+    function sucess(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+    }
+
+    $("#modalOpeningLegder").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        title: 'Opening Balance(+)',
+        buttons: {
+            "Save": function () {
+                Begin();
+                $("#OpeningLegder-form").submit();
+                $.unblockUI();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    $(".ledger-list").live("click", function () {
+        $(".nav-list li").children("a").removeClass("selectedli");
+        $(this).addClass("selectedli");
+       var value = $(this).attr("data-id");
+        $("#LegderId").val(value);
+
+        var url = "@Url.Action("GetOpeningBalanceLedger")";
+        $.ajax({
+            url: url,
+            data:{ledgerId:value},
+            type: "GET",
+            error: function() {
+                alert("An error occurred.");
+            },
+            success: function(data) {
+                if(data == 0) {
+                    $(".openingAmt").val('');
+                }
+                if(data > 0) {
+                    $(".openingAmt").val(data + " -Dr");
+                
+                } if(data < 0 ) {
+  
+                    $(".openingAmt").val(Math.abs(data) + " -Cr");
+                }
+            }
+        });
+       });
+    $("#Category").live("change", function () {
+        var value = $(this).val();
+        var url = '@Url.Action("GetLedgerByCategory")';
+        $.ajax({
+            url: url,
+            data: { cat: value },
+            dataType: "json",
+            type: "GET",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+                var item = "";
+                $.each(data, function (index, value) {
+                    item += "<li ><a class='ledger-list' href='javascript:void(0);' data-id=\"" + value.Id + "\">" +value.AccountName+ "</a></li>";
+                });
+                $(".ledgerList").html(item);
+            }
+        });
+    });
+
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+            if (closestTr.find(".Amt").val() != 0) {
+                var link = $(this).attr("href");
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        if (closestTr.is(":last-child")) {
+                            $('#table-openinglegder tr:last').addClass("deletable");
+                              
+                            $('#table-openinglegder tr:last').after(data);
+//                                var arrString = id.split("_");
+//                                var index = parseInt(arrString[1])+1;
+                            //var index = $(".narration").index(element) + 1;
+                            
+                        }
+                        $("#saveCashBankVoucher").removeAttr("disabled");
+                        closestTr.next().find('.drAmt').focus();
+
+                           
+                        $('input[type="text"]').focus(function () {
+                            var closestTr = $(this).closest("tr");
+                            if ($(this).attr("entermsg")) {
+                                $(".enter-msg").html($(this).attr("entermsg"));
+                            } else {
+                                $(".enter-msg").html("");
+                            }
+                        });
+                    }
+                });
+            }
+
+            closestTr.find(".Amt").focus();
+            return false;
+        }
+        return true;
+    });
+
+
+   //    $(".drAmt").live('keydown', function (e) {
+//        var ev = e || event;
+//        var keycode = ev.keyCode;
+//        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+//            var closestTr = $(this).closest("tr");
+//            closestTr.find(".crAmt").val("0");
+//        }
+//        else if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
+
+//    });
+//    $(".Amt").live('keydown', function (e) {
+//        var ev = e || event;
+//        var keycode = ev.keyCode;
+//        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+//            var closestTr = $(this).closest("tr");
+//            closestTr.find(".drAmt").val("0");
+//        }
+//        else if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
+
+//    });
+</script>

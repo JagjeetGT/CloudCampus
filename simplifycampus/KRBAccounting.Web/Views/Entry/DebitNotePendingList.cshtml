@@ -1,0 +1,69 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.DebitNoteMaster>
+       <div class="block-fluid table-sorting" id="tbl-pending">
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Debit Note No.
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Ledger AccountName
+                </th>
+                <th>
+                    Ref. Bill No.
+                </th>
+                <th>
+                    Ref. Bill Date
+                </th>
+                <th>
+                    Created By
+                </th>
+                <th>
+                    Remarks
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+        
+                <tr>
+                    <td>@item.Number
+                    </td>
+                    <td>@item.Date.ToShortDateString()
+                    </td>
+                    <td>@item.Ledgers.AccountName
+                    </td>
+                    <td>@item.RefBillNo
+                    </td>
+                    <td>@item.RefBillDate
+                    </td>
+                    <td>@item.Users.Username
+                    </td>
+                    <td>@item.Remarks
+                    </td>
+                    <td>
+                                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "DN"))
+                                    {
+                                        <a href="javascript:void(0)" data-id="@item.Id" class="editDebitNote icon-edit"></a>
+                                        <text>&nbsp;|</text>
+                                    }
+                                   @* @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "DN"))
+                                    {
+                                        <a href="javascript:void(0)" data-id="@item.Id" class="approvedDebitNote icon-ok"></a>
+                                    }
+                                    |*@<a href="javascript:void(0);" class="DebitNoteDelete icon-remove" data-id="@item.Id" title="Delete"></a>
+                                </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "DebitNotePendingList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

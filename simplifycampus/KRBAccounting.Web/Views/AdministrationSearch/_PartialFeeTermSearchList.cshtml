@@ -1,0 +1,92 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.ScFeeTerm>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    GLCode
+                </th>
+               
+               
+                <th>
+                    Sign
+                </th>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Rate
+                </th>
+               
+               
+                <th>
+                    Active
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+    
+
+                <tr align="center">
+                    <td >@i</td>
+                    <td>@item.Code
+                    </td>
+                    <td>@item.Description
+                    </td>
+                    <td>@if (item.Ledger != null)
+                        {
+                            @item.Ledger.AccountName
+                        }
+
+                    </td>
+                 
+                  @*  <td>@Enum.GetName(typeof(FeeTermRoundedOffType), item.Rounded)
+                    </td>*@
+                    <td>@Enum.GetName(typeof(SignEnum), item.Sign)
+                    </td>
+                    <td>@Enum.GetName(typeof(FeeTermType), item.Type)
+                    </td>
+                    <td>@item.Rate
+                    </td>
+                  
+                    <td>@if(item.IsActive)
+                        {<input type="checkbox" disabled="disabled" checked="checked" />}
+                         else
+                        {<input type="checkbox" disabled="disabled" />}
+                    </td>
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editScFeeTerm icon-edit" data-id="@item.Id" title="Edit"></a>
+                        }
+                  @if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)" class="deleteterm icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+   
+</div>
+

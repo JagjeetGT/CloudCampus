@@ -1,0 +1,83 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.TrialBalanceReportNormalViewModel
+
+
+@{
+    decimal drTotal = 0;
+    decimal crTotal = 0;
+    decimal diff = 0;
+}
+@Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+<br />
+<table border="0.5" style="font-size: 7px;">
+    <thead>
+        <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+            <th>
+                Code
+            </th>
+            <th>
+                Particulars
+            </th>
+            <th>
+                Debit Amount
+            </th>
+            <th>
+                Credit Amount
+            </th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.ReportList)
+    {
+        if (item.DebitCredit != 0)
+        {
+        <tr>
+            <td>@item.ShortName
+            </td>
+            <td>@item.AccountName
+            </td>
+            <td style="text-align: right">
+                @if (item.DebitCredit > 0)
+                {
+                    drTotal += item.DebitCredit;
+                    <text>@item.DebitCredit</text>
+                }
+            </td>
+            <td style="text-align: right">
+                @if (item.DebitCredit < 0)
+                {
+                    crTotal += item.DebitCredit;
+                    <text>@Math.Abs(item.DebitCredit)</text>
+                }
+            </td>
+        </tr>
+        }
+
+    }
+    <tr class="bold numbericfield">
+        <td>
+        </td>
+        <td>
+            Total
+        </td>
+        <td style="text-align: right">@drTotal
+        </td>
+        <td style="text-align: right">@Math.Abs(crTotal)
+        </td>
+    </tr>
+    @{
+        diff = drTotal - Math.Abs(crTotal);
+    }
+    @if (diff != 0)
+    {
+        <tr class="bold numbericfield">
+            <td>
+            </td>
+            <td>
+                Difference
+            </td>
+            <td style="text-align: right">@diff
+            </td>
+            <td>
+            </td>
+        </tr>
+    }
+</table>

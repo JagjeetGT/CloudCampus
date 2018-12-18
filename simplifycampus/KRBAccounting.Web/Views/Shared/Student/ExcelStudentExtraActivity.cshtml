@@ -1,0 +1,63 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model KRBAccounting.Web.ViewModels.Student.StudentGeneralInformationViewModel
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Student Extra Activity
+                </h1>
+
+
+            </div>
+            <div id="report" class="block-fluid">
+                <div style="font-size:8px;">
+                    Student Name : @Model.Studentinfo.StuDesc
+                    Class : @Model.StudentExtraActivitys.FirstOrDefault().Class.Description
+                    Section : @Model.StudentExtraActivitys.FirstOrDefault().Section.Description
+                </div>
+                <div class="block-fluid table-sorting">
+                    <table border="0.5" style="font-size:8px;">
+                        <thead>
+                            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+
+                                <th style="font-size:10px;">
+                                    Activity
+                                </th>
+
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.StudentExtraActivitys)
+                            {
+
+                                <tr align="center">
+
+
+
+
+                                    <td>
+                                        @if (item.ExtraActivity != null)
+                                        {
+                                            @item.ExtraActivity.Description
+                                        }
+
+                                    </td>
+
+
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

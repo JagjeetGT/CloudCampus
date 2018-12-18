@@ -1,0 +1,241 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.LedgerReport.DayBookViewModel
+@{
+    var asOnDate = "";
+    var closeDate = "";
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+ <table border="1" style="font-size: 12px;">
+        <thead>
+           <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Voucher No
+                </th>
+                <th>
+                    Particulars
+                </th>
+                <th>
+                    Dr Amount
+                </th>
+                <th>
+                    Cr Amount
+                </th>
+            </tr>
+        </thead>
+        @{
+            asOnDate = Model.StartDate;
+            var opening = UtilityService.GetDayBookOpeningBalance(asOnDate, Model.FYId, Model.BranchId);
+            if (opening != null && opening.Total != 0)
+            {
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td class="numbericfield bold">
+                        Opening :
+                    </td>
+                    @if (opening.Total > 0)
+                    {
+                        <td class="numbericfield bold">
+                            @Math.Abs(opening.Total)
+                        </td>
+                        <td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                        </td>
+                        <td class="numbericfield bold">@Math.Abs(opening.Total)
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        @foreach (var date in Model.DBDateList)
+        {
+            asOnDate = date.ToString("yyyy-MM-dd");
+            closeDate = date.AddDays(1).ToString("yyyy-MM-dd");
+            
+                var headers = UtilityService.GetDayBookHeaders(asOnDate, Model.FYId, Model.SourceList, Model.BranchId);
+
+                decimal dayDrTotal = 0;
+                decimal dayCrTotal = 0;
+
+                foreach (var header in headers)
+                {
+                    var description = new StringEnum(typeof(KRBAccounting.Enums.ModuleEnum)).GetStringValue(header.Source);
+                    var dayBookList = UtilityService.GetDayBookDetail(header.VNo, header.Source, Model.BranchId);
+                    decimal drTotal = 0;
+                    decimal crTotal = 0;
+                    <tr>
+                        <td>
+                            @if (headers.IndexOf(header) == 0)
+                            {<text>
+                                @(Model.Datetype == 1 ? @asOnDate : @header.VMiti)
+                                </text>}
+                        </td>
+                        <td>@header.VNo
+                        </td>
+                        <td style="font-weight: bold">
+                            @description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    foreach (var db in dayBookList)
+                    {
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            @db.AccountName
+                        </td>
+                        <td style="text-align: right">
+                            @if (db.DrAmt != 0)
+                            {
+                                drTotal += db.DrAmt;
+                                <text>@db.DrAmt</text>
+                            }
+                        </td>
+                        <td style="text-align: right">
+                            @if (db.CrAmt != 0)
+                            {
+                                crTotal += db.CrAmt;
+                                <text>@db.CrAmt</text>
+                            }
+                        </td>
+                    </tr>
+                    if (Model.DisplaySubLedger)
+                    {
+                        if (db.SubLedName != null)
+                        {
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                                <td style="padding-left: 20px;">
+                                    Sub Ledger : @db.SubLedName
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    if (Model.DisplayRemarks)
+                    {
+                        if (db.Narration != null)
+                        {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-size: 11px">
+                                        Narration :
+                                    </td>
+                                    <td colspan="3" style="padding-left: 40px; font-size: 11px">
+                                        @db.Narration
+                                    </td>
+                                </tr>
+                        }
+                    }
+                    }
+                    if (Model.DisplayRemarks)
+                    {
+                        if (header.Remarks != null)
+                        {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right; font-size: 11px">
+                                        Remarks :
+                                    </td>
+                                    <td colspan="3" style="padding-left: 40px; font-size: 11px">
+                                        @header.Remarks
+                                    </td>
+                                </tr>
+                        }
+                    }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">@drTotal
+                </td>
+                <td style="text-align: right; font-weight: bold">@crTotal
+                </td>
+            </tr>
+                    dayDrTotal += drTotal;
+                    dayCrTotal += crTotal;
+                }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Day Total :
+                </td>
+                <td style="text-align: right; font-weight: bold">@dayDrTotal
+                </td>
+                <td style="text-align: right; font-weight: bold">@dayCrTotal
+                </td>
+            </tr>
+        }
+
+        @{
+            var opening1 = UtilityService.GetDayBookOpeningBalance(closeDate, Model.FYId, Model.BranchId);
+            <tr>
+                @if (opening1 != null)
+                {
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td class="numbericfield bold">
+                        Closing :
+                    </td>
+                    if (opening1.Total > 0)
+                    {
+                        <td class="numbericfield bold">
+                            @Math.Abs(opening1.Total)
+                        </td>
+                        <td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                        </td>
+                        <td class="numbericfield bold">@Math.Abs(opening1.Total)
+                        </td>
+                    }
+
+                }
+                
+            </tr>
+        }
+    </table>
+</div>

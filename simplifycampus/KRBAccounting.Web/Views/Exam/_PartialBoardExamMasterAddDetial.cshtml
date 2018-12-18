@@ -1,0 +1,89 @@
+﻿@using System.Net.Configuration
+@using iTextSharp.text.pdf
+@model KRBAccounting.Domain.Entities.BoardExamDetail
+           
+@using (Html.BeginCollectionItem("BoardExamDetailList"))
+{
+
+
+    <tr>
+        <td>
+            @Html.HiddenFor(s=>s.BoardExamMasterId)
+            @Html.HiddenFor(x => x.ClassId)
+            @Html.HiddenFor(x => x.SubjectId)
+            @Model.SubjectName
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.MaskObtained_Y1, new {@class = "input MO"})
+       
+        </td>
+        <td>@Html.TextBoxFor(x => x.Result_Y1, new {@class = "input result"})
+           
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SymbolNo_Y1, new {@class = "input"})
+     
+        </td>
+        <td>@Html.TextBoxFor(x => x.MaskObtained_Y2, new { @class = "input MO" })
+       
+        </td>
+        <td>@Html.TextBoxFor(x => x.Result_Y2, new { @class = "input result" })
+      
+        </td>
+        <td>@Html.TextBoxFor(x => x.SymbolNo_Y2, new { @class = "input" })
+   
+        </td>
+        <td>@Html.TextBoxFor(x => x.MaskObtained_Y3, new { @class = "input MO" })
+    
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Result_Y3, new { @class = "input result" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SymbolNo_Y3, new {@class = "input"})
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.MaskObtained_Y4, new { @class = "input MO" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Result_Y4, new { @class = "input result" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SymbolNo_Y4, new {@class = "input"})
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.MaskObtained_Y5, new { @class = "input MO" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Result_Y5, new { @class = "input result" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SymbolNo_Y5, new {@class = "input"})
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.MaskObtained_Y6, new { @class = "input MO" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Result_Y6, new { @class = "input result" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SymbolNo_Y6, new {@class = "input"})
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.MaskObtained_Y7, new { @class = "input MO" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Result_Y7, new { @class = "input result" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.SymbolNo_Y7, new {@class = "input"})
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Remarks, new {@class = "input"})
+        </td>
+    </tr>
+       
+}
+
+
+

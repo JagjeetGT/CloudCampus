@@ -1,0 +1,7 @@
+﻿@model KRBAccounting.Web.ViewModels.Library.LibraryBookIssueReturnDetialViewModel
+
+    @foreach (var item in Model.IssueReturnDetials)
+    {
+    @Html.Partial("_PartialBookIssueReturnDetailEdit", item)
+    }
+

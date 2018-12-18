@@ -1,0 +1,99 @@
+﻿@using KRBAccounting.Web.Helpers
+@model KRBAccounting.Web.ViewModels.Entry.PurchaseInvoicePrintViewModel
+@Html.Partial("_PartialSalesInvoiceHeader", Model.InvoiceHeader)
+<br />
+<table border="0.5" style="font-size: 7px;" height="600">
+    <thead>
+        <tr align="center" style="font-weight: bold">
+            <th>
+                SNo
+            </th>
+            <th>
+                Particulars
+            </th>
+            <th>
+                Qty
+            </th>
+            <th>
+                Rate
+            </th>
+            <th>
+                Dis (%)
+            </th>
+            <th>
+                Total
+            </th>
+        </tr>
+    </thead>
+    @foreach (var invoice in Model.InvoiceDetails)
+    {
+        <tr align="right">
+            <td width="5%">
+                @invoice.SNo
+            </td>
+            <td width="30%">@invoice.Particular
+            </td>
+            <td width="10%">
+                @invoice.Qty
+            </td>
+            <td width="15%">
+                @invoice.Rate
+            </td>
+            <td width="15%">
+                @{
+           var productwise = Model.InvoiceBillingTerms.Where(x => x.Type == "P" && x.DetailId == invoice.Id).ToList();
+                }
+                @if (productwise.Any())
+                {
+                    @productwise.Sum(x => x.TermRate)
+                }
+            </td>
+            <td width="15%">
+                @invoice.Amount
+            </td>
+        </tr>
+    }
+    @if (Model.InvoiceBillingTerms.Any(x => x.Type == "B"))
+    {
+        <tr align="right">
+            <td colspan="5">
+                Sub Total
+            </td>
+            <td style="font-weight: bold">@Model.SubTotal
+            </td>
+            <td>
+            </td>
+        </tr>
+    }
+    @foreach (var term in Model.InvoiceBillingTerms.Where(x => x.Type == "B"))
+    {
+        <tr align="right">
+            <td colspan="5">
+                @term.TermName (@term.TermRate %)
+            </td>
+            <td style="font-weight: bold">@term.TermAmount
+            </td>
+            <td>
+            </td>
+        </tr>
+    }
+    <tr align="right">
+        <td colspan="5">
+            Total
+        </td>
+        <td style="font-weight: bold">@Model.Total
+        </td>
+        <td>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            In Words: @NumberToEnglish.changeCurrencyToWords(Convert.ToDouble(Model.Total).ToString())
+        </td>
+    </tr>
+</table>
+<br />
+<br />
+<div style="text-align: right; width: 100%; font-size: 8px">
+    Billed By: @Model.BilledBy
+</div>

@@ -1,0 +1,56 @@
+﻿@model KRBAccounting.Web.ViewModels.Student.StudentGeneralInformationViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@{
+    var data = Model.GetStudentFeeRate.FirstOrDefault();
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+
+            <div class="block-fluid">
+                <div class="ReportHeader" style="text-align: center">
+                    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                
+                </div>
+                <br />
+                <div class="block-fluid">
+                    <p style="font-weight:bold;font-size:8px;">
+                        NAME : @data.Student &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        STUDENT CODE : @data.StdCode &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        REGISTRATION NO. :  @data.Regno
+                        <br />
+
+                        CLASS : @data.Class &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        SECTION : @data.Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        ROLL NO. : @data.RollNo
+                        <br />
+                        ADDTRESS : @data.TmpAdd,  @data.TmpCity,  @data.TmpDistrict,  @data.TmpCountry
+
+                    </p>
+                    <br />
+                    <div class="block-fluid">
+                        <table border="0.5" style="font-size:8px;">
+                            <tr bgcolor="#E6EEEE" align="center" style="font-weight:bold">
+
+                                <th style="font-size:8px;">Item</th>
+                                <th style="font-size:8px;">Fee Rate</th>
+                            </tr>
+
+                            @foreach (var item in Model.GetStudentFeeRate)
+                            {
+                                <tr>
+
+                                    <td align="center">@item.ItemName</td>
+                                    <td align="center">@item.FeeRate</td>
+                                </tr>
+                            }
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

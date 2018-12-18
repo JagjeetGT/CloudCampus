@@ -1,0 +1,109 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Book Issued";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Book Issued</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                               <li><a href="@Url.Action("BookIssuedAdd", "Library")" class="isw-plus"></a></li>
+                        }
+                     
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="BookIssued-list" class="block-fluid">
+                    @Html.Action("BookIssuedList")
+                </div>
+                <div class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dialog" id="modalBookIssued" style="display: none;" title="Book Issued (+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#BookIssued-list').html(data);
+                
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            },
+            complete:function () {
+                $.unblockUI();
+            }
+        });
+    }
+
+    $('a.addBookIssued').live('click', function () {
+        var url = '@Url.Action("BookIssuedAdd", "Library")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editBookIssued').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("BookIssuedEdit", "Library")?BookIssuedId=' + id;
+        Begin();
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalBookIssued .block').load("/Library/BookIssuedAdd");
+        $("#BookIssued-list").load("/Library/BookIssuedList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#BookIssued-list").load("/Library/BookIssuedList");
+        $('#modalBookIssued').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+
+  
+ 
+</script>

@@ -1,0 +1,26 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScExamAttendanceDetail>  
+   @{int i=0;}   
+        
+@foreach (var item in Model)
+{
+    ViewBag.i = 1;
+    @Html.Partial("_PartialExamAttendanceDetailEdit", item)
+    i++;
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-examroutine-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-examroutine-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>

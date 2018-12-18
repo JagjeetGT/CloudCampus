@@ -1,0 +1,167 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "School-Bus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Bus-Route List</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addBusStopRoute"></a></li>
+                        }
+                    </ul>
+                    <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchBouRouteDetails"><i
+                            class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="BusStopRouteDetail-list">
+                    @Html.Action("BusStopRouteDetailList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalSchBusRouteDetail" style="display: none;" title="Bus Route Details">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalSchBusRouteDetail").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                SaveData();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function SaveData() {
+        var data = document.querySelectorAll('.busStopIdText');
+        var i = 0;
+        $.each(data, function () {
+            var element = $(this).closest("tr");
+            var value = element.find('.hdn_busStopId').val();
+            if (value == 0) {
+                i++;
+            }
+
+        });
+        if (i == 0) {
+            $("#formBusRoute-id").submit();
+        } else {
+            alert("Please assign the Bus Stop.");
+            $.unblockUI();
+        }
+    }
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSchBusRouteDetail .block').html(data);
+                $(this).addClass("done");
+                $("#modalSchBusRouteDetail").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+
+    $('.addBusStopRoute').live('click', function () {
+        var url = '@Url.Action("BusRouteDetailsAdd", "Transportation")';
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $("#modalSchBusRouteDetail .block").load("/Transportation/BusRouteDetailsAdd");
+            $("#BusStopRouteDetail-list").load("/Transportation/BusStopRouteDetailList");
+        } else {
+            $.unblockUI();
+            alert(data);
+        }
+
+    }
+
+    function OnCompleteEdit(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $("#modalSchBusRouteDetail").dialog("close");
+            $("#BusStopRouteDetail-list").load("/Transportation/BusStopRouteDetailList");
+        } else {
+            $.unblockUI();
+            alert(data);
+        }
+
+    }
+
+    $('.editScBusRouteDetails').live('click', function () {
+        var busdescription = $(this).attr("data-id");
+        var url = '@Url.Action("BusRouteDetailsEdit", "Transportation")?routeDescription=' + busdescription;
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+
+    $(".SearchBouRouteDetails").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/TransportationSearch/BusRouteDetailSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#BusStopRouteDetail-list").html(data);
+        });
+    });
+
+</script>

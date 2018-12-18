@@ -1,0 +1,27 @@
+﻿@model KRBAccounting.Domain.Entities.StudentDocument
+<tr class="student-document-row detail-entry deletable">
+    @using (Html.BeginCollectionItem("studentDocumentList"))
+    {
+        if (Model != null)
+        {
+            if (Model.Id != 0)
+            {
+<text>@Html.HiddenFor(x => x.Id)</text>
+            }
+        }
+        @Html.HiddenFor(x => x.DocumentGuid, new { @class = "document_guid" })
+        @Html.HiddenFor(x => x.DocumentExt, new { @class = "document_ext" })
+        <td>
+            @Html.FileFor(x => x.Attachment, new { @class = "attachment" })
+            <span class="icon-ok upload_success" style="display: none"></span>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Title, new { @class = "input-160 input titless" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Description, new { @class = "input-305 input board" })
+        </td><td>
+                 <img src="../../Content/img/delete.png" width="15px" class="del-row">
+             </td>
+    }
+</tr>

@@ -1,0 +1,82 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.ReOrderStatusViewModel
+@{
+    decimal currentStockGrandTotal = Convert.ToDecimal(Model.ReOrderStatuses.Sum(x => x.CurrentStock));
+    decimal reOrderLevelGrandTotal = Convert.ToDecimal(Model.ReOrderStatuses.Sum(x => x.ReOrderLevel));
+    decimal reOrderQtyGrandTotal = Convert.ToDecimal(Model.ReOrderStatuses.Sum(x => x.ReOrderQty));
+    decimal minStockGrandTotal = Convert.ToDecimal(Model.ReOrderStatuses.Sum(x => x.MinimumStock));
+    decimal maxStockGrandTotal = Convert.ToDecimal(Model.ReOrderStatuses.Sum(x => x.MaximumStock));
+}
+@Html.Partial("_PartialPdfReportHeader", Model.ReportHeader)
+<br />
+<table border="0.5" style="font-size: 7px;">
+    <thead>
+        <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+            <th>
+                Code
+            </th>
+            <th>
+                Product Description
+            </th>
+            <th>
+                Unit
+            </th>
+            <th>
+                Current Stock
+            </th>
+            <th>
+                Reorder Level
+            </th>
+            <th>
+                Reorder Qty
+            </th>
+            <th>
+                Min Level
+            </th>
+            <th>
+                Max Level
+            </th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.ReOrderStatuses)
+    {
+        <tr>
+            <td>@item.ShortName
+            </td>
+            <td>@item.Description
+            </td>
+            <td>@item.Unit
+            </td>
+            <td style="text-align: right">@item.CurrentStock
+            </td>
+            <td style="text-align: right">@item.ReOrderLevel
+            </td>
+            <td style="text-align: right">@item.ReOrderQty
+            </td>
+            <td style="text-align: right">@item.MinimumStock
+            </td>
+            <td style="text-align: right">@item.MaximumStock
+            </td>
+        </tr>
+    }
+    <tr>
+        <td>
+        </td>
+        <td style="font-weight: bold; text-align: right">
+            Grand Total :
+        </td>
+        <td>
+        </td>
+        <td style="font-weight: bold; text-align: right">@currentStockGrandTotal
+        </td>
+        <td style="font-weight: bold; text-align: right">@reOrderLevelGrandTotal
+        </td>
+        <td style="font-weight: bold; text-align: right">@reOrderQtyGrandTotal
+        </td>
+        <td style="font-weight: bold; text-align: right">@minStockGrandTotal
+        </td>
+        <td style="font-weight: bold; text-align: right">@maxStockGrandTotal
+        </td>
+    </tr>
+</table>

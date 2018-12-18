@@ -1,0 +1,189 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Grading";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Gradelist</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addGrade"></a></li>
+                        }
+                        
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchGrading"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Grade-list">
+                    @Html.Action("GradeList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalGradeSection" style="display: none;" title="Grades">
+    <div class="block">
+    </div>
+</div>
+<div class="dialog" id="modalGradeSectionEdit" style="display: none;" title="Grades">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#modalGradeSection").dialog({
+        autoOpen: false,
+        modal: true,
+        width: '500',
+        buttons: {
+            "Ok": function () {
+                $("#form-add-grade").submit();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#modalGradeSectionEdit").dialog({
+        autoOpen: false,
+        modal: true,
+        width: '500',
+        buttons: {
+            "Ok": function () {
+                $("#form-edit-grade").submit();
+                Begin();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function getRequestEdit(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalGradeSectionEdit .block').html(data);
+                $(this).addClass("done");
+                $("#modalGradeSectionEdit").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.editScGrade').live('click', function () {
+        var gradeId = $(this).attr("data-id");
+        var url = '@Url.Action("EditGrade", "School")?gradeId=' + gradeId;
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        //$.unblockUI();
+        getRequestEdit(url);
+        return false;
+    });
+
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalGradeSection .block').html(data);
+                $(this).addClass("done");
+                $("#modalGradeSection").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('.addGrade').live('click', function () {
+        var url = '@Url.Action("AddGrade", "School")';
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        getRequest(url);
+        return false;
+    });
+
+
+    $('a.deleteScGrade').live('click', function () {
+        var result = confirm('Are you sure you want to delete this Grading ?');
+        if (result) {
+            var gradingId = $(this).attr("data-id");
+            var url = '@Url.Action("DeleteGrading", "School")?gradingId=' + gradingId;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Grading is already in use. Cannot delete.");
+                } else {
+                    $("#Grade-list").load("/School/GradeList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+        $.unblockUI();
+        return false;
+    });
+
+
+    function OnComplete() {
+        $("#modalGradeSection").dialog("close");
+        $("#Grade-list").load("/School/GradeList");
+        $.unblockUI();
+    }
+
+    function OnCompleteEdit() {
+        $("#modalGradeSectionEdit").dialog("close");
+        $("#Grade-list").load("/School/GradeList");
+        $.unblockUI();
+    }
+
+    $(".SearchGrading").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/AcademySearch/GradingSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#Grade-list").html(data);
+        });
+    });
+
+</script>

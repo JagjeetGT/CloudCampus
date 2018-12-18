@@ -1,0 +1,19 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.SmsGroup>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr><th>Name</th><th>CreatedOn</th></tr></thead><tbody>@foreach (var item in Model){<tr><td>@item.Name</td><td>@item.CreatedOn.ToShortDateString()</td><td>@if(userRight.Edit)
+    {
+        <a href="@Url.Action("GroupEdit", "Sms", new {groupId = item.Id})" class="editSmsGroup icon-pencil" data-id="@item.Id" title="Edit"></a>
+    }</td><td>@if(userRight.Delete)
+     {
+         <a href="@Url.Action("GroupDelete", "Sms", new {groupId = item.Id})" class="deleteSmsGroup icon-remove" data-id="@item.Id" title="Delete"></a>
+     }</td></tr>}
+        </tbody>
+    </table>
+</div>

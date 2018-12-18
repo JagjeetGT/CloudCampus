@@ -1,0 +1,720 @@
+﻿@using System.Web.Script.Serialization
+@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Student Wise Fee Rate Setup";
+    var serializer = new JavaScriptSerializer();
+    var userRight = (UserRight)ViewBag.UserRight;
+    
+}
+
+<script src="@Url.Content("~/Scripts/jQuery.tmpl.min.js")" type="text/javascript"></script>
+<script src="../../Scripts/jquery.queryable-1.0.min.js" type="text/javascript"></script>
+<script type="text/x-jquery-tmpl" id="ProductBillTermTemplate">
+<span class="single-list" style="display: none">
+<input autocomplete="off" class="collection_index" name="billTermList.Index" type="hidden" value="${index}" />
+<input class="billing_term_value billing_term Id" id="billTermList___${index}___Id" name="billTermList[${index}].Id" type="hidden" value="${Id}" />
+<input class="billing_term amount" id="billTermList___${index}___Amount" name="billTermList[${index}].Amount" type="hidden" value="${Amount}" />
+<input class="billing_term Description" id="billTermList___${index}___Description" name="billTermList[${index}].Description" type="hidden" value="${Description}" />
+<input class="billing_term Rate" id="billTermList___${index}___Rate" name="billTermList[${index}].Rate" type="hidden" value="${Rate}" />
+<input class="billing_term Sign" id="billTermList___${index}___Sign" name="billTermList[${index}].Sign" type="hidden" value="${Sign}" />
+<input class="billing_term BillingTermIndex" id="billTermList___${index}___BillingTermIndex" name="billTermList[${index}].BillingTermIndex" type="hidden" value="${BillingTermIndex}" />
+<input class="billing_term IsProductWise" id="billTermList___${index}___IsProductWise" name="billTermList[${index}].IsProductWise" type="hidden" value="${IsProductWise}" />
+<input class="billing_term ParentGuid" id="billTermList___${index}___ParentGuid" name="billTermList[${index}].ParentGuid" type="hidden" value="${ParentGuid}" />
+<input class="billing_term DisplayOrder" id="billTermList___${index}___DisplayOrder" name="billTermList[${index}].DisplayOrder" type="hidden" value="${DisplayOrder}" />
+</span>
+</script>
+<script type="text/x-jquery-tmpl" id="BillTermPopupTemplate">
+<tr class="alt">
+<input type="hidden" class="billingterm_Id" value="${Id}">
+<input type="hidden" class="billingterm_displayorder" value="${DisplayOrder}">
+<td class="billingterm_Description">${Description}</td>
+<td class="billingterm_Sign">${Sign}</td>
+<td><input type="text" value="${Rate}" style="width:50px;" class="billingterm_rate input"></td>
+<td><input type="text" value="${Amount}" style="width:70px;" class="billingterm_amount"></td>
+</tr>
+</script>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Student Wise Fee Rate Setup</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                               <li><a href="#" class="isw-plus addScSubject"></a></li>
+                        }
+                     
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="subject-list">
+                    @Html.Action("StudentFeeRateList")
+                </div>
+                <div class="clearfix">
+                </div>
+                <div id="imgload" style="display: none" align="center">
+                    <img src="/Content/themes/img/loaders/w_loader_gr.gif" />
+                </div>
+            </div>
+            <div id="Detail-list">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title="Student Wise Fee Rate Setup">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+var productWiseBatchList=@Html.Raw(serializer.Serialize(ViewBag.BillTerms));
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+
+                ValidationCheck();
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    $(".del-row").live("click", function () {
+        var ele = $(this).closest("tr");
+        ele.remove();
+        FeeRateCalc();
+    });
+    function ValidationCheck() {
+        var check = false;
+        var classid = $("#ClassId").val();
+        var student = $("#StudentId").val();
+        var feeitem = $(".text_subject").val();
+
+        if (feeitem == '' || feeitem == 0) {
+            $(".text_subject").addClass("error");
+            check = false;
+        } else {
+            check = true;
+        }
+
+        if (classid == 0 || classid == '') {
+            $("#ClassId").val('');
+            check = false;
+        } else {
+            check = true;
+        }
+        if (student == 0 || student == '') {
+            $("#StudentId").val('');
+            check = false;
+        } else {
+            check = true;
+        }
+        checkValidationError();
+        if (check) {
+
+            $("#form-id").submit();
+        }
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+
+    $("td._detail").live("click", function () {
+        $("div#imgload").css("display", "block");
+        var studentid = $(this).attr("data-classid");
+
+        $("#Detail-list").load("/School/StudentWiseFeeRateByStudentId?studentId=" + studentid, function () {
+            $("div#imgload").css("display", "none");
+        });
+    });
+    $('a.addScSubject').live('click', function () {
+        Begin();
+
+        getRequest('@Url.Action("StudentFeeRateAdd", "School")');
+
+        return false;
+    });
+    $('a.editScClassFeeRate').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-Id");
+
+        getRequest('@Url.Action("StudentFeeRateEdit", "School")?id=' + id);
+        return false;
+    });
+
+    function OnComplete() {
+
+        $('#modalsubject .block').load("/School/StudentFeeRateAdd");
+        $("#subject-list").load("/School/StudentFeeRateList");
+        $.unblockUI();
+    }
+
+    function OnCompleteEdit() {
+
+
+        $("#subject-list").load("/School/StudentFeeRateList");
+        $('#modalsubject').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        } else {
+            alert(data);
+        }
+    }
+
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        } else {
+            alert(data);
+        }
+    }
+
+
+    function FeeRateCalc() {
+        var basicAmt = parseFloat(0);
+        var ledgerElement = document.querySelectorAll(".basicAmt");
+        $.each(ledgerElement, function () {
+            basicAmt += parseFloat($(this).val());
+        });
+        $("#BasicAmount , #StudentFeeRateMaster_BasicAmount").val(basicAmt);
+
+        CalcAmount();
+    }
+
+    function CalcAmount() {
+
+        var basicAmt = $("#BasicAmount , #StudentFeeRateMaster_BasicAmount").val();
+        var termAmt = $("#TermAmount , #StudentFeeRateMaster_TermAmount").val();
+        var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+        $("#NetAmount, #StudentFeeRateMaster.NetAmount").val(netAmt);
+    }
+      $("#feeitemledger").live("keydown", function (e) {
+        var ClassId = $("#ClassId").val();
+       // var Id = $("#Id").val();
+
+        e.preventDefault();
+        if (ClassId != 0 && ClassId != '') {
+//           var url1 = "@Url.Action("GetClassesCodeById", "School")?id=" + ClassId;
+//          
+//            $.getJSON(url1, function (data) {
+//                
+//                if (data != null) {
+//                    $("#Code").val(data.Code);
+//                }
+//            });
+            var url = '@Url.Action("StudentFeeRateDetailAddForm")';
+
+            Begin();
+
+            $.ajax({
+                url: url,
+                data: { ClassId: ClassId},
+                type: "GET",
+                error: function () {
+                   alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+               
+                    if (data != "") {
+                        $("#table-student-fee-rate-detail tbody tr.detail-entry").remove();
+                        $("#table-student-fee-rate-detail ").append(data);
+                          $('#table-student-fee-rate-detail tr').addClass("deletable");
+                      var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+        $.each(ledgerElement, function (index) {
+            var element = $(this).closest("tr");
+            element.attr("id", "tr_" + index);
+            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+            element.find(".text_subject").attr({
+                "valueId": Subject_valueid,
+                "id": "text_subject_" + index
+            });
+        });
+                    }
+                  
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+        }
+    });
+    $(".narration").live('keydown', function (e) {
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+
+        if (keycode == 13) {
+            var closestTr = element.closest("tr");
+
+            if (closestTr.find(".hdn_Subject_Id").val() != "" && closestTr.find(".hdn_Subject_Id").val() != 0) {
+                var link = $(this).attr("href");
+                $.ajax({
+                    url: link,
+                    type: "GET",
+                    error: function () {
+                        alert("An error occurred.");
+                    },
+                    success: function (data) {
+                        //alert(data);
+                        if (closestTr.is(":last-child")) {
+                            $('#table-student-fee-rate-detail tr:last').addClass("deletable");
+                            var id = $('#table-student-fee-rate-detail tr:last').attr("id");
+                            $('#table-student-fee-rate-detail tr:last').after(data);
+                            var arrString = id.split("_");
+                            var index = parseInt(arrString[1]) + 1;
+                            index = $(".narration").index(element) + 1;
+
+                            $(".indexId:last").val(index);
+                            $(".text_subject:last").attr("id", "text_subject_" + index);
+                            $(".text_subject:last").closest("tr").attr("id", "tr_" + index);
+                            $(".text_subject:last").attr("valueId", $(".hdn_Subject_Id:last").attr("id"));
+                            closestTr.next().find('.text_subject').focus();
+                        } else {
+                            closestTr.next().find('.text_subject').focus();
+                        }
+                    }
+                });
+            }
+            //closestTr.find(".text_subject").addClass("error");
+            closestTr.find(".text_subject").focus();
+            return false;
+        }
+        return true;
+    });
+
+
+    $(".FeeRate").live('keydown', function (e) {
+            var ev = e || event;
+            var keycode = ev.keyCode;
+        var element = $(this);
+            var closestTr = element.closest("tr");
+        
+            if (keycode == 13 || keycode == 9) {
+                if ($(this).val() != "") {
+                    var guid = closestTr.find(".detailGuid").val();
+                    var link = "/School/GetFeeItems";
+                    var id = $('#table-student-fee-rate-detail tr:last').attr("id");
+                    var arrString = id.split("_");
+                    var index = parseInt(arrString[1]) + 1;
+                        
+                            selectedElement = closestTr;
+                            if ($(element).hasClass("rate-bill-term")) {
+                                isProductWise = true;
+                                var arrNewBatchList = [];
+                                if (element.closest("td").find(".product_wise_billterms").find(".single-list").length > 0) {
+                                    element.closest("td").find(".product_wise_billterms").find(".single-list").each(function (item, index3) {
+                                        var Id = $(this).find(".billing_term_value").val();
+                                        var Amount = $(this).find(".amount").val();
+                                        if (typeof Amount === "undefined") {
+                                            Amount = "0";
+                                        }
+                                        var Description = $(this).find(".Description").val();
+                                        var Rate = $(this).find(".Rate").val();
+                                        if (typeof Rate === "undefined") {
+                                            Rate = "0";
+                                        }
+                                        var Sign = $(this).find(".Sign").val();
+                                        var BillingTermIndex = $(this).find(".BillingTermIndex").val();
+                                        var IsProductWise = $(this).find(".IsProductWise").val();
+                                        var ParentGuid = $(this).find(".ParentGuid").val();
+                                        var DisplayOrder = $(this).find(".DisplayOrder").val();
+                                        if (typeof DisplayOrder === "undefined") {
+                                            DisplayOrder = "0";
+                                        }
+                                        arrNewBatchList.push({
+                                            Id: Id,
+                                            Rate: Rate,
+                                            Amount: Amount,
+                                            DisplayOrder: DisplayOrder,
+                                            IsProductWise: IsProductWise,
+                                            Description: Description,
+                                            Sign: Sign,
+                                            BillingTermIndex: BillingTermIndex,
+                                            ParentGuid: ParentGuid
+                                        });
+                                    });
+                                } else {
+                                    arrNewBatchList = productWiseBatchList;
+                                }
+                                if (productWiseBatchList.length != 0) {
+                                    $('#modalbox-billingterm-productwise .msg-body').find('tbody').html('');
+                                    arrNewBatchList.forEach(function (item, index4) {
+                                        if ($('#modalbox-billingterm-productwise .msg-body').find('tbody').html() == '') {
+                                            $('#modalbox-billingterm-productwise .msg-body tbody').html($("#BillTermPopupTemplate").tmpl({
+                                                Id: item.Id,
+                                                Amount: item.Amount,
+                                                Description: item.Description,
+                                                Rate: item.Rate,
+                                                Sign: item.Sign
+                                            }));
+                                        } else {
+                                            $('#modalbox-billingterm-productwise .msg-body tbody tr:last').after($("#BillTermPopupTemplate").tmpl({
+                                                Id: item.Id,
+                                                Amount: item.Amount,
+                                                Description: item.Description,
+                                                Rate: item.Rate,
+                                                Sign: item.Sign
+                                            }));
+                                        }
+                                    });
+                                    $("#modalbox-billingterm-productwise").dialog({
+                                        modal: true,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function () {
+                                                selectedElement.find(".billing_term").remove();
+                                                var termAmt = parseFloat(0);
+                                                closestTr.find(".product_wise_billterms").html("");
+                                                $(this).closest("#modalbox-billingterm-productwise").find(".billingterm_amount").each(function () {
+                                                    var value = parseFloat(0);
+                                                    var basis = $(this).closest("tr").find(".billingterm_Basis").html();
+                                                    var sign = $(this).closest("tr").find(".billingterm_Sign").html();
+                                                    var rate = $(this).closest("tr").find(".billingterm_rate").val();
+                                                    if (typeof rate == "undefined") {
+                                                        rate = "0";
+                                                    }
+                                                    var desc = $(this).closest("tr").find(".billingterm_Description").html();
+                                                    var id = $(this).closest("tr").find(".billingterm_Id").val();
+                                                    var displayOrder = $(this).closest("tr").find(".billingterm_displayorder").val();
+                                                    if (typeof displayOrder == "undefined" || displayOrder == '') {
+                                                        displayOrder = "0";
+                                                    }
+
+                                                    var amount = $(this).closest("tr").find(".billingterm_amount").val();
+                                                    if (typeof amount == "undefined") {
+                                                        amount = "0";
+                                                    }
+                                                    value = parseFloat($(this).val());
+                                                    if (sign == "-") {
+                                                        termAmt = RoundTwoDecimalPlace(termAmt - value);
+                                                    } else {
+                                                        termAmt = RoundTwoDecimalPlace(termAmt + value);
+                                                    }
+                                                    var basicAmt = selectedElement.find(".basicAmt").val();
+                                                    selectedElement.find(".termAmt").val(termAmt);
+                                                    var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                                                    selectedElement.find(".netAmt").val(netAmt);
+                                                    var index = selectedElement.find(".indexId").val();
+                                                    var batch = new BillingTermViewModel(id, rate, amount, displayOrder, 'true', desc, sign, basis, guid);
+                                                    var result = $.queryable(arrBillingTerms).where('a=>a.Guid=="' + guid + '"');
+                                                    result = result.where('a=>a.Id=="' + id + '"');
+                                                    if (result.length == 0) {
+                                                        arrBillingTerms.push(batch);
+                                                    } else {
+                                                        var arrLength = arrBillingTerms.length;
+                                                        if (arrLength > 0) {
+                                                            breakloop = 0;
+                                                            arrBillingTerms.forEach(function (item, indexa) {
+                                                                var result = $.queryable(arrBillingTerms).where('a=>a.Guid=="' + guid + '"');
+                                                                result = result.where('a=>a.Id=="' + id + '"');
+                                                                if (result.length != 0 && breakloop == 0) {
+                                                                    breakloop = 1;
+                                                                    arrBillingTerms.splice(indexa, 1);
+                                                                    arrBillingTerms.push(batch);
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                    if (element.closest("td").find('.product_wise_billterms').html() != '') {
+                                                        var rowGuid = _generateGuid();
+                                                        element.closest("td").find('.product_wise_billterms .single-list:last').after($("#ProductBillTermTemplate").tmpl({
+                                                            index: rowGuid,
+                                                            Id: id,
+                                                            Amount: amount,
+                                                            Basis: basis,
+                                                            Description: desc,
+                                                            Rate: rate,
+                                                            Sign: sign,
+                                                            BillingTermIndex: index,
+                                                            IsProductWise: 'true',
+                                                            ParentGuid: guid,
+                                                            DisplayOrder: displayOrder
+                                                        }));
+                                                    } else {
+                                                        var rowGuid = _generateGuid();
+                                                        element.closest("td").find('.product_wise_billterms').html($("#ProductBillTermTemplate").tmpl({
+                                                            index: rowGuid,
+                                                            Id: id,
+                                                            Amount: amount,
+                                                            Basis: basis,
+                                                            Description: desc,
+                                                            Rate: rate,
+                                                            Sign: sign,
+                                                            BillingTermIndex: index,
+                                                            IsProductWise: 'true',
+                                                            ParentGuid: guid,
+                                                            DisplayOrder: displayOrder
+                                                        }));
+                                                    }
+                                                });
+                                                getTotalQty();
+                                                getTotalAmt();
+                                                $('input[type="text"]').focus(function () {
+                                                    if ($(this).attr("entermsg")) {
+                                                        $(".enter-msg").html($(this).attr("entermsg"));
+                                                    } else {
+                                                        $(".enter-msg").html("");
+                                                    }
+                                                    $(".receipt-amt").blur(function () {
+                                                        if ($(this).val() != "") {
+                                                            selectedElement.find(".payment-amt").attr("disabled", "disabled");
+                                                        } else {
+                                                            selectedElement.find(".payment-amt").removeAttr("disabled");
+                                                        }
+                                                    });
+
+                                                    $(".payment-amt").blur(function () {
+                                                        if ($(this).val() != "") {
+                                                            selectedElement.find(".receipt-amt").attr("disabled", "disabled");
+                                                        } else {
+                                                            selectedElement.find(".receipt-amt").removeAttr("disabled");
+                                                        }
+                                                    });
+                                                });
+                                                $('#modalbox-billingterm-productwise .msg-body').find('tbody').html('');
+                                                $(this).dialog("close");
+                                            },
+                                            Cancel: function () {
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });
+                                    $('#modalbox-billingterm-productwise').find(".billingterm_rate").first().focus().select();
+                                    return false;
+                                }
+                                return false;
+                            } else {
+                                var basicAmt = selectedElement.find(".basicAmt").val();
+                                selectedElement.find(".termAmt").val(0);
+                                selectedElement.find(".netAmt").val(basicAmt);
+                                getTotalQty();
+                                getTotalAmt();
+                            }
+                            closestTr.next().find('.text_product').focus();
+                            isProductWise = false;
+                            getTotalQty();
+                            getTotalAmt();
+                            $('input[type="text"]').focus(function () {
+                                if ($(this).attr("entermsg")) {
+                                    $(".enter-msg").html($(this).attr("entermsg"));
+                                } else {
+                                    $(".enter-msg").html("");
+                                }
+                                $(".receipt-amt").blur(function () {
+                                    if ($(this).val() != "") {
+                                        closestTr.find(".payment-amt").attr("disabled", "disabled");
+                                    } else {
+                                        closestTr.find(".payment-amt").removeAttr("disabled");
+                                    }
+                                });
+                                $(".payment-amt").blur(function () {
+                                    if ($(this).val() != "") {
+                                        closestTr.find(".receipt-amt").attr("disabled", "disabled");
+                                    } else {
+                                        closestTr.find(".receipt-amt").removeAttr("disabled");
+                                    }
+                                });
+                            });
+                            $("#billing-term-list").html("");
+                }
+                closestTr.find(".text_ledger").addClass("error");
+                closestTr.find(".text_ledger").focus();
+                return false;
+            }
+            if ((keycode > 95 && keycode < 106) || (keycode > 45 && keycode < 58) || keycode == 8 || (keycode > 36 && keycode < 40)) {
+
+                return true;
+            }
+            return false;
+    });
+    $(".basicAmt").live("blur", function () {
+        getTotalAmt();
+    });
+    $(".bill-wise-feeterm").live('click', function (e) {
+        var element = $("#BasicAmount , #StudentFeeRateMaster_BasicAmount");
+        if ($("#BasicAmount, #StudentFeeRateMaster_BasicAmount").val() != "" && $("#BasicAmount, #StudentFeeRateMaster_BasicAmount").val() != 0) {
+            $.ajax({
+                url: "/School/GetFeeTermItemWise?itemwise=false",
+                dataType: "json",
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                    if (data != "") {
+                        isProductWise = false;
+                        var tableData = CreateBillingTermTableView(data, "listpopup", true);
+                        $('#modalbox-billingterm .msg-body').html(tableData);
+                        $("#modalbox-billingterm").dialog({
+                            modal: true,
+                            width: 'auto',
+                            buttons: {
+                                "Ok": function () {
+
+                                    var termAmt = parseFloat(0);
+
+                                    $(this).find(".billingterm_amount").each(function () {
+
+                                        if (element.val() != "") {
+
+                                            var value = parseFloat(0);
+                                            var basis = $(this).closest("tr").find(".billingterm_Basis").html();
+                                            var sign = $(this).closest("tr").find(".billingterm_Sign").html();
+                                            var rate = $(this).closest("tr").find(".billingterm_rate").val();
+                                            var desc = $(this).closest("tr").find(".billingterm_Description").html();
+                                            var id = $(this).closest("tr").find(".billingterm_Id").val();
+
+                                            value = parseFloat($(this).val());
+                                            if (sign == "-") {
+                                                termAmt = termAmt - value;
+                                            } else {
+                                                termAmt = termAmt + value;
+                                            }
+
+
+                                            var basicAmt = $(".MasterBasicAmt").val();
+                                            var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                                            // var basicAmt = selectedElement.find(".MasterBasicAmt").val();
+                                            // selectedElement.find("#TermAmount,#StudentFeeRateMaster_TermAmount").val(termAmt);
+                                            // var netAmt = parseFloat(basicAmt) + parseFloat(termAmt);
+                                            //  selectedElement.find("#NetAmount,#StudentFeeRateMaster_NetAmount").val(netAmt);
+                                            //  var index = selectedElement.find(".indexId").val();
+                                            $("#NetAmount, #StudentFeeRateMaster_NetAmount").val(netAmt);
+                                            //   $("#TotalAmtRs").val(netAmt);
+                                            $("#TermAmount, #StudentFeeRateMaster_TermAmount").val(termAmt);
+
+                                            if (value != 0) {
+                                                $.ajax({
+                                                    url: "/School/InsertFeeTerm",
+                                                    type: "GET",
+                                                    data: {
+                                                        desc: desc,
+                                                        basis: basis,
+                                                        id: id,
+                                                        amount: Math.abs(value),
+                                                        rate: rate,
+                                                        sign: sign,
+
+                                                        isProductWise: false
+                                                    },
+                                                    success: function (data1) {
+
+                                                        $(".ui-dialog #billing-term-list").html(data1);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+
+                                    $(".msg-body").html("");
+                                    $(this).dialog("close");
+                                },
+                                Cancel: function () {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+
+                        $('#modalbox-billingterm').find(".billingterm_rate").first().focus();
+                    }
+                }
+            });
+            return false;
+        }
+        return true;
+
+
+    });
+
+    function getTotalAmt() {
+
+        var totalAmt = parseFloat(0);
+        var netAmt = parseFloat(0);
+        var termAmt = parseFloat(0);
+        var NetAmtElements = document.querySelectorAll(".netAmt");
+        var n;
+        for (n = 0; n < NetAmtElements.length; n++) {
+            var namt = Math.abs(NetAmtElements[n].value);
+            if (namt != "") {
+                netAmt = netAmt + parseFloat(namt);
+            }
+        }
+        var basicAmtElements = document.querySelectorAll(".basicAmt");
+        var j;
+        for (j = 0; j < basicAmtElements.length; j++) {
+            var amt = Math.abs(basicAmtElements[j].value);
+            if (amt != "") {
+                totalAmt = totalAmt + parseFloat(amt);
+            }
+        }
+        var termAmtElements = document.querySelectorAll(".termAmt");
+        var t;
+        for (t = 0; t < termAmtElements.length; t++) {
+            var tamt = termAmtElements[t].value;
+            if (tamt != "") {
+                termAmt = termAmt + parseFloat(tamt);
+            }
+        }
+        //var termAmt = parseFloat($("#TermAmount, #StudentFeeRateMaster_TermAmount").val());
+
+        ///  + termAmt;
+
+        //            $("#billing-term-list .billing_term_value").each(function () {
+        //                if ($(this).val() != "") {
+        //                    var basis = $(this).attr("basis");
+        //                    var sign = $(this).attr("sign");
+        //                    var rate = parseFloat($(this).attr("rate"));
+        //                    var value = rate / 100 * totalAmt;
+        //                    if (sign == "-") {
+
+        //                        termAmt = termAmt - value;
+        //                    } else {
+        //                        termAmt = termAmt + value;
+        //                    }
+        //                    netAmt = parseFloat(totalAmt) + parseFloat(termAmt);
+        //                    //alert(termAmt);
+        //                    //alert($(this).closest("span").find(".amount").val());
+        //                    var newTermAmt = Math.abs(termAmt);
+        //                    $(this).closest("span").find(".amount").val(newTermAmt);
+        //                }
+
+        //            });
+        $("#BasicAmount , #StudentFeeRateMaster_BasicAmount").val(totalAmt);
+        $("#NetAmount, #StudentFeeRateMaster_NetAmount").val(netAmt);
+        $("#TermAmount, #StudentFeeRateMaster_TermAmount").val(termAmt);
+        //  $("#TotalAmtRs").val(netAmt);
+    }
+    
+</script>

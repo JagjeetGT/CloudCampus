@@ -1,0 +1,53 @@
+@model KRBAccounting.Domain.Entities.ScClassRoomMapping
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ClassRoomMappingEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+@Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(x=>x.BuildingRoomMappingId)
+    <div class="lag">
+        <label class="label-90">
+            Building</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.BuildingId, Model.BuildingList)
+        </div>
+        <label class="label-100">
+            Room
+        </label>
+        <div class="field" id="4444">
+            @Html.HiddenFor(x => x.RoomMappingId)
+            <input type="text" class="modallink input input-100" value="@if (Model.RoomMapping != null)
+                                                                        {
+                                                                            if (Model.RoomMapping.Room != null)
+                                                                            {
+                                                                                @Model.RoomMapping.Room.Description
+                                                                            }
+                                                                        }
+                                                                           " href="@Url.Action("GetRoomsByRoomMappingId")" parent="BuildingId" valueid="RoomMappingId" id="building-id"/>
+            @Html.ValidationMessageFor(m => m.RoomMappingId)
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Class</label>
+            <span class="field">@Html.HiddenFor(x => x.ClassId)
+                <input type="text" class="modallink input input-100" value="@if (Model.Class != null)
+                                                                            {
+                                                                                @Model.Class.Description
+                                                                            }
+                                                                               " href="@Url.Action("GetClasses")"  valueid="ClassId" id="class-id"/>
+                @Html.ValidationMessageFor(m => m.ClassId) </span></span><span class="stack">
+                    <label class="label-90">
+                        Section</label>
+                    <span class="field">@Html.HiddenFor(x => x.SectionId)
+                        <input type="text" class="modallink input input-100" value="@if (Model.Section != null)
+                                                                                    {
+                                                                                        @Model.Section.Description
+                                                                                    }
+                                                                                       " href="@Url.Action("GetSections")"  valueid="SectionId" id="section-id"/>
+                        @Html.ValidationMessageFor(m => m.SectionId) </span></span>
+    </div>
+}

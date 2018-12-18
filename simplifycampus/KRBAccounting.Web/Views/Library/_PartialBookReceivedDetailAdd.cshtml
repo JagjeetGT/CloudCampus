@@ -1,0 +1,31 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.ScBookReceivedDetails
+
+
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AccessionNo, new { @class = "AccessionNo input first-col" })
+          
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.BarCode, new { @class = "input-120"})
+        </td>
+        <td>
+            @Html.HiddenFor(x=>x.Status)
+           <input class="input input-120" type="text" readonly="readonly" value="@Enum.GetName(typeof(LibraryBookStatus),Model.Status)"/>
+        </td> 
+
+        <td>
+            @Html.TextBoxFor(x => x.Remarks, new { @class = "last-col-custom input-190 input",href="", tableid = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

@@ -1,0 +1,19 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.StockAdjustmentSingleViewModel
+@{
+    var trId = "id-" + Model.Id;
+}
+<tr id="@trId">
+    <td>@Model.STNo
+    </td>
+  
+    <td>@Model.STDate
+    </td>
+    <td>@Model.Remarks
+    </td>
+    
+    <td>
+        <a href="javascript:void(0)" class="SAEdit icon-pencil" data-id="@Model.Id" title="Edit: @Model.STNo">
+        </a>| <a href="javascript:void(0)" class="SARemove icon-remove" data-id="@Model.Id" title="Delete: @Model.STNo">
+        </a>
+    </td>
+</tr>

@@ -1,0 +1,457 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.LedgerReportFormViewModel
+@{
+    ViewBag.Title = "Ledger";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Ledger</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfLedgerReport", "ReportLedger")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelLedgerReport", "ReportLedger")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("_PartialLedgerReportForm", Model)</div>
+</div>
+<div id="modalbox-subledger" style="display: none" class="dialog">
+    <div class="msg-body block" style="padding: 0; height: 325px">
+    </div>
+    <div class="msg-footer">
+        <input type="text" class="search-box" name="search-box" placeholder="Search" />
+        <div class="selectedRows">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //OpenModal();
+        $("#modalReportForm").dialog('open');});
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+
+        //        $("#saveForm").live("click", function () {
+        //            $("#report-form").submit();
+        //        });
+
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Generate Ledger Report',
+            buttons: {
+                "OK": function () {
+                    var isCheckedAllLedger = $('#AllLedger').attr('checked') ? true : false;
+                    var subLedger = $('#SubLedger').attr('checked') ? true : false;
+                    var allSubLedger = $('#AllSubLedger').attr('checked') ? true : false;
+                    var remarks = $('#Remarks').attr('checked') ? true : false;
+                    var summary = $('#Summary').attr('checked') ? true : false;
+                    var DocAgent = $('#DocAgent').attr('checked') ? true : false;
+                    var reportType = $('#ReportType').val();
+                    var groupBy = $('#GroupBy').val();
+                    var productDetails = $('#ProductDetails').attr('checked') ? true : false;
+                    var zeroBalance = $('#ZeroBalance').attr('checked') ? true : false;
+                    var startDate = $(".ui-dialog #StartDate").val();
+                    var endDate = $(".ui-dialog #EndDate").val();
+                    var DateShow = $('#DateShow').attr('checked') ? true : false;
+                    var reportLink = "";
+                    var branchId = $(".ui-dialog #BranchId").val();
+                   
+                    if (isCheckedAllLedger) {
+                        if (subLedger) {
+                            if (allSubLedger) {
+                                reportLink = "/ReportLedger/LedgerReport/?ledgers=&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&subLedgers=&&includeSubLedger=" + subLedger + "&&remarks=" + remarks + "&&summary=" + summary + "&&reportType=" + reportType + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow+"&&BranchId="+branchId;
+                                $.ajax({
+                                    type: "POST",
+                                    url: reportLink,
+                                    success: function (data) {
+                                        $("#report").html(data);
+                                        $('#modalReportForm').dialog("close");
+                                    }
+                                });
+                            }
+                            else {
+                                var url = "/ReportLedger/LedgerReport/?reportType=" + reportType + "&&remarks=" + remarks + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow + "&&BranchId=" + branchId + "&&ledgers";
+                                ShowSubLedgerPickList(url);
+                            }
+                        } else {
+                            reportLink = "/ReportLedger/LedgerReport/?ledgers=&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&subLedgers=&&includeSubLedger=" + subLedger + "&&remarks=" + remarks + "&&summary=" + summary + "&&reportType=" + reportType + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow + "&&BranchId=" + branchId;
+                            $.ajax({
+                                type: "POST",
+                                url: reportLink,
+                                success: function (data) {
+                                    $("#report").html(data);
+                                    $('#modalReportForm').dialog('close');
+                                }
+                            });
+                        }
+
+                    } else {   //////////////  else isCheckedAllLedger /////////////////////
+
+                        if (modalshow == true) {
+                            modalshow = false;
+                            selectedRows.deleteall();
+                            var link = "";
+                            if (groupBy == "1") {   ///ledger   
+                                link = "/ReportLedger/GetLedgerListByType/?reportType=" + reportType;
+                            }
+                            else if (groupBy == "2") {   ///Agent
+                                link = "/Master/GetAgent/";
+                            }
+                            else if (groupBy == "3") {   ///Area
+                                link = "/Master/GetArea/";
+                            }
+                            else if (groupBy == "4") {   ///Account Group
+                                link = "/Master/GetAccountGroupList/?reportType=" + reportType;
+                            }
+                            else if (groupBy == "5") {   ///Account+Sub Group
+                                link = "/Master/GetAccountGroupList/";
+                            }
+                            $.ajax({
+                                url: link,
+                                dataType: "json",
+                                data: { reportType: $("#ReportType").val() },
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    var tableData = CreateTableViewList(data, "listpopup", true);
+                                    $('#modalbox-report .msg-body').html(tableData);
+                                    $("#modalbox-report").dialog({
+                                        modal: true,
+                                        closeOnEscape: false,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function () {
+                                                modalshow = true;
+                                                if (groupBy == "1") {       ///ledger 
+                                                    if (subLedger) {
+                                                        if (allSubLedger) {
+                                                            var reportLink = "/ReportLedger/LedgerReport/?subLedgers=&&includeSubLedger=true&&reportType=" + reportType + "&&remarks=" + remarks + "&&summary=" + summary + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow + "&&BranchId=" + branchId + "&&ledgers";
+                                                            DisplayReport(reportLink);
+                                                        } else {
+                                                            var url = "/ReportLedger/LedgerReport/?reportType=" + reportType + "&&remarks=" + remarks + "&&summary=" + summary + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow + "&&BranchId=" + branchId + "&&ledgers";
+                                                            DisplayReportLedgerandSubledger(url);
+                                                        }
+
+                                                    } else {
+                                                        var url1 = "/ReportLedger/LedgerReport/?reportType=" + reportType + "&&remarks=" + remarks + "&&summary=" + summary + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow + "&&BranchId=" + branchId + "&&ledgers";
+                                                        DisplayReport(url1);
+                                                    }
+                                                }
+                                                else {
+                                                    var url1 = "/ReportLedger/LedgerReport/?reportType=" + reportType + "&&remarks=" + remarks + "&&summary=" + summary + "&&productDetails=" + productDetails + "&&zeroBalance=" + zeroBalance + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&dateshow=" + DateShow + "&&Groups" + "&&BranchId=" + branchId;
+                                                    DisplayReportAccGrpandLedger(url1);
+                                                }
+
+                                                $(this).dialog("close");
+                                            },
+                                            Cancel: function () {
+                                                modalshow = true;
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });
+                                    //$.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                                    //$('#modalbox-report .msg-body').html("");
+
+                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+                                    $('.selectable-table').tableSelect({
+                                        onClick: function (row) {
+                                            //alert(row);
+                                        },
+                                        onDoubleClick: function (rows) {
+                                            $.each(rows, function (i, row) {
+                                                var name = $(row).children('td').eq(0).attr("ledger-id");
+                                                if ($(row).hasClass('disabled')) {
+                                                    $(row).removeClass('disabled');
+                                                    selectedRows.remove(name);
+                                                } else {
+                                                    $(row).addClass('disabled');
+                                                    selectedRows.add(name);
+                                                }
+                                            });
+
+                                            if (groupBy == "1") {   ///ledger   
+                                                updateListLedger();
+                                            }
+                                            else if (groupBy == "2") {   ///Agent
+                                                updateListAcGroups();
+                                            }
+                                            else if (groupBy == "3") {   ///Area
+                                                updateListAcGroups();
+                                            }
+                                            else if (groupBy == "4") {   ///Account Group
+                                                updateListAcGroups();
+                                            }
+                                            else if (groupBy == "5") {   ///Account+Sub Group
+                                                updateListAcGroups();
+                                            }
+                                        },
+                                        onChange: function (row) {
+                                            //alert(row);
+                                        }
+                                    });
+                                }
+                            });
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    //$(this).dialog('close');
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+   
+    function OpenModal() {
+        $('#modalReportForm').modal({
+            keyboard: false,
+            backdrop: "static"
+        }).css({
+            width: 'auto',
+            'margin-left': function () {
+                return -($(this).width() / 2);
+            }
+        });
+    }
+
+   
+    function updateListLedger() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="ledgers" value="' + this + '" />');
+        });
+    };
+    
+    function updateListAcGroups() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="Groups" value="' + this + '" />');
+        });
+    };
+    function updateListSubLedger() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="subledgers" value="' + this + '" />');
+        });
+    };
+    var selectedRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.deleteall = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+
+    var selectedsubledgerRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.deleteall = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+
+    function ShowLedgerPickList(url) {
+        modalshow = false;
+        selectedsubledgerRows.deleteall();
+        $.ajax({
+            url: "/Master/GetLedger",
+            dataType: "json",
+            type: "GET",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+                var tableData = CreateTableViewList(data, "listpopup", true);
+                $('#modalbox-subledger .msg-body').html(tableData);
+                $("#modalbox-subledger").dialog({
+                    modal: true,
+                    closeOnEscape: false,
+                    width: 'auto',
+                    buttons: {
+                        "Ok": function () {
+                            modalshow = true;
+                            DisplayReport(url);
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            modalshow = true;
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+                $('#modalbox-subledger .msg-footer .selectedRows').html("");
+                $('.selectable-table').tableSelect({
+                    onClick: function (row) {
+                        //alert(row);
+                    },
+                    onDoubleClick: function (rows) {
+                        $.each(rows, function (i, row) {
+                            var name = $(row).children('td').eq(0).attr("ledger-id");
+                            if ($(row).hasClass('disabled')) {
+                                $(row).removeClass('disabled');
+                                selectedsubledgerRows.remove(name);
+                            } else {
+                                $(row).addClass('disabled');
+                                selectedsubledgerRows.add(name);
+                            }
+                        });
+                        updateListLedger();
+                    },
+                    onChange: function (row) {
+                        //alert(row);
+                    }
+                });
+            }
+        });
+        return true;
+    }
+    
+    function ShowSubLedgerPickList(url) {
+        modalshow = false;
+        selectedsubledgerRows.deleteall();
+        $.ajax({
+            url: "/Master/GetSubLedger",
+            dataType: "json",
+            type: "GET",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+                var tableData = CreateTableViewList(data, "listpopup", true);
+                $('#modalbox-subledger .msg-body').html(tableData);
+                $("#modalbox-subledger").dialog({
+                    modal: true,
+                    closeOnEscape: false,
+                    width: 'auto',
+                    buttons: {
+                        "Ok": function () {
+                            modalshow = true;
+                            DisplayReportSubLedger(url);
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            modalshow = true;
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+                //$.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                //$('#modalbox-report .msg-body').html("");
+
+                $('#modalbox-subledger .msg-footer .selectedRows').html("");
+                $('.selectable-table').tableSelect({
+                    onClick: function (row) {
+                        //alert(row);
+                    },
+                    onDoubleClick: function (rows) {
+                        $.each(rows, function (i, row) {
+                            var name = $(row).children('td').eq(0).attr("ledger-id");
+                            if ($(row).hasClass('disabled')) {
+                                $(row).removeClass('disabled');
+                                selectedsubledgerRows.remove(name);
+                            } else {
+                                $(row).addClass('disabled');
+                                selectedsubledgerRows.add(name);
+                            }
+                        });
+                        updateListSubLedger();
+                    },
+                    onChange: function (row) {
+                        //alert(row);
+                    }
+                });
+            }
+        });
+        return true;
+    }
+
+    $("#SubLedger").live("click", function () {
+        if ($(this).is(":checked")) {
+            $("#AllSubLedger").removeAttr("disabled");
+        } else {
+            $("#AllSubLedger").attr("disabled", "disabled");
+            $("#AllSubLedger").removeAttr("checked");
+        }
+    });
+    
+    $('#GroupBy').change(function () {
+        var groupBy = $('#GroupBy').val();
+
+        if (groupBy == 2) {
+            $("#DocAgent").removeAttr("disabled");
+        } else {
+            $("#DocAgent").attr("disabled", "disabled");
+            $("#DocAgent").removeAttr("checked");
+        }
+    });
+    
+    $("#Summary").live("click", function () {
+        if ($(this).is(":checked")) {
+            $("#ProductDetails").attr("disabled", "disabled");
+            $("#ProductDetails").removeAttr("checked");
+        } else {
+            $("#ProductDetails").removeAttr("disabled");
+        }
+        if ($(this).is(":checked")) {
+            $("#Remarks").attr("disabled", "disabled");
+            $("#Remarks").removeAttr("checked");
+        } else {
+            $("#Remarks").removeAttr("disabled");
+        }
+        if ($(this).is(":checked")) {
+            $("#ZeroBalance").attr("disabled", "disabled");
+            $("#ZeroBalance").removeAttr("checked");
+        } else {
+            $("#ZeroBalance").removeAttr("disabled");
+        }
+    });
+</script>

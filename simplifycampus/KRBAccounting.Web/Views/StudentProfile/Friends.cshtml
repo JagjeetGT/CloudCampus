@@ -1,0 +1,114 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScStudentRegistrationDetail>
+@{
+    ViewBag.Title = "Friends";
+    var studentMsgList = (IEnumerable<KRBAccounting.Domain.Entities.ScMessage>)ViewBag.SudentMsgList;
+    var currentUserId = ViewBag.CurrentUserId;
+}
+
+
+
+<div class="row-fluid">
+    <h4 class="page-title">
+        <div class="social-box">
+            <div class="body">
+                Friends 
+                @if(Model.Any())
+                {
+                    <text>(Class: </text> @Model.FirstOrDefault().Studentinfo.Class.Description <text>)</text>
+                }
+            </div>
+        </div>
+    </h4>
+</div>
+<div class="block-fluid">
+    <section class="feeds social-box" id="feeds">
+        <div class="header">
+            <h4><i class="icon-th-list"></i> <span class="hidden-phone">Class Mate </span><span class="visible-phone">Feeds</span></h4>
+            <div class="tools">
+            </div>
+        </div>
+   
+        <div class="body">
+            <div class="tab-content">
+                <div id="users" class="tab-pane fade in users-feeds active" >
+                    @foreach (var item in Model)
+                    {
+                        var count = "count_" + item.UserId;
+                        <div class="row-fluid" style="width: 350px; float: left">
+                            <img  src="/Content/social/assets/img/avatars/user2-55x55.png" class="feed-object">
+                               <a href="@Url.Action("StudentProfile", "StudentProfile", new { userId = item.UserId })"><h6 class="feed-heading">@item.Studentinfo.StuDesc <small id="@count">(@studentMsgList.Count(x => x.SenderId == currentUserId && x.ReceiverId == item.UserId)) </small></h6>
+                           </a>
+                            <span><small>@item.RollNo</small></span>
+                            <br/>
+                            <a data-id="@item.UserId" href="#" id="studentMsg"><span class="label label-info">new message</span></a>
+                        </div>
+                
+                    
+                    }
+
+              
+                </div>
+            
+            </div>
+        </div>
+    </section>
+</div>
+
+<div  style="width: auto" id="studentMsgDetail"  class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    
+   
+</div>
+<script type="text/javascript" language="javascript">
+
+
+    $('a#studentMsg').live('click', function () {
+        $.blockUI();
+         var id = $(this).attr("data-id");
+         var url = '/StudentProfile/StudentMsg?studentId=' + id;
+       
+        getRequest(url);
+
+        return false;
+    });
+
+   // $("#studentMsgDetail").modal('toggle');
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#studentMsgDetail').modal('show');
+                $('#studentMsgDetail').html(data);
+                $.unblockUI();
+
+            },
+            error: function (err) {
+
+
+
+            alert("Error");
+            }
+        });
+    }
+
+//    $(".btn-submit-form").live("click", function () {
+//        //$(".student-form").submit();
+//    });
+
+    function complete(data) {
+        //alert(data.msgCount);
+       // alert(data.content);
+        if (data.content == "true") {
+        
+            $("#count_" + data.userId).text("("+data.msgCount+")");
+            $("#studentMsgDetail").modal('hide');
+            var chat = $.connection.chatHub;
+            chat.server.send();
+            GrowlMsg('Sent message Successful');
+        }
+  
+    }
+
+
+</script>

@@ -1,0 +1,51 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStaffgroupListReportViewModel
+
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 8px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                  Code
+                </th>
+                <th>
+                    Description
+                </th>
+                
+                <th>
+                    Remarks
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.StaffGroupList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>@item.Code</td>
+                <td>
+                    @item.Description
+                </td>
+                
+                <td>@item.Remarks</td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>

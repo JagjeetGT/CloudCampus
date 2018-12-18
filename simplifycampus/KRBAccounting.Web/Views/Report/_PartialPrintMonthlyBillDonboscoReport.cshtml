@@ -1,0 +1,224 @@
+﻿@using System.Globalization
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.PrintMonthlyBillReportViewModel
+@{
+    decimal Total = 0;
+    decimal crGrandTotal = 0;
+
+    decimal totalOpening = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var i in Model.BillStudents)
+{
+    decimal grandTotalBalance = 0;
+    decimal feeamounttotal = 0;
+    decimal termamounttotal = 0;
+    decimal netamounttotal = 0;
+    decimal txttotal = 0;
+    decimal totalsum = 0;
+        
+    <div style="border: 1px solid; padding: 15px; margin-right: 3%">
+        <div class="ReportHeader" style="text-align: center">
+            @Html.Partial("_PartialAcademicReportHeader", Model.ReportHeader)
+            <div class="clearfix">
+            </div>
+            <div>
+                <p align="left" style="font-weight: bold; float: left;">
+                    Bill No.: @i.BillNo</p>
+                <p align="right" style="font-weight: bold;">
+                    Bill Date: @NepaliDateService.NepaliDate(DateTime.UtcNow).Date (@DateTime.Now.ToShortDateString())</p>
+                <div class="clearfix">
+                </div>
+                <p align="left" style="font-weight: bold; float: left; width: 220px;">
+                    Name:<span style="text-decoration: underline">@{
+                          var Name = @UtilityService.FirstLetterToUpper(i.ScStudentinfo.StuDesc);
+                    }
+                        @Name</span></p>
+                <p align="left" style="font-weight: bold; float: left">
+                    Class : @i.Class.Description
+                </p>
+                <p align="left" style="float: right; font-weight: bold;">
+                    Section : @i.SectionName</p>
+                <div class="clearfix">
+                </div>
+                <p align="left" style="font-weight: bold; float: left">
+                    Roll no. : @i.RollNo
+                </p>
+                <p align="right" style="font-weight: bold;">
+                    Bill For : @NepaliDateService.LongMonth(i.MonthMiti) @i.YearMiti (@i.Date.ToString("yyyy", CultureInfo.InvariantCulture) @i.Date.ToString("MMM", CultureInfo.InvariantCulture))</p>
+            </div>
+        </div>
+        <div class="ReportList">
+            <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>
+                            S.No
+                        </th>
+                        <th width="50%">
+                            Particular
+                        </th>
+                        <th>
+                            Fee Amount
+                        </th>
+                        <th>
+                            Term Amount
+                        </th>
+                        <th>
+                            Net Amount
+                        </th>
+                        <th>
+                            1% Tax
+                        </th>
+                        <th width="10%">
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+                @{
+                                                                    var sno = 1;
+                }
+                @foreach (var c in i.MonthlyBills.Where(x => x.FeeAmount != 0))
+                {
+                    decimal TotalBalance = 0;
+                    var studentfee = UtilityService.GetStudentFeeTerm(i.StudentId, c.FeeItemId, c.ScMonthlyBillStudent.AcademicYearId);
+                    var termamount = studentfee.Sum(x => x.LocalAmount);
+
+                    var feeamount = c.FeeAmount - termamount;
+                               
+                    <tr>
+                        <td>
+                            @sno
+                        </td>
+                        <td>
+                            @c.FeeItem.Description
+                        </td>
+                        <td>
+                            @feeamount
+                        </td>
+                        <td>
+                            @termamount
+                        </td>
+                        <td>
+                            @c.FeeAmount
+                        </td>
+                        <td>
+                            @c.EducationTaxAmount
+                        </td>
+                        <td>
+                            @{
+                       TotalBalance = c.FeeAmount + c.EducationTaxAmount;
+                       grandTotalBalance += TotalBalance;
+                            }
+                            @TotalBalance
+                        </td>
+                    </tr>
+                       feeamounttotal += feeamount;
+                       termamounttotal += termamount;
+                       netamounttotal += c.FeeAmount;
+                       txttotal += c.EducationTaxAmount;
+                       totalsum += TotalBalance;
+
+                       sno++;
+                }
+                <tr>
+                    <td colspan="2">
+                        Total Bill
+                    </td>
+                    <td>
+                        @feeamounttotal
+                    </td>
+                    <td>
+                        @termamounttotal
+                    </td>
+                    <td>
+                        @netamounttotal
+                    </td>
+                    <td>
+                        @txttotal
+                    </td>
+                    <td>
+                        @totalsum
+                    </td>
+                </tr>
+                @* <tr style="font-weight: bold">
+                    <td colspan="2" align="center">
+                        Total
+                    </td>
+                    <td>
+                        @Total
+                    </td>
+                </tr>
+                @if (@i.MonthlyBills.Sum(x => x.EducationTaxAmount) != 0)
+                {
+                    <tr style="font-weight: bold">
+                        <td colspan="2" align="center">
+                            Education Tax 1 %
+                        </td>
+                        <td>
+                            @i.MonthlyBills.Sum(x => x.EducationTaxAmount)
+                        </td>
+                    </tr>
+                }
+                <tr style="font-weight: bold">
+                    <td colspan="2" align="center">
+                        Grand Total
+                    </td>
+                    <td>
+                        @{
+                grandTotalBalance = Total + i.MonthlyBills.Sum(x => x.EducationTaxAmount);
+                        }
+                        @grandTotalBalance
+                    </td>
+                </tr>*@
+            </table>
+            <table class="listpopup" width="100%">
+                <tr>
+                    <th colspan="6">
+                        Previous Amount
+                    </th>
+                    <th width="10%">
+                        @i.DueAmount
+                        @{
+                   grandTotalBalance += i.DueAmount;
+                        }
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="6">
+                        Total Amount
+                    </th>
+                    <td width="10%">
+                        @grandTotalBalance
+                    </td>
+                </tr>
+            </table>
+            <div class="clearfix">
+            </div>
+            @* <div style="width: 300px; float: left; border-right: 1px solid;">
+                In Words: @NumberToEnglish.changeCurrencyToWords(grandTotalBalance.ToString())
+            </div>
+            <div style="margin-left: 20px; position: relative; text-align: center;">
+                Prepared By : @i.PreparedBy.Username
+              
+            </div>*@
+            <table class="listpopup" style="border: none">
+                <tr>
+                    <td style="border: none">
+                        In Words: @NumberToEnglish.changeCurrencyToWords(grandTotalBalance.ToString())
+                    </td>
+                    <td style="text-align: right; border: none">
+                        Prepared By : @i.PreparedBy.Username
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}
+<div class="clearfix">
+</div>

@@ -1,0 +1,154 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "House Group Master";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        House Group Master</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addScSubject"></a></li>
+                        }
+                       
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchHouseGroup"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="boader-list">
+                    @Html.Action("HouseGroupsList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title="House Group Master">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScSubject').live('click', function () {
+        Begin();
+        var url = '@Url.Action("HouseGroupAdd", "School")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editScHouseGroup').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("HouseGroupEdit", "School")?housegroupId=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalsubject .block').load("/School/HouseGroupAdd");
+        $("#boader-list").load("/School/HouseGroupsList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#boader-list").load("/School/HouseGroupsList");
+        $('#modalsubject').dialog("close"); $.unblockUI();
+    }
+
+    function success(data) {
+        Begin();
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        Begin();
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+    $('a.deleteClass').live('click', function () {
+        var result = confirm("Are you sure you wish to delete this Group?");
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("HouseGroupDelete", "School")?id=' + id;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Group is already in use. Cannot delete.");
+                } else {
+                    $("#boader-list").load("/School/HouseGroupsList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+
+    });
+
+
+
+    $(".SearchHouseGroup").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/AdministrationSearch/HouseGroupSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#boader-list").html(data);
+        });
+    });
+
+
+</script>

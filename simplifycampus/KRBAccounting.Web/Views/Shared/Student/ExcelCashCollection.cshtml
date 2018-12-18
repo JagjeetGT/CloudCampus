@@ -1,0 +1,110 @@
+﻿@using System.Globalization
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentCashCollectionReportViewModel
+@{
+
+    decimal grandTotalBalance = 0;
+    var i = 1;
+}
+@{
+    var data = @Model.SP_StudentInfoHeader.FirstOrDefault();
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+
+
+
+            <div class="ReportHeader" style="text-align: center">
+                @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                <br />
+                <div class="ReportList">
+                    <p align="left" style="font-weight: bold; float: left;font-size:8px;">
+                        NAME :@data.Student &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        REGISTRATION NO. :@data.Regno &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        STUDENT CODE : @data.StdCode &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        <br />
+                        CLASS :@data.Class &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+
+
+                        SECTION :@data.Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                        ROLL NO. @data.Rollno
+                        <br />
+                       
+
+
+
+                        ADDRESS : @data.TmpAdd, @data.TmpCity, @data.TmpDistrict, @data.TmpCountry
+
+                    </p>
+
+                    <br />
+
+
+                    <table border="0.5" style="font-size:8px;">
+                        <thead>
+                            <tr bgcolor="#E6EEEE" align="center" style="font-weight:bold">
+                                <th style="font-size:8px;" width="5%">
+                                    S.N
+                                </th>
+                                <th style="font-size:8px;">
+                                    Date
+                                </th>
+                                <th style="font-size:8px;">
+                                    Receipt No
+                                </th>
+
+                                <th style="font-size:8px;">
+                                    Amount
+                                </th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in Model.StudentCashCollectionList.Where(x => x.ReceiptAmount != 0))
+                        {
+
+                            var miti = NepaliDateService.NepaliDate(item.Date);
+                            //var month = new DateTime(item.Year, item.Month, 1).ToString("MMM", CultureInfo.InvariantCulture);
+                            <tr align="center">
+                                <td>
+                                    @i
+                                </td>
+                                <td>
+                                    @*     @miti.Year @NepaliDateService.LongMonth(miti.Month)
+                                        (@item.Date.ToString("yyyy", CultureInfo.InvariantCulture) @item.Date.ToString("MMM", CultureInfo.InvariantCulture))*@
+                                    @item.BMiti B.S.
+                                    (@item.Date.ToString("MM/dd/yyyy") A.D.)
+                                </td>
+                                <td>
+                                    @item.BillNo
+                                </td>
+
+                                <td>
+                                    @item.ReceiptAmount
+                                </td>
+                            </tr>
+
+                            grandTotalBalance += item.ReceiptAmount;
+                            i++;
+                        }
+                        @if (Model.StudentCashCollectionList.Any())
+                        {
+                            <tr style="font-weight: bold">
+                                <td colspan="3" align="center">
+                                    Grand Total
+                                </td>
+                                <td>
+                                    @grandTotalBalance
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

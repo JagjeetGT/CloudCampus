@@ -1,0 +1,163 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.ReportStudentLedgerFromViewModel
+@{
+    ViewBag.Title = "Student Wise House";
+}
+@Html.Partial("_PartialStudentReportBreadCrumb")
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Student Wise House</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfStudentHouseWise", "Report")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelStudentHouseWise", "Report")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm" title="Student House">
+    <div class="block">
+        @Html.Partial("_PartialStudentHouseReportForm", Model)</div>
+</div>
+<script type="text/javascript">
+    $('.checkall').live('change', function () {
+        if ($(this).is(':checked')) {
+            $('.student-checkbox').attr('checked', "checked");
+        } else {
+            $('.student-checkbox').removeAttr('checked');
+        }
+
+
+
+    });
+
+    $(".studentwisehouse-box").live('keyup', function (e) {
+        $(this).closest(".ui-dialog").find("#report-form tbody").find("tr").hide();
+        var data = this.value.split(" ");
+        var jo = $(this).closest(".ui-dialog").find("#report-form tbody").find("tr");
+        $.each(data, function (i, v) {
+            //Use the new containsIgnoreCase function instead
+            jo = jo.filter("*:containsIgnoreCase('" + v + "')");
+        });
+
+        jo.show();
+
+    }).focus(function () {
+        this.value = "";
+        $(this).css({ "color": "black" });
+        $(this).unbind('focus');
+    }).css({ "color": "#C0C0C0" });
+    
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    $(document).ready(function () {
+
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+    });
+    $("#modalReportForm").dialog({
+        autoOpen: true,
+        modal: true,
+        width: '800px',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                Save();
+                //$.unblockUI();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function Save() {
+        var form = $("#report-form");
+        var url = form.attr("action");
+        $("form").removeData("validator");
+        $("form").removeData("unobtrusiveValidation");
+        $.validator.unobtrusive.parse(form);
+        var checkstudent = false;
+        $.each($(".student-checkbox"), function () {
+            if ($(this).is(":checked")) {
+                checkstudent = true;
+                return;
+            }
+        });
+
+        if (checkstudent == false) {
+            alert("Please Select Student");
+        }
+
+
+        if ($("form").valid() && checkstudent == true) {
+            $.ajax({
+                url: url,
+                data: form.serialize(),
+                datatype: "JSON",
+                type: "POST",
+                error: function () {
+
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    $("#report").html(data.view);
+                    $("#modalReportForm").dialog("close");
+                    $.unblockUI();
+                }
+            });
+        }
+    }
+
+    $("#ClassId").live("change", function () {
+        var ClassId = $("#ClassId").val();
+        var url = '@Url.Action("GetStudentOther")?classId=' + ClassId + "&sectionId=0" ;
+        $.ajax({
+            url: url,
+            datatype: "JSON",
+            type: "POST",
+            error: function () {
+
+                alert("An error occurred.");
+                $.unblockUI();
+            },
+            success: function (data) {
+                $("#student-ledger-detail .deletable").remove();
+                if (data.value != 0) {
+                    $("#student-ledger-detail").append(data.view);
+                }
+
+
+                $.unblockUI();
+            }
+        });
+    });
+
+   
+   
+</script>

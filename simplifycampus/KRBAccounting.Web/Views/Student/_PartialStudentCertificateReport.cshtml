@@ -1,0 +1,56 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentCertificateReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+
+            <div class="head">
+                <h1>
+                    Student Result Report
+                </h1>
+                <ul class="buttons">
+                    <li>
+                        <a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                           class="isw-refresh"></a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("PdfCertificate", "Student")" target="_blank" title="Export to Pdf" class="isw-pdf">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ExcelCertificate", "Student")" target="_blank" title="Export to Excel" class="isw-excel">
+                        </a>
+                    </li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            @*<div class="ReportHeader" style="text-align: center">
+                    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                </div>*@
+        <div class="workplace">
+            <div class="row-fluid">
+                <div class="block-fluid">
+
+            <div class="ReportList">
+
+                @foreach (var item in Model.Templates)
+                {
+
+                    if (item == null)
+                    {
+                        @*@Url.Action("")*@
+                    }
+                    else
+                    {
+                         @Html.Raw(item.Description)
+                    }
+                   
+                }
+
+
+
+            </div>
+            </div></div></div>

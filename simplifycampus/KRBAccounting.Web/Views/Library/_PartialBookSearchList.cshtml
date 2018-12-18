@@ -1,0 +1,55 @@
+@using KRBAccounting.Enums
+@model IEnumerable<KRBAccounting.Domain.Entities.ScBookReceivedDetails>
+@{
+    var i = 1;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N
+                </th>
+                <th>
+                    Accession No
+                </th>
+                <th>
+                    Book Name
+                </th>
+                <th>
+                    Author
+                </th>
+                <th>
+                    Rack No.
+                </th>
+                <th>
+                    Row No.
+                </th>
+                <th>
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>@item.AccessionNo
+                    </td>
+                    <td>@item.BookReceived.Book.Name
+                    </td>
+                    <td>@item.BookReceived.Book.PersonalAuthor
+                    </td>
+                    <td>@item.BookReceived.Book.RackNo
+                    </td><td>@item.BookReceived.Book.RowNo
+                    </td>
+                    <td>@Enum.GetName(typeof(LibraryBookStatus), item.Status)
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

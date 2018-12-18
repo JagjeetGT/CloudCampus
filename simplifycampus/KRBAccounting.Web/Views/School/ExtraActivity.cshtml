@@ -1,0 +1,164 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Extra activity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                       Activity Master</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="Javascript:void(0)" class="isw-plus addExtraActivity"></a></li>
+                        }
+                      
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchExtraActivity"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="extra-activity-list">
+                    @Html.Action("ExtraActivityList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalExtraActivity" style="display: none;" title="Activity Master">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    $("#modalExtraActivity").dialog({
+        autoOpen: false,
+        modal: true,
+        width: '500',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#frm-extra-activity").submit();
+              
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+
+
+
+    $('a.editExtraActivity').live('click', function () {
+        Begin();
+        var activityId = $(this).attr("data-id");
+        var url = '@Url.Action("EditExtraActivity", "School")?Id=' + activityId;
+        
+        getRequest(url);
+        return false;
+    });
+
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalExtraActivity .block').html(data);
+                $(this).addClass("done");
+                $("#modalExtraActivity").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('.addExtraActivity').live('click', function () {
+        Begin();
+        var url = '@Url.Action("AddExtraActivity", "School")';
+
+        getRequest(url);
+        return false;
+    });
+
+
+    function OnComplete() {
+        $("#modalExtraActivity").dialog("close");
+        $("#extra-activity-list").load("/School/ExtraActivityList"); $.unblockUI();
+    }
+
+    function OnCompleteEdit() {
+        $("#modalExtraActivity").dialog("close");
+        $("#extra-activity-list").load("/School/ExtraActivityList"); $.unblockUI();
+    }
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+    $('a.deleteScExtraActivity').live('click', function () {
+        var result = confirm('Are you sure you want to delete this Extra Activity ?');
+        if (result) {
+            var extraId = $(this).attr("data-id");
+            var url = '@Url.Action("DeleteExtraActivity", "School")?extraId=' + extraId;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Extra Activity is already in use. Cannot delete.");
+                } else {
+                    $("#extra-activity-list").load("/School/ExtraActivityList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+        $.unblockUI();
+        return false;
+    });
+
+
+    $(".SearchExtraActivity").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/AcademySearch/ExtraActivitySearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#extra-activity-list").html(data);
+        });
+    });
+</script>

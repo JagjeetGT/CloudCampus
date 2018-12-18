@@ -1,0 +1,65 @@
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<List<KRBAccounting.Domain.Entities.ScClassSchedule>>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = 1;}
+            @foreach (var item in Model)
+            {
+
+                <tr>
+                    <td align="center">@i</td>
+                    <td>
+                        @{
+                            var scClassSchedule = item.FirstOrDefault();
+                        }
+                        @if (scClassSchedule != null)
+                        {
+                            if (scClassSchedule.Class != null)
+                            {
+                                @scClassSchedule.Class.Description
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @{
+                            var firstOrDefault = item.FirstOrDefault();
+                        }
+                        @if (firstOrDefault != null)
+                        {
+                            if (firstOrDefault.Section != null)
+                            {
+                                @firstOrDefault.Section.Description
+                            }
+                        }
+
+                    </td>
+                    <td>@if (CheckPermission.GivePermission("Edit", "ScCS"))
+                        {
+                            <a href="@Url.Action("ClassScheduleEdit", new {classid = item.FirstOrDefault().ClassId, sectionid = item.FirstOrDefault().SectionId})" class="editScClassSchedule icon-pencil" data-id="@item.FirstOrDefault().Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                 
+                                <td>
+                       @if (CheckPermission.GivePermission("Delete", "ScCS")){ <a href="#" class="deleteScClassSchedule icon-remove" data-id="@item.FirstOrDefault().Id" title="Delete">
+                        </a>}
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

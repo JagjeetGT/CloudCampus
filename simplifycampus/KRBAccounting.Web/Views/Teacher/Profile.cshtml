@@ -1,0 +1,209 @@
+﻿@model KRBAccounting.Web.ViewModels.Teacher.TeacherProfileViewModel
+@using KRBAccounting.Service
+@{
+    Layout = "_Layout.cshtml";
+}
+
+<div class="social-box" id="user-profile" style="display: block;">
+    <div class="body">
+        <div class="row-fluid">
+            <div class="span2">
+                <div class="row-fluid">
+                    <img class="img-polaroid avatar span12" src="@KRBAccounting.Service.UtilityService.GetThumbnailImageByUserName(User.Identity.Name)">
+                </div>
+                
+                
+                @if (ViewBag.Name != User.Identity.Name)
+                {
+                    <p>
+                        <a data-id="@Model.EmployeeInfo.userId" href="#" id="studentMsg" class="btn btn-block btn-success"><i class="icon-envelope-alt"></i>Send message</a>
+                    </p>
+                }
+            </div>
+            <div class="span10">
+                <div class="row-fluid">
+                    <div class="span10 text-left" id="user-status">
+                        <h3>
+                            @Model.EmployeeInfo.Description</h3>
+                        <h5>
+                            @Model.EmployeeInfo.Address, @Model.EmployeeInfo.Country</h5>
+                        
+                       
+                    </div>
+                    @if (ViewBag.Name == User.Identity.Name)
+                    {
+                        <div class="span2">
+                            <a id="edit-profile-button" class="btn btn-block btn-primary" href="@Url.Action("Setting")" >
+                                Edit Profile</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span2">
+               @* <div class="social-box" id="friends-list">
+                    <div class="header">
+                        <h4>
+                            Friends</h4>
+                    </div>
+                    <div class="body">
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <a title="" data-toggle="tooltip" href="#" data-original-title="Yadra Abels">
+                                    <img class="img-rounded" alt="User" src="/templates/social/assets/img/people-face/user1_55.jpg">
+                                </a>
+                            </div>
+                            <div class="span4">
+                                <a title="" data-toggle="tooltip" href="#" data-original-title="Cesar Mendoza">
+                                    <img class="img-rounded" alt="User" src="/templates/social/assets/img/people-face/user2_55.jpg">
+                                </a>
+                            </div>
+                            <div class="span4">
+                                <a title="" data-toggle="tooltip" href="#" data-original-title="John Doe">
+                                    <img class="img-rounded" alt="User" src="/templates/social/assets/img/people-face/user3_55.jpg">
+                                </a>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <a title="" data-toggle="tooltip" href="#" data-original-title="Tobei Tsumura">
+                                    <img class="img-rounded" alt="User" src="/templates/social/assets/img/people-face/user4_55.jpg">
+                                </a>
+                            </div>
+                            <div class="span4">
+                                <a title="" data-toggle="tooltip" href="#" data-original-title="Jack Smith">
+                                    <img class="img-rounded" alt="User" src="/templates/social/assets/img/people-face/user5_55.jpg">
+                                </a>
+                            </div>
+                            <div class="span4">
+                                <a title="" data-toggle="tooltip" href="#" data-original-title="David Street">
+                                    <img class="img-rounded" alt="User" src="/templates/social/assets/img/people-face/user6_55.jpg">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+            <div class="span10">
+                <hr />
+                <dl class="dl-horizontal">
+                    <dt>Date Of Birth</dt>
+                    <dd>
+                        @if (Model.EmployeeInfo.DateOfBirth != null)
+                        {
+                                                       
+                            @Convert.ToDateTime(Model.EmployeeInfo.DateOfBirth).ToShortDateString()
+                                                       
+                        }</dd>
+                    <dt>Sex </dt>
+                    <dd>
+                        @Model.EmployeeInfo.Gender
+                    </dd>
+                    <dt>Categroy Name</dt>
+                    <dd>@Model.EmployeeInfo.EmployeeCategory.Description
+                    </dd>
+                    <dt>Department </dt>
+                    <dd>@Model.EmployeeInfo.EmployeeDepartment.Description
+                    </dd>
+                    <dt>Marital Status </dt>
+                    <dd>@Model.EmployeeInfo.MaritalStatus
+                    </dd>
+                    <dt>Religion </dt>
+                    <dd>
+                        @Model.EmployeeInfo.Religion
+                    </dd>
+                    <dt>Post </dt>
+                    <dd>
+                        @Model.EmployeeInfo.EmployeePost.Description
+                    </dd>
+                   
+                    <dt>Phone No. </dt>
+                    <dd>
+                        @Model.EmployeeInfo.Phone
+                    </dd>
+                    <dt>Email Address </dt>
+                    <dd>
+                        @Model.EmployeeInfo.Email
+                    </dd>
+                    <dt>Join Date </dt>
+                    <dd>
+                        @if (Model.EmployeeInfo.DateOfJoin != null)
+                        {
+                            @Convert.ToDateTime(Model.EmployeeInfo.DateOfJoin).ToShortDateString()
+                        }
+                    </dd>
+                </dl>
+                <hr/>
+                  <div class="span6 row">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h3>
+                        Documents</h3>
+                    <div class="clear">
+                    </div>
+                </div>
+             
+            </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" language="javascript">
+
+
+    $('a#studentMsg').live('click', function () {
+        $.blockUI();
+        var id = $(this).attr("data-id");
+        var url = '/Teacher/StudentMsg?studentId=' + id;
+
+        getRequest(url);
+
+        return false;
+    });
+
+    // $("#studentMsgDetail").modal('toggle');
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#studentMsgDetail').modal('show');
+                $('#studentMsgDetail').html(data);
+                $.unblockUI();
+
+            },
+            error: function (err) {
+
+
+
+                alert("Error");
+            }
+        });
+    }
+
+    //    $(".btn-submit-form").live("click", function () {
+    //        //$(".student-form").submit();
+    //    });
+
+    function complete(data) {
+        //alert(data.msgCount);
+        // alert(data.content);
+        if (data.content == "true") {
+
+            $("#count_" + data.userId).text("(" + data.msgCount + ")");
+            $("#studentMsgDetail").modal('hide');
+            var chat = $.connection.chatHub;
+            chat.server.send();
+            $.unblockUI();
+            GrowlMsg('Sent message Successful');
+        }
+
+    }
+
+
+</script>

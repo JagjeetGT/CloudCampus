@@ -1,0 +1,77 @@
+﻿@using KRBAccounting.Service
+@model PagedList<KRBAccounting.Domain.Entities.DebitNoteMaster>
+       <div class="block-fluid table-sorting" id="tbl-accepted">
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Debit Note No.
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Ledger AccountName
+                </th>
+                <th>
+                    Ref. Bill No.
+                </th>
+                <th>
+                    Ref. Bill Date
+                </th>
+                <th>
+                    Created By
+                </th>
+                <th>
+                    Approved Date
+                </th>
+                <th>
+                    Approved By
+                </th>
+                <th>
+                    Remarks
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+        
+                <tr>
+                    <td>@item.Number
+                    </td>
+                    <td>@item.Date.ToShortDateString()
+                    </td>
+                    <td>@item.Ledgers.AccountName
+                    </td>
+                    <td>@item.RefBillNo
+                    </td>
+                    <td>@item.RefBillDate.ToShortDateString()
+                    </td>
+                    <td>@item.Users.Username
+                    </td>
+                <td>@if(item.ApprovedDate.HasValue)
+                    {
+                        <text>@Convert.ToDateTime(item.ApprovedDate).ToShortDateString()</text>
+                    }
+                    </td>
+                    <td>@UtilityService.GetUserNameById(item.ApprovedBy)
+                    </td>
+                    <td>@item.Remarks
+                    </td>
+                    @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "DN"))
+                    {
+                        <td>
+                            <a href="javascript:void(0)" data-id="@item.Id" class="editDebitNote">Edit</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "DebitNoteAcceptedList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-accepted" }))
+    </div>
+</div>

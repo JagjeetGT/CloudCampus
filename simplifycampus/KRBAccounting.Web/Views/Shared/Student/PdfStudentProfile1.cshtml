@@ -1,0 +1,573 @@
+﻿@using iTextSharp.text.pdf.qrcode
+@model KRBAccounting.Domain.Entities.ScStudentinfo
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+
+            <div class="block-fluid table-sorting" id="report">
+                <h3 align="center" style="font-weight: bold; font-family: 'Times New Roman';">
+                    STUDENT PROFILE
+                </h3>
+                <h4 style="font-weight: bold; text-decoration: underline; font-family: 'Times New Roman';">
+                    PERSONAL INFORMATION
+                </h4>
+                <br />
+
+                <br />
+                <table >
+                    <tr>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="3" >
+                            <div class="lag">
+                                <label >NAME : </label>@Model.StuDesc
+                            </div>
+                     
+
+
+                        </td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';"colspan="3">
+                            
+                                    REGISTRATION NO. :
+                                
+                                @Model.Regno
+
+                        </td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="3">
+                            STUDENT CODE : @if (Model.StdCode != null)
+                            {
+                                @Model.StdCode
+                            }
+                        </td>
+                    
+                     
+                       
+                        <td style="font-size:9px;" colspan="2">
+                        PHONE : @Model.Phone
+                        </td>
+                     
+                        <td align="left" rowspan="4">
+                            @{
+                                var path = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "Content/academicsimage/" + Model.StdPhotoFileName + Model.StdPhotoExt;
+                                if (!File.Exists(path))
+                                {
+                                    path = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "Content/img/NoImage.jpg";
+
+                                }
+                            }
+
+
+
+
+                            <img src="@path" width="80px" height="80px" style="float: right;
+                                margin-top: 10px" />
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <td style="font-size: 10px; font-family: 'Times New Roman';" colspan="3">
+
+
+                            DOB : @if (Model.DBO != null)
+                                {
+
+                            @Convert.ToDateTime(Model.DBO).ToShortDateString()
+
+                                }
+                                A.D.
+
+                            || @Model.DBOMiti B.S.
+                        </td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';">
+                            SEX : @Model.Sex
+                        </td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="3">CURRENT CLASS : @Model.CurrClsCode</td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="2">CATEGORY NAME : @Model.StudentCategory.Description</td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="2">NATIONALITY : @Model.Nationality</td>
+                     
+                        
+                      
+                    
+                    </tr>
+                    <tr>
+                      
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="3">
+
+                           MARITAL STATUS : @Model.MaritialSt
+
+
+                        </td>
+                        <td style="font-size:9px; font-family: 'Times New Roman';" colspan="2"> ACADEMIC YEAR : @Model.AcademicYear.StartDate.Year</td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="2">HEIGHT : @Model.StHeight</td>
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="2">WEIGHT : @Model.StWeight</td>
+                      
+                        <td style="font-size: 9px; font-family: 'Times New Roman';" colspan="2">
+                            APPLY DATE : @if (Model.ApplyDate != null)
+                            {
+                                @Convert.ToDateTime(Model.ApplyDate).ToShortDateString()
+                            }
+                        </td>
+                       
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+
+                        <td style="font-size: 10px; font-family: 'Times New Roman';"></td>
+                        <td style="font-size: 10px; font-family: 'Times New Roman';"></td>
+                  
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                       </tr>
+                </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <h4 style="font-weight: bold; text-decoration: underline; font-family: 'Times New Roman';font-size:11px;">
+                    
+                    ADDRESS DETAILS
+                </h4>
+                <br/>
+           
+                <h5 style=" font-weight: bold; font-family: 'Times New Roman';font-size:10px;">
+                    1. PERMANENT
+                </h5>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';">
+                    ADDRESS : @Model.PerAdd 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                  
+                   
+                     WARD NO. : @Model.PerWardNo 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                   
+                    CITY/VILLAGE : @Model.PerCity
+                </p>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';"> 
+                DISTRICT : @Model.PerDistrict 
+                    
+                   
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  
+                STATE/ZONE : @Model.PerState 
+                   
+                   
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                
+                COUNTRY : @Model.PerCountry 
+                   
+                    
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    
+                   PHONE NO. : @Model.PerPhone</p>
+
+                <h5 style="font-weight: bold; font-family: 'Times New Roman';font-size:10px;">
+                    2. TEMPORARY 
+
+                </h5>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';" >
+                ADDRESS : @Model.TmpAdd 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                WARD NO. : @Model.TmpWardNo 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                  CITY/VILLAGE : @Model.TmpCity</p>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';"> 
+                DISTRICT : @Model.TmpDistrict 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  
+                    
+                    STATE/ZONE : @Model.TmpCity
+
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                 
+                    COUNTRY : @Model.TmpDistrict
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    
+                  PHONE NO. : @Model.TmpPhone</p>
+                <br />
+                <h4 style=" font-weight: bold; text-decoration: underline; font-family: 'Times New Roman';">
+                   
+                    PARENTS' DETAILS
+                </h4>
+                <br />
+                <h5 style="font-weight: bold;font-size:10px;">
+                    1.  FATHER'S INFORMATION
+                </h5>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';">
+                NAME : @Model.FName 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                 PROFESSION : @Model.FProff 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  
+                 PHONE(Res) : @Model.FPhoneRes</p>
+                <p style="padding-left:10px;font-size:10px;">
+                MOBILE : @Model.FMobile
+                    &ensp; &ensp; &ensp; &ensp;
+                    OFFICE : @Model.FOff
+                  &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+               
+                    EMAIL : @Model.FEmail
+                    
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  
+                ADDRESS : @Model.FOffAdd 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    <br/>
+                PHONE : @Model.FPhoneOff</p>
+
+
+                <h5 style=" font-weight:bold;font-size:10px;">
+                    2.  MOTHER'S INFORMATION
+                </h5>
+                
+                <p style="padding-left:10px;font-size:10px;font-family:'Times New Roman';"> 
+                NAME : @Model.MName 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    
+                PROFESSION : @Model.MOff
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                PHONE(Res) : @Model.MPhoneRes</p>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';">
+                    MOBILE : @Model.MMobile 
+                    &ensp; &ensp; &ensp; &ensp;
+                   OFFICE : @Model.MOff  
+                
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;    &ensp;  &ensp; 
+                     
+                EMAIL  : @Model.MEmail
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                ADDRESS : @Model.MOffAdd 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                  <br/>
+                PHONE: @Model.MPhoneOff</p>
+
+
+                <h5 style="font-weight: bold; font-family: 'Times New Roman';font-size:10px;">
+                    3. GUARDIAN'S INFORMATION
+                </h5>
+                <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';">
+                NAME : @Model.GName
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                 PROFESSION : @Model.GProff 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                RELATION : @Model.GRelation</p>
+                <p style="padding-left: 10px; font-size: 11px; font-family: 'Times New Roman';">
+              PHONE(Res) : @Model.GPhoneOff 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;    &ensp;  &ensp;  
+                   
+                
+                    EMAIL : @Model.GEmail
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                    MOBILE : @Model.GMobile
+                    
+                </p>
+                <p style="padding-left: 10px; font-size: 11px; font-family: 'Times New Roman';"> 
+                OFFICE : @Model.GOff 
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; 
+                ADDRESS : @Model.GOffAdd
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+                    &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  
+                PHONE : @Model.GPhoneOff</p>
+
+                <br/>
+                <h5 style=" font-weight: bold; text-decoration: underline; font-family: 'Times New Roman';">
+                     ACADEMIC BACKGROUND
+                </h5>
+                <br />
+
+
+
+                @foreach (var item in Model.AcademicBackGrounds)
+                {
+                    <p style="font-weight: bold; font-size: 10px;">@Model.AcademicBackGrounds.FirstOrDefault().Title</p>
+
+    <p style="padding-left: 10px; font-size: 10px; font-family: 'Times New Roman';">
+        INSTITUTION,BOARD,COUNTRY: @item.Institution @item.Board @item.Country 
+        &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+        &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+        &ensp; &ensp; &ensp; &ensp; &ensp; &ensp; &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;  &ensp;
+        
+        PASSED YEAR: @item.PassedYear  
+        
+        &ensp; &ensp; 
+         CGPA/PERCENTAGE:
+        @item.Percentage 
+        &ensp; &ensp; 
+        
+        DIVISION: @item.Division.Description
+    </p>
+                }
+                <br/>
+
+                <label style="padding: 11px; font-family: 'Times New Roman';font-size:11px;font-weight:bold">REMARKS</label>
+                <br />
+                <br />
+                <br />
+                <table border="0.5">
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                        <td rowspan="48" colspan="350"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#000000"></td>
+                    </tr>
+
+                </table>
+                <br />
+                <br />
+                <br />
+                <div class="row-fluid">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+
+                                <p style="font-size: 9px; font-family: 'Times New Roman';font-weight:bold;" align="left">
+                                    <br />
+                                    ____________
+                                    <br />
+                                    PREPARED BY
+                                </p>
+                            </td>
+                            <td>
+
+                                <p align="center" style=" font-size: 9px; font-family: 'Times New Roman'; font-weight: bold;">
+                                    <br />
+                                    _____________
+                                    <br />
+                                    CAMPUS SEAL
+                                </p>
+                            </td>
+                            <td>
+
+                                <p align="right" style=" font-size: 9px; font-family: 'Times New Roman'; font-weight: bold;">
+                                    <br />
+                                    ______________
+                                    <br />
+                                    CAMPUS CHIEF
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+
+
+                </div>
+        </div>
+    </div>
+</div>

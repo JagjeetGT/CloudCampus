@@ -1,0 +1,1295 @@
+﻿
+@model KRBAccounting.Web.ViewModels.LedgerReport.ProfitAndLossReportPeriodicViewModel
+@{
+
+    var incomeHeaders = KRBAccounting.Service.UtilityService.GetProfitAndLossHeaders(Model.StartDate, Model.EndDate, "I", Model.FYId,Model.BranchId);
+    var expenditureHeaders = KRBAccounting.Service.UtilityService.GetProfitAndLossHeaders(Model.StartDate, Model.EndDate, "E", Model.FYId, Model.BranchId);
+    decimal incomeTotal = incomeHeaders.Sum(x => x.Total);
+    decimal expenditureTotal = expenditureHeaders.Sum(x => x.Total);
+    //var profitLoss = incomeTotal - expenditureTotal;
+    var totalByGroupSide = KRBAccounting.Service.UtilityService.GetProfitAndLossTotalByGroupSide(Model.StartDate, Model.EndDate, Model.FYId, Model.BranchId);
+
+    var totalExpenditureSide = totalByGroupSide.Where(x => x.GroupAccountType == "E").FirstOrDefault();
+    var totalIncomeSide = totalByGroupSide.Where(x => x.GroupAccountType == "I").FirstOrDefault();
+
+    decimal totalIncomeSideOpeningTotal = totalIncomeSide == null ? 0 : totalIncomeSide.OpeningTotal;
+    decimal totalExpenditureSideOpeningTotal = totalExpenditureSide == null ? 0 : totalExpenditureSide.OpeningTotal;
+
+    decimal totalIncomeSidePeriodTotal = totalIncomeSide == null ? 0 : totalIncomeSide.PeriodTotal;
+    decimal totalExpenditureSidePeriodTotal = totalExpenditureSide == null ? 0 : totalExpenditureSide.PeriodTotal;
+
+    decimal totalIncomeSideClosing = totalIncomeSide == null ? 0 : totalIncomeSide.Closing;
+    decimal totalExpenditureSideClosing = totalExpenditureSide == null ? 0 : totalExpenditureSide.Closing;
+
+    var profitLossOpening = Math.Abs(totalIncomeSideOpeningTotal - totalExpenditureSideOpeningTotal);
+    var profitLossPeriodic = Math.Abs(totalIncomeSidePeriodTotal - totalExpenditureSidePeriodTotal);
+    var profitLossClosing = Math.Abs(totalIncomeSideClosing - totalExpenditureSideClosing);
+
+    var expenditureGrandTotalOpening = totalExpenditureSideOpeningTotal;
+    var expenditureGrandTotalPeriodic = totalExpenditureSidePeriodTotal;
+    var expenditureGrandTotalClosing = totalExpenditureSideClosing;
+
+    var incomeGrandTotalOpening = totalIncomeSideOpeningTotal;
+    var incomeGrandTotalPeriodic = totalIncomeSidePeriodTotal;
+    var incomeGrandTotalClosing = totalIncomeSideClosing;
+
+    bool isProfit = false;
+    if (totalExpenditureSide.Closing < totalIncomeSide.Closing)
+    {
+        isProfit = true;
+    }
+        
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 7px;">
+        @if (Model.AccountGroup == true && Model.Ledger == true)
+        {
+         <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <td colspan="4">
+                    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Expenditure
+                                </th>
+                                <th>
+                                    Opening
+                                </th>
+                                <th>
+                                    Periodic
+                                </th>
+                                <th>
+                                    Closing
+                                </th>
+                            </tr>
+                        </thead>
+                        @if (Model.AccountSubGroup == false && Model.Subledger == false)
+                        {
+                            foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                   var groupTotalOpening = expenditureLedgers.Sum(x => x.OpeningTotal);
+                                   var groupTotalPeriod = expenditureLedgers.Sum(x => x.PeriodTotal);
+                                   var groupTotalClosing = expenditureLedgers.Sum(x => x.Closing);
+
+                                   foreach (var ledger in expenditureLedgers)
+                                   {
+                                    <tr>
+                                        <td style="padding-left: 30px">
+                                            @ledger.AccountName
+                                        </td>
+                                        <td style="text-align: right">@ledger.OpeningTotal
+                                        </td>
+                                        <td style="text-align: right">@ledger.PeriodTotal
+                                        </td>
+                                        <td style="text-align: right">@ledger.Closing
+                                        </td>
+                                    </tr>
+                                   }
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (Model.AccountSubGroup == true && Model.Subledger == true)
+                        {
+                            decimal groupTotalOpening;
+                            decimal groupTotalPeriod;
+                            decimal groupTotalClosing;
+                            foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   groupTotalOpening = 0;
+                                   groupTotalPeriod = 0;
+                                   groupTotalClosing = 0;
+                                   decimal subgroupTotalOpening;
+                                   decimal subgroupTotalPeriod;
+                                   decimal subgroupTotalClosing;
+
+                                   foreach (var subgroup in expenditureHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                                   {
+                                       subgroupTotalOpening = 0;
+                                       subgroupTotalPeriod = 0;
+                                       subgroupTotalClosing = 0;
+                                    <tr>
+                                        <td style="padding-left: 30px; font-weight: bold">
+                                            @subgroup.ASGName
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                       var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                                       groupTotalOpening += expenditureLedgers.Sum(x => x.OpeningTotal);
+                                       groupTotalPeriod += expenditureLedgers.Sum(x => x.PeriodTotal);
+                                       groupTotalClosing += expenditureLedgers.Sum(x => x.Closing);
+                                       subgroupTotalOpening += expenditureLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.OpeningTotal);
+                                       subgroupTotalPeriod += expenditureLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.PeriodTotal);
+                                       subgroupTotalClosing += expenditureLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.Closing);
+                                       foreach (var ledger in expenditureLedgers)
+                                       {
+                                        <tr>
+                                            <td style="padding-left: 45px">
+                                                @ledger.AccountName
+                                            </td>
+                                            <td style="text-align: right">@ledger.OpeningTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.PeriodTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.Closing
+                                            </td>
+                                        </tr>
+                                                                     var expendituresubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", subgroup.Id, ledger.ASGId, ledger.Id, Model.FYId, 1, 1, Model.BranchId);
+                                                                     foreach (var subledger in expendituresubLedgers)
+                                                                     {
+                                            <tr>
+                                                <td style="padding-left: 60px">
+                                                    @subledger.SLName
+                                                </td>
+                                                <td style="text-align: right">@subledger.OpeningTotal
+                                                </td>
+                                                <td style="text-align: right">@subledger.PeriodTotal
+                                                </td>
+                                                <td style="text-align: right">@subledger.Closing
+                                                </td>
+                                            </tr>
+                                                                     }
+                                       }
+                                       if (expenditureLedgers.Count > 1)
+                                       {
+                                        <tr>
+                                            <td style="text-align: right; font-weight: bold">
+                                                Sub Group Total
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalOpening
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalPeriod
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalClosing
+                                            </td>
+                                        </tr>
+                                       }
+                                   }
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (Model.AccountSubGroup == true && Model.Subledger == false)
+                        {
+                            decimal groupTotalOpening;
+                            decimal groupTotalPeriod;
+                            decimal groupTotalClosing;
+                            foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   groupTotalOpening = 0;
+                                   groupTotalPeriod = 0;
+                                   groupTotalClosing = 0;
+                                   decimal subgroupTotalOpening;
+                                   decimal subgroupTotalPeriod;
+                                   decimal subgroupTotalClosing;
+
+                                   foreach (var subgroup in expenditureHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                                   {
+                                       subgroupTotalOpening = 0;
+                                       subgroupTotalPeriod = 0;
+                                       subgroupTotalClosing = 0;
+                                    <tr>
+                                        <td style="padding-left: 30px; font-weight: bold">
+                                            @subgroup.ASGName
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                       var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                                       groupTotalOpening += expenditureLedgers.Sum(x => x.OpeningTotal);
+                                       groupTotalPeriod += expenditureLedgers.Sum(x => x.PeriodTotal);
+                                       groupTotalClosing += expenditureLedgers.Sum(x => x.Closing);
+                                       subgroupTotalOpening += expenditureLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.OpeningTotal);
+                                       subgroupTotalPeriod += expenditureLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.PeriodTotal);
+                                       subgroupTotalClosing += expenditureLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.Closing);
+                                       foreach (var ledger in expenditureLedgers)
+                                       {
+                                        <tr>
+                                            <td style="padding-left: 45px">
+                                                @ledger.AccountName
+                                            </td>
+                                            <td style="text-align: right">@ledger.OpeningTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.PeriodTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.Closing
+                                            </td>
+                                        </tr>
+                                       }
+                                       if (expenditureLedgers.Count > 1)
+                                       {
+                                        <tr>
+                                            <td style="text-align: right; font-weight: bold">
+                                                Sub Group Total
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalOpening
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalPeriod
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalClosing
+                                            </td>
+                                        </tr>
+                                       }
+                                   }
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (Model.AccountSubGroup == false && Model.Subledger == true)
+                        {
+                            decimal groupTotalOpening;
+                            decimal groupTotalPeriod;
+                            decimal groupTotalClosing;
+                            foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   groupTotalOpening = 0;
+                                   groupTotalPeriod = 0;
+                                   groupTotalClosing = 0;
+
+                                   var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                   groupTotalOpening += expenditureLedgers.Sum(x => x.OpeningTotal);
+                                   groupTotalPeriod += expenditureLedgers.Sum(x => x.PeriodTotal);
+                                   groupTotalClosing += expenditureLedgers.Sum(x => x.Closing);
+
+                                   foreach (var ledger in expenditureLedgers)
+                                   {
+                                    <tr>
+                                        <td style="font-weight: bold; padding-left: 30px">
+                                            @ledger.AccountName
+                                        </td>
+                                        <td style="font-weight: bold; text-align: right">@ledger.OpeningTotal
+                                        </td>
+                                        <td style="font-weight: bold; text-align: right">@ledger.PeriodTotal
+                                        </td>
+                                        <td style="font-weight: bold; text-align: right">@ledger.Closing
+                                        </td>
+                                    </tr>
+                                                                                    var expendituresubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", item.Id, 0, ledger.Id, Model.FYId, 0, 1, Model.BranchId);
+                                                                                    foreach (var subledger in expendituresubLedgers)
+                                                                                    {
+                                        <tr>
+                                            <td style="padding-left: 45px">
+                                                @subledger.SLName
+                                            </td>
+                                            <td style="text-align: right">@subledger.OpeningTotal
+                                            </td>
+                                            <td style="text-align: right">@subledger.PeriodTotal
+                                            </td>
+                                            <td style="text-align: right">@subledger.Closing
+                                            </td>
+                                        </tr>
+                                                                                    }
+                                   }
+                    
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </td>
+
+                <td colspan="4">
+                    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Income
+                                </th>
+                                <th>
+                                    Opening
+                                </th>
+                                <th>
+                                    Periodic
+                                </th>
+                                <th>
+                                    Closing
+                                </th>
+                            </tr>
+                        </thead>
+                        @if (Model.AccountSubGroup == false && Model.Subledger == false)
+                        {
+                            foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right">
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                   var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                   var groupTotalOpening = incomeLedgers.Sum(x => x.OpeningTotal);
+                                   var groupTotalPeriod = incomeLedgers.Sum(x => x.PeriodTotal);
+                                   var groupTotalClosing = incomeLedgers.Sum(x => x.Closing);
+
+                                   foreach (var ledger in incomeLedgers)
+                                   {
+                                    <tr>
+                                        <td style="padding-left: 30px">
+                                            @ledger.AccountName
+                                        </td>
+                                        <td style="text-align: right">@ledger.OpeningTotal
+                                        </td>
+                                        <td style="text-align: right">@ledger.PeriodTotal
+                                        </td>
+                                        <td style="text-align: right">@ledger.Closing
+                                        </td>
+                                    </tr>
+                                   }
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (Model.AccountSubGroup == true && Model.Subledger == true)
+                        {
+                            decimal groupTotalOpening;
+                            decimal groupTotalPeriod;
+                            decimal groupTotalClosing;
+
+                            foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                groupTotalOpening = 0;
+                                groupTotalPeriod = 0;
+                                groupTotalClosing = 0;
+                                decimal subgroupTotalOpening;
+                                decimal subgroupTotalPeriod;
+                                decimal subgroupTotalClosing;
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right">
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   foreach (var subgroup in incomeHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                                   {
+                                       subgroupTotalOpening = 0;
+                                       subgroupTotalPeriod = 0;
+                                       subgroupTotalClosing = 0;
+                                    <tr>
+                                        <td style="font-weight: bold; padding-left: 30px">
+                                            @subgroup.ASGName
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td style="text-align: right">
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                       var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                                       groupTotalOpening = incomeLedgers.Sum(x => x.OpeningTotal);
+                                       groupTotalPeriod = incomeLedgers.Sum(x => x.PeriodTotal);
+                                       groupTotalClosing = incomeLedgers.Sum(x => x.Closing);
+                                       subgroupTotalOpening += incomeLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.OpeningTotal);
+                                       subgroupTotalPeriod += incomeLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.PeriodTotal);
+                                       subgroupTotalClosing += incomeLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.Closing);
+                                       foreach (var ledger in incomeLedgers)
+                                       {
+                                        <tr>
+                                            <td style="padding-left: 45px">
+                                                @ledger.AccountName
+                                            </td>
+                                            <td style="text-align: right">@ledger.OpeningTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.PeriodTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.Closing
+                                            </td>
+                                        </tr>
+                                                                     var incomesubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", subgroup.Id, ledger.ASGId, ledger.Id, Model.FYId, 1, 1, Model.BranchId);
+                                                                     foreach (var subledger in incomesubLedgers)
+                                                                     {
+                                            <tr>
+                                                <td style="padding-left: 60px">
+                                                    @subledger.SLName
+                                                </td>
+                                                <td style="text-align: right">@subledger.OpeningTotal
+                                                </td>
+                                                <td style="text-align: right">@subledger.PeriodTotal
+                                                </td>
+                                                <td style="text-align: right">@subledger.Closing
+                                                </td>
+                                            </tr>
+                                                                     }
+                                       }
+                                       if (incomeLedgers.Count > 1)
+                                       {
+                                        <tr>
+                                            <td style="text-align: right; font-weight: bold">
+                                                Sub Group Total
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalOpening
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalPeriod
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalClosing
+                                            </td>
+                                        </tr>
+                                       }
+                                   }
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (Model.AccountSubGroup == true && Model.Subledger == false)
+                        {
+                            decimal groupTotalOpening;
+                            decimal groupTotalPeriod;
+                            decimal groupTotalClosing;
+                            foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                groupTotalOpening = 0;
+                                groupTotalPeriod = 0;
+                                groupTotalClosing = 0;
+                                decimal subgroupTotalOpening;
+                                decimal subgroupTotalPeriod;
+                                decimal subgroupTotalClosing;
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right">
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   foreach (var subgroup in incomeHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                                   {
+                                       subgroupTotalOpening = 0;
+                                       subgroupTotalPeriod = 0;
+                                       subgroupTotalClosing = 0;
+                                    <tr>
+                                        <td style="font-weight: bold; padding-left: 30px">
+                                            @subgroup.ASGName
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td style="text-align: right">
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                       var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                                       groupTotalOpening = incomeLedgers.Sum(x => x.OpeningTotal);
+                                       groupTotalPeriod = incomeLedgers.Sum(x => x.PeriodTotal);
+                                       groupTotalClosing = incomeLedgers.Sum(x => x.Closing);
+                                       subgroupTotalOpening += incomeLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.OpeningTotal);
+                                       subgroupTotalPeriod += incomeLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.PeriodTotal);
+                                       subgroupTotalClosing += incomeLedgers.Where(x => x.ASGId == subgroup.ASGId).Sum(x => x.Closing);
+                                       foreach (var ledger in incomeLedgers)
+                                       {
+                                        <tr>
+                                            <td style="padding-left: 45px">
+                                                @ledger.AccountName
+                                            </td>
+                                            <td style="text-align: right">@ledger.OpeningTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.PeriodTotal
+                                            </td>
+                                            <td style="text-align: right">@ledger.Closing
+                                            </td>
+                                        </tr>
+                                       }
+                                       if (incomeLedgers.Count > 1)
+                                       {
+                                        <tr>
+                                            <td style="text-align: right; font-weight: bold">
+                                                Sub Group Total
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalOpening
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalPeriod
+                                            </td>
+                                            <td style="text-align: right; font-weight: bold">@subgroupTotalClosing
+                                            </td>
+                                        </tr>
+                                       }
+                                   }
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else if (Model.AccountSubGroup == false && Model.Subledger == true)
+                        {
+                            decimal groupTotalOpening;
+                            decimal groupTotalPeriod;
+                            decimal groupTotalClosing;
+                            foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   groupTotalOpening = 0;
+                                   groupTotalPeriod = 0;
+                                   groupTotalClosing = 0;
+
+                                   var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                   groupTotalOpening += incomeLedgers.Sum(x => x.OpeningTotal);
+                                   groupTotalPeriod += incomeLedgers.Sum(x => x.PeriodTotal);
+                                   groupTotalClosing += incomeLedgers.Sum(x => x.Closing);
+
+                                   foreach (var ledger in incomeLedgers)
+                                   {
+                                    <tr>
+                                        <td style="font-weight: bold; padding-left: 30px">
+                                            @ledger.AccountName
+                                        </td>
+                                        <td style="font-weight: bold; text-align: right">@ledger.OpeningTotal
+                                        </td>
+                                        <td style="font-weight: bold; text-align: right">@ledger.PeriodTotal
+                                        </td>
+                                        <td style="font-weight: bold; text-align: right">@ledger.Closing
+                                        </td>
+                                    </tr>
+                                                                                    var incomesubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", item.Id, 0, ledger.Id, Model.FYId, 0, 1, Model.BranchId);
+                                                                                    foreach (var subledger in incomesubLedgers)
+                                                                                    {
+                                        <tr>
+                                            <td style="padding-left: 45px">
+                                                @subledger.SLName
+                                            </td>
+                                            <td style="text-align: right">@subledger.OpeningTotal
+                                            </td>
+                                            <td style="text-align: right">@subledger.PeriodTotal
+                                            </td>
+                                            <td style="text-align: right">@subledger.Closing
+                                            </td>
+                                        </tr>
+                                                                                    }
+                                   }
+                    
+                                <tr>
+                                    <td style="text-align: right; font-weight: bold">
+                                        Group Total
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </td>
+
+                 </tr>       
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            TOTAL FOR EXPENDITURE 
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@totalExpenditureSide.OpeningTotal
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@totalExpenditureSide.PeriodTotal
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@totalExpenditureSide.Closing
+                        </td>
+                        <td style="text-align: right; font-weight: bold">
+                            TOTAL FOR INCOME 
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@totalIncomeSide.OpeningTotal
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@totalIncomeSide.PeriodTotal
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@totalIncomeSide.Closing
+                        </td>
+                    </tr>
+                                                                    if (!isProfit)
+                                                                    {
+                                                                        incomeGrandTotalOpening += profitLossOpening;
+                                                                        incomeGrandTotalPeriodic += profitLossPeriodic;
+                                                                        incomeGrandTotalClosing += profitLossClosing;
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align: right; font-weight: bold">
+                                Net Loss C/F To B/S
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@profitLossOpening
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@profitLossPeriodic
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@profitLossClosing
+                            </td>
+                        </tr>
+                                                                    }
+                                                                    if (isProfit)
+                                                                    {
+
+                                                                        expenditureGrandTotalOpening += profitLossOpening;
+                                                                        expenditureGrandTotalPeriodic += profitLossPeriodic;
+                                                                        expenditureGrandTotalClosing += profitLossClosing;
+
+                        <tr>
+                            <td style="text-align: right; font-weight: bold">
+                                Net Profit C/F To B/S
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@profitLossOpening
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@profitLossPeriodic
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@profitLossClosing
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                                                                    }
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            GRAND TOTAL
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@expenditureGrandTotalOpening
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@expenditureGrandTotalPeriodic
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@expenditureGrandTotalClosing
+                        </td>
+                         <td style="text-align: right; font-weight: bold">
+                            GRAND TOTAL
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@incomeGrandTotalOpening
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@incomeGrandTotalPeriodic
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@incomeGrandTotalClosing
+                        </td>
+                    </tr>
+        }
+        else if (Model.AccountGroup == true && Model.Ledger == false)
+        {
+             <tr>
+                <td colspan="4">
+                    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Expenditure
+                                </th>
+                                <th>
+                                    Opening
+                                </th>
+                                <th>
+                                    Periodic
+                                </th>
+                                <th>
+                                    Closing
+                                </th>
+                            </tr>
+                        </thead>
+                        @if (Model.AccountSubGroup == true)
+                        {
+                            foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                var groupTotalOpening = expenditureLedgers.Sum(x => x.OpeningTotal);
+                                var groupTotalPeriod = expenditureLedgers.Sum(x => x.PeriodTotal);
+                                var groupTotalClosing = expenditureLedgers.Sum(x => x.Closing);
+
+                                <tr>
+                                    <td style="text-align: left; font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                                                                                foreach (var subgroup in expenditureHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                                                                                {
+                                                                                    var expendituresubgroup = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                                                                                    var subgroupTotalOpening = expendituresubgroup.Sum(x => x.OpeningTotal);
+                                                                                    var subgroupTotalPeriod = expendituresubgroup.Sum(x => x.PeriodTotal);
+                                                                                    var subgroupTotalClosing = expendituresubgroup.Sum(x => x.Closing);
+
+                                    <tr>
+                                        <td style="text-align: left; padding-left: 30px">
+                                            @subgroup.ASGName
+                                        </td>
+                                        <td style="text-align: right">@subgroupTotalOpening
+                                        </td>
+                                        <td style="text-align: right">@subgroupTotalPeriod
+                                        </td>
+                                        <td style="text-align: right">@subgroupTotalClosing
+                                        </td>
+                                    </tr>
+                                                                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                var groupTotalOpening = expenditureLedgers.Sum(x => x.OpeningTotal);
+                                var groupTotalPeriod = expenditureLedgers.Sum(x => x.PeriodTotal);
+                                var groupTotalClosing = expenditureLedgers.Sum(x => x.Closing);
+                            
+                                <tr>
+                                    <td>
+                                       @item.Description
+                                    </td>
+                                    <td style="text-align: right">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </table>
+                </td>
+                <td colspan="4">
+                    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Income
+                                </th>
+                                <th>
+                                    Opening
+                                </th>
+                                <th>
+                                    Periodic
+                                </th>
+                                <th>
+                                    Closing
+                                </th>
+                            </tr>
+                        </thead>
+                        @if (Model.AccountSubGroup == true)
+                        {
+                            foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", item.Id, 0, 0, Model.FYId, 1, 0, Model.BranchId);
+                                var groupTotalOpening = incomeLedgers.Sum(x => x.OpeningTotal);
+                                var groupTotalPeriod = incomeLedgers.Sum(x => x.PeriodTotal);
+                                var groupTotalClosing = incomeLedgers.Sum(x => x.Closing);
+
+                                <tr>
+                                    <td style="text-align: left; font-weight: bold">
+                                        @item.Description
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@groupTotalClosing
+                                    </td>
+                                </tr>
+                    
+                                                                                foreach (var subgroup in incomeHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                                                                                {
+                                                                                    var incomesubgroup = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                                                                                    var subgroupTotalOpening = incomesubgroup.Sum(x => x.OpeningTotal);
+                                                                                    var subgroupTotalPeriod = incomesubgroup.Sum(x => x.PeriodTotal);
+                                                                                    var subgroupTotalClosing = incomesubgroup.Sum(x => x.Closing);
+
+                                    <tr>
+                                        <td style="text-align: left; padding-left: 30px">
+                                            @subgroup.ASGName
+                                        </td>
+                                        <td style="text-align: right">@subgroupTotalOpening
+                                        </td>
+                                        <td style="text-align: right">@subgroupTotalPeriod
+                                        </td>
+                                        <td style="text-align: right">@subgroupTotalClosing
+                                        </td>
+                                    </tr>
+                                                                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                            {
+                                var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                                var groupTotalOpening = incomeLedgers.Sum(x => x.OpeningTotal);
+                                var groupTotalPeriod = incomeLedgers.Sum(x => x.PeriodTotal);
+                                var groupTotalClosing = incomeLedgers.Sum(x => x.Closing);
+                                <tr>
+                                   <td>
+                                        @item.Description
+                                    </td>
+                                    <td style="text-align: right">@groupTotalOpening
+                                    </td>
+                                    <td style="text-align: right">@groupTotalPeriod
+                                    </td>
+                                    <td style="text-align: right">@groupTotalClosing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </td>
+            </tr>       
+            <tr>
+                <td style="text-align: right; font-weight: bold">
+                    TOTAL FOR EXPENDITURE 
+                </td>
+                <td style="text-align: right; font-weight: bold">@totalExpenditureSide.OpeningTotal
+                </td>
+                <td style="text-align: right; font-weight: bold">@totalExpenditureSide.PeriodTotal
+                </td>
+                <td style="text-align: right; font-weight: bold">@totalExpenditureSide.Closing
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    TOTAL FOR INCOME 
+                </td>
+                <td style="text-align: right; font-weight: bold">@totalIncomeSide.OpeningTotal
+                </td>
+                <td style="text-align: right; font-weight: bold">@totalIncomeSide.PeriodTotal
+                </td>
+                <td style="text-align: right; font-weight: bold">@totalIncomeSide.Closing
+                </td>
+            </tr>
+                                                            if (!isProfit)
+                                                            {
+                                                                incomeGrandTotalOpening += profitLossOpening;
+                                                                incomeGrandTotalPeriodic += profitLossPeriodic;
+                                                                incomeGrandTotalClosing += profitLossClosing;
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right; font-weight: bold">
+                        Net Loss C/F To B/S
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLossOpening
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLossPeriodic
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLossClosing
+                    </td>
+                </tr>
+                                                            }
+                                                            if (isProfit)
+                                                            {
+
+                                                                expenditureGrandTotalOpening += profitLossOpening;
+                                                                expenditureGrandTotalPeriodic += profitLossPeriodic;
+                                                                expenditureGrandTotalClosing += profitLossClosing;
+
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        Net Profit C/F To B/S
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLossOpening
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLossPeriodic
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLossClosing
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                                                            }
+            <tr>
+                <td style="text-align: right; font-weight: bold">
+                    GRAND TOTAL
+                </td>
+                <td style="text-align: right; font-weight: bold">@expenditureGrandTotalOpening
+                </td>
+                <td style="text-align: right; font-weight: bold">@expenditureGrandTotalPeriodic
+                </td>
+                <td style="text-align: right; font-weight: bold">@expenditureGrandTotalClosing
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    GRAND TOTAL
+                </td>
+                <td style="text-align: right; font-weight: bold">@incomeGrandTotalOpening
+                </td>
+                <td style="text-align: right; font-weight: bold">@incomeGrandTotalPeriodic
+                </td>
+                <td style="text-align: right; font-weight: bold">@incomeGrandTotalClosing
+                </td>
+            </tr>     
+        }
+        else if (Model.AccountGroup == false && Model.Ledger == true)
+        {
+            <tr>
+                <td colspan="4">
+                    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Expenditure
+                                </th>
+                                <th>
+                                    Opening
+                                </th>
+                                <th>
+                                    Periodic
+                                </th>
+                                <th>
+                                    Closing
+                                </th>
+                            </tr>
+                        </thead>
+                        @if (Model.Subledger == true)
+                        {
+                            var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", 0, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                            foreach (var ledger in expenditureLedgers)
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @ledger.AccountName
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@ledger.OpeningTotal
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@ledger.PeriodTotal
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@ledger.Closing
+                                    </td>
+                                </tr>
+                                                                                var expendituresubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", 0, 0, ledger.Id, Model.FYId, 0, 1, Model.BranchId);
+                                                                                foreach (var subledger in expendituresubLedgers)
+                                                                                {
+                                    <tr>
+                                        <td style="padding-left: 30px">@subledger.SLName
+                                        </td>
+                                        <td style="text-align: right">@subledger.OpeningTotal
+                                        </td>
+                                        <td style="text-align: right">@subledger.PeriodTotal
+                                        </td>
+                                        <td style="text-align: right">@subledger.Closing
+                                        </td>
+                                    </tr>
+                                                                                }
+                            }
+                        }
+                        else
+                        {
+                            var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "E", 0, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                            foreach (var ledger in expenditureLedgers)
+                            {
+                                <tr>
+                                    <td>
+                                        @ledger.AccountName
+                                    </td>
+                                    <td style="text-align: right">@ledger.OpeningTotal
+                                    </td>
+                                    <td style="text-align: right">@ledger.PeriodTotal
+                                    </td>
+                                    <td style="text-align: right">@ledger.Closing
+                                    </td>
+                                </tr>
+                            }
+                        }  
+                    </table>
+                </td>
+                <td colspan="4">
+                    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Income
+                                </th>
+                                <th>
+                                    Opening
+                                </th>
+                                <th>
+                                    Periodic
+                                </th>
+                                <th>
+                                    Closing
+                                </th>
+                            </tr>
+                        </thead>
+                        @if (Model.Subledger == true)
+                        {
+                            var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", 0, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                            foreach (var ledger in incomeLedgers)
+                            {
+                                <tr>
+                                    <td style="font-weight: bold">
+                                        @ledger.AccountName
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@ledger.OpeningTotal
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@ledger.PeriodTotal
+                                    </td>
+                                    <td style="text-align: right; font-weight: bold">@ledger.Closing
+                                    </td>
+                                </tr>
+                                                                                var incomeLedgerssubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", 0, 0, ledger.Id, Model.FYId, 0, 1, Model.BranchId);
+                                                                                foreach (var subledger in incomeLedgerssubLedgers)
+                                                                                {
+                                    <tr>
+                                        <td style="padding-left: 30px">@subledger.SLName
+                                        </td>
+                                        <td style="text-align: right">@subledger.OpeningTotal
+                                        </td>
+                                        <td style="text-align: right">@subledger.PeriodTotal
+                                        </td>
+                                        <td style="text-align: right">@subledger.Closing
+                                        </td>
+                                    </tr>
+                                                                                }
+                            }
+                        }
+                        else
+                        {
+                            var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossPeriodicLedger(Model.StartDate, Model.EndDate, "I", 0, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                            foreach (var ledger in incomeLedgers)
+                            {
+                                <tr>
+                                    <td>
+                                        @ledger.AccountName
+                                    </td>
+                                    <td style="text-align: right">@ledger.OpeningTotal
+                                    </td>
+                                    <td style="text-align: right">@ledger.PeriodTotal
+                                    </td>
+                                    <td style="text-align: right">@ledger.Closing
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE 
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@totalExpenditureSide.OpeningTotal
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@totalExpenditureSide.PeriodTotal
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@totalExpenditureSide.Closing
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME 
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@totalIncomeSide.OpeningTotal
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@totalIncomeSide.PeriodTotal
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@totalIncomeSide.Closing
+                    </td>
+                        
+                </tr>
+                                                                if (!isProfit)
+                                                                {
+                                                                    incomeGrandTotalOpening += profitLossOpening;
+                                                                    incomeGrandTotalPeriodic += profitLossPeriodic;
+                                                                    incomeGrandTotalClosing += profitLossClosing;
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLossOpening
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLossPeriodic
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLossClosing
+                        </td>
+                    </tr>
+                                                                }
+                                                                if (isProfit)
+                                                                {
+                                                                    expenditureGrandTotalOpening += profitLossOpening;
+                                                                    expenditureGrandTotalPeriodic += profitLossPeriodic;
+                                                                    expenditureGrandTotalClosing += profitLossClosing;
+
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLossOpening
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLossPeriodic
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLossClosing
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                                                                }
+            <tr>
+                <td style="text-align: right; font-weight: bold">
+                    GRAND TOTAL
+                </td>
+                <td style="text-align: right; font-weight: bold">@expenditureGrandTotalOpening
+                </td>
+                <td style="text-align: right; font-weight: bold">@expenditureGrandTotalPeriodic
+                </td>
+                <td style="text-align: right; font-weight: bold">@expenditureGrandTotalClosing
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    GRAND TOTAL
+                </td>
+                <td style="text-align: right; font-weight: bold">@incomeGrandTotalOpening
+                </td>
+                <td style="text-align: right; font-weight: bold">@incomeGrandTotalPeriodic
+                </td>
+                <td style="text-align: right; font-weight: bold">@incomeGrandTotalClosing
+                </td>
+                    
+            </tr>
+            
+        }
+    </table>
+</div>

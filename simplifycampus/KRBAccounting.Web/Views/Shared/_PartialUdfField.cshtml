@@ -1,0 +1,53 @@
+﻿@using KRBAccounting.Service
+@model IEnumerable<KRBAccounting.Domain.Entities.UDFEntry>
+@foreach (var item in Model)
+{
+    <div class="lag">
+        <label>@item.FieldName</label>
+        <span class="field">
+            @switch (item.ControlTypeId)
+            {
+                case (int)KRBAccounting.Enums.ControlTypeEnum.Textbox:
+                    {
+                <input type="text" value="@UtilityService.GetUdfValueById(item.Id, ViewBag.Id)" name="@item.FieldName"/>
+                    }
+                    break;
+
+                case (int)KRBAccounting.Enums.ControlTypeEnum.Date:
+                    {
+                <input type="text" value="@UtilityService.GetUdfValueById(item.Id, ViewBag.Id)" name="@item.FieldName"/>
+                    }
+                    break;
+                case (int)KRBAccounting.Enums.ControlTypeEnum.Number:
+                    {
+                <input type="text" value="@UtilityService.GetUdfValueById(item.Id, ViewBag.Id)" name="@item.FieldName"/>
+                    }
+                    break;
+                case (int)KRBAccounting.Enums.ControlTypeEnum.YesNo:
+                    {
+                        
+                        
+                <input type="checkbox" name="@item.FieldName"/>
+                    }
+                    break;
+                case (int)KRBAccounting.Enums.ControlTypeEnum.Memo:
+                    {
+                <textarea name="@item.FieldName" value="@UtilityService.GetUdfValueById(item.Id, ViewBag.Id)" />
+                    }
+                    break;
+                case (int)KRBAccounting.Enums.ControlTypeEnum.List:
+                    {
+
+                        var list = UtilityService.UdfList(item.Id);
+                <select name="@item.FieldName" class="select-80">
+                    @foreach (var i in list)
+                    {
+                        <option value="@i.Value">@i.Text</option>
+                    }
+                </select>
+                    }
+                    break;
+            }
+        </span>
+    </div>
+}

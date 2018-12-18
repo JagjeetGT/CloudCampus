@@ -1,0 +1,51 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.OpeningStudent
+<tr class="university-course-fee detail-entry">
+    @using (Html.BeginCollectionItem("openingdue"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "ledger_openingvendor" })
+            <input type="text" class="modallink input-160 first-col text_ledger_vendor" value="@if (Model.Studentinfo != null)
+                                                                                               {
+                                                                                                   @Model.Studentinfo.StuDesc
+                                                                                               }" href="@Url.Action("GetRegistrationStudents", "School")" valueId="StudentId" id="GlCodevendorId"/>
+        </td>
+        
+        <td>
+            @Html.DropDownListFor(x => x.AmountType, Model.AmountTypeList, new { @class = "input-120 Unit" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Amount, new { @class = "last-col-modified input-160 BuyPrice", tableid = "openingledgervendor-list", href = "/Master/PartialOpeningDueAdd/" })
+        </td>
+        
+@*        <td class="PlusUnit">
+          <a  data-id="@Model.Id" class="addNewConversion icon-plus" href = "@Url.Action("AddProductUnitConversion")" tableid = "qualificatione-list" ></a>
+           
+        </td>*@
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#openingledgervendor-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#openingledgervendor-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+
+    })
+
+
+
+</script>

@@ -1,0 +1,157 @@
+@model KRBAccounting.Domain.Entities.ScStudentRegistration
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StudentRegistrationEdit", "Student", new { controller = "Student" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(m => m.AcademicYearId)
+    @Html.HiddenFor(x => x.CreatedDate)
+    @Html.HiddenFor(x => x.CreatedById)
+   
+    <div class="lag">
+        <div class="stack">
+            <label class="label-70">
+                Class</label>
+            <div class="field">@Html.HiddenFor(x => x.ClassId)
+                <input type="text" class = " input-190" href="@Url.Action("GetStudentRegistrationByClassId", "School")" value="@if (Model.Class != null)
+                                                                                                                                          {
+                                                                                                                         @Model.Class.Description
+                                                                                                                                          }
+                                                                                                                        " parent="Id" 
+                                                                                                                         readonly="readonly" valueId="ClassId" id="feeitemledger" title="Class Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassId)</div>
+        </div>
+        <input type="text" id="Code" readonly="readonly" class="input-100 input" />
+        <div class="clearfix">
+        </div>
+        <div class="lag detailEntryTable" style="height: 400px;">
+            <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 825px">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Section
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Roll No
+                    </th>
+                    <th>
+                        Type
+                    </th>
+                    <th>
+                        Shift
+                    </th>
+                    <th>
+                        Boarder
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+                @foreach (var item in Model.StudentRegistrationDetails)
+                {
+                    item.OldRollNo = item.RollNo;
+                    item.OldSectionId = item.SectionId;
+                    @Html.Partial("_PartialStudentRegistrationDetailEdit", item)
+                }
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Remarks</label>
+            <div class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks)
+            </div>
+        </div>
+    </div>
+}
+<script>
+
+    $(".text_section").live("blur", function() {
+        var closeselement = $(this).closest("tr");
+        var sectionId = closeselement.find(".hdn_SectionId").val();
+        var OldsectionId = closeselement.find(".OldSectionId").val();
+        var OldRollNo = closeselement.find(".OldRollNo").val();
+        //rollno
+  
+        if(sectionId == OldsectionId) {
+            closeselement.find(".rollno").val(OldRollNo);
+        }else {
+               closeselement.find(".rollno").val("");
+            
+        }
+    });
+    $(document).ready(function () {
+        var id = $("#Id").val();
+        if (id != 0 && id != '') {
+            var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+            $.each(ledgerElement, function (index) {
+                var element = $(this).closest("tr");
+                element.attr("id", "tr_" + index);
+               
+                var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                element.find(".text_subject").attr({
+                    "valueId": Subject_valueid,
+                    "id": "text_subject_" + index
+                });
+                var hdn_CurrentStatus = element.find(".hdn_CurrentStatus").attr("id");
+
+                element.find(".text_status").attr({
+                    "valueId": hdn_CurrentStatus,
+                    "id": "text_status_" + index
+                });
+                var hdn_ShiftId = element.find(".hdn_ShiftId").attr("id");
+
+                element.find(".text_shift").attr({
+                    "valueId": hdn_ShiftId,
+                    "id": "text_shift_" + index
+                });
+                var hdn_SectionId = element.find(".hdn_SectionId").attr("id");
+
+                element.find(".text_section").attr({
+                    "valueId": hdn_SectionId,
+                    "id": "text_section_" + index
+                });
+                var hdn_BoarderId = element.find(".hdn_BoarderId").attr("id");
+                element.find(".text_boader").attr({
+                    "valueId": hdn_BoarderId,
+                    "id": "text_boader_" + index
+                }); 
+                
+                
+                var hdn_StudentType = element.find(".hdn_StudentType").attr("id");
+
+                element.find(".text_type").attr({
+                    "valueId": hdn_StudentType,
+                    "id": "text_type_" + index
+                });
+            });
+        }
+        
+         var ClassId = $("#ClassId").val();
+        if (ClassId != 0 && ClassId != '') {
+            var url1 = "@Url.Action("GetClassesCodeById", "School")?id=" + ClassId;
+
+            $.getJSON(url1, function(data) {
+
+                if (data != null) {
+                    $("#Code").val(data.Code);
+                }
+            });
+        }
+    });
+</script>

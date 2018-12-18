@@ -1,0 +1,33 @@
+@model KRBAccounting.Domain.Entities.ScStudentCategory
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StudentCategoryEdit", "Student", new { controller = "Student" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90 ">
+                Description</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Description, new { @class = "input-190 input", entermsg = "Enter Description" })
+                @Html.ValidationMessageFor(m => m.Description)
+            </span></span><span class="stack">
+                <label class="label-70">
+                    Code</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.Code, new { @class = "input-100 input", entermsg = "Enter Code" })
+                    @Html.ValidationMessageFor(m => m.Code)
+                </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">
+                @Html.TextAreaFor(m => m.Memo, new { @class = "input-370 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Memo)
+            </span></span>
+    </div>
+}

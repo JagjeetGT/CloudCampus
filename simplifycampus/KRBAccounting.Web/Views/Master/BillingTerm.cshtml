@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Billing Term";
+}
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "SBT"))
+        {
+            <li><a href="@Url.Action("SalesBillingTerm", "Master")">Sales</a> <span class="divider">
+                |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PBT"))
+        {
+            <li><a href="@Url.Action("PurchaseBillingTerm", "Master")">Purchase</a> <span class="divider">
+                |</span></li>
+        }
+    </ul>
+</div>

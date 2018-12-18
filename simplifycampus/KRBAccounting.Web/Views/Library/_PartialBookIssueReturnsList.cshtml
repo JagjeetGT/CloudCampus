@@ -1,0 +1,96 @@
+@using KRBAccounting.Service
+@model PagedList<KRBAccounting.Domain.Entities.ScBookIssueReturn>
+@{var i = Convert.ToInt32(ViewBag.SnStart);}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Card No.
+                </th>
+                <th>
+                    Book name
+                </th>
+                <th>
+                    Accession No
+                </th>
+                <th>
+                    Return Date
+                </th>
+                <th>
+                    Fine Amount
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)            {
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>
+                        @{
+                            var isssueto = "";
+                        }
+
+                        @if (item.LibraryCard.LibraryMemberRegistration.Type== "staff")
+                        {
+
+                            var staff = item.LibraryCard.LibraryMemberRegistration.StaffMaster;
+                            if (staff != null)
+                            {
+                                isssueto = staff.Description;
+                            }
+                        }
+                        else
+                        {
+                            var student = item.LibraryCard.LibraryMemberRegistration.Studentinfo;
+                            if (student != null)
+                            {
+                                isssueto = student.StuDesc;
+                            }
+                        }
+                        @isssueto
+                    </td>
+                    <td>@item.LibraryCard.CardNo
+                    </td>
+                    <td>@if (item.ReceivedDetails != null && item.ReceivedDetails.BookReceived != null)
+                        {
+                            if (item.ReceivedDetails.BookReceived.Book != null)
+                            {
+                                @item.ReceivedDetails.BookReceived.Book.Name
+                            }
+                        }
+
+                    </td>
+                    <td>@if (item.ReceivedDetails != null && item.ReceivedDetails.AccessionNo != null)
+                        {
+                            @item.ReceivedDetails.AccessionNo
+                        }
+
+                    </td>
+                    <td>@item.ReturnDate.ToString("MM/dd/yyyy")
+                    </td>
+                    <td>
+                        @item.FineAmount
+                    </td>
+                    @*<td>
+                        <a href="#" class="editBookIssueReturns icon-edit" data-id="@item.Id" title="Edit">
+                        </a>
+                    </td>*@
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BookIssueReturnsList", "Library", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "BookIssueReturns-list" }))
+    </div>
+</div>

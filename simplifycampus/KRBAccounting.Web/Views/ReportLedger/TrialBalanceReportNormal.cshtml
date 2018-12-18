@@ -1,0 +1,196 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.TrialBalanceReportNormalViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+@{
+    decimal drTotal = 0;
+    decimal crTotal = 0;
+    decimal drLedTotal = 0;
+    decimal crLedTotal = 0;
+    decimal diff = 0;
+    var Ledger = "";
+}
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+<table class="table" cellspacing="0" cellpadding="0" width="100%">
+    <thead>
+        <tr>
+            <th>
+                Code
+            </th>
+            <th>
+                Particulars
+            </th>
+            <th>
+                Debit Amount
+            </th>
+            <th>
+                Credit Amount
+            </th>
+        </tr>
+    </thead>
+    @if (Model.SubLedger == true)
+    {
+        var counter = 0;
+        foreach (var item in Model.ReportList)
+        {
+            if (item.DebitCredit != 0)
+            {
+                if (Ledger != item.AccountName)
+                {
+                    if (counter > 1 && (drLedTotal > 0 || crLedTotal < 0))
+                    {
+                        <tr class="bold numbericfield">
+                            <td>
+                            </td>
+                            <td style="text-align: right">
+                                Ledger Total
+                            </td>
+                            <td style="text-align: right">
+                                @if (drLedTotal > 0)
+                                {
+                                    <text>@drLedTotal</text>
+                                }
+                            </td>
+                            <td style="text-align: right">
+                                @if (crLedTotal < 0)
+                                {
+                                    <text>@Math.Abs(@crLedTotal)</text>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    drLedTotal = 0;
+                    crLedTotal = 0;
+                    counter = 0;
+
+                    Ledger = item.AccountName;
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.ShortName 
+                        </td>
+                        <td style="font-weight: bold">
+                            @item.AccountName
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                }
+                counter += 1;
+                <tr>
+                    <td style="padding-left: 30px">@item.SLShortName
+                    </td>
+                    <td style="padding-left: 30px;">@item.SLAccountName
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.DebitCredit > 0)
+                        {
+                            drTotal += item.DebitCredit;<text>@item.DebitCredit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.DebitCredit < 0)
+                        {
+                            crTotal += item.DebitCredit;<text>@Math.Abs(item.DebitCredit)</text>
+                        }
+                    </td>
+                </tr>
+                    if (item.DebitCredit > 0)
+                    { drLedTotal += @item.DebitCredit;}
+                    else
+                    { crLedTotal += @item.DebitCredit;}
+            }
+        }
+        <tr class="bold numbericfield">
+            <td>
+            </td>
+            <td>
+                Total
+            </td>
+            <td style="text-align: right">@drTotal
+            </td>
+            <td style="text-align: right">@Math.Abs(crTotal)
+            </td>
+        </tr>
+        
+        {
+            diff = drTotal - Math.Abs(crTotal);
+        }
+        if (diff != 0)
+        {
+             <tr class="bold numbericfield">
+                 <td>
+                 </td>
+                 <td>
+                     Difference
+                 </td>
+                 <td style="text-align: right">@diff
+                 </td>
+                 <td>
+                 </td>
+             </tr>
+        }
+    }
+    else
+    {
+        foreach (var item in Model.ReportList)
+        {
+            if (item.DebitCredit != 0)
+            {
+                <tr>
+                    <td>@item.ShortName
+                    </td>
+                    <td>@item.AccountName
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.DebitCredit > 0)
+                        {
+                            drTotal += item.DebitCredit;<text>@item.DebitCredit</text>
+                        }
+                    </td>
+                    <td style="text-align: right">
+                        @if (item.DebitCredit < 0)
+                        {
+                            crTotal += item.DebitCredit;<text>@Math.Abs(item.DebitCredit)</text>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        <tr class="bold numbericfield">
+            <td>
+            </td>
+            <td>
+                Total
+            </td>
+            <td style="text-align: right">@drTotal
+            </td>
+            <td style="text-align: right">@Math.Abs(crTotal)
+            </td>
+        </tr>
+        
+        {
+            diff = drTotal - Math.Abs(crTotal);
+        }
+        if (diff != 0)
+        {
+             <tr class="bold numbericfield">
+                 <td>
+                 </td>
+                 <td>
+                     Difference
+                 </td>
+                 <td style="text-align: right">@diff
+                 </td>
+                 <td>
+                 </td>
+             </tr>
+        }
+    }
+    </table>
+</div>

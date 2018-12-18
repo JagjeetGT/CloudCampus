@@ -1,0 +1,81 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportBusStopRouteListReportViewModel
+
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table border="0.5" style="font-size: 8px;">
+
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Bus Route Description
+                </th>
+                <th>
+                    Bus Description
+                </th>
+                <th>
+                    Fuel
+                </th>
+                <th>
+                    Bus Stop
+                </th>
+                <th>
+                    Pick Time
+                </th>
+                <th>
+                    Drop Time
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Remarks
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.BusStopRouteList)
+        {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>@item.BusRouteDescription</td>
+                <td>
+                    @item.ScBus.Description
+                </td>
+                <td>
+                    @item.Fuel
+                </td>
+                <td>
+                    @item.ScBusStop.Description
+                </td>
+                <td>
+                    @item.Picktime
+                </td>
+                <td>
+                    @item.Droptime
+                </td>
+                <td>
+                    @item.AMOUNT
+                </td>
+                <td>
+                    @item.Remarks
+                </td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>

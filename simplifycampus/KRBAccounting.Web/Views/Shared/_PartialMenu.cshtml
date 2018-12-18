@@ -1,0 +1,315 @@
+﻿@using KRBAccounting.Web.CustomFilters
+<ul class="navigation">
+    @if (CheckPermission.GivePermission("Navigate", "Master"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="Master">Master</span> </a>
+            <ul>
+                @if (CheckPermission.GivePermission("Navigate", "GL"))
+                {
+                    <li><a href="@Url.Action("Ledger", "Master")"><span class="text" action="Ledger">Ledger
+                        Master</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "SL"))
+                {
+                    <li><a href="@Url.Action("SubLedger", "Master")"><span class="text" action="SubLedger">
+                        Sub Ledger</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "AG"))
+                {
+                    <li><a href="@Url.Action("AccountGroup", "Master")"><span class="text" action="AccountGroup">
+                        Account Group</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "ASG"))
+                {
+                    <li><a href="@Url.Action("AccountSubGroup", "Master")"><span class="text" action="AccountSubGroup">
+                        Account Sub Group</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "IP"))
+                {
+                    <li><a href="@Url.Action("Product", "Master")"><span class="text" action="Product">Product</span>
+                    </a></li>
+                }
+                <li><a href="@Url.Action("SalesBillingTerm", "Master")"><span class="text" action="SalesBillingTerm">
+                    Bill Terms</span> </a></li>
+                @if (CheckPermission.GivePermission("Navigate", "AR"))
+                {
+                    <li><a href="@Url.Action("Area", "Master")"><span class="text" action="Area">Area</span>
+                    </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "GD"))
+                {
+                    <li><a href="@Url.Action("Godown", "Master")"><span class="text" action="Godown">Godown</span>
+                    </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "CUR"))
+                {
+                    <li><a href="@Url.Action("Currency", "Master")"><span class="text" action="Currency">
+                        Currency</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "CC"))
+                {
+                    <li><a href="@Url.Action("CostCenter", "Master")"><span class="text" action="CostCenter">
+                        Cost Center</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "NM"))
+                {
+                    <li><a href="@Url.Action("Narration", "Master")"><span class="text" action="Narration">
+                        Narration</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "UDF"))
+                {
+                    <li><a href="@Url.Action("Udf", "Master")"><span class="text" action="Udf">User Defined
+                        Field</span> </a></li>
+                }
+                <li><a href="@Url.Action("OpeningLedger", "Master")"><span class="text" action="OpeningLedger">
+                    Opening Ledger</span> </a></li>
+            </ul>
+        </li>
+    }
+    @if (CheckPermission.GivePermission("Navigate", "Entry"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="Entry">Entry</span> </a>
+            <ul>
+                @if (CheckPermission.GivePermission("Navigate", "CB"))
+                {
+                    <li><a href="@Url.Action("CashBankVoucher", "Entry")"><span class="text" action="CashBankVoucher">
+                        Cash/Bank</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "JV"))
+                {
+                    <li><a href="@Url.Action("JournalVoucher", "Entry")"><span class="text" action="JournalVoucher">
+                        Journal Voucher</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "DN"))
+                {
+                    <li><a href="@Url.Action("DebitNote", "Entry")"><span class="text" action="DebitNote">
+                        Debit Note</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "CN"))
+                {
+                    <li><a href="@Url.Action("CreditNote", "Entry")"><span class="text" action="CreditNote">
+                        Credit Note</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "IP"))
+                {
+                    <li><a href="@Url.Action("PurchaseInvoice", "Entry")"><span class="text" action="PurchaseInvoice">
+                        Purchase</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "IP"))
+                {
+                    <li><a href="@Url.Action("SalesInvoice", "Entry")"><span class="text" action="SalesInvoice">
+                        Sales</span> </a></li>
+                }
+            </ul>
+        </li>
+    }
+    @if (CheckPermission.GivePermission("Navigate", "LEDGER"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="ReportLedger">Ledger</span> </a>
+            <ul>
+                @if (CheckPermission.GivePermission("Navigate", "LR-CBR"))
+                {
+                    <li><a href="@Url.Action("CashBanKBook", "ReportLedger")"><span class="text" action="CashBanKBook">
+                        Cash/Bank Book</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "LR-CSR"))
+                {
+                    <li><a href="@Url.Action("CashBanKBookSummary", "ReportLedger")"><span class="text"
+                        action="CashBanKBookSummary">Cash/Bank Summary</span> </a></li>
+                }
+                @if (CheckPermission.GivePermission("Navigate", "LR-JVR"))
+                {
+                    <li><a href="@Url.Action("JournalVoucher", "ReportLedger")"><span class="text" action="JournalVoucher">
+                        Journal Voucher</span> </a></li>
+                }@if (CheckPermission.GivePermission("Navigate", "LR-DBR"))
+                 {
+                    <li><a href="@Url.Action("DayBook", "ReportLedger")"><span class="text" action="DayBook">
+                        Day Book</span> </a></li>
+                 }@if (CheckPermission.GivePermission("Navigate", "LR-LR"))
+                  {
+                     <li><a href="@Url.Action("LedgerReport", "ReportLedger")"><span class="text" action="LedgerReport">
+                         Ledger</span> </a></li>
+                  }@if (CheckPermission.GivePermission("Navigate", "LR-TBR"))
+                   {
+                      <li><a href="@Url.Action("TrialBalance", "ReportLedger")"><span class="text" action="TrialBalance">
+                          Trial Balance</span> </a></li>
+                   }@if (CheckPermission.GivePermission("Navigate", "LR-PLR"))
+                    {
+                       <li><a href="@Url.Action("ProfitAndLoss", "ReportLedger")"><span class="text" action="ProfitAndLoss">
+                           Profit & Loss</span> </a></li>
+                    }@if (CheckPermission.GivePermission("Navigate", "LR-BSR"))
+                     {
+                        <li><a href="@Url.Action("BalanceSheet", "ReportLedger")"><span class="text" action="BalanceSheet">
+                            Balance Sheet</span> </a></li>
+                     }
+            </ul>
+        </li>
+    }
+    @if (CheckPermission.GivePermission("Navigate", "AR/AP"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="ARAP">AR/AP</span> </a>
+            <ul>
+                @if (CheckPermission.GivePermission("Navigate", "AR-PLR"))
+                {
+                    <li><a href="@Url.Action("PartyLedger", "ARAP")"><span class="text" action="PartyLedger">
+                        Party Ledger</span> </a></li>
+                }@if (CheckPermission.GivePermission("Navigate", "AR-OCR"))
+                 {
+                    <li><a href="@Url.Action("OutStandingCustomer", "ARAP")"><span class="text" action="OutStandingCustomer">
+                        Outstanding Customer</span> </a></li>
+                 }@if (CheckPermission.GivePermission("Navigate", "AR-OVR"))
+                  {
+                     <li><a href="@Url.Action("OutStandingSupplier", "ARAP")"><span class="text" action="OutStandingSupplier">
+                         Outstanding Vender</span> </a></li>
+                  }
+                <li><a href="@Url.Action("SalesSummary", "ARAP")"><span class="text" action="SalesSummary">
+                    Sales</span> </a></li>
+                <li><a href="@Url.Action("PurchaseSummary", "ARAP")"><span class="text" action="PurchaseSummary">
+                    Purchase</span> </a></li>
+            </ul>
+        </li>
+    }
+    @if (CheckModulePermission.CheckModule("EnableAcademy"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text">Academics</span></a>
+            <ul>
+                <li><a href="@Url.Action("Classes", "School")"><span class="text">Class Master</span></a></li>
+                <li><a href="@Url.Action("Sections", "School")"><span class="text">Section Master</span></a></li>
+                <li><a href="@Url.Action("Shifts", "School")"><span class="text">Shift Master</span></a></li>
+                <li><a href="@Url.Action("Subjects", "School")"><span class="text">Subject Master</span></a></li>
+                <li><a href="@Url.Action("SalaryHeads", "School")"><span class="text">Salary Head</span></a></li>
+                <li><a href="@Url.Action("ClassSubjectMappings", "School")"><span class="text">Class
+                    Wise Subject Setup</span></a></li>
+                <li><a href="@Url.Action("StudentSubjectMappings", "School")"><span class="text">Student
+                                                                                  Wise Subject Setup</span></a></li>
+
+                <li><a href="@Url.Action("Exams", "School")"><span class="text">Exam Master</span></a></li>
+                <li><a href="@Url.Action("ExamMarkSetups", "School")"><span class="text">Exam Wise Mark
+                    Setup</span></a></li>
+                <li><a href="@Url.Action("ExamRoutines", "School")"><span class="text">Exam Routine</span></a></li>
+                <li><a href="@Url.Action("ExamAttendances", "School")"><span class="text">Exam Attendance</span></a></li>
+                <li><a href="@Url.Action("Grading", "School")"><span class="text">Grading</span></a></li>
+                <li><a href="@Url.Action("SubjectWiseMarks", "School")"><span class="text">Subject Wise
+                    Marks Setup</span></a></li>
+                <li><a href="@Url.Action("StudentWiseMarks", "School")"><span class="text">Student Wise
+                    Marks Setup</span></a></li>
+                <li><a href="@Url.Action("Division", "School")"><span class="text">Division</span></a></li>
+                <li><a href="@Url.Action("ExtraActivity", "School")"><span class="text">Activity Master</span></a></li>
+                <li><a href="@Url.Action("StudentExtraActivities", "School")"><span class="text">Student
+                    Extra Activity</span></a></li>
+            </ul>
+        </li>
+        <li class="openable"><a href="Javascrip:void(0)"><span class="isw-list"></span><span
+            class="text">Administration</span></a>
+            <ul>
+                <li><a href="@Url.Action("AbsentApplications", "School")"><span class="text">Absent
+                    Application </span></a></li>
+                <li><a href="@Url.Action("StudentCategories", "School")"><span class="text">Student
+                    Category</span></a></li>
+                <li><a href="@Url.Action("Students", "School")"><span class="text">Student Information</span></a></li>
+                <li><a href="@Url.Action("StudentRegistrations", "School")"><span class="text">Student
+                    Admission / Registration</span></a></li>
+                <li><a href="@Url.Action("Boaders", "School")"><span class="text">Boader Master</span></a></li>
+                <li><a href="@Url.Action("BoaderMappings", "School")"><span class="text">Boader Setup</span></a></li>
+                <li><a href="@Url.Action("Bus", "School")"><span class="text">Bus Master</span></a></li>
+                <li><a href="@Url.Action("BusStop", "School")"><span class="text">Bus Stop Master</span></a></li>
+                <li><a href="@Url.Action("BusRouteDetails", "School")"><span class="text">Bus Route
+                    Detail </span></a></li>
+                <li><a href="@Url.Action("BusTransportMapping", "School")"><span class="text">Transport
+                    Setup </span></a></li>
+                <li><a href="@Url.Action("FeeItems", "School")"><span class="text">Fee Master</span></a></li>
+                <li><a href="@Url.Action("FeeTerms", "School")"><span class="text">Fee Terms Master</span></a></li>
+                <li><a href="@Url.Action("ClassFeeRates", "School")"><span class="text">Class Fee Rates
+                    Setup</span></a></li>
+                <li><a href="@Url.Action("StudentWiseFeeRateSetups", "School")"><span class="text">Student
+                    Fee Rates Setup</span></a></li>
+                <li><a href="@Url.Action("FineSchemes", "School")"><span class="text">Fine Schemes</span></a></li>
+                <li><a href="@Url.Action("PrePaidSchemes", "School")"><span class="text">PrePaid Schemes</span></a></li>
+                <li><a href="@Url.Action("HouseGroups", "School")"><span class="text">House Group Master</span></a></li>
+                <li><a href="@Url.Action("HouseMappings", "School")"><span class="text">House Setup</span></a></li>
+                <li><a href="@Url.Action("StaffGroups", "School")"><span class="text">Staff Group Master</span></a></li>
+                <li><a href="@Url.Action("StaffMasterSetups", "School")"><span class="text">Staff Master</span></a></li>
+                <li><a href="@Url.Action("Buildings", "School")"><span class="text">Buildings</span></a></li>
+                <li><a href="@Url.Action("Rooms", "School")"><span class="text">Rooms</span></a></li>
+                <li><a href="@Url.Action("BuildingRoomMappings", "School")"><span class="text">Building
+                    Wise Room Setup</span></a></li>
+                <li><a href="@Url.Action("ClassRoomMappings", "School")"><span class="text">Class Wise
+                    Room Setup</span></a></li>
+                <li><a href="@Url.Action("StaffSubjectMappings", "School")"><span class="text">Staff
+                    Subject Mapping</span></a></li>
+                <li><a href="@Url.Action("ClassSchedules", "School")"><span class="text">Class Schedules</span></a></li>
+            </ul>
+        </li>
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text">Transaction</span></a>
+            <ul>
+                <li><a href="@Url.Action("MonthlyBillGenerationAdd", "Transaction")"><span class="text">
+                    Monthly Bill Generation</span></a></li>
+                <li><a href="@Url.Action("FeeReceipts", "Transaction")"><span class="text">Fee Receipt</span></a></li>
+                <li><a href="@Url.Action("MaterialIssue_Masters", "Transaction")"><span class="text">
+                    Material Issue</span></a></li>
+                <li><a href="@Url.Action("MaterialReturn_Masters", "Transaction")"><span class="text">
+                    Material Return</span></a></li>
+            </ul>
+        </li>
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="Report">Report</span> </a>
+            <ul>
+                <li><a href="@Url.Action("StaffList", "Report")"><span class="text" action="StaffList">
+                    Staff List</span> </a></li>
+                <li><a href="@Url.Action("SubjectList", "Report")"><span class="text" action="SubjectList">
+                    Master Reports</span> </a></li>
+                <li><a href="@Url.Action("StudentLedger", "Report")"><span class="text" action="StudentLedger">
+                    Student Ledger</span> </a></li>
+                <li><a href="@Url.Action("StudentCashCollection", "Report")"><span class="text" action="StudentCashCollection">
+                    Student Cash Collection</span> </a></li>
+            </ul>
+        </li>
+    }
+    @if (CheckPermission.GivePermission("Navigate", "SETUP"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="Setup">Setup</span> </a>
+            <ul>
+                <li><a href="@Url.Action("FiscalYear", "Setup")"><span class="text" action="FiscalYear">
+                    Fiscal Year</span></a></li>
+                <li><a href="@Url.Action("AcademicYear", "Setup")"><span class="text" action="AcademicYear">
+                    Academic Year</span></a></li>
+                <li><a href="@Url.Action("SystemControl", "Setup")"><span class="text" action="SystemControl">
+                    System Control</span> </a></li>
+                <li><a href="@Url.Action("DocumentNumberingScheme", "Setup")"><span class="text"
+                    action="DocumentNumberingScheme">Document Numbering</span> </a></li>
+                <li><a href="@Url.Action("Users", "User")"><span class="text" action="User">User Master</span>
+                </a></li>
+            </ul>
+        </li>
+    }
+    @if (CheckPermission.GivePermission("Navigate", "MGMT"))
+    {
+        <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+            controller="Management">Management</span> </a>
+            <ul>
+                <li><a href="@Url.Action("Company", "Management")"><span class="text" action="Company">
+                    Company</span> </a></li>
+            </ul>
+        </li>
+    }
+    <li class="openable"><a href="#"><span class="isw-list"></span><span class="text"
+        controller="Library">Library</span> </a>
+        <ul>
+            <li><a href="@Url.Action("Books", "Library")"><span class="text" action="Books">Books</span>
+            </a></li>
+            <li><a href="@Url.Action("BookReceived", "Library")"><span class="text" action="BookReceived">
+                Book Received</span> </a></li>
+            <li><a href="@Url.Action("LibraryMemberRegistrations", "Library")"><span class="text"
+                action="LibraryMemberRegistrations">Library Member Registration</span> </a></li>
+            <li><a href="@Url.Action("BookIssued", "Library")"><span class="text" action="BookIssued">
+                Book Issued</span> </a></li>
+            <li><a href="@Url.Action("BookIssueReturns", "Library")"><span class="text" action="BookIssueReturns">
+                Book Issue Returns</span> </a></li>
+        </ul>
+    </li>
+</ul>

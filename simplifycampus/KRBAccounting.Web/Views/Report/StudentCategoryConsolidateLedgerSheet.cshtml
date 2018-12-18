@@ -1,0 +1,114 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.StudentCategoryConsolidateLedgerSheetViewModel
+@{
+    ViewBag.Title = "Student Result Report";
+}
+@Html.Partial("_PartialResultReportBreadCrumb")
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Student Result Report</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                        class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfStudentCategoryConsolidateLedgerSheet", "Report")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                    </a></li>
+                    <li><a href="@Url.Action("ExcelStudentCategoryConsolidateLedgerSheet", "Report")" target="_blank" title="Export to Excel" class="isw-excel">
+                    </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalReportForm">
+    <div class="block">
+        @Html.Partial("_PartialStudentCategoryConsolidateLedgerSheetForm", Model)</div>
+</div>
+<script type="text/javascript">
+  
+
+    $(document).ready(function () {
+
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });
+    });
+    $("#modalReportForm").dialog({
+        autoOpen: true,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+
+                Begin();
+                Save();
+                checkValidationError();
+            },
+            Cancel: function () {
+
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function Save() {
+
+        var form = $("#report-form");
+        var url = form.attr("action");
+        $("form").removeData("validator");
+        $("form").removeData("unobtrusiveValidation");
+        $.validator.unobtrusive.parse(form);
+        var category = false;
+        if ($("#CategoryId").val() != 0) {
+            category = true;
+        }
+
+        if (category == false) {
+            alert("Please Select Student Category");
+            $.unblockUI();
+        }
+        var Exam = false;
+        if ($("#ExamId").val() != 0) {
+            Exam = true;
+        }
+
+        if (Exam == false) {
+            alert("Please Select  Exam");
+            $.unblockUI();
+        }
+
+        if ($("form").valid() && Exam == true && category == true) {
+
+            $.ajax({
+
+                url: url,
+                data: form.serialize(),
+                datatype: "JSON",
+                type: "POST",
+                error: function () {
+
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+
+                    $("#report").html(data.view);
+                    $("#modalReportForm").dialog("close");
+                    $.unblockUI();
+                }
+            });
+        }
+    }
+
+    
+   
+    
+   
+</script>

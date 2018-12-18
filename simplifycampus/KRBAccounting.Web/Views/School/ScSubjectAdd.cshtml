@@ -1,0 +1,82 @@
+@model KRBAccounting.Web.ViewModels.Academy.AcademicsSubjectViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+
+@using (Ajax.BeginForm("SubjectAdd", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.ScSubject.Id)
+    <div class="lag">
+        <label class="label-90">
+            Code</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ScSubject.Code, new { @class = "input-100 input", entermsg = "Enter Code" })
+            @Html.ValidationMessageFor(m => m.ScSubject.Code)<span class="loading ScSubject_Code">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+        </div>
+        <label class="label-90">
+            Description</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ScSubject.Description, new { @class = "input-100 input", entermsg = "Enter Description"})
+            @Html.ValidationMessageFor(m => m.ScSubject.Description)<span class="loading ScSubject_Code">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+        </div>
+    </div>
+
+    
+    <div class="clearfix"></div>
+    
+    <div class="lag">
+        
+
+        <label class="label-90">
+            ResultSystem</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.ScSubject.ResultSystem, Model.ResultSystem, new { @class = "input-100 input", entermsg = "Enter ClassType" })
+            @Html.ValidationMessageFor(m => m.ScSubject.ResultSystem)
+        </div>
+        
+        <label class="label-90">
+            
+            ClassType
+        </label>
+        <div class="field">
+            
+           @Html.DropDownListFor(x => x.ScSubject.ClassType, Model.ClassType, new { @class = "input-100 input", entermsg = "Enter ClassType" })
+            @Html.ValidationMessageFor(m => m.ScSubject.ClassType)
+        </div>
+
+    </div>  <div class="clearfix"></div>
+    <div class="lag">
+        
+        <label class="label-90">
+            Type</label>
+        <div class="field">
+             @Html.DropDownListFor(x => x.ScSubject.Type, Model.SubjectType, new { @class = "input-100 input", entermsg = "Enter ClassType" })
+            @Html.ValidationMessageFor(m => m.ScSubject.Type)
+        </div>
+        
+        <label class="label-90">
+Evalution</label>
+        <div class="field">
+            
+          @Html.DropDownListFor(x => x.ScSubject.EvaluateForType, Model.EvaluationForPass, new { @class = "input-100 input", entermsg = "Enter ClassType" })
+            @Html.ValidationMessageFor(m => m.ScSubject.EvaluateForType)
+        </div>
+    </div>
+      <div class="clearfix"></div>
+
+<div class="lag">
+<label class="label-90">
+Schedule</label>
+<div class="field">
+@Html.TextBoxFor(m => m.ScSubject.Schedule, new { @class = "input-100 input", entermsg = "Enter Schedule" })
+@Html.ValidationMessageFor(m => m.ScSubject.Schedule)
+</div></div>  <div class="clearfix"></div>
+<div class="lag">
+<label class="label-90">
+Memo</label>
+<div class="field">
+@Html.TextBoxFor(m => m.ScSubject.Memo, new { @class = "input-305 input", entermsg = "Enter Remarks" })
+@Html.ValidationMessageFor(m => m.ScSubject.Memo)
+</div></div>
+}

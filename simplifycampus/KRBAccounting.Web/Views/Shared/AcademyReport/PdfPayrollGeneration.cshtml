@@ -1,0 +1,74 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Payroll.PayrollGenerationViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+    <br />
+</div>
+<div class="ReportList">
+    <table  width="100%" border="1">
+        <thead>
+            <tr bgcolor="rgb(241, 241, 241)" align="center" style="color: rgb(102, 102, 102);
+                font-size: 11px;">
+                <th>
+                    Employee
+                </th>  
+                <th>
+                    Position
+                </th>
+                <th>
+                    Department
+                </th>
+                @foreach (var type in Model.SalaryHeadList.Select(item => new StringEnum(typeof(SalaryHeadType)).GetStringValue(item.Head.ToString())))
+                {
+                    <th>
+                        @type
+                    </th>
+                }
+                <th>
+                    Net Amount
+                </th>
+            </tr>
+        </thead>
+        @foreach (var e in Model.GroupingPayrollGenerations)
+        {
+            decimal netamount = 0;
+            var employeinfo = UtilityService.GetEmployeeInfo(e.FirstOrDefault().EmployeeId);
+            <tr align="left" style="padding: 4px 10px;font-size: 10px ;font-weight: normal">
+                <td >
+                    @employeinfo.Description
+                </td>
+                <td>
+                    @employeinfo.EmployeePost.Description
+                </td>
+                <td>
+                    @employeinfo.EmployeeDepartment.Description
+                </td>
+                @foreach (var item in Model.PayrollGenerations.Where(x => x.EmployeeId == e.FirstOrDefault().EmployeeId))
+                {
+                    <td >
+                        @Math.Round(item.Amount, 4)
+                    </td>
+                    if (item.SalaryHeadId == 1 || item.SalaryHeadId == 2)
+                    {
+
+                        netamount += item.Amount;
+                    }
+                    else
+                    {
+                        netamount -= item.Amount;
+                    }
+                }
+                <td >
+                    @Math.Round(netamount, 4)
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+

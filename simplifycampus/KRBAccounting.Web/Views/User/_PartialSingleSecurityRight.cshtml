@@ -1,0 +1,68 @@
+﻿@model KRBAccounting.Domain.Entities.SecurityRight
+@{
+    var id = "";
+    var trclass = "";
+    var trclassName = "";
+    if(Model.ParentId ==null)
+    {
+        id = ViewBag.ParentId;
+    }else
+    {
+        trclass = ViewBag.ParentId;
+    }
+
+    var isparent =ViewBag.Isparent;
+    var attr = "";
+    if(isparent)
+    {
+        trclassName = "accordion";
+        //attr = "data-toggle='collapse' data-target=#" + @id + " class=accordion-toggle";
+       
+    }
+ 
+      
+}
+
+         
+         
+
+<tr id="@id" class="@trclass @trclassName">
+    @using (Html.BeginCollectionItem("securityRight"))
+    {
+        @Html.HiddenFor(x => x.Id)
+
+        @Html.HiddenFor(x => x.Role)
+        @Html.HiddenFor(x => x.ModuleId)        
+        <td>
+          
+                
+                @if(Model.ParentId==null)
+                {
+                    <b>  @Model.LinkName</b>
+                }
+                else
+                {
+<text>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;          </text> @Model.LinkName
+  
+                }
+          
+        
+        </td>
+        <td>
+     
+            @Html.CheckBoxFor(x => x.Create, new { @class = "chkcreate" })
+        </td>
+        <td>
+            @Html.CheckBoxFor(x => x.Edit, new { @class = "chkedit" })
+        </td>
+        <td>
+            @Html.CheckBoxFor(x => x.Delete, new { @class = "chkdelete" })
+        </td>
+        <td>
+            @Html.CheckBoxFor(x => x.Navigate, new { @class = "chknavigate" })
+        </td>
+        <td>
+            @Html.CheckBoxFor(x => x.Approve, new { @class = "chkapprove" })
+        </td>
+    }
+</tr>

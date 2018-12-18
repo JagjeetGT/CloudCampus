@@ -1,0 +1,432 @@
+﻿@using iTextSharp.text.pdf.qrcode
+@model KRBAccounting.Domain.Entities.ScStudentinfo
+<div class="workplace">
+    <div class="head">
+        <h1>
+            Student Proflie
+        </h1>
+        <ul class="buttons">
+            @* <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report" class="isw-refresh"></a></li>*@
+            <li><a id="print" title="Print" class="isw-print" style="float: right"></a></li>
+            @*<li><a href="@Url.Action("ExcelBusListReport", "Report")" target="_blank" title="Export to Excel" class="isw-excel" style="float:right">
+                </a></li>*@
+            <li>
+                <a href="@Url.Action("PdfStudentMoreDetail", "Student")" target="_blank" title="Export to Pdf" class="isw-pdf" style="float:right">
+                </a>
+            </li>
+        </ul>
+        <div class="clear">
+        </div>
+    </div>
+    <div class="block-fluid table-sorting" id="report">
+        <table cellpadding="0" cellspacing="0" width="100%" class="" id="tbl-list"
+               style="border-top: 0px; border-bottom: 0px" align="center">
+            @Html.HiddenFor(x => x.StudentID, new { @class = "studentid" })
+            @Html.HiddenFor(x => x.ClassId, new { @class = "classid" })
+
+            <tr>
+                <h3 align="center">
+                    Student Profile
+                </h3>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Registration No. :
+                        </label>
+                        @Model.Regno
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Student Name :
+                        </label>
+                        @Model.StuDesc
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Student Code :
+                        </label>@if (Model.StdCode != null)
+                        {@Model.StdCode}
+                    </div>
+                </td>
+
+                <td rowspan="4" style="border: 0px">
+                    <div class="lag">
+                        <span class="stack">
+                            <span class="field">
+                                @if (!string.IsNullOrEmpty(Model.StdPhotoFileName))
+                                {
+
+                                    <img src="/Content/academicsimage/@Model.StdPhotoFileName@Model.StdPhotoExt" height="150px" width="150px" />
+                                }
+                                else
+                                {
+                                    <img src="/Content/img/NoImage.jpg" height="150px" width="150px" />
+                                }
+                            </span>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Academic Year :
+                        </label>@Model.AcademicYear.StartDate.Year
+                    </div>
+                </td>
+
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Date Of Birth :
+                        </label>@if (Model.DBO != null)
+                        {
+
+                            @Convert.ToDateTime(Model.DBO).ToShortDateString()
+
+                        }A.D.
+                        ||
+                        @Model.DBOMiti B.S.
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Sex :
+                        </label>
+                        @Model.Sex
+                    </div>
+                </td>
+                <td style="border: 0px"></td>
+            </tr>
+            <tr>
+
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Current Class :
+                        </label>@Model.CurrClsCode
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Phone No. :
+                        </label>@Model.Phone
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Apply Date :
+                        </label>@if (Model.ApplyDate != null)
+                                {
+                                       @Convert.ToDateTime(Model.ApplyDate).ToShortDateString()
+                                }@if (Model.ApplyDate != null)
+                                 {
+                                     <text>A.D.</text>
+                                 }
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr>
+
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Permanent Address :
+                        </label>
+                        @Model.PerAdd
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Temporary Address :
+                        </label>
+                        @Model.TmpAdd
+                    </div>
+                </td>
+
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Father's Name :
+                        </label>
+                        @Model.FName
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Mobile :
+                        </label>
+                        @Model.FMobile
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Mother's Name :
+                        </label>
+                        @Model.MName
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Mobile :
+                        </label>
+                        @Model.MMobile
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Guardian's Name :
+                        </label>
+                        @Model.GName
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Mobile :
+                        </label>
+                        @Model.GMobile
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+
+        @*@if (Model.Documents.Any())
+            {
+
+
+                <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list" style="border-top: 0px" align="center">
+                    <thead>
+                        <tr>
+                            <td colspan="3" style="border: 0px">
+                                <h4 align="center">
+                                    Documents</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                S.N.
+                            </th>
+                            <th>
+                                Title
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int SNo = 1;
+                        }
+                        @foreach (var item in Model.Documents)
+                        {
+                            var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) +
+                                      "Content/AcademicStudentDocs/" + item.DocumentGuid + item.DocumentExt;
+                            <tr>
+                                <td style="border: 0px">
+
+
+
+                                    @SNo
+                                </td>
+                                <td style="border: 0px">
+
+                                    <a href="@url" target="_blank">@item.Title</a>
+                                </td>
+                                <td style="border: 0px">
+
+                                    @item.Description
+                                </td>
+
+                            </tr>  SNo++;
+                        }
+
+                    </tbody>
+
+                </table> *@
+
+
+    </div>
+   
+    <div class="row-fluid">
+        <div class="block-fluid span12">
+            <h5 style="align:center">Details</h5>
+
+
+                <span class="span5">
+                    <input type="button" id="billpayment" value="Due Amount: Rs. @ViewBag.Balance/- Bill Payment" class="btn btn-info btn-block btn-large" />
+                </span>
+                <span class="span3">
+                    <a target="_blank" href="/Student/StudentLedger?studentid=@Model.StudentID" id="ledger" class="btn btn-info btn-block btn-large">Ledger</a>
+                </span>
+                <span class="span3">
+                    <a target="_blank" href="/Student/MonthlyBill?studentid=@Model.StudentID" id="monthlybill" class="btn btn-info btn-block btn-large">Monthly Bill</a>
+                </span>
+                <div class="clearfix"></div>
+                <span class="span5">
+                    <a target="_blank" href="/Student/CashCollection?studentid=@Model.StudentID" id="cashcollection" class="btn btn-info btn-block btn-large">Cash Collection</a>
+                </span>
+                <span class="span6">
+                    <a href="~/Transaction/MonthlyBillGenerationAdd"> <input type="submit" id="generatemonthlybill" value="Generate Monthly Bill" class="btn btn-info btn-block btn-large" /></a>
+
+                </span>
+
+                <div class="clearfix"></div>
+
+                <span class="span5">
+                    <a target="_blank" id="universityledgermark" href="/Student/UniversityLedgerMark?studentid=@Model.StudentID&&classid=@Model.ClassId" class="btn btn-info btn-block btn-large">University Ledger Mark</a>
+                </span>
+                <span class="span6">
+                    <a target="_blank" href="/Student/StudentFeeRate?studentid=@Model.StudentID" id="feerate" class="btn btn-info btn-block btn-large">Fee Rate</a>
+
+                </span>
+                <div class="clearfix"></div>
+
+                <span class="span5">
+                    <a target="_blank" href="/Student/LibraryInformation?studentid=@Model.StudentID" id="libraryinformation" class="btn btn-info btn-block btn-large">Library Information</a>
+                </span>
+                <span class="span6">
+                    <a target="_blank" href="/Student/StudentAttendanceLog?studentid=@Model.StudentID" id="attendance" class="btn btn-info btn-block btn-large">Attendance</a>
+
+                </span>
+                <div class="clearfix"></div>
+
+                <span class="span5">
+                    <a target="_blank" href="/Student/Certificates?studentid=@Model.StudentID" id="certificate" class="btn btn-info btn-block btn-large">Certificates</a>
+                </span>
+                <span class="span6">
+                    <a target="_blank" href="/Student/StudentExtraActivity?studentid=@Model.StudentID" id="extraactivity" class="btn btn-info btn-block btn-large">Extra Activity</a>
+
+                </span>
+                <div class="clearfix"></div>
+
+                <span class="span5">
+                    <a target="_blank" href="/Student/StudentApplication?studentid=@Model.StudentID" id="application" class="btn btn-info btn-block btn-large">Application</a>
+                </span>
+                <span class="span6">
+                    <a target="_blank" href="/Student/StudentWiseMarksList?studentid=@Model.StudentID" id="marksheet" class="btn btn-info btn-block btn-large">Mark Sheet</a>
+
+                </span>
+            </div>
+        </div>
+   
+</div>
+<div class="dialog" id="modalStudentFeeReceipt" style="display: none;" title="Student Fee Receipt">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#modalStudentFeeReceipt").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                StudentFeeReceipSave();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function StudentFeeReceipSave() {
+        var form = $("#form-id");
+        $.ajax({
+            url: form.attr("action"),
+            type: "post",
+            data: form.serialize(),
+            success: function (data) {
+
+
+                if (data.True == "True") {
+                    $("#modalStudentFeeReceipt").dialog('close');
+                    PrintObjectElement = data.Print;
+                    var result = confirm("Are you sure you wish to Print this?");
+                    if (result) {
+                        if (data.PrintData) {
+                            FeeReceiptprint();
+                        } else {
+                            FeeReceiptHtmlprint();
+                        }
+
+                    }
+                    window.location.href = "/Transaction/FeeReceiptList";
+
+                }
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            type: "post",
+            success: function (data) {
+                $('#modalStudentFeeReceipt .block').html(data);
+                $(this).addClass("done");
+                $("#modalStudentFeeReceipt").dialog('open');
+
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+
+        });
+    }
+    $("#billpayment").live("click", function () {
+        var studentId=@Model.StudentID;
+        var classId=@Model.ClassId;
+        var amount=@ViewBag.Balance;
+
+        var url = '@Url.Action("StudentFeeReceipt")/?studentid=' + studentId + "&&classid=" + classId + "&&dueamount=" + amount;
+        getRequest(url);
+    });
+
+
+    //$("#universityledgermark").live("click", function () {
+    //    var studentid = $('.studentid').val();
+    //    var classid =  $('.classid').val();
+
+    //    var url = '/Student/UniversityLedgerMark?studentid=' + studentid+'&&classid='+classid;
+    //    //$.post(url, function (data) {
+    //    //    alert(data);
+    //    //   var item= $("#universityledgermark").html(data);
+
+    //    var win =window.open(url,"_blank");
+    //        win.focus();
+    //    //});
+    //});
+
+</script>

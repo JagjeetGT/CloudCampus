@@ -1,0 +1,151 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.StudentProfile.StudentFeeListViewModel
+
+@{
+    ViewBag.Title = "Fee History ";
+
+    var dataType = ViewBag.DateType;
+}
+
+
+<div class="row-fluid">
+    <h4 class="page-title">
+        <div class="social-box">
+            <div class="body">
+                Fee Histroy 
+            </div>
+        </div>
+    </h4>
+</div>
+<div class="row-fluid">
+    <div class="social-box">
+        <table class="table table-striped" style="font-size: 14px">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Month</th>
+                    <th>Bill No</th>
+                    <th>Bill Amount(in Rs.)</th>
+                    <th>Receipt Amount(in Rs.)</th>
+                    <th></th>
+           
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int SN0 = 1;
+                }
+                @foreach (var item in Model.BillTransactions)
+                {
+                    <tr style="font-size: 12px">
+                        <td>@SN0</td>
+                        @if (dataType == 1)
+                        {
+                            <td>@item.Date.ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td>@item.BMiti</td>
+                        }
+                
+                    
+                        @if (dataType == 1)
+                        {
+                            <td>@item.Date.ToString("MMM")</td>
+                        }
+                        else
+                        {
+                            var miti = Convert.ToDateTime(item.BMiti);
+                            <td>@NepaliDateService.LongMonth(miti.Month)</td>
+                                            
+                        }
+                
+                        <td>@item.BillNo</td>
+                        @if (item.BillAmount != 0)
+                        {
+                            <td>@item.BillAmount</td>
+  
+                        }
+                        else
+                        {
+                            <td>-</td>
+                        }
+                        @if (item.ReceiptAmount != 0)
+                        {
+                            <td>@item.ReceiptAmount</td>
+  
+                        }
+                        else
+                        {
+                            <td>-</td>
+                        }
+                        @if (item.ReceiptAmount == 0)
+                        {
+                             <td align="center" >
+                   
+                            <ul class="nav pull-right" style="height: 1px">
+                                <li class="dropdown">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" title="Detail" style="cursor: pointer"><i class="icon-hand-up"></i></a>
+                                    <ul class="dropdown-menu" style="left:-250px">
+                                        <li>
+                                            <table>
+                                                <tr>
+                                                    <th> FeeTerm</th>
+                                                    <th>Fee Amt</th>
+                                                    <th>Edu. Tax Amt</th>
+                                                </tr>
+                                   
+                                                @foreach (var i in Model.MonthlyBills.Where(x => x.MonthlyBillStudentId == item.ReferenceId))
+                                                {
+                               
+                                                    <tr>
+                                                        <td>  @i.FeeItem.Description 
+                                                        </td>
+                                                        <td>@i.FeeAmount</td>
+                                                        @if (i.EducationTaxAmount != 0)
+                                                        {
+                                                            <td>@i.EducationTaxAmount</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>-</td>
+                                                        }
+                                                    </tr>
+                                  
+                                                }
+                                            </table>
+                                        </li>
+                                        @*  <li><a href="#"><i class="icon-user"></i> My Profile</a></li>
+                            <li><a href="#"><i class="icon-cogs"></i> Settings</a></li>
+                            <li><a href="#"><i class="icon-off"></i> Log Out</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#"><i class="icon-info-sign"></i> Help</a></li>*@
+                                    </ul>
+                                </li>
+                            </ul>
+                    
+                        </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                       
+                                       
+
+                    </tr>
+                        SN0++;
+
+                }
+                                
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<style>
+    .nav table td {
+        line-height: 10px
+    }
+</style>

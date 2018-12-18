@@ -1,0 +1,18 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.FeeTermDetailViewModel
+<span style="display: none" class="single-list">
+    @using (Html.BeginCollectionItem("billTermList"))
+    {
+        @Html.HiddenFor(x => x.Id, new { @class = "billing_term_value billing_term  bill_term_Id " + Model.Description.Replace(" ", "_"), rate = Model.Rate, amt = Model.Amount, sign = Model.Sign })
+        @Html.HiddenFor(x => x.Amount, new { @class = "billing_term amount" })
+        @Html.HiddenFor(x => x.Basis, new { @class = "billing_term Basis" })    
+        @Html.HiddenFor(x => x.Description, new { @class = "billing_term Description" })
+        @Html.HiddenFor(x => x.Rate, new { @class = "billing_term Rate" })
+        @Html.HiddenFor(x => x.Sign, new { @class = "billing_term Sign" })
+        @Html.HiddenFor(x => x.FeeTermIndex, new { @class = "billing_term FeeTermIndex" })
+        @Html.HiddenFor(x => x.IsProductWise, new { @class = "billing_term IsProductWise" 
+        })
+        @Html.HiddenFor(x => x.ParentGuid, new { @class = "billing_term ParentGuid" })
+        @Html.HiddenFor(x => x.DispalyOrder, new { @class = "billing_term DispalyOrder" })
+
+    }
+</span>

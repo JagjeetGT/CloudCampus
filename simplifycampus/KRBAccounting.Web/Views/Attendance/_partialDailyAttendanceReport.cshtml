@@ -1,0 +1,142 @@
+﻿@model KRBAccounting.Web.ViewModels.Attendance.DailyAttendanceReportViewModel
+ <div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader",  Model.ReportHeader)
+</div>  
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="_divBus-list">
+        <thead>
+            <tr>
+                 
+                <th width="10%">
+                      Date
+                </th>
+                <th>
+                    Check In
+                </th>
+                <th>
+                    Break Out
+                </th>
+                <th>
+                    Break In
+                </th>
+                <th>
+                    Check Out
+                </th>
+                <th>
+                    Break Time
+                </th>
+                <th>
+                    Time At Office
+                </th>
+                <th>
+                    Total Time
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in Model.DailyAttendancesGroup)
+            {
+                var att = i.FirstOrDefault();
+                <tr style="font-weight: bold">
+                 
+                    <td colspan="9">
+                   Full Name / Department :   @att.EmployeeName  /  @att.DepartmentName
+                    </td>
+                </tr>
+
+                foreach (var item in Model.DailyAttendances.Where(x=>x.Id == att.Id))
+                {
+                    <tr>
+                       
+                        <td>
+                            
+                            @if (item.TDate != null)
+                            {
+                                @item.TDate
+                            }else
+                            {
+                                <text>-</text>
+                            }
+
+                        </td>
+                        <td>
+                           
+                            
+                            @if (item.InTime != null)
+                            {
+                                @item.InTime
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                         
+                            @if (item.BreakOut != null)
+                            {
+                                @item.BreakOut
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                           
+                            @if (item.BreakIn != null)
+                            {
+                                @item.BreakIn
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                         
+                            @if (item.OutTIme != null)
+                            {
+                                @item.OutTIme
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                          
+                            @if (item.LunchBreak != null)
+                            {
+                                @item.LunchBreak
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                 
+                            @if (item.TimeatOffice != null)
+                            {
+                                @item.TimeatOffice
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                        <td>
+                      
+                            @if (item.TotalTime != null)
+                            {
+                                @item.TotalTime
+                            }else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+            
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+ 
+</div>
+  
+

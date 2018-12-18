@@ -1,0 +1,604 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Web.Helpers
+@model KRBAccounting.Web.ViewModels.Master.ProductAddViewModel
+@{
+    ViewBag.Title = "Product Master(+)";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("ProductAdd", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin",OnComplete = "$.unblockUI();", OnSuccess = "sucess", UpdateTargetId = "MsgError" }, new { @class = "form-horizontal form-custom", id = "product-form" }))
+{
+    @Html.HiddenFor(x => x.Product.Id)
+    <div id="MsgError">
+    </div>
+    <div style="width: 750px;">
+        <div class="lag">
+            <div class="stack">
+                <label class="label-70">
+                    Name</label>
+                <div class="field input-305">
+                    @Html.TextBoxFor(m => m.Product.Name)
+                    @Html.ValidationMessageFor(m => m.Product.Name)<span class="loading Product_Name">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                </div>
+            </div>
+            <div class="stack">
+                <label class="label-70">
+                    Short Name</label>
+                <div class="field input-80">
+                    @Html.TextBoxFor(m => m.Product.ShortName)
+                    @Html.ValidationMessageFor(m => m.Product.ShortName)<span class="loading Product_ShortName">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                </div>
+            </div>
+            <div class="stack">
+                <label class="label-70">
+                    BarCode</label>
+                <div class="field input-80">
+                    @Html.TextBoxFor(m => m.Product.BarCode)
+                    @Html.ValidationMessageFor(m => m.Product.BarCode)
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>Group</legend>
+            <div class="lag">
+                <div class="stack">
+                    <label class="label-100">
+                        @if (WebConfigHelper.ReadValue("IsPublication") == "1")
+                        {
+                            <text>Publication</text>
+                        }
+                        else
+                        {
+                            <text>Group</text>
+                        }
+                    </label>
+                    <div class="field">
+                        @Html.HiddenFor(m => m.Product.ProductGroupId)
+                        <input type="text" class = "modallink input-240 input" href="@Url.Action("GetProductGroup", "Master")" valueId="Product_ProductGroupId" id="productgroup"/>
+                    </div>
+                </div>
+                <div class="stack">
+                    <label class="label-100">
+                        @if (WebConfigHelper.ReadValue("IsPublication") == "1")
+                        {
+                            <text>Writer's Name</text>
+                        }
+                        else
+                        {
+                            <text>Sub-Group</text>
+                        }
+                    </label>
+                    <div class="field">
+                        @Html.HiddenFor(m => m.Product.ProductSubGroupId)
+                        <input type="text" class = "modallink input-240 input" href="@Url.Action("GetProductSubGroup", "Master")" valueId="Product_ProductSubGroupId" id="productsubgroup" parent="Product_ProductGroupId"/>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        @if (WebConfigHelper.ReadValue("IsPublication") == "1")
+        {
+            <fieldset>
+                <legend>Level</legend>
+                <div class="lag">
+                    <div class="stack">
+                        <label class="label-100">
+                            Level
+                        </label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Product.Level, new { @class = "input-240 input" })
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <label class="label-100">
+                            Class
+                        </label>
+                        <div class="field">
+                            @Html.TextBoxFor(m => m.Product.Class, new { @class = "input-240 input" })
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        }
+        <div class="clearfix">
+        </div>
+        <div style="clear: both">
+        </div>
+        <!--Tabs-->
+        <div id="tabs" style="width: auto;">
+            <ul>
+                <li><a href="#tabs-1">Product Details</a></li>
+                <li><a href="#tabs-2">Units and Conversions</a></li>
+                <li><a href="#tabs-3">Product Images</a></li>
+                
+                <li><a href="#tabs-4">Ledger Mapping</a></li>
+            </ul>
+            <!--Tab one-->
+            <div id="tabs-1">
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-70">
+                            Product Type</label>
+                        <span class="field">
+                            @Html.DropDownListFor(m => m.Product.ProductType, Model.Type, new { @class = "select-120 input" })
+                        </span></span><span class="stack">
+                            <label class="label-53">
+                                Batch</label>
+                            <span class="field">
+                                @Html.CheckBoxFor(m => m.Product.IsBatch, new { @class = "input" })
+                            </span></span><span class="stack batch" style="display:none">
+                                <label class="label-53">
+                                    Mfg Date</label>
+                                <span class="field">
+                                    @Html.CheckBoxFor(m => m.Product.MfgDate, new { @class = "input" })
+                                </span></span><span class="stack batch" style="display:none">
+                                    <label class="label-53">
+                                        Exp Date</label>
+                                    <span class="field">
+                                        @Html.CheckBoxFor(m => m.Product.ExpDate, new { @class = "input" })
+                                    </span></span><span class="stack">
+                                        <label class="label-60">
+                                            Val Tech</label>
+                                        <span class="field">
+                                            @Html.DropDownListFor(m => m.Product.ValTech, Model.ValTechList, new { @class = "select-120 input" })
+                                        </span></span>
+                    @if (WebConfigHelper.ReadValue("IsPublication") == "1")
+                    {
+                        <span class="stack">
+                            <label class="label-60">
+                                Medium</label>
+                            <span class="field">
+                                @Html.DropDownListFor(m => m.Product.Medium, Model.MediumList, new { @class = "select-120 input" })
+                            </span></span>
+                    }
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <fieldset>
+                        <legend>Price</legend><span class="stack">
+                            <label class="label-60">
+                                Buy Price</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.BuyPrice, new { @class = "input-45 input" })
+                            </span></span><span class="stack">
+                                <label class="label-40">
+                                    Sell Price</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.SalesPrice, new { @class = "input-45 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-40">
+                                        MRP</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.Product.MRP, new { @class = "input-45 input" })
+                                    </span></span><span class="stack">
+                                        <label class="label-40">
+                                            TP</label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(m => m.Product.TradePrice, new { @class = "input-45 input" })
+                                        </span></span><span class="stack">
+                                            <label class="label-70">
+                                                M.R. Rate</label>
+                                            <span class="field">
+                                                @Html.TextBoxFor(m => m.Product.MRRate, new { @class = "input-45 input" })
+                                            </span></span>
+                    </fieldset>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <fieldset>
+                        <legend>Unit</legend><span class="stack">
+                            <label class="label-40">
+                                Unit</label>
+                            <span class="field">
+                                @Html.DropDownListFor(m => m.Product.Unit, Model.UnitList, new { @class = "select-80 input" })
+                            </span></span><span class="stack">
+                                <label class="label-60">
+                                    Alt. Unit</label>
+                                <span class="field">
+                                    @Html.CheckBox("AddAltUnit")
+                                </span></span><span class="stack"><span>&nbsp;&nbsp;&nbsp;</span> <span class="field">
+                                    @Html.DropDownListFor(m => m.Product.AltUnit, Model.UnitList, new { @class = "select-80 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-60">
+                                        Alt. Qty</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.Product.AltQuantity, new { @class = "input-80 input" })
+                                    </span></span><span class="stack">
+                                        <label class="label-60">
+                                            Qty</label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(m => m.Product.Quantity, new { @class = "input-80 input" })
+                                        </span></span>
+                    </fieldset>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <fieldset>
+                        <legend>Reorder Info</legend><span class="stack">
+                            <label class="label-70">
+                                Max Stock</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.MaxStock, new { @class = "input-45 input" })
+                            </span></span><span class="stack">
+                                <label class="label-90">
+                                    Reorder Level</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.ReorderLevel, new { @class = "input-45 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-70">
+                                        Min Stock</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.Product.MinStock, new { @class = "input-45 input" })
+                                    </span></span><span class="stack">
+                                        <label class="label-90">
+                                            Reorder Qty</label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(m => m.Product.ReorderQuantity, new { @class = "input-45 input" })
+                                        </span></span>
+                    </fieldset>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag" style="display: none">
+                    <span class="stack">
+                        <label>
+                            Bonus</label>
+                        <span class="field">
+                            <select id="BonusType">
+                                <option value="1">General</option>
+                                <option value="2">Percentage</option>
+                            </select>
+                        </span></span>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag" style="display: none">
+                    <fieldset>
+                        <legend>Bonus Info</legend><span class="stack">
+                            <label class="label-70">
+                                % Bonus</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.BonusPercentage, new { @class = "input-45 input" })
+                            </span></span><span class="stack">
+                                <label class="label-70">
+                                    Min Qty</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.MinQuantity, new { @class = "input-45 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-70">
+                                        Min Bonus</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.Product.MinBonus, new { @class = "input-45 input" })
+                                    </span></span><span class="stack">
+                                        <label class="label-70">
+                                            Max Bonus</label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(m => m.Product.MaxBonus, new { @class = "input-45 input" })
+                                        </span></span>
+                    </fieldset>
+                </div>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <fieldset>
+                        <legend>Vat Info</legend><span class="stack">
+                            <label class="label-70">
+                                Vat</label>
+                            <span class="field">
+                                <select id="AddVat" class="input input-53">
+                                    <option value="1">Yes</option>
+                                    <option value="2">No</option>
+                                </select>
+                            </span></span><span class="stack">
+                                <label class="label-70">
+                                    Vat Rate</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.VatRate, new { @class = "input-45 input" })
+                                </span></span>
+                    </fieldset>
+                </div>
+                <div class="lag batch" style="display:none">
+                    <fieldset>
+                        <legend>Others</legend><span class="stack"><span class="field">
+                            <div style="float: left;">
+                                <label class="label-90">
+                                    Expired Product</label>
+                                <span>@Html.DropDownListFor(x => x.Product.ExpiredProduct, Model.ExpiredProductList, new { @class = "input-64 input", entermsg = "Enter ExpiredList" })</span>
+                            </div>
+                        </span></span>
+                    </fieldset>
+                </div>
+            </div>
+            <!--Tab Two-->
+            <div id="tabs-2">
+                
+                <fieldset>
+                    <label>
+                        <b>Unit Conversion Table</b></label>
+                    <div class="lag activity_detail">
+                        <table class="table-bordered" id="qualificatione-list">
+                            <tr class="nodrop nodrag">
+                                <th>
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>
+                                    Unit
+                                </th>
+                                <th>
+                                    Buy Price
+                                </th>
+                                <th>
+                                    Sale Price
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>
+                                    Unit
+                                </th>
+                                <th>
+                                </th>
+                            </tr>
+                            @{
+                    var model = new ProductUnitConversion();
+                    model.UnitList = Model.UnitList;
+                    model.LowestUnitList = model.UnitList;
+    
+                                @Html.Partial("_PartialProductUnitConversion", model)
+                                    
+                            }
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+            <!--Tab Three-->
+            <div id="tabs-3">
+                <div class="lag">
+                    <fieldset>
+                        <div class="lag" id="images">
+                            <img src="../../Content/img/No_Image_70x70.gif" id="imgCurrentImage" alt="Image" />
+                            <input name="attachmentsroom" id="attachments" type="file" />
+                            @Html.HiddenFor(m => m.Product.ProductImage)
+                            <div class="newimg">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <!--Tab Four-->
+            <div id="tabs-4">
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-110">
+                            Purchase</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.Product.PurchaseId)
+                            <input type="text" class = "modallink input-346 input" href="@Url.Action("GetLedgerCategoryOther", "Master")" valueId="Product_PurchaseId" id="PurchaseLedger" />
+                        </span></span>
+                </div>
+                <div class="clear">
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-110">
+                            Sales</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.Product.SalesId)
+                            <input type="text" class = "modallink input-346 input" href="@Url.Action("GetLedgerCategoryOther", "Master")" valueId="Product_SalesId" id="SalesLedger" />
+                        </span></span>
+                </div>
+                <div class="clear">
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-110">
+                            Sales Return</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.Product.SalesReturnId)
+                            <input type="text" class = "modallink input-346 input" href="@Url.Action("GetLedgerCategoryOther", "Master")" valueId="Product_SalesReturnId" id="SalesReturnLedger" />
+                        </span></span>
+                </div>
+                <div class="clear">
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-110">
+                            Purchase Return</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.Product.PurchaseReturnId)
+                            <input type="text" class = "modallink input-346 input" href="@Url.Action("GetLedgerCategoryOther", "Master")" valueId="Product_PurchaseReturnId" id="PurchaseReturnLedger" />
+                        </span></span>
+                </div>
+            </div>
+        </div>
+        <div style="clear: both">
+        </div>
+        <div class="lag" id="error" style="display: none; color: red;">
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    //       $("#Product_Name").live("focusout", function () {
+    //        var name = $(this).val();
+    //        if (name != "") {
+    //            $.getJSON("/Master/IsProductItemNameAvailable?name=" + name, "", function (data, status, xhr) {
+    //                if (data != '') {
+    //                    $("#MsgError").html(data);
+    //                    $("#Product_Name").focus();
+    //                    $("#Product_Name").addClass("error");
+    //                } else {
+    //                    $("#MsgError").html('');
+    //                    $("#Product_Name").removeClass("error");
+    //                }
+    //            });
+    //        }
+    //    });
+    //       $("#Product_ShortName").live("focusout", function() {
+    //           var name = $(this).val();
+    //           if (name != "") {
+    //               $.getJSON("/Master/IsProductShortNameAvailable?name=" + name, "", function(data, status, xhr) {
+    //                   if (data != '') {
+    //                       $("#MsgError").html(data);
+    //                       $("#Product_ShortName").focus();
+    //                       $("#Product_ShortName").addClass("error");
+    //                   } else {
+    //                       $("#MsgError").html('');
+    //                       $("#Product_ShortName").removeClass("error");
+    //                   }
+    //               });
+    //           }
+    //       });
+
+
+    $(document).ready(function () {
+        $("#tabs").tabs();
+        $(".first-col").closest("tr").attr("id", "tr_0");
+    });
+
+
+    $(".addNewConversion").live('click', function (e) {
+        var tableClass = $(this).attr("tableid");
+        var element = $(this);
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        var disable = 0;
+         var unitId = $("#Product_Unit").val();
+        //var unitId = document.getElementById("Product_Unit");
+     //   var strUser = unitId.options[unitId.selectedIndex].text;
+        var closestTr = element.closest("tr");
+        closestTr.find("input[type='text']").each(function () {
+            if ($(this).val() == "" && $(this).attr("isrequired")) {
+                disable = 1;
+            }
+        });
+        if (disable == 0) {
+            var link = $(this).attr("href");
+            $.ajax({
+                url: link,
+                type: "GET",
+                data:{Id:unitId},
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                    if (closestTr.is(":last-child")) {
+                        $('#' + tableClass + ' tr:last').addClass("deletable");
+                        var id = $('#' + tableClass + ' tr:last').attr("id");
+                        $('#' + tableClass + ' tr:last').after(data);
+                        var arrString = id.split("_");
+                        var index = parseInt(arrString[1]) + 1;
+                        $(".first-col:last").closest("tr").attr("id", "tr_" + index);
+                      //  $("#Product_Unit :selected").text(); 
+                     //   $("#Product_Unit").val();
+                        RemovePlus();
+                    }
+                    closestTr.next().find('.first-col').focus();
+
+                    $('input[type="text"]').focus(function () {
+                        if ($(this).attr("entermsg")) {
+                            $(".enter-msg").html($(this).attr("entermsg"));
+                        } else {
+                            $(".enter-msg").html("");
+                        }
+                    });
+                }
+            });
+            closestTr.next().find('.first-col').focus();
+        }
+        else {
+            closestTr.find("input[type='text']").each(function () {
+                if ($(this).val() == "" && $(this).attr("isrequired")) {
+                    $(this).addClass("error");
+                    $(this).focus();
+                }
+            });
+        }
+        return false;
+    });
+
+
+    function RemovePlus() {
+        var deletabl = document.querySelectorAll(".deletable");
+        $.each(deletabl, function () {
+            $(this).find(".PlusUnit").css("display", "none");
+        });
+    }
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+    });
+
+    $("#attachments").kendoUpload({
+        upload: onUpload,
+        remove: onRemove,
+        multiple: true,
+        async: {
+            saveUrl: ('/Master/UploadProductImages'),
+            removeUrl: ('/Master/RemoveImages'),
+            autoUpload: true
+        },
+        success: function (data) {
+            var imageGuid = data.response.path;
+            if (imageGuid == '') {
+                alert('upload failed please try again');
+            } else {
+                var name = "hddimage" + data.response.filename;
+                var guuid = data.response.guid;
+                var bigimage = data.response.bigimage;
+                var imageBig = data.response.bigimage;
+                $("#imgCurrentImage").attr('src', '');
+                var classname = "hddimage" + data.response.filename.replace('.', '');
+                var text = '<div id="' + guuid + '"><img src="' + bigimage + '" alt="Image" id="' + guuid + '"width="75px" height="75px"/><img src="../../Content/img/delete.png" width="15px" data-id="' + guuid + '" class="del"></div>';
+                $("#images .newimg").append(text);
+                $('#product-form').append('<input type="hidden" class="' + classname + '" value="' + imageBig + '" name="image" id="' + name + '" />');
+
+            }
+        }
+    });
+
+
+    function onRemove(e) {
+        for (var i = 0; i < e.files.length; i++) {
+            var data = getGuid(e.files[i].name);
+            e.files[i].name = data;
+        }
+    }
+    function getGuid(id) {
+        var newValue = "hddimage" + id.replace('.', '');
+        var returnvalue = $("." + newValue).val();
+        return returnvalue;
+    }
+    function onUpload(e) {
+        var files = e.files;
+        // Check the extension of each file and abort the upload if it is not .jpg
+        $.each(files, function () {
+            var ext = this.extension.toUpperCase();
+            if (ext == ".JPG" || ext == ".PNG" || ext == ".JPEG") {
+
+            } else {
+                $("#kendoWindow").dialog();
+                //alert("Only .jpg, .png and .jpeg files can be uploaded");
+                e.preventDefault();
+            }
+        });
+
+    }
+
+    $(".del").live("click", function () {
+        var id = $(this).attr("data-id");
+        $("#" + id).remove();
+
+    });
+
+
+
+
+   
+</script>

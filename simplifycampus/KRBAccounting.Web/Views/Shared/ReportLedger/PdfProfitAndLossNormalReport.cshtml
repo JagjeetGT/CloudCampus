@@ -1,0 +1,1376 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.ProfitAndLossReportNormalViewModel
+@{
+    var incomeHeaders = KRBAccounting.Service.UtilityService.GetProfitAndLossHeaders(Model.AsOnDate, null, "I", Model.FYId, Model.BranchId);
+    var expenditureHeaders = KRBAccounting.Service.UtilityService.GetProfitAndLossHeaders(Model.AsOnDate, null, "E", Model.FYId, Model.BranchId);
+    decimal incomeTotal = incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null).Sum(x => x.Total);
+    decimal expenditureTotal = expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null).Sum(x => x.Total);
+    var profitLoss = incomeTotal - expenditureTotal;
+    var incomeGrandTotal = incomeTotal;
+    var expenditureGrandTotal = expenditureTotal;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+<table border="0.5" style="font-size: 7px;">
+
+
+        @if (Model.AccountGroup == true && Model.Ledger == true)
+        {
+            if (Model.AccountSubGroup == false && Model.Subledger == false)
+            {
+                <thead>
+                      <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Ledger Total
+                        </th>
+                        <th>
+                            Group Total
+                        </th>
+                    </tr>
+                </thead>  
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@item.Total
+                        </td>
+                    </tr>
+                    var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                    foreach (var ledger in expenditureLedgers)
+                    {
+                        <tr>
+                            <td style="padding-left: 30px">
+                                @ledger.AccountName
+                            </td>
+                            <td style="text-align: right">@ledger.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@item.Total
+                        </td>
+                    </tr>
+
+                    var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                    foreach (var ledger in incomeLedgers)
+                    {
+                        <tr>
+                            <td style="padding-left: 30px">
+                                @ledger.AccountName
+                            </td>
+                            <td style="text-align: right">@ledger.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+            else if (Model.AccountSubGroup == true && Model.Subledger == true)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Sub Ledger Total
+                        </th>
+                        <th>
+                            Ledger Total
+                        </th>
+                        <th>
+                            Sub Group Total
+                        </th>
+                        <th>
+                            Group Total
+                        </th>
+                    </tr>
+                </thead>  
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                     <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@item.Total
+                        </td>
+                    </tr>
+                    foreach (var subgroup in expenditureHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                    {
+                        <tr>
+                            <td style="padding-left: 30px; font-weight: bold">
+                                @subgroup.ASGName
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@subgroup.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                        foreach (var ledger in expenditureLedgers)
+                        {
+                            <tr>
+                                <td style="padding-left: 45px; font-weight: bold">
+                                    @ledger.AccountName
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right; font-weight: bold">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            var expendituresubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", subgroup.Id, subgroup.ASGId, ledger.Id, Model.FYId, 1, 1, Model.BranchId);
+                            foreach (var subledger in expendituresubLedgers)
+                            {
+                                <tr>
+                                    <td style="padding-left: 60px">
+                                        @subledger.SLName
+                                    </td>
+                                    <td style="text-align: right">@subledger.Total
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                     <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                         <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                     <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@item.Total
+                        </td>
+                    </tr>
+                    foreach (var subgroup in incomeHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                    {
+                        <tr>
+                            <td style="padding-left: 30px; font-weight: bold">
+                                @subgroup.ASGName
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@subgroup.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", subgroup.Id, subgroup.ASGId, 0, Model.FYId, 1, 0, Model.BranchId);
+                        foreach (var ledger in incomeLedgers)
+                        {
+                            <tr>
+                                <td style="padding-left: 45px; font-weight: bold">
+                                    @ledger.AccountName
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right; font-weight: bold">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            var incomesubLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", subgroup.Id, subgroup.ASGId, ledger.Id, Model.FYId, 1, 1, Model.BranchId);
+                            foreach (var subledger in incomesubLedgers)
+                            {
+                                <tr>
+                                    <td style="padding-left: 60px">
+                                        @subledger.SLName
+                                    </td>
+                                    <td style="text-align: right">@subledger.Total
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                     <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                         <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>   
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                     <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr> 
+            }
+            else if (Model.AccountSubGroup == true && Model.Subledger == false)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Ledger Total
+                        </th>
+                        <th>
+                            Sub Group Total
+                        </th>
+                        <th>
+                            Group Total
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@item.Total
+                        </td>
+                    </tr>
+                    foreach (var subgroup in expenditureHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                    {
+                         <tr>
+                             <td style="padding-left: 30px; font-weight: bold">
+                                 @subgroup.ASGName
+                             </td>
+                             <td>
+                             </td>
+                             <td style="text-align: right; font-weight: bold">@subgroup.Total
+                             </td>
+                             <td>
+                             </td>
+                         </tr>
+                        var acgrp = 0;
+                        if (Model.AccountSubGroup == true)
+                        {
+                            acgrp = 1;
+                        }
+                        var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", subgroup.Id, subgroup.ASGId, 0, Model.FYId, acgrp, 0, Model.BranchId);
+                        foreach (var ledger in expenditureLedgers)
+                        {
+                            <tr>
+                                <td style="padding-left: 45px">
+                                    @ledger.AccountName
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        Net Profit C/F To B/S
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@profitLoss
+                    </td>
+                </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@item.Total
+                        </td>
+                    </tr>
+                    foreach (var subgroup in incomeHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                    {
+                        <tr>
+                            <td style="padding-left: 30px; font-weight: bold">
+                                @subgroup.ASGName
+                            </td>
+                            <td>
+                            </td>
+                            <td style="text-align: right; font-weight: bold">@subgroup.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        var acgrp = 0;
+                        if (Model.AccountSubGroup == true)
+                        {
+                            acgrp = 1;
+                        }
+                        var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", subgroup.Id, subgroup.ASGId, 0, Model.FYId, acgrp, 0, Model.BranchId);
+                        foreach (var ledger in incomeLedgers)
+                        {
+                            <tr>
+                                <td style="padding-left: 45px">
+                                    @ledger.AccountName
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+            else if (Model.AccountSubGroup == false && Model.Subledger == true)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Sub Ledger Total
+                        </th>
+                        <th>
+                            Ledger Total
+                        </th>
+                        <th>
+                            Group Total
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@item.Total
+                        </td>
+                    </tr>
+                    var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", item.Id, 0, 0, Model.FYId, 0, 1, Model.BranchId);
+                    foreach (var ledger in expenditureLedgers)
+                    {
+                        if (ledger.SLName == null)
+                        {
+                            <tr>
+                                <td style="padding-left: 30px">
+                                    @ledger.AccountName
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                        else if (ledger.SLName != null)
+                        {
+                            <tr>
+                                <td style="padding-left: 40px">
+                                    @ledger.SLName
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@item.Total
+                        </td>
+                    </tr>
+                    var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", item.Id, 0, 0, Model.FYId, 0, 1, Model.BranchId);
+                    foreach (var ledger in incomeLedgers)
+                    {
+                        if (ledger.SLName == null)
+                        {
+                            <tr>
+                                <td style="padding-left: 30px">
+                                    @ledger.AccountName
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                        else if (ledger.SLName != null)
+                        {
+                            <tr>
+                                <td style="padding-left: 40px">
+                                    @ledger.SLName
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+        }
+        else if (Model.AccountGroup == true && Model.Ledger == false)
+        {
+            if (Model.AccountSubGroup == true)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Sub Group Total
+                        </th>
+                        <th>
+                            Group Total
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold;">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td  style="font-weight: bold; text-align: right">@item.Total
+                        </td>
+                    </tr>
+                    foreach (var subgroup in expenditureHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                    {
+                        <tr>
+                            <td style="padding-left: 30px">
+                                @subgroup.ASGName
+                            </td>
+                            <td  style="text-align: right">@subgroup.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                  <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td style="font-weight: bold;">
+                            @item.Description
+                        </td>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold; text-align: right">@item.Total
+                        </td>
+                    </tr>
+                    foreach (var subgroup in incomeHeaders.Where(x => x.Id == item.Id && x.ASGName != null))
+                    {
+                        <tr>
+                            <td style="padding-left: 30px">
+                                @subgroup.ASGName
+                            </td>
+                            <td style="text-align: right">@subgroup.Total
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Group Total
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td>
+                            @item.Description
+                        </td>
+                        <td  style="text-align: right">@item.Total
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    <tr>
+                        <td>
+                            @item.Description
+                        </td>
+                        <td style="text-align: right">@item.Total
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+        }
+        else if (Model.AccountGroup == false && Model.Ledger == true)
+        {
+            if (Model.Subledger == true)
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                           Sub Ledger Total
+                        </th>
+                        <th>
+                            Ledger Total
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", item.Id, 0, 0, Model.FYId, 0, 1, Model.BranchId);
+                    foreach (var ledger in expenditureLedgers)
+                    {
+                        if (ledger.SLName == null)
+                        {
+                            <tr>
+                                <td>
+                                    @ledger.AccountName
+                                </td>
+                                <td>
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                            </tr>
+                        }
+                        else if (ledger.SLName != null)
+                        {
+                            <tr>
+                                <td style="padding-left: 40px">
+                                    @ledger.SLName
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", item.Id, 0, 0, Model.FYId, 0, 1, Model.BranchId);
+                    foreach (var ledger in incomeLedgers)
+                    {
+                        if (ledger.SLName == null)
+                        {
+                            <tr>
+                                <td>
+                                    @ledger.AccountName
+                                </td>
+                                 <td>
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                            </tr>
+                        }
+                        else if (ledger.SLName != null)
+                        {
+                            <tr>
+                                <td style="padding-left: 40px">
+                                    @ledger.SLName
+                                </td>
+                                <td style="text-align: right">@ledger.Total
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td>
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <thead>
+                    <tr>
+                        <th>
+                            Particulars
+                        </th>
+                        <th>
+                            Ledger Total
+                        </th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        EXPENDITURE SIDE
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in expenditureHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    var expenditureLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "E", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                    foreach (var ledger in expenditureLedgers)
+                    {
+                        <tr>
+                            <td>
+                                @ledger.AccountName
+                            </td>
+                            <td style="text-align: right">@ledger.Total
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR EXPENDITURE SIDE
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureTotal
+                    </td>
+                </tr>
+                if (profitLoss > 0)
+                {
+                    expenditureGrandTotal = expenditureTotal + profitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Profit C/F To B/S
+                        </td>
+                        <td style="text-align: right">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@expenditureGrandTotal
+                    </td>
+                </tr>
+                 <tr>
+                    <td style="text-align: center; font-weight: bold">
+                        INCOME SIDE
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in incomeHeaders.Where(x => x.ASGId == 0 && x.ASGName == null))
+                {
+                    var incomeLedgers = KRBAccounting.Service.UtilityService.GetProfitAndLossLedgerTotals(Model.AsOnDate, "I", item.Id, 0, 0, Model.FYId, 0, 0, Model.BranchId);
+                    foreach (var ledger in incomeLedgers)
+                    {
+                        <tr>
+                            <td>
+                                @ledger.AccountName
+                            </td>
+                            <td style="text-align: right">@ledger.Total
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        TOTAL FOR INCOME SIDE
+                    </td>
+                    <td style="text-align: right">@incomeTotal
+                    </td>
+                </tr>
+                if (profitLoss < 0)
+                {
+                    var absProfitLoss = Math.Abs(profitLoss);
+                    incomeGrandTotal = incomeTotal + absProfitLoss;
+                    <tr>
+                        <td style="text-align: right; font-weight: bold">
+                            Net Loss C/F To B/S
+                        </td>
+                        <td style="text-align: right; font-weight: bold">@profitLoss
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td style="text-align: right; font-weight: bold">
+                        GRAND TOTAL
+                    </td>
+                    <td style="text-align: right; font-weight: bold">@incomeGrandTotal
+                    </td>
+                </tr>
+            }
+        }
+        
+    </table>
+</div>

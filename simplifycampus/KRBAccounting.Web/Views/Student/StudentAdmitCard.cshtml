@@ -1,0 +1,155 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.StudentAdmitCardForm
+@{
+    ViewBag.Title = "Student Attendance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var curdate = DateTime.Now;
+    var cdate = @curdate.ToString("MM/dd/yyyy");
+
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid block-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Student Attendance</h1>
+                    <div class="clear">
+                    </div>
+                </div>
+                @using (Html.BeginForm("StudentAttendances", "Student", FormMethod.Post))
+                {
+                    <div class="lag">
+                        <label class="label-90">
+                            Class</label><div class="field">
+                                             @Html.DropDownListFor(x => x.ClassId, Model.ClassList, new {@Class = "input-190"})
+                                         </div>
+                        <label class="label-90">
+                            Section</label><div class="field">
+                                               @Html.DropDownListFor(x => x.SectionId, Model.SectionList, new {@Class = "input-190"})
+                                           </div>
+                        <div class="field">
+                            <input type="button" value="Today" class="btn todaydate"/>
+                        </div>
+                    </div>
+               
+                    <div class="clearfix">
+                    </div>
+                    <div class="date">
+                    </div>
+                    <div class="attendace">
+                    </div>
+
+             
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .ui-datepicker-calendar
+    {
+        display: none;
+    }
+</style>
+<script>
+
+    $(".date").hide();
+    $(".date").datepicker();
+    $(".ui-datepicker-prev, .ui-datepicker-next").live("click", function () {
+        Begin();
+        var year = $(".ui-state-default").closest('td').attr("data-year");
+        var m = $(".ui-state-default").closest('td').attr("data-month");
+        var month = parseInt(m) + parseInt(1);
+        var classId = $("#ClassId").val();
+        var sectionId = $("#SectionId").val();
+        if (classId != 0) {
+            var url = "/Student/StudentAttendancesDetail?classId=" + classId + "&sectionId=" + sectionId + "&year=" + year + "&month=" + month;
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".attendace").html(data);
+
+                },
+                complete: function () {
+
+                    $(".today").css("background-color", "linen");
+
+                    $.unblockUI();
+                }
+            });
+        }
+    });
+    $("input.todaydate").live("click", function () {
+        Begin();
+        var classId = $("#ClassId").val();
+        var sectionId = $("#SectionId").val();
+        if (classId != 0) {
+            var url = "/Student/StudentAttendancesDetail?classId=" + classId + "&sectionId=" + sectionId + "&year=" + 0 + "&month=" + 0;
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".attendace").html(data);
+
+                },
+                complete: function () {
+                    $(".date").show();
+                    $(".today").css("background-color", "linen");
+                    $(".date").datepicker("setDate", new Date());
+                    $.unblockUI();
+                }
+            });
+        }
+        $(".attendace").remove();
+        $.unblockUI();
+    });
+    $("#ClassId, #SectionId").live("change", function () {
+        Begin();
+        var classId = $("#ClassId").val();
+        var sectionId = $("#SectionId").val();
+        if (classId != 0) {
+            var url = "/Student/StudentAttendancesDetail?classId=" + classId + "&sectionId=" + sectionId + "&year=" + 0 + "&month=" + 0;
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".attendace").html(data);
+
+                },
+                complete: function () {
+                    $(".date").show();
+                    $(".today").css("background-color", "linen");
+                    $(".date").datepicker("setDate", new Date());
+                    $.unblockUI();
+                }
+            });
+        } else {
+            $(".attendace").remove();
+            $.unblockUI();
+        }
+
+    });
+    $(".attendancesave").live("click", function () {
+        Begin();
+        var form = $("form");
+        var url = form.attr("action");
+        $.ajax({
+            url: url,
+            data: form.serialize(),
+            type: "POST",
+            success: function (data) {
+
+            },
+            complete: function () {
+                $.unblockUI();
+                $(".today").css("background-color", "linen");
+            }
+        });
+    });
+    //    {
+    //            $(this).attr("data-month"), $(this).attr("data-year")
+    //        }
+    
+
+</script>

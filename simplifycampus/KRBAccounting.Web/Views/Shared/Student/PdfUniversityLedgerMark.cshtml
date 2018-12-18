@@ -1,0 +1,480 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.UniversityMarkLedgerViewModel
+@{
+    var data = Model.SpGetSubjectByClassIdandStudentIdResult.FirstOrDefault();
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="workplace">
+
+    <div class="row-fluid">
+
+        <div class="ReportList" id="universityledgermark">
+            <h5 style="font-weight:bold;text-decoration:underline">STUDENT PERSONAL INFORMATION</h5>
+            <table>
+                <tr style="font-size:10px;">
+                    <td colspan="3">
+                        Name :@Model.Studentinfo.StuDesc
+                    </td>
+                    <td colspan="3">Address :@Model.Studentinfo.PerAdd</td>
+
+                    <td rowspan="6">
+                        @{
+                            var path = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "Content/academicsimage/" + Model.Studentinfo.StdPhotoFileName + Model.Studentinfo.StdPhotoExt;
+                            if (Model.Studentinfo.StdPhotoFileName == "" || Model.Studentinfo.StdPhotoFileName == null)
+                            {
+                                path = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "Content/img/NoImage.jpg";
+
+                            }
+                        }
+
+
+
+
+                        <img src="@path" width="80px" height="80px" style="float: right;
+                                margin-top: 10px" />
+                    </td>
+                </tr>
+                <tr style="font-size: 10px;">
+                    <td colspan="3">  Address :@Model.Studentinfo.Phone </td>
+                    <td colspan="3">
+                        DBO :@if (Model.Studentinfo.DBO != null)
+                        {
+                            @Convert.ToDateTime(Model.Studentinfo.DBO).ToShortDateString()
+                        } A.D. || @Model.Studentinfo.DBOMiti B.S.
+                    </td>
+
+                </tr>
+                <tr style="font-size: 10px;">
+                    <td colspan="3">Email Id :@Model.Studentinfo.EmailId </td>
+                    <td colspan="3">Local Address :@Model.Studentinfo.TmpAdd</td>
+
+                </tr>
+                <tr style="font-size: 10px;">
+                    <td colspan="3">Father's Name :@Model.Studentinfo.FName </td>
+                    <td colspan="3">Mobile :@Model.Studentinfo.FMobile</td>
+
+                </tr>
+                <tr style="font-size: 10px;">
+                    <td colspan="3">Mother's Name :@Model.Studentinfo.MName </td>
+                    <td colspan="3">Mobile :@Model.Studentinfo.MMobile</td>
+
+                </tr>
+                <tr>
+                    <td colspan="3"></td>
+                    <td colspan="3"></td>
+                </tr>
+            </table>
+
+
+            ___________________________________________________________________________________________________________________
+            <br />
+            <br />
+
+
+            <h5 style="font-weight: bold; text-decoration: underline">ACADEMIC BACKGROUND</h5>
+
+            <div class="row-fluid" style="border-top:solid 1px; border-bottom:solid 1px">
+                @foreach (var item in @Model.AcademicBackgrounds)
+                {<p style="font-weight:bold">@item.Title</p>
+
+                    <p style="font-size:10px;">
+                        Institution,Board,Country : @item.Institution  @item.Board @item.Country &ensp; &ensp; &ensp; &ensp;     Passed Year : @item.PassedYear &ensp; &ensp; &ensp; &ensp;
+                        Percentage : @item.Percentage  &ensp; &ensp; &ensp; &ensp;
+                        Division : @item.Division.Description
+                    </p>
+
+
+                }
+            </div>
+            ___________________________________________________________________________________________________________________
+            <br />
+            <br />
+
+
+            <h5 style="font-weight: bold; text-decoration: underline">IN CAPMUS/COLLEGE ACADEMIC PROFILE </h5>
+            <br />
+            <table>
+                <tr style="font-size: 10px;">
+                    <td>Program : @data.ProgramName</td>
+                    <td>Level : @data.Level</td>
+                    <td>Adminssion Year : @data.AcademicYear.ToShortDateString()</td>
+
+                </tr>
+                <tr style="font-size: 10px;">
+                    <td>University Registration No. : @data.UniversityRegistrationNo</td>
+
+
+                    <td>Student Registration No. : @Model.Studentinfo.Regno</td>
+                    <td> Program Code : @data.ProgramCode</td>
+                </tr>
+            </table>
+            <br />
+            <table style="font-size: 10px;">
+                @foreach (var item in Model.SpGetSubjectByClassIdandStudentIdResult.GroupBy(x => x.ClassId))
+                {
+                    var percentage = item.FirstOrDefault().PassPercentage;
+                    <tr>
+
+                        <td style="font-size: 10px;">
+                            @Model.Durationtype : @item.FirstOrDefault().ClassName
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="listpopup" border="0.5">
+                                <tr bgcolor="#E6EEEE" align="center" style="font-weight:bold">
+                                    <th rowspan="2" colspan="4" style="font-size:8px;" width="20%">
+                                        Subject
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 1
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 2
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 3
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 4
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 5
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 6
+                                    </th>
+                                    <th colspan="3" style="font-size:8px;" width="10%">
+                                        Year 7
+                                    </th>
+                                    @*<th rowspan="2" colspan="2" style="font-size:8px;" width="10%">
+                                        Remark
+                                    </th>*@
+                                </tr>
+                                <tr bgcolor="#E6EEEE" align="center" style="font-weight:bold">
+
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        MO
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Res
+                                    </th>
+                                    <th style="font-size:6px;" width="5%">
+                                        Sym
+                                    </th>
+
+
+                                </tr>
+                                @foreach (var i in Model.SpGetSubjectByClassIdandStudentIdResult.Where(x => x.ClassId == item.Key))
+                                {
+
+                                    @Html.Partial("_PartialBoardExamMasterAddDetial", i)
+                                }
+
+
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                    var m = new KRBAccounting.Web.ViewModels.ClassPercentageViewModel()
+                {
+                    ClassId = item.Key,
+
+                    Percentage = percentage
+
+                };
+
+
+
+
+                @Html.Partial("_PartialClassIdPercentageReport", m)
+                }
+            </table>
+            ___________________________________________________________________________________________________________________
+            <br />
+            <br />
+
+            <table>
+                <tr>
+                    <td style="font-size: 10px;">
+                        Graduation Year : @if (data.GraduationYear != null)
+                        {
+                            @data.GraduationYear
+                        }
+                    </td>
+                    <td style="font-size: 10px;">
+                        Percentage : @if (data.Percentage != null)
+                        {
+                            @data.Percentage
+                        }
+                    </td>
+                    <td style="font-size: 10px;"> Division : @if (data.Division != null)
+                    {@data.Division }</td>
+
+                </tr>
+                <tr>
+                    <td style="font-size: 10px;">
+                        Character Certificate Issue Date :  @if (data.CharacterCertificateIssueDate != null)
+                        {
+
+                            @Convert.ToDateTime(data.CharacterCertificateIssueDate).ToShortDateString()
+
+                        }
+                        || @data.CharacterCertificateIssueMiti
+                    </td>
+                    <td style="font-size: 10px;"> Character Certificate Number : @data.CharacterCertificateNumber</td>
+                    <td style="font-size: 10px;">
+                        Transcript Issue Date : @if (data.TranscriptIssueDate != null)
+                        {
+                            @Convert.ToDateTime(data.TranscriptIssueDate).ToShortDateString()
+
+                        }
+                        ||@data.TranscriptIssueMiti
+                    </td>
+                    <td style="font-size: 10px;"> Transcript Number : @data.TranscriptNumber</td>
+                </tr>
+            </table>
+            <div class="row-fluid">
+                <div class="lag">
+                    <label></label>
+                    <div class="field input-225"></div>
+                    <label></label>
+                    <div class="field input-225"></div>
+                    <label></label>
+                    <div class="field input-225"></div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="lag">
+                    <label></label>
+                    <div class="field input-225">
+
+                    </div>
+                    <label></label>
+                    <div class="field input-225">
+
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="lag">
+                    <label></label>
+                    <div class="field input-225">
+
+                    </div>
+                    <label></label>
+                    <div class="field input-225">
+
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="lag">
+                    <label style="font-size:10px;">Remarks</label>
+
+                    @*<div class="field input-225">
+                            @data.Remarks
+                        </div>*@
+
+                </div>
+
+
+
+            </div><br />
+            <table border="0.5">
+                <tr>
+                    <td bgcolor="#000000"></td>
+                    <td rowspan="24" colspan="350"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#000000"></td>
+                </tr>
+
+            </table>
+            <br />
+            <br />
+            <br />
+            <div class="row-fluid">
+                <table style="width:100%">
+                    <tr>
+                        <td>
+
+                            <p style="font-size:10px" align="left">
+                                <br />
+                                ____________
+                                <br />
+                                PREPARED BY
+                            </p>
+                        </td>
+                        <td>
+
+                            <p align="center" style=" font-size: 10px">
+                                <br />
+                                _____________
+                                <br />
+                                CAMPUS SEAL
+                            </p>
+                        </td>
+                        <td>
+
+                            <p align="right" style=" font-size: 10px">
+                                <br />
+                                ______________
+                                <br />
+                                CAMPUS CHIEF
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+                <br />
+                <p style="font-size: 10px">MO- MARKS OBTAINED</p>
+                <br />
+                <p style="font-size: 10px">RES- RESULT (PASS / FAIL / ABSENT / WITHHELD / CANCELLED)</p><br />
+                <p style="font-size: 10px">SYBL- SYMBOL NO</p>
+                <div class="clearfix"></div>
+                <div class="lag">
+                    <label style="font-size:8px"> </label>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+

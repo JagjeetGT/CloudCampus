@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{692FF5E9-9BAC-4865-82B0-7F11C0786FF9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KRBAccounting.Data</RootNamespace>
+    <AssemblyName>KRBAccounting.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="LinqKit">
+      <HintPath>..\packages\LinqKit.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\SimplifyAccounting\KRBAccounting.Web\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CacheRepo\DefaultCacheProvider.cs" />
+    <Compile Include="CacheRepo\SqlDependencyCacheProvider.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="ConnectionString.cs" />
+    <Compile Include="DataContext.cs" />
+    <Compile Include="Infrastructure\DatabaseFactory.cs" />
+    <Compile Include="Infrastructure\Disposable.cs" />
+    <Compile Include="Infrastructure\IDatabaseFactory.cs" />
+    <Compile Include="Infrastructure\IRepository.cs" />
+    <Compile Include="Infrastructure\IUnitOfWork.cs" />
+    <Compile Include="Infrastructure\PagedResult.cs" />
+    <Compile Include="Infrastructure\RepositoryBase.cs" />
+    <Compile Include="Infrastructure\UnitOfWork.cs" />
+    <Compile Include="Pager\PagedList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pager\PageLinqExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pager\PagerItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pager\PagerOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AcademicBackgroundRepository.cs" />
+    <Compile Include="Repositories\AccountGroupRepository.cs" />
+    <Compile Include="Repositories\AccountWatchListRepository.cs" />
+    <Compile Include="Repositories\AccountSubGroupRepository.cs" />
+    <Compile Include="Repositories\AccountTransactionRepository.cs" />
+    <Compile Include="Repositories\AgentRepository.cs" />
+    <Compile Include="Repositories\AreaRepository.cs" />
+    <Compile Include="Repositories\BillingTermDetailRepository.cs" />
+    <Compile Include="Repositories\BillOfMaterialDetailRepository.cs" />
+    <Compile Include="Repositories\BillOfMaterialRepository.cs" />
+    <Compile Include="Repositories\BoardExamDetailRepository.cs" />
+    <Compile Include="Repositories\BoardExamMasterRepository.cs" />
+    <Compile Include="Repositories\CashBankDetailRepository.cs" />
+    <Compile Include="Repositories\CashBankMasterRepository.cs" />
+    <Compile Include="Repositories\CertificateTemplateRepository.cs" />
+    <Compile Include="Repositories\ClassScheduleDetailRepository.cs" />
+    <Compile Include="Repositories\CompanyInfoRepository.cs" />
+    <Compile Include="Repositories\ConsolidateDetailCenterRepository.cs" />
+    <Compile Include="Repositories\ConsolidateCenterRepository.cs" />
+    <Compile Include="Repositories\ClassTeacherMappingRepository.cs" />
+    <Compile Include="Repositories\AttendanceLogRepository.cs" />
+    <Compile Include="Repositories\DesignRepository.cs" />
+    <Compile Include="Repositories\StudentRegistrationNumbering.cs" />
+    <Compile Include="Repositories\ScCalendarEventRepository.cs" />
+    <Compile Include="Repositories\ScMessageRepository.cs" />
+    <Compile Include="Repositories\ScClassTeacherMappingRepository.cs" />
+    <Compile Include="Repositories\StudentDocumentRepository.cs" />
+    <Compile Include="Repositories\EmployeeTransactionRepository.cs" />
+    <Compile Include="Repositories\ExpiryBreakageDetailRepository.cs" />
+    <Compile Include="Repositories\ExpiryBreakageMasterRepository.cs" />
+    <Compile Include="Repositories\FinishedGoodReceiveDetailRepository.cs" />
+    <Compile Include="Repositories\FinishedGoodReceiveRepository.cs" />
+    <Compile Include="Repositories\FinishedGoodReturnDetailRepository.cs" />
+    <Compile Include="Repositories\FinishedGoodReturnRepository.cs" />
+    <Compile Include="Repositories\GodownTransferDetailRepository.cs" />
+    <Compile Include="Repositories\GodownTransferRepository.cs" />
+    <Compile Include="Repositories\MaterialIssueDetailRepository.cs" />
+    <Compile Include="Repositories\MaterialIssueRepository.cs" />
+    <Compile Include="Repositories\MaterialReturnDetailRepository.cs" />
+    <Compile Include="Repositories\MaterialReturnRepository.cs" />
+    <Compile Include="Repositories\PurchaseChallanDetailRepository.cs" />
+    <Compile Include="Repositories\PurchaseChallanImpTransDocRepository.cs" />
+    <Compile Include="Repositories\PurchaseChallanMasterRepository.cs" />
+    <Compile Include="Repositories\PurchaseOrderBillingAddressRepository.cs" />
+    <Compile Include="Repositories\PurchaseOrderDetailRepository.cs" />
+    <Compile Include="Repositories\PurchaseOrderImpTransDocRepository.cs" />
+    <Compile Include="Repositories\PurchaseOrderMasterRepository.cs" />
+    <Compile Include="Repositories\PurchaseProductBatchRepository.cs" />
+    <Compile Include="Repositories\SalesChallanBillingAddressRepository.cs" />
+    <Compile Include="Repositories\SalesChallanDetailRepository.cs" />
+    <Compile Include="Repositories\SalesChallanImpTransDocRepository.cs" />
+    <Compile Include="Repositories\SalesChallanMasterRepository.cs" />
+    <Compile Include="Repositories\SalesOrderAddressRepository.cs" />
+    <Compile Include="Repositories\SalesOrderDetailRepository.cs" />
+    <Compile Include="Repositories\SalesOrderMasterRepository.cs" />
+    <Compile Include="Repositories\SalesOrderOtherDetailRepository.cs" />
+    <Compile Include="Repositories\SchemeFreeProductRepository.cs" />
+    <Compile Include="Repositories\SchemeProductRepository.cs" />
+    <Compile Include="Repositories\SchemeRepository.cs" />
+    <Compile Include="Repositories\ScRollNumberingSchemeRepository.cs" />
+    <Compile Include="Repositories\OpeningStudentRepository.cs" />
+    <Compile Include="Repositories\ProductImagesRepository.cs" />
+    <Compile Include="Repositories\ProductOpeningRepository.cs" />
+    <Compile Include="Repositories\ProductUnitConversionRepository.cs" />
+    <Compile Include="Repositories\PyPaymentSlipRepository.cs" />
+    <Compile Include="Repositories\PyPayrollGenerationDetailRepository.cs" />
+    <Compile Include="Repositories\PyPayrollGenerationRepository.cs" />
+    <Compile Include="Repositories\PyTaxDeductionEmployeeMappingRepository.cs" />
+    <Compile Include="Repositories\PyPFEmployeeMappingRepository.cs" />
+    <Compile Include="Repositories\PyEmployeeSalaryAllowanceMappingRepository.cs" />
+    <Compile Include="Repositories\PyEmployeeDeductionMappingRepository.cs" />
+    <Compile Include="Repositories\PyCorporateAllowanceMappingRepository.cs" />
+    <Compile Include="Repositories\MaterialIssue_DetailsRepository.cs" />
+    <Compile Include="Repositories\MaterialIssue_MasterRepository.cs" />
+    <Compile Include="Repositories\MenuItemRepository.cs" />
+    <Compile Include="Repositories\PyAllowanceMasterRepository.cs" />
+    <Compile Include="Repositories\PyCorporateSalaryMasterRepository.cs" />
+    <Compile Include="Repositories\PyDeductionMasterRepository.cs" />
+    <Compile Include="Repositories\PyEmployeeDeductionMasterRepository.cs" />
+    <Compile Include="Repositories\PyEmployeeSalaryMasterRepository.cs" />
+    <Compile Include="Repositories\PyPFEmployeeMasterRepository.cs" />
+    <Compile Include="Repositories\PyTaxDeductionPatternRepository.cs" />
+    <Compile Include="Repositories\ScAbsentApplicationRepository.cs" />
+    <Compile Include="Repositories\ScBillTransactionRepository.cs" />
+    <Compile Include="Repositories\ScBookReceivedDetailsRepository.cs" />
+    <Compile Include="Repositories\ScClassScheduleRepository.cs" />
+    <Compile Include="Repositories\ScConsolidatedMarksSetupRepository.cs" />
+    <Compile Include="Repositories\ScEmployeeDepartmentRepository.cs" />
+    <Compile Include="Repositories\ScEmployeePostRepository.cs" />
+    <Compile Include="Repositories\ScFeeReceiptRepository.cs" />
+    <Compile Include="Repositories\ScLibraryCardRepository.cs" />
+    <Compile Include="Repositories\ScLibraryLateFineRepository.cs" />
+    <Compile Include="Repositories\ScLibrarySettingRepository.cs" />
+    <Compile Include="Repositories\ScMaterialReturnDetailsRepository.cs" />
+    <Compile Include="Repositories\ScMaterialReturnMasterRepository.cs" />
+    <Compile Include="Repositories\ScMonthlyBillDetailRepository.cs" />
+    <Compile Include="Repositories\ScMonthlyBillRepository.cs" />
+    <Compile Include="Repositories\ScBookIssuedRepository.cs" />
+    <Compile Include="Repositories\ScBookIssueReturnRepository.cs" />
+    <Compile Include="Repositories\ScBookReceivedRepository.cs" />
+    <Compile Include="Repositories\ScBookRepository.cs" />
+    <Compile Include="Repositories\ScClassRoomMappingRepository.cs" />
+    <Compile Include="Repositories\ScExamMarksEntryRepository.cs" />
+    <Compile Include="Repositories\SchBuildingRoomMappingRepository.cs" />
+    <Compile Include="Repositories\ScLibraryMemberRegistrationRepository.cs" />
+    <Compile Include="Repositories\ScProgramMasterRepository.cs" />
+    <Compile Include="Repositories\ScRoomRepository.cs" />
+    <Compile Include="Repositories\ScSalaryHeadRepository.cs" />
+    <Compile Include="Repositories\ScStaffAttendanceRepository.cs" />
+    <Compile Include="Repositories\ScStaffSubjectMappingRepository.cs" />
+    <Compile Include="Repositories\ScStudentAttendanceRepository.cs" />
+    <Compile Include="Repositories\ScStudentExtraActivityDetailRepository.cs" />
+    <Compile Include="Repositories\ScBoaderMappingRepository.cs" />
+    <Compile Include="Repositories\ScExamAttendanceDetailRepository.cs" />
+    <Compile Include="Repositories\ScExamAttendanceMasterRepository.cs" />
+    <Compile Include="Repositories\ScPrePaidSchemeDetailsRepository.cs" />
+    <Compile Include="Repositories\ScPrePaidSchemeRepository.cs" />
+    <Compile Include="Repositories\ScFineSchemeDetailsRepository.cs" />
+    <Compile Include="Repositories\ScFineSchemeRepository.cs" />
+    <Compile Include="Repositories\ScBoaderRepository.cs" />
+    <Compile Include="Repositories\ScClassFeeRateRepository.cs" />
+    <Compile Include="Repositories\ScFeeItemRepository.cs" />
+    <Compile Include="Repositories\ExtraChargeRepository.cs" />
+    <Compile Include="Repositories\ExtraTermRepository.cs" />
+    <Compile Include="Repositories\ScExamMarkSetupRepository.cs" />
+    <Compile Include="Repositories\ScExamRoutineRepository.cs" />
+    <Compile Include="Repositories\ScExamRepository.cs" />
+    <Compile Include="Repositories\ScBusRouteDetailsRepository.cs" />
+    <Compile Include="Repositories\ScFeeTermRepository.cs" />
+    <Compile Include="Repositories\ScHouseGroupRepository.cs" />
+    <Compile Include="Repositories\ScHouseMappingRepository.cs" />
+    <Compile Include="Repositories\ScShiftRepository.cs" />
+    <Compile Include="Repositories\ScEmployeeCategoryRepository.cs" />
+    <Compile Include="Repositories\ScEmployeeInfoRepository.cs" />
+    <Compile Include="Repositories\ScStudentFeeRateDetailRepository.cs" />
+    <Compile Include="Repositories\ScStudentFeeRateMasterRepository.cs" />
+    <Compile Include="Repositories\ScStudentFeeTermRepository.cs" />
+    <Compile Include="Repositories\ScStudentRegistrationDetailRepository.cs" />
+    <Compile Include="Repositories\ScStudentRegistrationRepository.cs" />
+    <Compile Include="Repositories\ScStudentSubjectMappingRepository.cs" />
+    <Compile Include="Repositories\ScClassSubjectMappingRepository.cs" />
+    <Compile Include="Repositories\ScBusRepository.cs" />
+    <Compile Include="Repositories\ScBusStopRepository.cs" />
+    <Compile Include="Repositories\ScDivisionRepository.cs" />
+    <Compile Include="Repositories\ScExtraActivityRepository.cs" />
+    <Compile Include="Repositories\ScGradeRepository.cs" />
+    <Compile Include="Repositories\ScNationalityRepository.cs" />
+    <Compile Include="Repositories\ScReligionRepository.cs" />
+    <Compile Include="Repositories\ScStudentCategoryRepository.cs" />
+    <Compile Include="Repositories\ScStudentinfoRepository.cs" />
+    <Compile Include="Repositories\ScSubjectRepository.cs" />
+    <Compile Include="Repositories\ScTeacherScheduleRepository.cs" />
+    <Compile Include="Repositories\ScTransportMappingRepository.cs" />
+    <Compile Include="Repositories\QueuedJobRepository.cs" />
+    <Compile Include="Repositories\ScClassRepository.cs" />
+    <Compile Include="Repositories\SchBuildingRepository.cs" />
+    <Compile Include="Repositories\ScSectionRepository.cs" />
+    <Compile Include="Repositories\EntryControlInventoryRepository.cs" />
+    <Compile Include="Repositories\EntryControlPLRepository.cs" />
+    <Compile Include="Repositories\EntryControlPurchaseRepository.cs" />
+    <Compile Include="Repositories\EntryControlSalesRepository.cs" />
+    <Compile Include="Repositories\OpeningLedgerRepository.cs" />
+    <Compile Include="Repositories\ModuleListRepository.cs" />
+    <Compile Include="Repositories\SecurityRightRepository.cs" />
+    <Compile Include="Repositories\ShortNameDetailRepository.cs" />
+    <Compile Include="Repositories\SmsGroupDetailRepository.cs" />
+    <Compile Include="Repositories\SmsGroupRepository.cs" />
+    <Compile Include="Repositories\SmsLogRepository.cs" />
+    <Compile Include="Repositories\SMSSettingsRepository.cs" />
+    <Compile Include="Repositories\SmsTemplatesRepository.cs" />
+    <Compile Include="Repositories\StockAdjustmentDetailRepository.cs" />
+    <Compile Include="Repositories\StockAdjustmentMasterRepository.cs" />
+    <Compile Include="Repositories\StockTransferDetailRepository.cs" />
+    <Compile Include="Repositories\StockTransferMasterRepository.cs" />
+    <Compile Include="Repositories\StudentExtraActivityRepository.cs" />
+    <Compile Include="Repositories\StudentSlcInfoRepository.cs" />
+    <Compile Include="Repositories\UDFDataRepository.cs" />
+    <Compile Include="Repositories\UDFEntryDetailRepository.cs" />
+    <Compile Include="Repositories\UDFEntryRepository.cs" />
+    <Compile Include="Repositories\PurchaseReturnDetailRepository.cs" />
+    <Compile Include="Repositories\PurchaseReturnImpTransDocRepository.cs" />
+    <Compile Include="Repositories\PurchaseReturnMasterRepository.cs" />
+    <Compile Include="Repositories\SalesDetailRepository.cs" />
+    <Compile Include="Repositories\SalesInvoiceOtherDetailRepository.cs" />
+    <Compile Include="Repositories\SalesInvoiceRepository.cs" />
+    <Compile Include="Repositories\SalesReturnDetailRepository.cs" />
+    <Compile Include="Repositories\SalesReturnOtherDetailRepository.cs" />
+    <Compile Include="Repositories\SalesReturnMasterRepository.cs" />
+    <Compile Include="Repositories\StockTransactionRepository.cs" />
+    <Compile Include="Repositories\SystemControlRepository.cs" />
+    <Compile Include="Repositories\DocumentNumberingSchemeRepository.cs" />
+    <Compile Include="Repositories\CostCenterRepository.cs" />
+    <Compile Include="Repositories\CreditNoteDetailRepository.cs" />
+    <Compile Include="Repositories\CreditNoteMasterRepository.cs" />
+    <Compile Include="Repositories\CurrencyRepository.cs" />
+    <Compile Include="Repositories\DebitNoteDetailRepository.cs" />
+    <Compile Include="Repositories\DebitNoteMasterRepository.cs" />
+    <Compile Include="Repositories\FiscalYearRepository.cs" />
+    <Compile Include="Repositories\GodownRepository.cs" />
+    <Compile Include="Repositories\JournalVoucherDetailRepository.cs" />
+    <Compile Include="Repositories\JournalVoucherRepository.cs" />
+    <Compile Include="Repositories\LedgerRepository.cs" />
+    <Compile Include="Repositories\NarrationRepository.cs" />
+    <Compile Include="Repositories\ProductRepository.cs" />
+    <Compile Include="Repositories\ProductGroupRepository.cs" />
+    <Compile Include="Repositories\ProductSubGroupRepository.cs" />
+    <Compile Include="Repositories\BillingTermRepository.cs" />
+    <Compile Include="Repositories\PurchaseDetailRepository.cs" />
+    <Compile Include="Repositories\PurchaseImpTransDocRepository.cs" />
+    <Compile Include="Repositories\PurchaseInvoiceReository.cs" />
+    <Compile Include="Repositories\RoleRepository.cs" />
+    <Compile Include="Repositories\SubLedgerRepository.cs" />
+    <Compile Include="Repositories\UnitRepository.cs" />
+    <Compile Include="Repositories\UserRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KRBAccounting.Domain\KRBAccounting.Domain.csproj">
+      <Project>{EB87EBA9-486E-4921-9A0D-E63E5FBBF212}</Project>
+      <Name>KRBAccounting.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

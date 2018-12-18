@@ -1,0 +1,23 @@
+﻿@model IEnumerable<KRBAccounting.Web.ViewModels.Academy.AcademicSemesterAddViewModel>  
+@foreach (var item in Model)
+{
+    @Html.Partial("_PartialProgramSemesterDetail", item)
+    
+}
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-examroutine-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-examroutine-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>*@

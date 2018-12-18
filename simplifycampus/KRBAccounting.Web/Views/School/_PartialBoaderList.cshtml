@@ -1,0 +1,115 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScBoader>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+    }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Fee Item
+                </th>
+                <th>
+                    Memo
+                </th>
+                @*<th>
+                    CreatedDate
+                </th>
+                <th>
+                    CreatedBy
+                </th>*@
+                <th>
+                    UpdatedDate
+                </th>
+                <th>
+                    UpdatedBy
+                </th>
+                <th>
+                    IsActive
+                </th>
+                <th>
+                    Display Order
+                </th>
+                <th width="5%">
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr align="center">
+                    <td align="center">@i
+                    </td>
+                    <td>@item.Code
+                    </td>
+                    <td>@item.Description
+                    </td>
+                    <td>
+                        @if (item.FeeItem != null)
+                        {
+                            @item.FeeItem.Description
+                        }
+                    </td>
+                    <td>@item.Memo
+                    </td>
+                    @*<td>@Convert.ToDateTime(item.CreatedDate).ToShortDateString()
+                    </td>
+                    <td>
+                        @if (item.CreatedBy != null)
+                        {
+                            @item.CreatedBy.Username
+                        }
+                    </td>*@
+                    <td>@Convert.ToDateTime(item.UpdatedDate).ToShortDateString()
+                    </td>
+                    <td>
+                        @if (item.UpdatedBy != null)
+                        {
+                            @item.UpdatedBy.Username
+                        }
+                    </td>
+                    <td>
+                        @if (item.IsActive)
+                        {<input type="checkbox" disabled="disabled" checked="checked" />}
+                        else
+                        {<input type="checkbox" disabled="disabled" />}
+                    </td>
+                    <td>@item.DispalyOrder
+                    </td>
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editScBoader icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>@if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)" class="deleteboader  icon-remove" data-id="@item.Id"  title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BoadersList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "boader-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@ 

@@ -1,0 +1,233 @@
+﻿@using KRBAccounting.Service.Models
+
+@{
+    ViewBag.Title = "Class Wise Fee Rate Setup";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="block-fluid">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Class Wise Fee Rate Setup</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addScSubject"></a></li>
+                        }
+                        
+                        
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="subject-list">
+                    @Html.Action("ClassFeeRatesList")
+                </div>
+                <div class="clearfix"></div>
+                  <div class="clearfix">
+                </div>
+                <div id="imgload" style="display: none" align="center">
+                    <img src="/Content/themes/img/loaders/w_loader_gr.gif" />
+                </div>
+            </div>
+            <div id="Detail-list">
+            </div>
+                
+       
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalsubject" style="display: none;" title=" Class Wise Fee Rate Setup">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $(".del-row").live("click", function() {
+        $(this).closest("tr").remove();
+        CalcTotalAmount();
+    });
+    $("#modalsubject").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+              
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalsubject .block').html(data);
+                $(this).addClass("done");
+                $("#modalsubject").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $("tr._detail").live("click", function () {
+        $("div#imgload").css("display", "block");
+        var classid = $(this).attr("data-classid");
+
+        $("#Detail-list").load("/School/ClassWiseFeeRateDetailByClassId?classId=" + classid, function () {
+            $("div#imgload").css("display", "none");
+        });
+    });
+ 
+    $('a.addScSubject').live('click', function () {
+        Begin();
+        var url = '@Url.Action("ClassFeeRateAdd", "School")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editScClassFeeRate').live('click', function () {
+        Begin();
+        var ShiftId = $(this).attr("data-ShiftId");
+        var BoaderId = $(this).attr("data-BoaderId");
+        var ClassId = $(this).attr("data-ClassId");
+        var url = '@Url.Action("ClassFeeRateEdit", "School")?shiftId=' + ShiftId + '&&boaderId=' + BoaderId + '&&classId=' + ClassId;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalsubject .block').load("/School/ClassFeeRateAdd");
+        $("#subject-list").load("/School/ClassFeeRatesList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#subject-list").load("/School/ClassFeeRatesList");
+        $('#modalsubject').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+
+        if (data == "True") {
+            Begin();
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            Begin();
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+    $("#Boader-id , #class-id, #Shift-id").live("blur", function () {
+        var valueid = $(this).attr("valueid");
+        var boaderId = $("#" + valueid).val();
+        var classId = $("#ClassFeeRate_ClassId").val();
+        var shiftId = $("#ClassFeeRate_ShiftId").val();
+        if (boaderId == '') {
+            boaderId = 0;
+        }
+        if (shiftId == '') {
+            shiftId = 0;
+        }
+        if (classId != 0 && classId != '') {
+            var url = '@Url.Action("GetClasFeeItem")';
+            Begin();
+            $.ajax({
+                url: url,
+                data: { classId: classId, shiftId: shiftId, boaderId: boaderId },
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+
+                },
+                success: function (data) {
+                    if (data != "false") {
+                        $("#table-class-fee-rate-detail tr.detail-entry").remove();
+                        $("#table-class-fee-rate-detail").append(data);
+                        $("#table-class-fee-rate-detail").append();
+
+                        var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+                        $.each(ledgerElement, function (index) {
+                            var element = $(this).closest("tr");
+                            element.attr("id", "tr_" + index);
+
+                            var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                            element.find(".text_subject").attr({
+                                "valueId": Subject_valueid,
+                                "id": "text_subject_" + index
+                            });
+                        });
+
+                    } else {
+                        if (data == "0") {
+
+                            alert('Data Is Not Exists');
+                        }
+
+                        alert('Already Exists For Select');
+                    }
+
+                },
+                complete: function () {
+                    $.unblockUI();
+                }
+            });
+
+
+
+        }
+    });
+
+    $(".FeeRate").live("blur", function() {
+        CalcTotalAmount();
+    });
+    
+    function CalcTotalAmount() {
+        var element = document.querySelectorAll(".FeeRate");
+        var totalAmount = parseFloat(0);
+        $.each(element, function() {
+            var amount = parseFloat($(this).val());
+            totalAmount += amount;
+        });
+        $("#TotalAmount").val(totalAmount);
+    }
+    function NewRowDetailList(element, index) {
+
+        element = element.closest("tr").next("tr");
+
+        element.attr("id", "tr_" + index);
+
+        var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+        element.find(".text_subject").attr({
+            "valueId": Subject_valueid,
+            "id": "text_subject_" + index
+        });
+    }
+</script>

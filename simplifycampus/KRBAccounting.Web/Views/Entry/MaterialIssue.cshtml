@@ -1,0 +1,393 @@
+﻿@using KRBAccounting.Service.Models
+@model KRBAccounting.Web.ViewModels.Entry.MaterialIssueViewModel
+@{
+    ViewBag.Title = "Material Issue";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@Html.Partial("_PartialInventoryIssueBredcrumb")
+<div id="debitnote-list">
+    <div class="workplace">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Material Issue</h1>
+                    <ul class="buttons">
+                         @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addMI"></a></li>
+                        }
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid table-sorting" id="tbl-pending">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list" id="table-mi">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Issue No
+                                </th>
+                                <th>
+                                    Unit
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>
+                                    Conv. Factor
+                                </th>
+                                <th>
+                                    Remarks
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.MaterialIssues)
+                            {
+                                var trId = "id-" + item.Id;
+                                <tr id="@trId">
+                                    <td>@item.Code
+                                    </td>
+                                    <td>@item.Unit.Code
+                                    </td>
+                                    <td>@item.Qty
+                                    </td>
+                                    <td>@item.ConversionFactor
+                                    </td>
+                                    <td>@item.Description
+                                    </td>
+                                    <td>
+                                          @if (userRight.Edit)
+                                          {
+                                               <a href="javascript:void(0)" class="MIEdit icon-pencil" data-id="@item.Id" title="Edit: @item.Code">
+                                        </a>
+                                          }
+                                       | 
+                                          @if (userRight.Delete)
+                                          {
+                                              <a href="javascript:void(0)" class="MIRemove icon-remove" data-id="@item.Id" title="Delete: @item.Code">
+                                              </a>
+                                          }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        @Html.Raw(Html.AjaxPager(Model.MaterialIssues, "MaterialIssueList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dr">
+            <span></span>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalMI" style="display: none;" title="Material Issue(+)">
+    <div class="block">
+    </div>
+</div>
+<div class="dialog" id="modalMIEdit" style="display: none;" title="Material Issue Edit">
+    <div class="block">
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/jQuery.tmpl.min.js")" type="text/javascript"></script>
+<script type="text/x-jquery-tmpl" id="MIAddTemplate">    
+    @Html.CollectionItemJQueryTemplate("MaterialIssueAddEdit", Model.MaterialIssueAddViewModel)
+</script>
+<script type="text/x-jquery-tmpl" id="MIDetailAddTemplate">
+     @{
+         var model = new KRBAccounting.Web.ViewModels.Entry.MaterialIssueDetailAddViewModel();
+         model.UnitList = Model.MaterialIssueAddViewModel.UnitList;
+         model.EntryControl = Model.EntryControl;
+      }
+    @Html.CollectionItemJQueryTemplate("_PartialMIDetailEntry", model)
+</script>
+<script type="text/javascript">
+    $('a.addMI').live('click', function () {
+        var guid = _generateGuid();
+        $('#modalMI .block').html($("#MIAddTemplate").tmpl({ index: guid }));
+        $.validator.unobtrusive.parse("#mi-form");
+        $("#modalMI").dialog('open');
+     var dateType = @Model.DateType.ToString();
+        if (dateType == "1") {
+            $("#IssueDate").mask("99/99/9999");
+            $("#IssueDate").live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#IssueDate").mask("9999/99/99");
+            $("#IssueDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+        return false;
+    });
+
+//    $("#IssueDate").live('blur', function () {
+//        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "__/__/____") {
+//            var date = $(this).val();
+//            var nepDate = convertToNepaliNew(date);
+//            $("#IssueMiti").val(nepDate);
+//        }
+    //    });
+    
+     
+    $("#modalMI").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $(".ui-dialog #mi-form");
+                var isValid = form.valid();
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if (isValid) {
+                     var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index == 0 || index != length - 1) {
+                            if ($(this).find(".product_text").val() == 0 ) {
+                                isValid = false;
+                                $(this).find(".product_text").addClass("error").focus();
+                            }
+                            if ($(this).find(".costCenter").val() == 0 || $(this).find(".costCenter").val == "") {
+                                if (isValid) {
+                                    $(this).find(".costCenter").addClass("error").focus();
+                                } else {
+                                    $(this).find(".costCenter").addClass("error");
+                                }
+                            }
+                            if ($(this).find(".godown").val() == 0 || $(this).find(".godown").val == "") {
+                                if (isValid) {
+                                    $(this).find(".godown").addClass("error").focus();
+                                } else {
+                                    $(this).find(".godown").addClass("error");
+                                }
+
+                            }
+                            if ($(this).find(".unit").val() == 0 || $(this).find(".unit").val == "") {
+                                if (isValid) {
+                                    $(this).find(".unit").addClass("error").focus();
+                                } else {
+                                    $(this).find(".unit").addClass("error");
+                                }
+                            }
+                            if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val == "") {
+                                if (isValid) {
+                                    $(this).find(".qty").addClass("error").focus();
+                                } else {
+                                    $(this).find(".qty").addClass("error");
+                                }
+                                isValid = false;
+                            }
+
+                        }
+                        
+                    });
+                    if (isValid) {
+                        $.ajax({
+                            type: "POST",
+                            url: form.attr('action'),
+                            data: form.serialize(),
+                            beforeSend: function() {
+                                $.blockUI();
+                            },
+                            success: function(data) {
+                                if (data.success) {
+                                    var guid = _generateGuid();
+                                    $('#modalMI .block').html($("#MIAddTemplate").tmpl({ index: guid }));
+                                    $.validator.unobtrusive.parse("#mi-form");
+                                    $("#table-mi tbody").append(data.newrow);
+                                } else {
+                                    $("#MsgError").html(data.msg).show();
+                                }
+                            },
+                            complete: function() {
+                                $.unblockUI();
+                            }
+                        });
+                    }
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("a.MIRemove").live("click", function () {
+        var result = confirm("Are you sure?");
+        if (result) {
+            BeginRequest();
+            var currentElement = $(this);
+            var id = $(this).attr("data-id");
+            var link = '@Url.Action("MaterialIssueDelete", "Entry")';
+            $.ajax({
+                url: link,
+                type: "POST",
+                data: { id: id },
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    if (data) {
+                        currentElement.closest('tr').remove();
+                        $.unblockUI();
+                        GrowlMsg('Delete Successful');
+                    }
+                    else {
+                        alert("could not be deleted");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#modalMIEdit").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $(".ui-dialog #mi-form");
+                var isValid = form.valid();
+                var error = document.querySelectorAll('.error');
+                if (error.length > 0) {
+                    isValid = false;
+                }
+                if (isValid) {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("MaterialIssueEdit", "Entry")',
+                        data: form.serialize(),
+                        beforeSend: function () {
+                            $.blockUI();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                var element = "#id-" + data.id;
+                                $(element).replaceWith(data.updatedRow);
+                                $('#modalMIEdit .block').html("");
+                                $('#modalMIEdit').dialog('close');
+                            }
+                            else {
+                                $("#MsgError").html(data.msg).show();
+                            }
+                        },
+                        complete: function () {
+                            $.unblockUI();
+                            GrowlMsg('Edit Successful');
+                        }
+                    });
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $('a.MIEdit').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("MaterialIssueEdit", "Entry")';
+        BeginRequest();
+        $.ajax({
+            url: url,
+            data: { id: id },
+            context: document.body,
+            success: function (data) {
+                $('#modalMIEdit .block').html(data);
+                $('#modalMIEdit').dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                $.unblockUI();
+                alert("Error");
+            }
+        });
+
+        return false;
+    });
+
+    function PicklistCustomFunction(value, type) {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("PopulateMaterialIssueDetails", "Entry")',
+            data: { id: value },
+            beforeSend: function () {
+                BeginRequest();
+            },
+            success: function (data) {
+                $("#FinishedGoodId").val(data.FinishedGoodId);
+                $("#FinishedGood").val(data.FinishedGood);
+                $("#Description").val(data.Description);
+                $("#CostCenter").val(data.CostCenter);
+                $("#CostCenterId").val(data.CostCenterId);
+                $("#ConversionFactor").val(data.ConversionFactor);
+                $("#Qty").val(data.Qty);
+                $("#UnitId").val(data.UnitId);
+                $("#Unit").val(data.Unit);
+                $("#body-material-issue-detail").html(data.materialIssueDetailView);
+                resetValidation();
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    }
+    $(".qty").live("keyup", function () {
+        var totalQty = parseFloat(0);
+         $(this).removeClass("error");
+       $(this).closest("tr").find(".qty").removeClass("error");
+        $(".qty").each(function (index, element) {
+            if (element.value) {
+                totalQty += parseFloat(element.value);
+                }
+          });
+        
+        $("#TotalQty").val(totalQty);
+    });
+       
+    $(".del-row").live('click', function (e) {
+        $(this).closest("tr").remove();
+        
+    });
+
+    
+    33
+    $("#IssueDate").live("blur", function (e) {
+        var currentElement = $(this);
+        var date = $(this).val();
+        var url = '@Url.Action("CheckFiscalyearDateinMaterialIssue", "Entry")?IssueDate=' + date;
+        $.post(url, function (data) {
+            if (data != "True") {
+                currentElement.addClass("error");
+                alert(data);
+
+            } else {
+                currentElement.removeClass("error");
+            }
+        });
+    });
+</script>

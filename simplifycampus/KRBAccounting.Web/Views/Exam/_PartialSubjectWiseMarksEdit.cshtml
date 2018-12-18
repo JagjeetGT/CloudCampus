@@ -1,0 +1,136 @@
+@model KRBAccounting.Domain.Entities.ScExamMarksEntry
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("SubjectWiseMarksEdit", "Exam", new { controller = "Exam" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.CreatedById)
+    @Html.HiddenFor(x => x.CreatedDate)
+    @Html.HiddenFor(x => x.oldClassId)
+    @Html.HiddenFor(x => x.oldExamId)
+     @Html.HiddenFor(x => x.oldSubjectId)
+     @Html.HiddenFor(m=>m.AcademicYearId)
+    <div class="lag">
+        <label>
+            Exam</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ExamId)
+            <input type="text" class=" input-150 input" href="@Url.Action("GetExames")" value="@if (Model.Exam != null)
+                                                                                                        {
+                                                                                                            @Model.Exam.Description
+                                                                                                        }
+                                                                                                           " valueid="ExamId" id="exam-id" readonly="readonly"  />
+            @Html.ValidationMessageFor(m => m.ExamId)
+        </div>
+        <label>
+            Class</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.ClassId)
+            <input type="text" class=" input-150 input" href="@Url.Action("GetClasses","School")" value="@if (Model.Class != null)
+                                                                                                         {
+                                                                                                             @Model.Class.Description
+                                                                                                         }
+                                                                                                            " valueid="ClassId" id="class-id" readonly="readonly"/>
+            @Html.ValidationMessageFor(m => m.ClassId)
+        </div>
+        <label>
+            Subject</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.SubjectId)
+            <input type="text" class=" input-150 input" href="@Url.Action("GetSubjectByExamClasId")" value="@if (Model.Subject != null)
+                                                                                                                     {
+                                                                                                                         @Model.Subject.Description
+                                                                                                                     }
+                                                                                                                        " parent="ExamId" parentnext="ClassId" valueid="SubjectId" readonly="readonly" id="suject-id"/>
+            @Html.ValidationMessageFor(m => m.SubjectId)
+        </div>
+    </div>
+    
+    <div class="clearfix">
+    </div>
+    <div class="lag detailEntryTable" style="height: 350px; width: 100%">
+        <table class="listpopup" id="table-examroutine-detail" width="100%">
+            <tr>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+                <th colspan="4">
+                    Theory
+                </th>
+                <th colspan="4">
+                    Practical
+                </th>
+            </tr>
+            <tr class="">
+                <th>
+                    s.no
+                </th>
+                <th>
+                    Student Name
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Roll No
+                </th>
+                <th>
+                    Full Mark
+                </th>
+                <th>
+                    Pass Mark
+                </th>
+                <th>
+                    Ob. Mark
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Full Mark
+                </th>
+                <th>
+                    Pass Mark
+                </th>
+                <th>
+                    Ob. Mark
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Total
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        @{
+            var i = 1; 
+        }
+
+            @foreach (var item in Model.SubjectWiseMarksDetailses)
+            {
+                ViewBag.sno = i;
+                
+                @Html.Partial("_PartialSubjectWiseMarksDetailEdit", item)
+                i++;
+            }
+        </table>
+    </div>
+    <hr />
+    <div class="lag">
+        @Html.TextBoxFor(x => x.Remarks, new { @class = "input-450 input" })
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        AutoGEN();
+    });
+    
+</script>

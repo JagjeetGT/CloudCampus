@@ -1,0 +1,73 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStaffListReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix"></div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+      <table border="0.5" style="font-size: 8px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    S.no.
+                </th>
+                <th>
+                    Staff Name
+                </th>
+                <th>
+                    Gender
+                </th>
+                <th>
+                    Martial Status
+                </th>
+                <th>
+                    Date Of Birth
+                </th>
+                <th>
+                    Father's Name
+                </th>
+                <th>
+                    Mobile No.
+                </th>
+                <th>
+                    Religion
+                </th>
+                <th>Current Status</th>
+                <th>Date Of Join</th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.StaffList)
+        {
+            <tr>
+                <td>@i
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @item.Gender
+                </td>
+                <td>@item.MaritalStatus
+                </td>
+                <td>@item.DateOfBirth.ToShortDateString()
+                </td>
+                <td>
+                    @item.FatherName
+                </td><td>@item.Mobile</td><td>@item.Religion</td><td>@Enum.GetName(typeof(StatusEnum), item.Status)</td><td>@item.DateOfJoin.ToShortDateString()</td>
+            </tr>
+            i++;
+        }
+    </table>
+</div>

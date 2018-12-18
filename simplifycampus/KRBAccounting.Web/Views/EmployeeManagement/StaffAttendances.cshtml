@@ -1,0 +1,125 @@
+﻿@model KRBAccounting.Web.ViewModels.Academy.StaffAttendanceFormViewModel
+@{
+    ViewBag.Title = "Staff Attendance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var curdate = DateTime.Now;
+    var cdate = @curdate.ToString("MM/dd/yyyy");
+
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid block-fluid">
+            <div class="span12">
+                <div class="head">
+                    <h1>
+                        Staff Attendance</h1>
+                    <div class="clear">
+                    </div>
+                </div>
+                @using (Html.BeginForm("StaffAttendances", "EmployeeManagement", FormMethod.Post))
+                {
+                    <div class="lag">
+                        <label class="label-190">
+                            Select Employee Department
+                        </label>
+                        <div class="field">
+                            @Html.DropDownListFor(x => x.DepartmentId, Model.EmployeeDepartmentList, new { @Class = "input-190" })
+                        </div>
+                        <div class="field">
+                            <input type="button" value="Today" class="btn todaydate" />
+                        </div>
+                    </div>
+               
+                    <div class="clearfix">
+                    </div>
+                    <div class="date" style="width: auto;">
+                    </div>
+                    <div class="attendace">
+                    </div>
+             
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .ui-datepicker-calendar
+    {
+        display: none;
+    }
+</style>
+<script>
+
+    $(".date").hide();
+    $(".date").datepicker();
+    $(".ui-datepicker-prev, .ui-datepicker-next").live("click", function () {
+        Begin();
+        var year = $(".ui-state-default").closest('td').attr("data-year");
+        var m = $(".ui-state-default").closest('td').attr("data-month");
+        var month = parseInt(m) + parseInt(1);
+        var groupId = $("#DepartmentId").val();
+
+        if (groupId != 0) {
+            var url = "/EmployeeManagement/StaffAttendancesDetail?departmentId=" + groupId + "&year=" + year + "&month=" + month;
+            $.ajax({
+                url: url,
+                success: function (data) {
+                    $(".attendace").html(data);
+                    $.unblockUI();
+                },
+                complete: function () {
+
+                    $(".today").css("background-color", "linen");
+
+
+                }
+            });
+        }
+
+    });
+    $("input.todaydate").live("click", function () {
+        Begin();
+        var groupId = $("#DepartmentId").val();
+
+
+        var url = "/EmployeeManagement/StaffAttendancesDetail?departmentId=" + groupId + "&year=" + 0 + "&month=" + 0;
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $(".attendace").html(data);
+                $.unblockUI();
+            },
+            complete: function () {
+                $(".date").show();
+                $(".today").css("background-color", "linen");
+                $(".date").datepicker("setDate", new Date());
+                $.unblockUI();
+            }
+        });
+
+    });
+    $("#DepartmentId").live("change", function () {
+        $("input.todaydate").click();
+    });
+    $(".attendancesave").live("click", function () {
+        Begin();
+        var form = $(this).closest("form");
+        var url = form.attr("action");
+        $.ajax({
+            url: url,
+            data: form.serialize(),
+            type: "POST",
+            success: function (data) {
+
+            },
+            complete: function () {
+                $.unblockUI();
+                $(".today").css("background-color", "linen");
+            }
+        });
+    });
+
+    
+
+</script>

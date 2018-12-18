@@ -1,0 +1,205 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.StockLedgerSummaryViewModel
+@{
+    decimal openingQtyGrandTotal = Model.StockLedgerSummaries.Sum(x => x.OpeningQty);
+    decimal receivedQtyGrandTotal = Model.StockLedgerSummaries.Sum(x => x.ReceivedQty);
+    decimal deliveredQtyGrandTotal = Model.StockLedgerSummaries.Sum(x => x.DeliveredQty);
+    decimal balanceQtyGrandTotal = Model.StockLedgerSummaries.Sum(x => x.BalanceQty);
+    decimal openingValGrandTotal = Model.StockLedgerSummaries.Sum(x => x.OpeningValue);
+    decimal receivedValGrandTotal = Model.StockLedgerSummaries.Sum(x => x.ReceivedValue);
+    decimal deliveredValGrandTotal = Model.StockLedgerSummaries.Sum(x => x.DeliveredValue);
+    decimal balanceValGrandTotal = Model.StockLedgerSummaries.Sum(x => x.BalanceValue);
+    
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    
+       @if (Model.WithValue == 0)
+       {
+           <table class="table" cellspacing="0" cellpadding="0" width="100%">
+           <thead>
+               <tr>
+                   <th>
+                       Code
+                   </th>
+                   <th>
+                       Product Description
+                   </th>
+                   <th width="5%">
+                       Unit
+                   </th>
+                   <th>
+                       Opening
+                   </th>
+                   <th>
+                       Received
+                   </th>
+                   <th>
+                       Delivered
+                   </th>
+                   <th>
+                       Balance
+                   </th>
+               </tr>
+           </thead>
+           @foreach (var item in Model.StockLedgerSummaries)
+           {
+               <tr>
+                   <td>@item.ShortName
+                   </td>
+                   <td>@item.Description
+                   </td>
+                   <td>@item.UnitShortName
+                   </td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.OpeningQty)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.ReceivedQty)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.DeliveredQty)</td>
+                   <td style="text-align: right">@item.BalanceQty</td>
+               </tr>
+           }
+           <tr>
+               <td>
+               </td>
+               <td style="font-weight: bold; text-align: right">
+                   Grand Total :
+               </td>
+               <td>
+               </td>
+               <td style="font-weight: bold; text-align: right">
+                   @openingQtyGrandTotal
+               </td>
+               <td style="font-weight: bold; text-align: right">
+                   @receivedQtyGrandTotal
+               </td>
+               <td style="font-weight: bold; text-align: right">
+                   @deliveredQtyGrandTotal
+               </td>
+               <td style="font-weight: bold; text-align: right">
+                   @balanceQtyGrandTotal
+               </td>
+           </tr>
+            </table>
+       }
+        else
+        {
+               <table class="table" cellspacing="0" cellpadding="0" width="100%">
+           <thead>
+               <tr>
+                   <th rowspan="2">
+                        Code
+                   </th>
+                   <th rowspan="2">
+                       Product Description
+                   </th>
+                   <th rowspan="2" width="5%">
+                        Unit
+                   </th>
+                   <th colspan="2">
+                       Opening
+                   </th>
+                   <th colspan="2">
+                       Received
+                   </th>
+                   <th colspan="2">
+                       Delivered
+                   </th>
+                   <th colspan="2">
+                       Balance
+                   </th>
+               </tr>
+               <tr>
+                   @*<th>
+                   </th>
+                   <th>
+                   </th>
+                   <th width="5%">
+                   </th>*@
+                   <th>
+                       Qty
+                   </th>
+                   <th>
+                       Value
+                   </th>
+                   <th>
+                       Qty
+                   </th>
+                   <th>
+                       Value
+                   </th>
+                   <th>
+                       Qty
+                   </th>
+                   <th>
+                       Value
+                   </th>
+                   <th>
+                       Qty
+                   </th>
+                   <th>
+                       Value
+                   </th>
+               </tr>
+           </thead>
+           @foreach (var item in Model.StockLedgerSummaries)
+           {
+               <tr>
+                   <td>@item.ShortName
+                   </td>
+                   <td>@item.Description
+                   </td>
+                   <td>@item.UnitShortName
+                   </td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.OpeningQty)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.OpeningValue)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.ReceivedQty)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.ReceivedValue)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.DeliveredQty)</td>
+                   <td style="text-align: right">@UtilityService.CheckZero(item.DeliveredValue)</td>
+                   <td style="text-align: right">@item.BalanceQty</td>
+                    <td style="text-align: right">@item.BalanceValue</td>
+               </tr>
+           }
+               <tr>
+                   <td>
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       Grand Total :
+                   </td>
+                   <td>
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @openingQtyGrandTotal
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @openingValGrandTotal
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @receivedQtyGrandTotal
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @receivedValGrandTotal
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @deliveredQtyGrandTotal
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @deliveredValGrandTotal
+                   </td>
+                   <td style="font-weight: bold; text-align: right">
+                       @balanceQtyGrandTotal
+                   </td>
+                    <td style="font-weight: bold; text-align: right">
+                       @balanceValGrandTotal
+                   </td>
+               </tr>
+        </table>
+       }
+   
+</div>

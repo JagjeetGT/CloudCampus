@@ -1,0 +1,7 @@
+﻿@model IEnumerable<KRBAccounting.Domain.Entities.ScStudentFeeRateDetail>
+@using KRBAccounting.Service
+@foreach (var item in Model)
+{
+    @Html.Partial("_PartialStudentFeeRateDetailAdd", item)
+
+}

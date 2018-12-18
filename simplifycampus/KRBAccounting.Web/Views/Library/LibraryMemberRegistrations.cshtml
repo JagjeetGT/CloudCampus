@@ -1,0 +1,222 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Library Member Registration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Library Member Registration</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                               <li><a href="#" class="isw-plus addLibraryMemberRegistration"></a></li>
+                        }
+                     
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="LibraryMemberRegistrations-list">
+                    @Html.Action("LibraryMemberRegistrationsList")
+                </div>
+                <div class="clear">
+                </div>
+                  <div id="imgload" style="display: none" align="center">
+                <img src="/Content/themes/img/loaders/w_loader_gr.gif"/>
+            </div>
+
+               
+                <div id="LibraryMemberRegistrationsdetail-list">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalLibraryMemberRegistration" style="display: none;" title="Library Member Registration(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#modalLibraryMemberRegistration").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalLibraryMemberRegistration .block').html(data);
+                $(this).addClass("done");
+                $("#modalLibraryMemberRegistration").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addLibraryMemberRegistration').live('click', function () {
+        Begin();
+        var url = '@Url.Action("LibraryMemberRegistrationAdd", "Library")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editLibraryMemberRegistration').live('click', function () {
+        Begin();
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("LibraryMemberRegistrationEdit", "Library")?LibraryMemberRegistrationId=' + id;
+        getRequest(url);
+        return false;
+    });
+    $("td.detail").live("click", function () {
+        $("div#imgload").css("display", "block");
+        $("div#studHeader").attr("display", "block");
+        var type = $(this).attr("data-type");
+        var classId = $(this).attr("data-classId");
+        var url = '@Url.Action("LibraryMemberRegistrationsDetailList", "Library")?type=' + type + "&classId=" + classId;
+        $.ajax({
+            url: url,
+            success: function (data) {
+
+                $("#LibraryMemberRegistrationsdetail-list").html(data);
+                $("div#imgload").css("display", "none");
+            },
+            complete: function () {
+                $("div#imgload").css("display", "none");
+                $.unblockUI();
+            }
+        });
+    });
+    function OnComplete() {
+
+        $('#modalLibraryMemberRegistration').dialog("close");
+        $("#LibraryMemberRegistrations-list").load("/Library/LibraryMemberRegistrationsList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#LibraryMemberRegistrations-list").load("/Library/LibraryMemberRegistrationsList");
+        $('#modalLibraryMemberRegistration').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        Begin();
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+            $.unblockUI();
+        }
+    }
+    function successEdit(data) {
+        Begin();
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+            $.unblockUI();
+        }
+    }
+
+    $("#Type").live("change", function () {
+        Begin();
+        var type = $(this).val();
+        if (type == "staff") {
+            $("#table-class-fee-rate-detail .student").hide();
+            $("#table-class-fee-rate-detail .staff").show();
+
+        } else {
+            $("#table-class-fee-rate-detail .student").show();
+            $("#table-class-fee-rate-detail .staff").hide();
+            $("#table-class-fee-rate-detail .detail-entry").remove();
+        }
+
+        var url = '@Url.Action("LibraryMemberRegistrationDetailAdd")?type=' + type;
+        $.ajax({
+            url: url,
+            success: function (data) {
+                $("#table-class-fee-rate-detail .detail-entry").remove();
+                if (data.value > 0) {
+                    $("#table-class-fee-rate-detail").append(data.view);
+                    AutoGen();
+                }
+
+
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    });
+
+   
+
+    function AutoGen() {
+        var e = document.querySelectorAll('.first-col');
+        $.each(e, function (index) {
+            var element = $(this).closest('tr');
+            element.attr("id", 'tr_' + index);
+            var classId = element.find(".c_ClassId").attr('id'); 
+            var bookId = element.find(".hdn_StaffId_Id").attr('id');
+            var Type = element.find(".t_Type").attr('id');
+            element.find('.text_staff').attr({
+                "valueid": bookId,
+                "id": "text_staff_" + index
+            });
+            var hdn_StudentId_Id = element.find(".hdn_StudentId_Id").attr('id');
+
+            element.find('.text-student').attr({
+                "valueid": hdn_StudentId_Id,
+                "id": "text-student" + index,
+                "parent" : classId,
+                "parentnext" : Type
+            });
+            var hdn_Status = element.find(".hdn_Status").attr('id');
+
+            element.find('.text-Status').attr({
+                "valueid": hdn_Status,
+                "id": "text-Status_" + index
+            });
+
+            var RegNo = element.find(".RegNo").attr('name');
+            var RegNoid = element.find(".RegNo").attr('id');
+            element.find('.validregno').attr({
+                "data-valmsg-for": RegNo
+
+            });
+            element.find('span.loading').addClass(RegNoid);
+        });
+    }
+</script>

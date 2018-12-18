@@ -1,0 +1,55 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.GodownTransferEntryViewModel
+<tr class="cashbank-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("godownTransferDetail"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ProductId, new { @class = "hdn_product_Id" })
+            @Html.HiddenFor(x => x.Index, new { @class = "indexId" })
+            <input type="text" class = "modallink text_product input-225 input first-col-custom" href="@Url.Action("GetProductList", "Entry")" createhref="@Url.Action("OnlineProductAdd", "Master")"  entermsg = "Press F1 for existing Account list." value="" isrequired="true"/>
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.GodownId, new { @class = "hdn_godown_Id" })
+            <input type="text" class = "modallink text_godown input-225 input" href="@Url.Action("GetGodownList", "Master")" createhref="@Url.Action("OnlineProductAdd", "Master")"  entermsg = "Press F1 for existing Account list." value="" isrequired="true"/>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltQty, new { @class = "input-80 altQty input", entermsg = "Enter Altrnative Quantity." })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Qty, new { @class = "input-80 qty input", entermsg = "Enter Quantity." ,isrequired="true"})
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new
+       {
+           @class = "input-80 rate input last-col-custom",
+           href = "/Entry/GetGodownTransferDetailEntry",
+           entermsg = "Enter Rate.",
+           tableid = "table-detail",isrequired="true"
+       })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TotalAmount, new { @class = "input-80 totalAmount", entermsg = "Enter Basic Amount.", @readonly = "readonly" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

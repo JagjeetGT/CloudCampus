@@ -1,0 +1,92 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScExam>  
+@{
+    var i = 1;
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Code
+                </th>
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    End Date
+                </th>
+                <th>
+                    Exam Type
+                </th>
+                <th>
+                    Schedule
+                </th>
+                <th width="5%">
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          @foreach (var item in Model)
+          {
+    <tr>
+        <td align="center">@i
+        </td>
+        <td>@item.Description
+        </td>
+        <td>
+            @item.Code
+        </td>
+        @if (ViewBag.DateType == 1)
+        {
+            <td>@item.StartDate.ToString("MM/dd/yyyy")
+            </td>
+            <td>@item.EndDate.ToString("MM/dd/yyyy")
+            </td>
+        }
+        else
+        {
+            <td>@item.StartMiti
+            </td>
+            <td>@item.EndMiti
+            </td>
+        }
+        <td>@Enum.GetName(typeof(ExamType), item.Type)
+        </td>
+        <td>@item.Schedule
+        </td>
+        <td>
+            @if (ViewBag.userRight.Edit)
+            {
+                <a href="#" class="editExam icon-edit" data-id="@item.Id" title="Edit"></a>
+            }
+      
+          
+        </td>
+        <td>
+            @if (ViewBag.userRight.Delete)
+            {
+                <a href="javascript:void(0)" class="deleteExam icon-remove" data-id="@item.Id" title="Delete">
+                </a>
+            }
+        </td>
+    </tr>
+            i++;
+          }
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
+    @Html.Raw(Html.AjaxPager(Model, "ExamList", "Exam", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "exam-list", OnBegin = "BeginRequest", OnComplete = "EndRequest" }))
+</div>
+

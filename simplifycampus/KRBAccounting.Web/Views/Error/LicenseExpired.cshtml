@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "License Expired";
+    Layout = null;
+}
+<script src="../../Scripts/jquery-1.7.min.js" type="text/javascript"></script>
+<script src="../../Scripts/jquery-ui-1.8.11.min.js" type="text/javascript"></script>
+<script src="/Scripts/jquery.blockUI.min.js" type="text/javascript"></script>
+<h2>
+    License Expired</h2>
+<p>
+    Your license has been expired , Please contact sasi@Emeron.com or +971526119086
+    for renew.
+</p>
+Please send the following code to your software vendor for your renewing your license:
+<br />
+<b>@KRBAccounting.Web.Helpers.EncryptionService.GetCode()</b>
+@using (Html.BeginForm("CheckLicense", "Error", FormMethod.Post, new { id = "license-form" }))
+{
+    <h2>
+        If you have the license key, Please Enter</h2>
+    <div id="MsgError">
+    </div>
+    <div>
+        Enter License:
+        @Html.TextArea("License", new { autocomplete = "off", rows = "6", cols = "40" })
+        @*<input type="text" autocomplete="off" name="License" id="License" width="100px" />*@
+    </div>
+    <input type="button" value="Submit" id="license-submit" />
+}
+<a href="@Url.Action("Index", "Home")" style="display:none" id="go-to-home">Go To Home
+    Page</a>
+<script type="text/javascript">
+
+    $("#license-submit").live("click", function () {
+        var form = $("#license-form");
+        $.ajax({
+            type: "POST",
+            url: form.attr('action'),
+            data: form.serialize(),
+            //            beforeSend: function () {
+            //                $.blockUI();
+            //            },
+            success: function (data) {
+                if (data.success) {
+                    $("#MsgError").html(data.msg);
+                    $("#go-to-home").show();
+                }
+                else {
+                    $("#MsgError").html(data.msg).show();
+                }
+            },
+            complete: function () {
+                //$.unblockUI();
+            }
+        });
+    });
+</script>

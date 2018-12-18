@@ -1,0 +1,35 @@
+﻿@model KRBAccounting.Web.ViewModels.InvoiceHeader
+@{
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/img/NoImage.jpg";
+}
+<table border="0" style="font-size: 8px;">
+    <tr style="clear: both">
+        <td>
+            <table width="100%">
+                <tr align="center" style="font-size: 8px;">
+                    <td width="40%">
+                    </td>
+                    <td>
+                        @* <img src="@url" width="64" height="64" />
+                        <br />*@ <b>@Model.CompanyName</b><br />
+                        @Model.CompanyAddress<br />@Model.InvoiceDate
+                    </td>
+                    <td width="40%">
+                        <p>
+                            Invoice No. : @Model.InvoiceNo</p>
+                    </td>
+                </tr>
+                <tr align="center" style="font-size: 8px;font-weight: bold">
+                    <td colspan="3">Purchase Invoice</td>
+                </tr>
+                <tr style="font-size: 8px;">
+                    <td width="20%">
+                        To M/S :
+                    </td>
+                    <td colspan="2">@Model.PartyName
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

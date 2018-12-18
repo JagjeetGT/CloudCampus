@@ -1,0 +1,37 @@
+@model KRBAccounting.Web.ViewModels.School.ScStaffSubjectMappingViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StaffSubjectMappingEdit", "EmployeeManagement", new { controller = "EmployeeManagement" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "staffsubjectform-id" }))
+{
+     
+    @Html.HiddenFor(m => m.OldStaffId)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-120">
+                StaffId</label>
+            @Html.HiddenFor(m => m.StaffSubjectMapping.StaffId)
+            <input type="text" class="input-305 modallink input" href="@Url.Action("GetEmployeeInfoForStaffSubjectMapping", "EmployeeManagement")" parent="OldStaffId" value="@if (Model.StaffSubjectMapping != null)
+                                                                                                                                                                 {
+                                                                                                                                                                     if (Model.StaffSubjectMapping.Staff != null)
+                                                                                                                                                                     {
+                                                                                                                                                                         @Model.StaffSubjectMapping.Staff.Description
+                                                                                                                                                                     }
+                                                                                                                                                                 }
+                                                                                                                                                                    " />
+            @Html.ValidationMessageFor(m => m.StaffSubjectMapping.StaffId)
+        </div>
+    </div>
+    
+    <div class="clearfix">
+    </div>
+    <div class="checkboxs lag">
+        <label class="label-120">
+            Subjects</label>
+        <div class="stack" style="width: 40%;">
+            <div class="field">
+                @Html.CheckBoxList("SubjectItemList", Model.SubjectList.ToList())
+            </div>
+        </div>
+    </div>
+    
+}

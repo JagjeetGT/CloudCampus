@@ -1,0 +1,68 @@
+﻿@model KRBAccounting.Web.ViewModels.ARAP.PurchaseRegisterFormViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("PurchaseRegister", "ARAP", new { controller = "ARAP" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "report", OnComplete = "$('#modalReportForm').modal('hide');$.unblockUI();" }, new { @class = "form-horizontal", id = "purchase-register-form" }))
+{
+    <div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Start Date</label>
+            <span class="field">
+                @Html.EditorFor(m => m.StartDate)
+                @Html.ValidationMessageFor(m => m.StartDate)
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag endDate">
+            <label class="label-90">
+                End Date</label>
+            <span class="field">
+                @Html.EditorFor(m => m.EndDate)
+                @Html.ValidationMessageFor(m => m.EndDate)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Vat Term</label>
+            <span class="lag" style="width: 300px">
+                @Html.HiddenFor(m => m.VatTerm)
+                <input type="text" class = "modallink input-240" href="@Url.Action("GetPurchaseTermList", "Master")" valueId="VatTerm" id="vat_term_name"/>
+                @Html.ValidationMessageFor(m => m.VatTerm)
+            </span>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+}
+<script type="text/javascript">
+
+      $(document).ready(function () {
+        var dateType = @Model.DateType.ToString();
+        if (dateType == "1") {
+            $("#StartDate,#EndDate" ).mask("99/99/9999");
+            $("#StartDate,#EndDate" ).live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#StartDate,#EndDate").mask("9999/99/99");
+            $("#StartDate,#EndDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+    });
+</script>

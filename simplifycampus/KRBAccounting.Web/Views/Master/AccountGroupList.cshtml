@@ -1,0 +1,96 @@
+﻿@using KRBAccounting.Service.Helpers
+@using KRBAccounting.Service.Models
+@model PagedList<KRBAccounting.Domain.Entities.AccountGroup>
+           @{
+               var userRight = (UserRight) ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N</th>
+                <th width="20%">
+                    Name
+                </th>
+                @*<th>
+                    Short Name
+                </th>*@
+                <th>
+                    Category
+                </th>
+                <th>
+                    Type
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody class="itemList">
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                var AccountGroupTypeEnum = new StringEnum(typeof(KRBAccounting.Enums.AccountGroupTypeEnum));
+                var BalanceSheetTypeEnum = new StringEnum(typeof(KRBAccounting.Enums.BalanceSheetTypeEnum));
+                var PLTypeEnum = new StringEnum(typeof(KRBAccounting.Enums.PLTypeEnum));
+                var trid = "id_" + item.Id;
+                <tr id="@trid">
+                    <td align="center">@i</td>
+                    <td>@item.Description
+                    </td>
+                    @*<td>@item.Code
+                    </td>*@
+                    <td>@AccountGroupTypeEnum.GetStringValue(item.GroupType)
+                    </td>
+                    @if (item.GroupType == "B")
+                    {
+                        <td>@BalanceSheetTypeEnum.GetStringValue(item.GroupAccountType)
+                        </td>
+                    }
+                    else
+                    {
+                        <td>@PLTypeEnum.GetStringValue(item.GroupAccountType)
+                        </td>
+                    }
+                    <td>
+                         @if (userRight.Edit)
+                         { <a href="javascript:void(0);" class="editAccountGroup icon-pencil" data-id="@item.Id" title="Edit: @item.Description"></a>
+                         }
+                       
+                    </td>
+                    <td>
+                         @if (userRight.Delete)
+                         {   <a href="javascript:void(0);" class="AccountGroupDelete icon-remove" data-id="@item.Id" title="Delete"></a>
+                         }
+                     
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "AccountGroupList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "accountgroup-list" }))
+    </div>
+</div>
+
+
+<script type="text/javascript">
+//    $(document).ready(function () {
+//        $("#tbl-list").tablesorter({ widgets: ['zebra'] });
+//        InitItemSorting();
+//    });
+
+    function InitItemSorting() {
+        $('.itemList').sortable({
+            connectWith: ".itemList",
+            containment: "document",
+            cursor: "move",
+            opacity: 0.8,
+            placeholder: "itemRowPlaceholder",
+            //update event fires both for item list leaving and receiving
+            update: function (event, ui) {
+                $.post("/Master/AccountGroupUpdateSortOrder", { id: $(this).sortable("serialize").toString() });
+            }
+        });
+    }
+</script>

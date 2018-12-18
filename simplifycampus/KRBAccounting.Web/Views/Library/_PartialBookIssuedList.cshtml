@@ -1,0 +1,100 @@
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+@model PagedList<KRBAccounting.Domain.Entities.ScBookIssued>
+@{var i = Convert.ToInt32(ViewBag.SnStart);
+}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N
+                </th>
+                <th>
+                    Issue To
+                </th>
+                <th>
+                    Book Name
+                </th>
+                <th>
+                    Accession No
+                </th>
+                <th>
+                    Card No
+                </th>
+                <th>
+                    Issue Date
+                </th>
+                <th>
+                    Due Date
+                </th>
+                <th>
+                    Is Return
+                </th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i
+                    </td>
+                    <td>
+                        @if (item.LibraryCard != null && item.LibraryCard.LibraryMemberRegistration!=null)
+                        {
+                            if (item.LibraryCard.LibraryMemberRegistration.Studentinfo != null)
+                            {
+                                @item.LibraryCard.LibraryMemberRegistration.Studentinfo.StuDesc
+                            }
+                        
+
+                            else
+                            {
+                                if (item.LibraryCard.LibraryMemberRegistration.StaffMaster != null)
+                                {
+                                    @item.LibraryCard.LibraryMemberRegistration.StaffMaster.Description
+                                }
+                            }
+                            
+                        }
+                    </td>
+                    <td>
+                        @if (item.BookReceivedDetails != null)
+                        {
+                            @item.BookReceivedDetails.BookReceived.Book.Name
+                        }
+                    </td>
+                    <td>
+                        @if (item.BookReceivedDetails != null)
+                        {
+                            @item.BookReceivedDetails.AccessionNo
+                        }
+                    </td>
+                    <td>
+                        @if (item.LibraryCard != null)
+                        {
+                            @item.LibraryCard.CardNo
+                        }
+                    </td>
+                    <td>@item.Date.ToShortDateString()
+                    </td>
+                    <td>
+                        @item.BookDueDate.ToShortDateString()
+                    </td>
+                   <td>
+                       @item.IsReturn
+                    </td>
+                     @*<td>
+                        <a href="@Url.Action("BookIssuedDelete", new { bookissuedId = item.Id })" onclick="return confirm('Are you sure want to delete this?')" class="BookIssuedDelete icon-remove" data-id="@item.Id" title="Delete">
+                        </a>
+                    </td>*@
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BookIssuedList", "Library", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "BookIssued-list" }))
+    </div>
+</div>

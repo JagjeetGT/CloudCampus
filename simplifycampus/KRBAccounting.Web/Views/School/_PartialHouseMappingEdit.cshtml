@@ -1,0 +1,183 @@
+@model KRBAccounting.Domain.Entities.ScHouseMapping
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@{
+    var sec = string.Empty;
+}
+@using (Ajax.BeginForm("HouseMappingEdit", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.Id)
+     @Html.HiddenFor(x => x.OLDCLassId)
+     @Html.HiddenFor(x => x.OLDSectionId)
+          @Html.HiddenFor(x => x.OLDHouseGroupId)
+          @Html.HiddenFor(m=>m.AcademicYearId)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-70">
+                Class</label>
+            <div class="field">@Html.HiddenFor(x => x.ClassId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetClasses", "School")" value="@if (Model.Classes != null)
+                                                                                                                   {
+                                                                                                                       @Model.Classes.Description
+                                                                                                                   }
+                                                                                                                      " valueId="ClassId" id="feeitemledger" title="Class Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassId)</div>
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Section</label>
+            <div class="field">
+                @Html.HiddenFor(x => x.SectionId)
+                @if (Model.SectionId != 0)
+                {
+                    if (Model.Sections != null)
+                    {
+                        sec = Model.Sections.Description;
+                    }
+                }
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetSections", "School")" value="@sec" valueId="SectionId" id="houseSectionId" title="Section Name" entermsg = "Enter SectionId" />
+                @Html.ValidationMessageFor(m => m.SectionId)
+            </div>
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                House</label>
+            <div class="field">
+                @Html.HiddenFor(x => x.HouseGroupId)
+                <input type="text" class = "modallink input-190" href="@Url.Action("GetHouseGroups", "School")" value="@if (Model.HouseGroups != null)
+                                                                                                                       {
+                                                                                                                           @Model.HouseGroups.Description
+                                                                                                                       }
+                                                                                                                          " valueId="HouseGroupId" id="houseHouseGroupId" title="House Name" entermsg = "Enter SectionId" />
+                @Html.ValidationMessageFor(m => m.HouseGroupId)
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag detailEntryTable" style="height: 400px;">
+            <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 825px">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Start Date
+                    </th>
+                    <th>
+                        End Date
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                </tr>
+                @foreach (var item in Model.HouseMappings)
+                {
+                    @Html.Partial("_PartialHouseMappingDetailEdit", item);
+                }
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="stack">
+            <label class="label-70 ">
+                Remarks</label>
+            <div class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks)
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var id = $("#Id").val();
+        if (id != 0) {
+            var ledgerElement = document.querySelectorAll(".hdn_Subject_Id");
+            $.each(ledgerElement, function (index) {
+                var element = $(this).closest("tr");
+                element.attr("id", "tr_" + index);
+
+                var Subject_valueid = element.find(".hdn_Subject_Id").attr("id");
+
+                element.find(".text_subject").attr({
+                    "valueId": Subject_valueid,
+                    "id": "text_subject_" + index
+                });
+                var hdn_Status = element.find(".hdn_Status").attr("id");
+
+                element.find(".text_status").attr({
+                    "valueId": hdn_Status,
+                    "id": "text_status_" + index
+                });
+
+                element.find(".DisplayStartDate").attr("id", "DisplayStartDate_" + index);
+                var StartMiti = element.find(".StartMiti").attr("id");
+
+                var DisplayStartDate = element.find(".DisplayStartDate").attr("id");
+
+
+                element.find(".StartDate").attr({
+                    "displayid": DisplayStartDate,
+                    "id": "StartDate_" + index
+                });
+
+
+                element.find(".DisplayStartDate").attr({
+                    "dateId": "StartDate_" + index,
+                    displayid: DisplayStartDate,
+                    mitiId: StartMiti
+                });
+
+
+                element.find(".DisplayEndDate").attr("id", "DisplayEndDate_" + index);
+                var DisplayEndDate = element.find(".DisplayEndDate").attr("id");
+                element.find(".EndDate").attr({
+                    "displayid": DisplayEndDate,
+                    "id": "EndDate_" + index
+                });
+                var EndMiti = element.find(".EndMiti").attr("id");
+                element.find(".DisplayEndDate").attr({
+                    "dateId": "EndDate_" + index,
+                    displayid: DisplayEndDate,
+                    mitiId: EndMiti
+                });
+
+
+                var Sdate = element.find(".DisplayStartDate").val();
+                var Edate = element.find(".DisplayEndDate").val();
+                var dateType = '@Model.DateType';
+                var nepStartDate;
+                var nepEndDate;
+                if (dateType == 1) {
+
+                    nepStartDate = convertToNepali(Sdate);
+                    nepEndDate = convertToNepali(Edate);
+
+                } else {
+                    Sdate = convertToNepali(Sdate);
+                    nepStartDate = Sdate;
+                    
+                    Edate = convertToNepali(Edate);
+                    nepEndDate = Edate;
+                 
+
+                    $("#" + DisplayStartDate).val(nepStartDate);
+                    $("#" + DisplayEndDate).val(nepEndDate);
+
+                }
+
+                $("#" + StartMiti).val(nepStartDate);
+                $("#" + EndMiti).val(nepEndDate);
+
+            });
+          
+        }
+    });
+</script>

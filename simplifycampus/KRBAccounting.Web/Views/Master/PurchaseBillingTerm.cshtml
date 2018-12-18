@@ -1,0 +1,147 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Purchase Billing Term";
+    var userRight = (UserRight) ViewBag.UserRight;
+}
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "SBT"))
+        {
+            <li><a href="@Url.Action("SalesBillingTerm", "Master")">Sales</a> <span class="divider">
+                |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PBT"))
+        {
+            <li><a href="@Url.Action("PurchaseBillingTerm", "Master")">Purchase</a> <span class="divider">
+                |</span></li>
+        }
+    </ul>
+</div>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Purchase Bill Term</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                             <li><a href="#" class="isw-plus addPurchaseBillingTerm"></a></li>
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="purchasebillingterm-list">
+                    @Html.Action("PurchaseBillingTermList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalPurchaseBillingTerm" style="display: none;" title="Purchase Billing Term(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalPurchaseBillingTerm .block').html(data);
+                $(this).addClass('done');
+                $('#modalPurchaseBillingTerm').dialog('open');
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addPurchaseBillingTerm').live('click', function () {
+        var url = '@Url.Action("PurchaseBillingTermAdd", "Master")';
+        getRequest(url);
+
+        return false;
+    });
+
+    $('a.editPurchaseBillingTerm').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("PurchaseBillingTermEdit", "Master")/' + id;
+        getRequest(url);
+
+        return false;
+    });
+
+    $("a.PurchaseBillingTermDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("PurchaseBillingTermDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    function OnComplete() {
+
+        $("#modalPurchaseBillingTerm .block").load("/Master/PurchaseBillingTermAdd");
+        $("#purchasebillingterm-list").load("/Master/PurchaseBillingTermList");
+    }
+    function OnCompleteEdit() {
+
+        $("#modalPurchaseBillingTerm").dialog("close");
+        $("#purchasebillingterm-list").load("/Master/PurchaseBillingTermList");
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+
+    }
+
+    $("#modalPurchaseBillingTerm").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Save": function () {
+                $("#purchase-billing-term-form").submit();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>
+

@@ -1,0 +1,93 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.PurchaseChallanDetail
+@*@{
+    var trId = "tr_" + Model.Index;
+}*@
+<tr class="cashbank-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("purchaseChallanDetailEntry"))
+    {
+        string display = "display:none;";
+        string billTermClass = "";
+        if (ViewBag.AllowProductWiseBillTerm == 1)
+        {
+            display = "";
+            billTermClass = "rate-bill-term";
+        }
+        @Html.HiddenFor(x => x.ChallanId)
+        @Html.HiddenFor(x => x.Id)
+@* @Html.HiddenFor(x => x.Index, new { @class = "indexId" })*@
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ProductCode, new { @class = "productId" })
+            <input type="text" class = "modallink text_product input-215 input" href="@Url.Action("GetProductList", "Entry")" createhref="@Url.Action("OnlineProductAdd", "Master")" value="@UtilityService.GetProductNameById(Model.ProductCode)" entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Qty, new { @class = "Qty input-100 qty input numberonly", entermsg = "Enter Quantity." })
+            @*<input type="text" value="@Model.Qty" entermsg="Enter Quantity." class="input-80 qty input" />*@
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.GodownCode, new { @class = "value" })
+            <input type="text" name="GodownName" class="input-190 modallink input" href="/Master/GetGodownList"
+                value="@UtilityService.GetGodownName(Model.GodownCode)" />
+        </td>
+        <td>
+            @Html.DropDownListFor(x => x.Unit, Model.UnitList, new { @class = "input-100 unit input", entermsg = "Enter Unit." })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltQty, new { @class = "AltQty input-100 altQty input numberonly", entermsg = "Enter Altrnative Quantity." })
+            @*<input type="text" value="@Model.AltQty" entermsg="Enter Altrnative Quantity." class="input-80 altQty input" />*@
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltUnit, new { @class = "input-100 altunit input", entermsg = "Enter Altrnative Unit.", @readonly = true })
+        </td>
+      
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "Rate input-100 rate input  numberonly " + billTermClass, entermsg = "Enter Rate.", href = "/Entry/GetPurchaseDetailEdit" })
+            @*<input type="text" value="@Model.Rate" entermsg="Enter Rate." class="input-80 rate @billTermClass input "  href="/Entry/GetPurchaseDetailEdit"/>*@
+            <span class="product_wise_billterms">
+                @{
+        var billingTerms = ((List<BillingTermDetail>)ViewBag.BillingTermList).Where(x => x.DetailId == Model.Id);
+        
+                }
+                @foreach (var term in billingTerms.OrderBy(x => x.BillingTermId))
+                {
+                    @Html.Action("InsertBillTermEdit", term)
+                }
+            </span>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt input", entermsg = "Enter Basic Amount.", @readonly = "readonly" })
+        </td>
+        <td style="@display">
+            @Html.TextBoxFor(x => x.TermAmt, new { @class = "input-100 termAmt input", @readonly = "readonly" })
+        </td>
+
+        <td style="@display">
+            @Html.TextBoxFor(x => x.NetAmt, new { @class = "input-100 netAmt input", @readonly = "readonly" })
+        </td>
+    }
+    <td>
+        <img src="../../Content/img/delete.png" width="15px" class="del-row">
+    </td>
+</tr>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>

@@ -1,0 +1,281 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "School-Bus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Transport Mapping</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addBusStopRoute"></a></li>
+                        }
+                    
+                        
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="TransportMapping-list">
+                    @Html.Action("BusTransportMappingList")
+                </div>
+                <div class="clearfix"></div>
+                 <div id="imgload" style="display: none" align="center">
+                <img src="/Content/themes/img/loaders/w_loader_gr.gif"/>
+            </div>
+
+                <div id="Detail-list">
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalSchBusRouteDetail" style="display: none;" title="Transportation Mapping Details">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("#modalSchBusRouteDetail").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                CheckRow();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function CheckRow() {
+        var element = document.querySelectorAll(".first-col");
+        var i = 0;
+        if (element.length > 0) {
+            var list = document.querySelectorAll(".StartMitiMapping");
+            $.each(list, function (index) {
+                var dateElement = $(this).closest("tr");
+                var miti = dateElement.find(".StartMitiMapping").val();
+
+                if (miti == "0000/00/00") {
+                    dateElement.find(".StartDateMapping").addClass("error");
+                    $.unblockUI();
+                    i += 1;
+                }
+            });
+
+            var enddatelist = document.querySelectorAll(".EndMitiMapping");
+            $.each(enddatelist, function (index) {
+                var enddateElement = $(this).closest("tr");
+                var miti = enddateElement.find(".EndMitiMapping").val();
+                if (miti == "0000/00/00") {
+                    enddateElement.find(".EndDateMapping").addClass("error");
+                    $.unblockUI();
+                    i += 1;
+                }
+            });
+
+            if (i == 0) {
+                $("#formTransportationMapping-id").submit();
+            } else {
+                alert("Date cannot be null");
+                $.unblockUI();
+            }
+
+        }
+        else {
+            alert("No information");
+            $.unblockUI();
+        }
+    }
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-error alert"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSchBusRouteDetail .block').html(data);
+                $(this).addClass("done");
+                $("#modalSchBusRouteDetail").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+
+    $("td._detail").live("click", function () {
+        $("div#imgload").css("display", "block");
+        var studentid = $(this).attr("data-classid");
+        $("div#studHeader").attr("display", "block");
+
+        $("#Detail-list").load("/Transportation/StudentRouteByClassId?classid=" + studentid, function () {
+            $("div#imgload").css("display", "none");
+
+        });
+    });
+
+    $('.addBusStopRoute').live('click', function () {
+        var url = '@Url.Action("BusTransportMappingAdd", "Transportation")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    function OnComplete(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $("#modalSchBusRouteDetail .block").load("/Transportation/BusTransportMappingAdd");
+            $("#TransportMapping-list").load("/Transportation/BusTransportMappingList");
+        } else {
+            $.unblockUI();
+            writeError("error-msg", data);
+        }
+
+    }
+
+    $(".alert-error .close").live("click", function() {
+        $(".alert-error").remove();
+    });
+    function OnCompleteEdit(data) {
+        if (data == "True") {
+            $.unblockUI();
+            $("#modalSchBusRouteDetail").dialog("close");
+            $("#TransportMapping-list").load("/Transportation/BusTransportMappingList");
+        } else {
+            $.unblockUI();
+            writeError("error-msg", data);
+            
+        }
+
+    }
+
+    $('.editScTransportMapping').live('click', function () {
+        var classid = $(this).attr("data-classid");
+        var sectionid = $(this).attr("data-sectionid");
+        var busroutedescription = $(this).attr("data-busRouteCode");
+        var url = '@Url.Action("BusTransportMappingEdit", "Transportation")?classId=' + classid + '&&sectionid=' + sectionid + '&&routeid=' + busroutedescription;
+        Begin();
+        getRequest(url);
+        return false;
+    });
+    $(".studentId").live("blur", function () {
+        var element = $(this);
+        var studentId = element.closest('span').find(".hdn_StudentId").val();
+        if (studentId != '' && studentId != null && studentId != 0) {
+            $.ajax({
+                url: '@Url.Action("GetRegistrationNumber", "School")',
+                type: 'POST',
+                data: { studentId: studentId },
+                success: function (data) {
+                    if (data == 0) {
+                        element.closest('tr').find(".registrationNumber").val('');
+                    } else {
+                        element.closest('tr').find(".registrationNumber").val(data);
+                    }
+
+                },
+
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+
+            });
+        }
+
+    });
+
+    $("#SectionId,#ClassId").live("blur", function () {
+
+        var classid = $("#ScTransportMapping_ClassId").val();
+        var sectionId = $("#ScTransportMapping_SectionId").val();
+        if (sectionId == '') {
+            sectionId = 0;
+        }
+        if (classid != 0 && classid != '') {
+            url = '@Url.Action("GetStudentsByClassAndSection")';
+            Begin();
+            $.ajax({
+                url: url,
+                data: { classId: classid, sectionId: sectionId },
+                type: "GET",
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    $("#bus-transportmapping-list tr.detail-entry").remove();
+                    $("#bus-transportmapping-list").append(data);
+
+                    $("#bus-transportmapping-list").append();
+                    $.unblockUI();
+                    var ledgerElement = document.querySelectorAll(".studentId");
+                    $.each(ledgerElement, function (index) {
+                        var element = $(this).closest("tr");
+                        element.attr("id", "tr_" + index);
+
+                        var Subject_valueid = element.find(".hdn_StudentId").attr("id");
+
+                        element.find(".studentId").attr({
+                            "valueId": Subject_valueid,
+                            "id": "studentId_" + index
+                        });
+
+                        var ResultSystem_valueid = element.find(".hdn_BusStopFromId").attr("id");
+
+                        element.find(".BusStopFromId").attr({
+                            "valueId": ResultSystem_valueid,
+                            "id": "BusStopFromId_" + index
+                        });
+                        var EvaluateForType_valueid = element.find(".hdn_BusStopToId").attr("id");
+
+                        element.find(".BusStopToId").attr({
+                            "valueId": EvaluateForType_valueid,
+                            "id": "BusStopTo_" + index
+                        });
+                    });
+
+                }
+            });
+        }
+
+    });
+
+    function NewRowDetailList(element, index) {
+        $(".studentId:last").attr("id", "studentId_" + index);
+        $(".studentId:last").closest("tr").attr("id", "tr_" + index);
+        $(".studentId").attr("valueId", $(".hdn_StudentId:last").attr("id"));
+
+        $(".BusStopFromId:last").attr("id", "busstopFrom_" + index);
+        $(".BusStopFromId:last").closest("tr").attr("id", "tr_" + index);
+        $(".BusStopFromId").attr("valueId", $(".hdn_BusStopFromId:last").attr("id"));
+
+        $(".BusStopToId:last").attr("id", "busstopto_" + index);
+        $(".BusStopToId:last").closest("tr").attr("id", "tr_" + index);
+        $(".BusStopToId").attr("valueId", $(".hdn_BusStopToId:last").attr("id"));
+    }
+
+    $(".del-row").live("click", function () {
+        $(this).closest("tr").remove();
+    });
+
+</script>

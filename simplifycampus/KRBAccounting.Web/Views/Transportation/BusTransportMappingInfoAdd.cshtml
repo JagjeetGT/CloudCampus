@@ -1,0 +1,157 @@
+﻿@model KRBAccounting.Domain.Entities.ScTransportMapping
+@{
+    var displayDate = false;
+    if (ViewBag.DateType == 1)
+    {
+        displayDate = true;
+    }
+    else
+    {
+        displayDate = false;
+    }
+              
+}
+<tr class="university-course-fee detail-entry">
+    @using (Html.BeginCollectionItem("busTransportMappingInfoList"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.StudentId, new { @class = "input hdn_StudentId first-col" })
+                <input type="text" class = "modallink input studentId first-col" isrequired="true" href="@Url.Action("GetStudents", "School")" valueId="ScTransportMapping_StudentId" id="StudentId"/>
+                @Html.ValidationMessageFor(m => m.StudentId)
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.TextBoxFor(x => x.RegNo, new { @class = "input level registrationNumber" })
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.BusStopFromId, new { @class = "input hdn_BusStopFromId first-col" })
+                <input type="text" class = "modallink input BusStopFromId" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")" valueId="ScTransportMapping_BusStopFromId" id="BusStopFromId"/>
+                @Html.ValidationMessageFor(m => m.BusStopFromId)
+            </span>
+        </td>
+        <td>
+            <span class="field">
+                @Html.HiddenFor(m => m.BusStopToId, new { @class = "input hdn_BusStopToId first-col" })
+                <input type="text" class = "modallink input BusStopToId" isrequired="true" href="@Url.Action("GetBusStopList", "Transportation")" valueId="ScTransportMapping_BusStopToId" id="BusStopToId"/>
+                @Html.ValidationMessageFor(m => m.BusStopToId)
+            </span>
+        </td>
+        
+        <td>
+            @Html.DropDownListFor(x => x.Status, Model.StatusList, new { @class = "input-80" })
+        </td>
+        
+        <td>
+            <span>
+                @if (displayDate)
+                {
+                    @Html.HiddenFor(m => m.StartMiti, new { @class = "StartMitiMapping input", isrequired="true"})
+                    @Html.TextBoxFor(m => m.StartDate, new { @class = "StartDateMapping input", isrequired = "true" })
+                    @Html.ValidationMessageFor(m => m.StartDate)
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.StartMiti, new { @class = "StartMitiMapping input",isrequired="true" })
+                    @Html.HiddenFor(m => m.StartDate, new { @class = "StartDateMapping input", isrequired = "true" })
+                    @Html.ValidationMessageFor(m => m.StartMiti)
+                }
+                
+            </span>
+        </td>
+        
+        <td>
+            <span>
+                @if (displayDate)
+                {
+                    @Html.HiddenFor(m => m.EndMiti, new { @class = "EndMitiMapping input", isrequired = "true" })
+                    @Html.TextBoxFor(m => m.EndDate, new { @class = "EndDateMapping input", isrequired = "true" })  
+                     @Html.ValidationMessageFor(m => m.EndDate)
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.EndMiti, new { @class = "EndMitiMapping input", isrequired = "true" })
+                    @Html.HiddenFor(m => m.EndDate, new { @class = "EndDateMapping input", isrequired = "true" })
+                     @Html.ValidationMessageFor(m => m.EndMiti)
+                }
+               
+            </span>
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.TransportAmt)
+        </td>
+        
+        
+        <td>
+            @Html.TextBoxFor(x => x.Narr, new { @class = "input last-col-custom", href = "/Transportation/BusTransportMappingInfoAdd", tableid = "bus-transportmapping-list" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bus-transportmapping-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#bus-transportmapping-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+
+        $(".StartDateMapping").mask('99/99/9999');
+        $(".EndDateMapping").mask('99/99/9999');
+
+        $(".StartMitiMapping").mask('9999/99/99');
+        $(".EndMitiMapping").mask('9999/99/99');
+
+
+    });
+
+    $(".StartMitiMapping ").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "____/__/__") {
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            $(".StartDateMapping ").val(engDate);
+        }
+    });
+
+    $(".StartDateMapping ").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "__/__/____") {
+            //alert(1);
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            $(".StartMitiMapping ").val(nepDate);
+        }
+    });
+
+    $(".EndMitiMapping ").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "____/__/__") {
+            //alert(1);
+            var date = $(this).val();
+            var engDate = convertToEnglishNew(date);
+            $(".EndDateMapping ").val(engDate);
+        }
+    });
+
+    $(".EndDateMapping ").live('blur', function () {
+        if (!$(this).hasClass("error") && $(this).val() != "" && $(this).val() != "__/__/____") {
+            //alert(1);
+            var date = $(this).val();
+            var nepDate = convertToNepaliNew(date);
+            $(".EndMitiMapping ").val(nepDate);
+        }
+    });
+</script>

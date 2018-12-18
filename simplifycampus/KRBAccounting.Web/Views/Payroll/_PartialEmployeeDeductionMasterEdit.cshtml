@@ -1,0 +1,50 @@
+@model KRBAccounting.Web.ViewModels.Payroll.PayrollEmployeeDeductionViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("EmployeeDeductionMasterEdit", "Payroll", new { controller = "Payroll" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.EmployeeDeductionMaster.Id)
+     @Html.HiddenFor(x => x.EmployeeDeductionMaster.CreatedBy)
+      @Html.HiddenFor(x => x.EmployeeDeductionMaster.CreatedOn)
+            @Html.HiddenFor(x => x.OldEmployeeDeductionId)
+             @Html.HiddenFor(x => x.EmployeeDeductionMaster.BranchId)
+                    @Html.HiddenFor(x => x.EmployeeDeductionMaster.FiscalYearId)
+    <div id="error-msg">
+    </div>
+    <div class="lag">
+        <div class="lag">
+            <div class="stack">
+                <label class="label-120">
+                    Employee</label>
+                <div class="field">
+                    @Html.DropDownListFor(m => m.EmployeeDeductionMaster.EmployeeId, Model.EmployeeList, new { @class = "input-190 input", entermsg = "Enter EmployeePostId" })
+                    @Html.ValidationMessageFor(m => m.EmployeeDeductionMaster.EmployeeId)
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <div class="stack">
+                <label class="label-120">
+                    Status</label>
+                <div class="field">
+                    @Html.EditorFor(m => m.EmployeeDeductionMaster.Status, new { @class = "input-190 input", entermsg = "Enter Status" })
+                    @Html.ValidationMessageFor(m => m.EmployeeDeductionMaster.Status)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lag checkboxs" style="width: auto">
+        <div class="stack" style="width: 100% ! important;">
+            <label class="label">
+                Deduction</label>
+            <div class="field">
+                @Html.CheckBoxList("DeductionId", Model.CheckBoxListInfos)
+                @*@Html.ValidationMessageFor(m => m.AllowanceId)*@
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+}

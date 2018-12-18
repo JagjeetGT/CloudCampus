@@ -1,0 +1,242 @@
+﻿
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Inventory.GodownInventoryViewModel
+@{
+    decimal openingGrandTotal = 0;
+    decimal receivedGrandTotal = 0;
+    decimal deliveredGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+    
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    @if (Model.RptType == 1)
+    {
+        <table class="table" cellspacing="0" cellpadding="0" width="100%">
+            <thead>
+                <tr>
+                    <th width="10%">
+                        Date
+                    </th>
+                    <th>
+                        Code/Document
+                    </th>
+                    <th>
+                        Customer/Vendor
+                    </th>
+                    <th>
+                        Opening
+                    </th>
+                    <th>
+                        Received
+                    </th>
+                    <th>
+                        Delivered
+                    </th>
+                    <th>
+                        Balance
+                    </th>
+                </tr>
+            </thead>
+            @foreach (var godown in Model.Godowns)
+            {
+                decimal openingGdnTotQty = decimal.Zero;
+                decimal receivedGdnTotQty = decimal.Zero;
+                decimal deliveredGdnTotQty = decimal.Zero;
+                decimal GdnTotQty = decimal.Zero;
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        Godown :
+                    </td>
+                    <td style="font-weight: bold; text-align: left">
+                        @godown.ShortName
+                    </td>
+                    <td style="font-weight: bold; text-align: left">
+                        @godown.Description
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                //var gdncode = "";
+                //if (godown.Godown != null)
+                //{
+                //    gdncode = godown.Godown.ToString();
+                //}
+                var products = StoredProcedureService.GetStockLedgerProduct(Model.StartDate, Model.EndDate, Model.ProductIds, 0, godown.Godown);
+                foreach (var item in products)
+                {
+                    var ledgers = Model.ProcuctLedgers.Where(x => x.ProductCode == item.Id && x.Godown == godown.Godown).ToList();
+
+                    decimal openingBalance = decimal.Zero;
+                    decimal receivedTotal = ledgers.Sum(x => x.ReceivedQty);
+                    decimal deliveredTotal = ledgers.Sum(x => x.DeliveredQty);
+                    var opening = Model.ProductOpenings.Where(x => x.ProductId == item.Id && x.Godown == godown.Godown).ToList();
+                    foreach (var openqty in opening)
+                    {
+                        if (opening != null)
+                        {
+                            openingBalance += @openqty.OpeningQty;
+
+                        }
+                    }
+                    openingGdnTotQty += openingBalance;
+                    receivedGdnTotQty += receivedTotal;
+                    deliveredGdnTotQty += deliveredTotal;
+                    GdnTotQty = openingGdnTotQty + receivedGdnTotQty - deliveredGdnTotQty;
+                    if (openingBalance != 0 || receivedTotal != 0 || deliveredTotal != 0)
+                    {
+                        //var product = UtilityService.GetProductById(item);
+                        receivedGrandTotal += receivedTotal;
+                        deliveredGrandTotal += deliveredTotal;
+                        openingGrandTotal += openingBalance;
+                        decimal balance = openingBalance + receivedTotal - deliveredTotal;
+                        grandTotalBalance += balance;
+
+                        <tr>
+                           <td style="font-weight: bold; text-align: center">
+                                Product :
+                            </td>
+                            <td style="font-weight: bold; padding-left: 15px;">
+                                @item.ShortName
+                            </td>
+                            <td style="font-weight: bold; padding-left: 15px;">
+                                @item.Description
+                            </td>
+                            <td style="font-weight: bold; text-align: right">
+                                @if (openingBalance != 0)
+                                {
+                                    @openingBalance
+                                }
+                            </td>
+                            <td style="font-weight: bold; text-align: center">
+                                @(Model.ProductCode == "" ? item.Code : UtilityService.GetPorductUnitCode(item.Id, item.Code, Model.ProductCode))
+                            </td>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                        foreach (var ledger in ledgers.OrderBy(x => x.VDate).ToList())
+                        {
+                            var rowBalance = ledger.ReceivedQty - ledger.DeliveredQty;
+                            if (ledger.ReceivedQty != 0 || ledger.DeliveredQty != 0)
+                            {
+                                <tr>
+                                    <td>
+                                        @ledger.VDate.ToShortDateString()
+                                    </td>
+                                    <td>
+                                        @ledger.Source - @ledger.VNo
+                                    </td>
+                                    <td>
+                                        @ledger.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="text-align: right">
+                                        @ledger.ReceivedQty
+                                    </td>
+                                    <td style="text-align: right">
+                                        @ledger.DeliveredQty
+                                    </td>
+                                    <td style="text-align: right">
+                                        @rowBalance
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                            </td>
+                            <td style="font-weight: bold; text-align: right">
+                                Product Total :
+                            </td>
+                            <td style="font-weight: bold; text-align: right">
+                                @openingBalance
+                            </td>
+                            <td style="font-weight: bold; text-align: right">
+                                @receivedTotal
+                            </td>
+                            <td style="font-weight: bold; text-align: right">
+                                @deliveredTotal
+                            </td>
+                            <td style="font-weight: bold; text-align: right">
+                                @balance
+                            </td>
+                        </tr>
+                    }
+                }
+
+                if (openingGdnTotQty != 0 || receivedGdnTotQty != 0 || deliveredGdnTotQty != 0)
+                {
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold; text-align: right">
+                            Godown Total :
+                        </td>
+                        <td style="font-weight: bold; text-align: right">
+                            @openingGdnTotQty
+                        </td>
+                        <td style="font-weight: bold; text-align: right">
+                            @receivedGdnTotQty
+                        </td>
+                        <td style="font-weight: bold; text-align: right">
+                            @deliveredGdnTotQty
+                        </td>
+                        <td style="font-weight: bold; text-align: right">
+                            @GdnTotQty
+                        </td>
+                    </tr>
+                }
+                 <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td style="font-weight: bold; text-align: right">
+                    Grand Total :
+                </td>
+                <td style="font-weight: bold; text-align: right">
+                    @openingGrandTotal
+                </td>
+                <td style="font-weight: bold; text-align: right">
+                    @receivedGrandTotal
+                </td>
+                <td style="font-weight: bold; text-align: right">
+                    @deliveredGrandTotal
+                </td>
+                <td style="font-weight: bold; text-align: right">
+                    @grandTotalBalance
+                </td>
+            </tr>
+        </table>
+    }
+</div>

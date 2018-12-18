@@ -1,0 +1,1068 @@
+﻿@model KRBAccounting.Web.ViewModels.School.ScStudentInfoViewModel
+@{
+    SelectList ddlSex = ViewBag.SexDropDown;
+    SelectList ddlMaritalStatus = ViewBag.MartialStatusDropDowm;
+    SelectList ddlBloodGroup = ViewBag.BloodGroup;
+    SelectList ddlRelation = ViewBag.RelationDropDown;
+    ViewBag.Title = "Edit Student Information";
+
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<script src="../../Content/KendoUI/kendo.all.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <div class="isw-grid">
+                </div>
+                <h1>
+                    Edit student
+                </h1>
+                <ul class="buttons">
+                    <li>
+                        <a href="@Url.Action("Students")" class="isw-left" title="Back To List"></a>
+                    </li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="block-fluid">
+        <div id="student-info">
+            @using (Ajax.BeginForm("StudentEdit", "Student", new { controller = "Student" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete", OnBegin = "OnBegin" }, new { enctype = "multipart/form-data", id = "frm-addstudent" }))
+            {
+                <input type="hidden" name="ImageGuid" id="ImageGuid" />
+                <input type="hidden" name="Ext" id="Ext" />
+                @Html.HiddenFor(x => x.Regno)
+                @Html.HiddenFor(x => x.StudentID)
+                @Html.HiddenFor(x => x.StdPhotoFileName)
+                @Html.HiddenFor(x => x.StdPhotoExt)
+
+
+                <!--Common student details-->
+                <div id="student-details">
+                    <div>
+                        <fieldset>
+                            <legend>Student details: </legend>
+                            <div class="row">
+                                <div class="span7">
+                                    <div class="lag">
+                                        <span class="stack">
+                                            <label class="label-90">
+                                                Reg no:
+                                            </label>
+                                            <span class="field">
+                                                @Html.TextBoxFor(x => x.Regno, new { @class = "input-150 input", @readonly = "readonly" })
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="clearfix">
+                                    </div>
+                                    <div class="lag">
+                                        <span class="stack">
+                                            <label class="label-90">
+                                                Name:
+                                            </label>
+                                            <span class="field">
+                                                @Html.TextBoxFor(x => x.StuDesc, new { @class = "input-305 input", entermsg = "Enter name" })
+                                                @* @Html.ValidationMessageFor(m => m.StuDesc)*@
+                                            </span><span class="text-error">&nbsp;*</span>
+                                        </span><span class="stack">
+                                            <span class="field">
+                                                @Html.TextBoxFor(x => x.StdCode, new { @class = "input-200 input", @readonly = "readonly" })
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="clearfix">
+                                    </div>
+                                    <div class="lag">
+                                        <span class="stack">
+                                            <label class="label-90">
+                                                Current class:
+                                            </label>
+                                            <span class="field">
+                                                @Html.HiddenFor(x => x.ClassId)
+                                                @Html.TextBoxFor(x => x.CurrClsCode, new { name = "CurrClsCode", @class = "modallink input input-190", href = Url.Action("GetClasses", "School"), createhref = Url.Action("AddClass", "School", new { fromPickList = true }), valueId = "ClassId", id = "CurrClsCode", title = "Class", entermsg = "Press F1 for existing classes list." })
+                                                @*@Html.ValidationMessageFor(m => m.CurrClsCode)*@
+                                            </span><span class="text-error">&nbsp;*</span>
+                                        </span>
+                                    </div>
+                                    <div class="clearfix">
+                                    </div>
+                                    <div class="lag">
+                                        <span class="stack">
+                                            <label class="label-90">
+                                                Category:
+                                            </label>
+                                            <span class="field">
+                                                @Html.DropDownListFor(x => x.StdCategoryId, Model.StudentCategories, new { @class = "input-190 input" })
+                                            </span>
+                                        </span><span class="stack">
+                                            <label class="label-60">
+                                                Nationality:
+                                            </label>
+                                            <span class="field">
+                                                @* @Html.DropDownList("Nationality", new SelectList(ViewBag.NationalityDropDown, "Nationality", "Nationality"), new { @class = "input-190 input" })*@
+                                            @Html.TextBoxFor(m => m.Nationality, new { @class = "input-190 input" })
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="clearfix">
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-90">
+                                            Maritial status:
+                                        </label>
+                                        <span class="field">
+                                            @Html.DropDownList("MaritialSt", ddlMaritalStatus, new { @class = "input-190 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label class="label-60">
+                                            Religion:
+                                        </label>
+                                        <span class="field">
+                                            @* @Html.DropDownList("Religion", new SelectList(ViewBag.ReligionDropDown, "Religion", "Religion"), new { @class = "input-190 input" })*@
+                                        @Html.TextBoxFor(m => m.Religion, new { @class = "input-190 input" })
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="clearfix">
+                            </div>
+                            <div class="lag">
+                                <span class="stack">
+                                    <label class="label-90">
+                                        Sex:
+                                    </label>
+                                    <span class="field">
+                                        @Html.DropDownList("Sex", ddlSex, new { @class = "input-190 input" })
+                                    </span>
+                                </span><span class="stack">
+                                    <label class="label-60">
+                                        Blood group:
+                                    </label>
+                                    <span class="field">
+                                        @Html.DropDownList("BloodGrp", ddlBloodGroup, new { @class = "input-190 input" })
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="span4">
+                            <div>
+                                <div class="student-photo">
+                                    <div class="clear" style="margin-bottom: 35px;">
+                                    </div>
+                                    <span class="stack">
+                                        @{
+                var img = Model.StdPhotoFileName + Model.StdPhotoExt;
+                                        }
+                                        @* <img src="/Content/academicsimage/@img" id="StudentPhoto" title="Image" width="100px" />*@
+                                        <img src="@KRBAccounting.Service.UtilityService.GetImage(Model.StdPhotoFileName, Model.StdPhotoExt)" width="100px" />
+                                        @*<img src="/Content/img/NoImage.jpg" id="StudentPhoto" title="Image" width="100px" />*@
+                                    </span>
+                                    <div class="clear" style="margin-bottom: 15px">
+                                    </div>
+                                    <span class="stack">
+                                        <input name="attachments" id="attachments" type="file" />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-90">
+                                Height:
+                            </label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.StHeight, new { @class = "input-190 input" })
+                            </span>
+                        </span><span class="stack">
+                            <label class="label-60">
+                                Weight:
+                            </label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.StWeight, new { @class = "input-190 input" })
+                            </span>
+                        </span>
+                    </div>
+                    <div class="lag">
+                        <div class="clearfix">
+                        </div>
+                        <span class="stack">
+                            <label>
+                                DOB @if (Model.SystemControl.DateType == 2)
+                                {
+                                    <text>(Miti)</text>
+
+                                }:
+                            </label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.DBODisplay, new { @class = "input-190 input" })
+                                @Html.ValidationMessageFor(x => x.DBODisplay)
+                            </span>
+                        </span><span class="stack">
+                            <label>
+                                Phone no:
+                            </label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.Phone, new { @class = "input-150 input" })
+                            </span>
+                        </span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-90">
+                                Date @if (Model.SystemControl.DateType == 2)
+                                {
+                                    <text>(Miti)</text>
+
+                                }:
+                            </label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.EntryDateDisplay, new { @class = "input-190 input" })
+                            @Html.ValidationMessageFor(x => x.EntryDateDisplay)
+                        </span>
+                    </span><span class="stack">
+                        <label>
+                            Apply date @if (Model.SystemControl.DateType == 2)
+                            {
+                                <text>(Miti)</text>
+
+                            }:
+                        </label>
+                        <span class="field">
+                            @Html.TextBoxFor(x => x.ApplyDateDisplay, new { @class = "input-190 input" })
+                            @Html.ValidationMessageFor(x => x.ApplyDateDisplay)
+                        </span>
+                    </span>
+                    <span class="stack">
+                        <label>
+                            Email:
+                        </label>
+                        <span class="field">
+                            @Html.TextBoxFor(x => x.EmailId, new { @class = "input-250 input" })
+                        </span>
+                    </span>
+                </div>
+                <div class="clear">
+                </div>
+            </fieldset>
+        </div>
+    </div>
+                <div class="clearfix">
+                </div>
+                <!--Tab content holder-->
+                <div id="student-general-info-tabs">
+                    <!--Tabs-->
+                    <div id="tabs">
+                        <ul>
+                            <li><a href="#tabs-1">General</a></li>
+                            <li><a href="#tabs-2">Address details</a></li>
+                            <li><a href="#tabs-3">Parent details</a></li>
+                            <li><a href="#tabs-4">Qualification Detials</a></li>
+                        </ul>
+                        <!--Tab one-->
+                        <div id="tabs-1">
+                            
+                            <fieldset>
+                                <legend>Fathers information</legend>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Name:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FName, new { @class = "input input-250" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Profession:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FProff)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Email:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FEmail)
+                                            @*@Html.ValidationMessageFor(x => x.FEmail)*@
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Mobile:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FMobile)
+                                            @* @Html.ValidationMessageFor(x => x.FMobile)*@
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Office:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FOff)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Office address:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FOffAdd)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FPhoneOff)
+                                            @*@Html.ValidationMessageFor(x => x.FPhoneOff)*@
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone(Res):
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.FPhoneRes)
+                                            @*@Html.ValidationMessageFor(x => x.FPhoneRes)*@
+                                        </span>
+                                    </span>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <!--Tab two-->
+                        <div id="tabs-2">
+                            <fieldset>
+                                <legend>Permanent address</legend>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Address:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerAdd)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Ward no:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerWardNo)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            City/Village:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerCity)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Distict:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerDistrict)
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            State/Zone:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerState)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Country:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerCountry)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.PerPhone)
+                                        </span>
+                                    </span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Temporary address</legend>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Address:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpAdd)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Ward no:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpWardNo)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            City/Village:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpCity)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Distict:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpDistrict)
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            State/Zone:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpState)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Country:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpCountry)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.TmpPhone)
+                                        </span>
+                                    </span>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <!--Tab three-->
+                        <div id="tabs-3">
+                            <fieldset>
+                                <legend>Mother's information </legend>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Name:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MName, new { @class = "input-253 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Profession:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MProff, new { @class = "input-150 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Email:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MEmail, new { @class = "input-150 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Mobile:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MMobile, new { @class = "input-120 input" })
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Office:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MOff, new { @class = "input-180 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Office address:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MOffAdd)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone(Res):
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MPhoneRes)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone(Off):
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.MPhoneOff)
+                                        </span>
+                                    </span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Gurdain's details </legend>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Name:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GName, new { @class = "input-253 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Relation:
+                                        </label>
+                                        <span class="field">
+                                            @Html.DropDownList("GurdainRelation", ddlRelation)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Profession:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GProff, new { @class = "input-150 input" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Email:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GEmail)
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Mobile:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GMobile)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Office:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GOff, new { @class = "input input-150" })
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Office address:
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GOffAdd, new { @class = "input input-250" })
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="lag">
+                                    <span class="stack">
+                                        <label class="label-100">
+                                            Phone(Off):
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GPhoneOff)
+                                        </span>
+                                    </span><span class="stack">
+                                        <label>
+                                            Phone(Res):
+                                        </label>
+                                        <span class="field">
+                                            @Html.TextBoxFor(x => x.GPhoneRes)
+                                        </span>
+                                    </span>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <!--Tab four-->
+                        <div id="tabs-4">
+                            <fieldset>
+                                <div class="lag">
+                                    <table class="table-bordered" id="studentqualificationdetiallist">
+                                        <tr class="nodrop nodrag">
+
+                                            <th>
+                                                Title
+                                            </th>
+                                            <th>
+                                                Institution
+                                            </th>
+                                            <th>Board</th>
+                                            <th>Country</th>
+                                            <th>
+                                                Passed Year
+                                            </th>
+                                           
+                                            <th>
+                                                Division
+                                            </th>
+                                            <th>
+                                                Percentage
+                                            </th>
+
+                                        </tr>
+                                        @foreach (var item in Model.AcademicBackground)
+                                        {
+                                            @Html.Partial("_PartialAcademicBackgroundEdit", item)
+                                        }
+
+                                        @if(!Model.AcademicBackground.Any())
+                                        { 
+                                        @Html.Partial("_PartialAcademicBackground", new KRBAccounting.Domain.Entities.AcademicBackground())
+                                     
+                                        }
+
+                                    </table>
+                                    
+                                </div>
+                            </fieldset>
+                        </div>
+
+
+
+                    </div>
+                    <div style="clear: both">
+                    </div>
+                </div>
+                <!--remarks-->
+                <div class="clearfix"></div>
+                <div>
+                    <fieldset>
+                        <legend>Documents</legend>
+                        <div class="lag" style="max-height: 250px; overflow-y: scroll;">
+                            <table class="table-bordered" id="student-document-list">
+                                <tr>
+                                    <th width="245px">
+                                        File
+                                    </th>
+                                    <th width="150px">
+                                        Title
+                                    </th>
+                                    <th width="300px">
+                                        Description
+                                    </th>
+                                </tr>
+                                @foreach (var item in Model.Studentinfo.Documents)
+                                {
+                                    @Html.Partial("StudentDocumentAdd", item)
+                                }
+                                @Html.Partial("StudentDocumentAdd", new KRBAccounting.Domain.Entities.StudentDocument())
+                            </table>
+                            <a href="javascript:void(0);" onclick="viewModel.addNew();">Add</a>
+                        </div>
+                    </fieldset>
+                </div>
+                <div id="remarks">
+                    <label>
+                        Remarks:
+                    </label>
+                    @Html.TextAreaFor(x => x.StuMemo)
+                    @*  <label>
+                                    Ledger no:
+                                </label>
+                                @Html.TextBoxFor(x => x.LedgerNo)
+                            </div>
+                            <div style="clear: both">
+                                <input type="submit" value="Submit" />
+                            </div>
+                        </div>*@
+                    <div style="clear: both">
+                        <input id="formSubmit" type="submit" value="Submit" class="btn" />
+                    </div>
+                </div>
+            }
+        </div>
+        <script type="text/javascript" language="javascript">
+            $(document).ready(function () {
+                $(".division-text").attr("id", "division_0");
+
+                $(".division-text").attr("valueId", $(".hdn_division_Id").attr("id"));
+
+                $(".division-text").closest("tr").attr("id", "tr_0");
+                $(".attachment").each(function() {
+                    var guid = $(this).closest("tr").find(".collection_index").val();
+                    var id = 'studentDocumentList_' + guid + '__Attachment';
+
+
+
+                    var closestTr = $("#" + id).closest("tr");
+                    closestTr.find(".upload_success").hide();
+                    $('#' + id).kendoUpload({
+                        //upload: onUpload,
+                        multiple: false,
+                        showFileList: false,
+                        async: {
+                            saveUrl: ('/Student/UploadDocument'),
+                            autoUpload: true
+                        },
+                        success: function (data) {
+                            if (data == null) {
+                                $("#" + id).closest("tr").find(".upload_success").removeClass("icon-ok").addClass("icon-ban-circle");
+                            }
+                            if (data.response.success != null) {
+                                $("#" + id).closest("tr").find(".upload_success").removeClass("icon-ok").addClass("icon-ban-circle");
+
+                                alert(data.response.success);
+                            }
+                            var imageGuid = data.response.guid;
+                            if (imageGuid.toString() == '') {
+                                $("#" + id).closest("tr").find(".upload_success").removeClass("icon-ok").addClass("icon-ban-circle").show();
+                                alert('upload failed please try again');
+                            } else {
+                                $("#" + id).closest("tr").find(".document_guid").val(data.response.guid);
+                                $("#" + id).closest("tr").find(".document_ext").val(data.response.ext);
+                                $("#" + id).closest("tr").find(".upload_success").show();
+                                $("#" + id).closest("tr").find(".titless").addClass("error");
+                            }
+                            return false;
+                        }
+                    });
+                });
+
+                var dateType = @Model.SystemControl.DateType;
+                if(dateType==1) {
+
+                    $( "#ApplyDateDisplay, #EntryDateDisplay,#DBODisplay").mask("99/99/9999");
+                    $( "#ApplyDateDisplay, #EntryDateDisplay,#DBODisplay").live("blur", function() {
+                        var validDate = isDate($(this).val(),"/",1,0,2);
+                        if(!validDate) {
+                            $($(this).addClass("error"));
+                        }
+                        else {
+                            $($(this).removeClass("error"));
+                        }
+                    });
+                }
+
+                else {
+                    $( "#ApplyDateDisplay, #EntryDateDisplay,#DBODisplay").mask("9999/99/99");
+                    $( "#ApplyDateDisplay, #EntryDateDisplay,#DBODisplay").live("blur", function() {
+
+                        var date = $(this).val();
+
+                        var validDate=isNepaliDate(date);
+                        if(!validDate) {
+                            $($(this).addClass("error"));
+                        }
+                        else {
+                            $($(this).removeClass("error"));
+                        }
+                    });
+                }
+
+                $( "#PassYerDisplay").mask("9999");
+
+
+
+                $("#tabs").tabs();
+                //        $('#ApplyDate').nepDateTimePicker();
+                //        $('#DBO').nepDateTimePicker();
+                //        $('#EntryDate').nepDateTimePicker();
+                //        $('#PassYear').nepDateTimePicker();
+                // $('#MartialStatus').val();
+            });
+        </script>
+        <script type="text/javascript">
+
+            $("#StuDesc").focusout(function () {
+                var descVal = $(this).val();
+                if (descVal.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("GenerateStudentCode")',
+                        data: { studentName: descVal },
+                        success: function (data) {
+                            $('#StdCode').val(data);
+                        },
+                        error: function () {
+                            alert('Some error occured');
+                        }
+                    });
+                }
+            });
+
+            function OnBegin() {
+                $("#student-info").mask("Saving...");
+            }
+
+
+            $(".del-row").live("click", function() {
+                ele = $(this).closest("tr");
+                ele.remove();
+            });
+            function OnComplete() {
+                $("#student-info").mask("Saving...");
+                window.location.href = "@Url.Action("Students")";
+
+            }
+
+            //Kendo ui section
+
+            function onRemove(e) {
+                for (var i = 0; i < e.files.length; i++) {
+                    var data = getGuid(e.files[i].name);
+                    e.files[i].name = data;
+                }
+            }
+
+            function getGuid(id) {
+                var newValue = "hddimage" + id.replace('.', '');
+                var returnvalue = $("." + newValue).val();
+                return returnvalue;
+            }
+
+            function onUpload(e) {
+                var files = e.files;
+                // Check the extension of each file and abort the upload if it is not .jpg
+                $.each(files, function () {
+                    var ext = this.extension.toUpperCase();
+                    if (ext == ".JPG" || ext == ".PNG" || ext == ".JPEG") {
+
+                    } else {
+                        $("#kendoWindow").dialog();
+                        //alert("Only .jpg, .png and .jpeg files can be uploaded");
+                        e.preventDefault();
+                    }
+                });
+
+            }
+
+
+            $(document).ready(function () {
+
+                kendo.ui.Upload.fn._supportsDrop = function () { return false; };
+            });
+
+            $("#attachments").kendoUpload({
+                upload: onUpload,
+                remove: onRemove,
+                multiple: true,
+                async: {
+                    saveUrl: ('/Student/UploadStudentPic'),
+                    //removeUrl: ('/remove-images/UserImages'),
+                    autoUpload: true
+                },
+                success: function (data) {
+
+                    if (data.response.success != null) {
+                        //alert(data.response.success);
+                        //window.location.reload(true);
+                    }
+                    var imageGuid = data.response.guid;
+                    if (imageGuid.toString() == '') {
+                        alert('upload failed please try again');
+                    } else {
+                        var name = "hddimage" + data.response.filename;
+                        var classname = "hddimage" + data.response.filename.replace('.', '');
+                        $('#frm-addstudent').append('<input type="hidden" class="' + classname + '" value="' + imageGuid + '" name="' + name + '" id="' + name + '" />');
+                        //                $(".ui-dialog #ImageGuid").val(data.response.guid);
+                        //                $(".ui-dialog #Ext").val(data.response.ext);
+                        //alert(data.response.guid);
+                        $("#ImageGuid").val(data.response.guid);
+                        $("#Ext").val(data.response.ext);
+                        $("#StudentPhoto").attr("src", data.response.path);
+                    }
+                }
+            });
+            $("#DBODisplay").live("blur", function() {
+                var date = $(this).val();
+                var url = '@Url.Action("CheckDOB", "Student")/?date=' + date;
+                $.getJSON(url, function(data) {
+
+                    if(data =="true") {
+                        $("#DBODisplay").addClass("error");
+                        alert("DOB must be less than current date.");
+
+                    }
+
+                    if(date=="false")
+                    {
+                        $("#DBODisplay").removeClass("error");
+
+
+                    }
+                });
+            });
+
+            $("#formSubmit").live("click", function(e) {
+                var dob = $("#DBODisplay");
+                var date = $("#DBODisplay").val();
+                if(date== "") {
+
+                    $($(dob).addClass("error"));
+                }
+
+                var error=  document.querySelectorAll(".error");
+
+                if (error.length > 0) {
+
+                    e.preventDefault();
+                    $(".error").focus();
+
+                }
+
+            });
+
+            function bindDocument(generatedGuid) {
+                //studentDocumentList___a2665a4b-9423-48bf-9c7f-fe4689c55344___Attachment
+                var id;
+                if (generatedGuid == null || generatedGuid == '') {
+                    id = $(".attachment").attr("id");
+                }
+                else {
+                    id = 'studentDocumentList___' + generatedGuid + '___Attachment';
+                }
+                var closestTr = $("#" + id).closest("tr");
+                closestTr.find(".upload_success").hide();
+                $('#' + id).kendoUpload({
+                    //upload: onUpload,
+                    multiple: false,
+                    showFileList: false,
+                    async: {
+                        saveUrl: ('/Student/UploadDocument'),
+                        autoUpload: true
+                    },
+                    success: function (data) {
+                        if (data == null) {
+                            $("#" + id).closest("tr").find(".upload_success").removeClass("icon-ok").addClass("icon-ban-circle");
+                        }
+                        if (data.response.success != null) {
+                            $("#" + id).closest("tr").find(".upload_success").removeClass("icon-ok").addClass("icon-ban-circle");
+
+                            alert(data.response.success);
+                        }
+                        var imageGuid = data.response.guid;
+                        if (imageGuid.toString() == '') {
+                            $("#" + id).closest("tr").find(".upload_success").removeClass("icon-ok").addClass("icon-ban-circle").show();
+                            alert('upload failed please try again');
+                        } else {
+                            $("#" + id).closest("tr").find(".document_guid").val(data.response.guid);
+                            $("#" + id).closest("tr").find(".document_ext").val(data.response.ext);
+                            $("#" + id).closest("tr").find(".upload_success").show();
+                            $("#" + id).closest("tr").find(".titless").addClass("error");
+                        }
+                        return false;
+                    }
+                });
+                return false;
+            }
+            var viewModel = {
+                addNew: function () {
+                    var generatedGuid = viewModel._generateGuid();
+                    $("#student-document-list").append($("#studentDocumentTemplate").tmpl({ index: generatedGuid }));
+                    //alert(generatedGuid);
+                    bindDocument(generatedGuid);
+                },
+
+                _generateGuid: function () {
+                    // Source: http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/105074#105074
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                }
+            };
+    
+            $(".titless").live("blur", function() {
+                var data = $(this).val();
+                var image = $(this).closest("tr").find(".document_guid").val();
+
+                if (image != "") {
+                    if (data != "") {
+                        $(this).removeClass("error");
+                    } else {
+                        $(this).addClass("error");
+                    }
+
+                }
+            });
+            
+            $(".percentage").live('keydown', function (e) {
+                var element = $(this);
+                var ev = e || event;
+                var keycode = ev.keyCode;
+                //e.preventDefault();
+                if (keycode == 13) {
+                    var closestTr = element.closest("tr");
+                    if (closestTr.find(".hdn_division_Id").val() != "" && closestTr.find("hdn_division_Id").val() != "0") {
+
+                        if (closestTr.is(":last-child")) {
+
+                            var link = $(this).attr("href");
+                            $.ajax({
+                                url: link,
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    if (closestTr.is(":last-child")) {
+                                        $('#studentqualificationdetiallist tr:last').addClass("deletable");
+                                        var id = $('#studentqualificationdetiallist tr:last').attr("id");
+                                        $('#studentqualificationdetiallist tr:last').after(data);
+                                        var arrString = id.split("_");
+                                        var index = parseInt(arrString[1]) + 1;
+                                        //var index = $(".narration").index(element) + 1;
+
+                                        $(".division-text:last").attr("id", "subject_" + index);
+                                        $(".division-text:last").closest("tr").attr("id", "tr_" + index);
+                                        $(".division-text:last").attr("valueId", $(".hdn_division_Id:last").attr("id"));
+
+
+
+                                    }
+                                    closestTr.next().find('.division-text').select();
+                                    return true;
+                                }
+                            });
+                        }
+
+                        closestTr.next("tr").find('.division-text').select();
+                        return true;
+                    }
+                    closestTr.find(".division-text").addClass("error");
+                    closestTr.find(".division-text").focus();
+                    return false;
+                }
+                return true;
+            });
+        </script>
+
+        <script src="@Url.Content("~/Scripts/jQuery.tmpl.min.js")" type="text/javascript">
+
+
+
+        </script>
+        <script type="text/x-jquery-tmpl" id="studentDocumentTemplate">
+            @Html.CollectionItemJQueryTemplate("StudentDocumentAdd", new KRBAccounting.Domain.Entities.StudentDocument())
+        </script>
+       

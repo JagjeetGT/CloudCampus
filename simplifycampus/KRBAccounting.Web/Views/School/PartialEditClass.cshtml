@@ -1,0 +1,49 @@
+﻿@model KRBAccounting.Domain.Entities.SchClass
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+
+@using (Ajax.BeginForm("EditClass", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnCompleteEdit" }, new { @class = "form-horizontal", id = "class-frm" }))
+{
+    <fieldset>
+
+        @Html.HiddenFor(model => model.Id)
+  
+        @Html.HiddenFor(m=>m.ProgramId)
+
+    <div style="width: 500px;">
+        <div class="lag">
+            <label class="label-160">
+                Code</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Code, new {@class = "input input-253"})
+                @Html.ValidationMessageFor(model => model.Code)<span class="loading Code">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+            </span>
+        </div>
+        
+        <div class="lag">
+            <label class="label-160">
+                Description</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Description, new {@class = "input input-253"})
+                @Html.ValidationMessageFor(model => model.Description)<span class="loading Description">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+            </span>
+            <label class="label-160">
+                Schedule</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Schedule, new {@class = "input input-253"})
+                @Html.ValidationMessageFor(model => model.Schedule)
+            </span>
+           
+            <label class="label-160">
+                Incharge</label>
+            <span class="field">
+                @Html.TextBoxFor(model => model.Incharge, new { @class = "input input-253" })
+                @Html.ValidationMessageFor(model => model.Incharge)
+            </span>
+        </div>
+    </div>
+    </fieldset>
+}
+

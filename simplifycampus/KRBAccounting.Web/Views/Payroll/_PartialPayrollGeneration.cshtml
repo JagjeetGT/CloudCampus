@@ -1,0 +1,52 @@
+@model KRBAccounting.Web.ViewModels.Payroll.PayrollGenerationViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("PayrollGeneration", "Payroll", new { controller = "Payroll" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+
+    <div class="lag">
+        <div class="lag">
+            <div class="stack">
+                <label class="label-120">
+                    Year</label>
+                <div class="field">
+                    @Html.TextBoxFor(m => m.Year, new { @class = "input-190 input", entermsg = "Enter Status" , @readonly="readonly"})
+                    @Html.ValidationMessageFor(m => m.Year)
+                </div>
+            </div>
+        </div> <div class="clearfix">
+               </div>
+        <div class="lag">
+            <div class="stack">
+                <label class="label-120">
+                    Month</label>
+                <div class="field">
+                    @Html.DropDownListFor(m => m.Month, Model.MonthList, new { @class = "input-190 input", entermsg = "Enter EmployeePostId" })
+                    @Html.ValidationMessageFor(m => m.Month)
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="lag">
+            <div class="">
+                <input type="submit" onclick="Begin()"  value="Generate" class="btn"/>
+            </div>
+        </div>
+       
+    </div>
+    if (Model.AnnualList.Any())
+    {
+        <div class="lag checkboxs" style="width: auto; float: right; margin-right: 10px">
+            <div class="stack" style="width: 100% ! important;">
+                <label class="label">
+                    Annual</label>
+                <div class="field">
+                    @Html.CheckBoxList("AnnualId", Model.AnnualList)
+                    @*@Html.ValidationMessageFor(m => m.AllowanceId)*@
+                </div>
+            </div>
+        </div>
+    }
+    <div class="clearfix">
+    </div>
+}

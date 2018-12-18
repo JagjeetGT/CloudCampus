@@ -1,0 +1,15 @@
+@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.SmsTemplates>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr><th>Name</th><th>Body</th></tr></thead><tbody>@foreach (var item in Model){<tr><td>@item.Name</td><td>@item.Body</td><td>@if(CheckPermission.GivePermission("Edit","SMSTML"))
+    {
+        <a href="#" class="editSmsTemplates icon-pencil" data-id="@item.Id" title="Edit"></a>
+    }</td><td>@if(CheckPermission.GivePermission("Delete","SMSTML"))
+    {
+        <a href="#" class="deleteSmsTemplates icon-remove" data-id="@item.Id" title="Delete"></a>
+    }</td></tr>}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,140 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.OutStandingViewModel
+@{
+    decimal Total = 0;
+    decimal GrandTotal = 0;
+
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix"></div>
+
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+    <br/>
+
+  <table border="1" style="font-size: 12px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Customer Name/Document No.
+                </th>
+                <th>
+                    Doc Date
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Adjusted
+                </th>
+                <th>
+                    Balance
+                </th>
+                <th>
+                    Due Date
+                </th>
+                <th>
+                    Due Age
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.LedgerList)
+        {
+            Total = 0;
+            var customerlist = UtilityService.GetOutstandingCustomerLedgers(Model.AsOnDate, item.Id).Where(x => x.Balance != 0);
+            if (customerlist.Count() > 0)
+            {
+
+
+            <tr>
+                <td style="font-weight: bold">
+                    @item.ShortName - @item.AccountName
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            }
+
+            foreach (var list in customerlist)
+            {
+            <tr>
+                <td style="font-weight: bold">
+                    @list.Source - @list.VoucherNo
+                </td>
+                <td>
+                    @list.VoucherDate.ToString("MM/dd/yyyy")
+                </td>
+                <td>
+                    @list.Amount
+                </td>
+                <td>
+                    @list.Adjusted
+                </td>
+                <td>
+                    @list.Balance
+                </td>
+                <td>
+                    @list.DueDate.ToString("MM/dd/yyyy")
+                </td>
+                <td>
+                    @list.DueAge
+                </td>
+            </tr>
+                Total += list.Balance;
+
+            }
+
+            GrandTotal += Total;
+            if (customerlist.Count() > 0)
+            {
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    Total:
+                </td>
+                <td style="text-align: right; font-weight: bold">
+                    @Total.ToString("f2")
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+            }
+        }
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td style="text-align: right; font-weight: bold">
+                Grand Total:
+            </td>
+            <td style="text-align: right; font-weight: bold">
+                @GrandTotal.ToString("f2")
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+

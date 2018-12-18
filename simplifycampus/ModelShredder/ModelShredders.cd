@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ModelShredder.ShredderOptions">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAEAAAAAAA=</HashCode>
+      <FileName>ShredderOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ModelShredder.Shredder">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAACAAQCAAAAAAAAAAAAAAAACAAAgAAA=</HashCode>
+      <FileName>Shredder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="m_SchemaBuilder" />
+      <Field Name="m_ObjectShredder" />
+      <Field Name="m_OptionsProvider" />
+      <Field Name="m_ShredderMethod" />
+      <Field Name="m_ShredderOptions" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="ModelShredder.IObjectShredder">
+    <Position X="2" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IObjectShredder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ModelShredder.ISchemaBuilder">
+    <Position X="2" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ISchemaBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ModelShredder.IShredderOptionsProvider">
+    <Position X="2" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IShredderOptionsProvider.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Delegate Name="ModelShredder.ShredderDelegate">
+    <Position X="9" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ShredderDelegate.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

@@ -1,0 +1,199 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentBioDataReportViewModel
+@{
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"));
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table cellspacing="0" cellpadding="0" align="center" style="border: 1px solid rgb(221, 221, 221);
+        border-collapse: collapse; width: 60%;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Information
+                </th>
+                <th>
+                    Photo
+                </th>
+            </tr>
+        </thead>
+        <tr>
+            <td>
+                <div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Name
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.StuDesc, new { @class = "input-150 input", @readonly = "readonly" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Date of Birth
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.DBO, new { @class = "input-150 input", entermsg = "Enter name" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Gender
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Sex, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Marital Status
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.MaritialSt, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Nationality
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Nationality, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Contact
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Phone, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Email
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.EmailId, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Blood Group
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.BloodGrp, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Temporary Address
+                            </label>
+                            <span class="field">: @UtilityService.GetTemporaryFullAddress(Model.StudentInfo)
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Permanent Address
+                            </label>
+                            <span class="field">: @UtilityService.GetPermanentFullAddress(Model.StudentInfo)
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Religion
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Religion, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Reg No
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Regno, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Current Class
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Class.Description, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Apply Date
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.ApplyDate, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="lag">
+                    <span class="stack"><span class="field">
+                        @if (!string.IsNullOrEmpty(Model.StudentInfo.StdPhotoFileName))
+                        {
+                            var logo = "/academicsimage/" + @Model.StudentInfo.StdPhotoFileName + @Model.StudentInfo.StdPhotoExt;
+                            var filePath = Server.MapPath("~/Content" + logo);
+                            if (!System.IO.File.Exists(filePath))
+                            {
+                                logo = "/img/NoImage.jpg";
+                            }
+                            var link = url + "Content" + logo;
+                            <img src="@link" height="50px" width="50px"/>
+                        }
+                        @*else
+                        {
+                            var link = url + "//Content/img/NoImage.jpg"; //+ @Model.StudentInfo.StdPhotoFileName + @Model.StudentInfo.StdPhotoExt;
+                            <img src="@link" height="150px" width="150px" />
+                        }*@
+                    </span></span>
+                </div>
+                <div class="clearfix">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

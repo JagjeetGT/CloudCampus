@@ -1,0 +1,77 @@
+﻿@model KRBAccounting.Web.ViewModels.Master.AccountGroupViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Html.BeginForm("OnlineAccountGroupAdd", "Master", FormMethod.Post, new { @class = "form-horizontal online-form", id = "account-group-form" }))
+{
+    <div id="MsgError">
+    </div>
+    <div style="width: 445px;">
+        <div class="lag">
+            <label class="label-90">
+                Description</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.AccountGroup.Description, new { @class = "input-295 input" })
+                @Html.ValidationMessageFor(m => m.AccountGroup.Description)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Type</label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.AccountGroup.GroupType, Model.Type, new { @class = "input" })
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                A/c Type</label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.AccountGroup.GroupAccountType, Model.SubType, new { @class = "input" })
+            </span>
+        </div>
+    </div>
+    <span class="clearfix"></span>
+    <input type="button" class="btn btn-small btn-primary onlineSave" value="Save" />
+}
+<script type="text/javascript">
+    $("#AccountGroup_Description").live("focusout", function () {
+        var name = $(this).val();
+        if (name != "") {
+            $.getJSON("/Master/IsAccountGroupAvailable?name=" + name, "", function (data, status, xhr) {
+                if (data != '') {
+                    $("#MsgError").html(data);
+                    $("#AccountGroup_Description").addClass("error");
+                    $("#AccountGroup_Description").focus();
+                } else {
+                    $("#MsgError").html('');
+                    $("#AccountGroup_Description").removeClass("error");
+                }
+            });
+        }
+    });
+    
+    $("#AccountGroup_GroupType").live("change", function () {
+        var Id = $(this).val();
+
+        $.ajax({
+            url: '@Url.Action("GetAccountGroupType", "Master")',
+            data: { id: Id },
+            dataType: "json",
+            type: "POST",
+            error: function () {
+                alert("An error occurred.");
+            },
+
+            success: function (data) {
+                var items = "";
+                $.each(data, function (i, item) {
+                    items += "<option value=\"" + item.Value + "\">" + item.Text + "</option>";
+                });
+                items += "</select>";
+                $("#AccountGroup_GroupAccountType").html(items);
+
+            }
+        });
+    });
+    
+</script>

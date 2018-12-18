@@ -1,0 +1,120 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<List<KRBAccounting.Domain.Entities.ScBoaderMapping>>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Boarder
+                </th>
+                @*<th>
+                    CreatedDate
+                </th>
+                <th>
+                    CreatedBy
+                </th>*@
+                <th>
+                    UpdatedDate
+                </th>
+                <th>
+                    UpdatedBy
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                
+                <tr>
+                    <td align="center">@i</td>
+                    <td>
+                        @{
+                            var schClass = item.FirstOrDefault().Classes;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Description
+                        }
+
+                    </td>
+                    
+                    <td>@if (item.FirstOrDefault().SectionId != 0)
+                        {
+                            var scSection = item.FirstOrDefault().Sections;
+                            if (scSection != null)
+                            {
+                                @scSection.Description
+                            }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var scBoader = item.FirstOrDefault().ScBoader;
+                        }
+                        @if (scBoader != null)
+                        {
+                            @scBoader.Description
+                        }
+
+                    </td>
+                   @* <td>@item.FirstOrDefault().CreatedDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @{
+                            var createdBy = item.FirstOrDefault().CreatedBy;
+                        }
+                        @if (createdBy != null)
+                        {
+                            @createdBy.Username
+                        }
+
+                    </td>*@
+                    <td>@item.FirstOrDefault().UpdatedDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @{
+                            var updatedBy = item.FirstOrDefault().UpdatedBy;
+                        }
+                        @if (updatedBy != null)
+                        {
+                            @updatedBy.Username
+                        }
+
+                    </td>
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editScClassFeeRate icon-edit" data-ClassId="@item.FirstOrDefault().ClassId" data-SectionId="@item.FirstOrDefault().SectionId" data-BoaderId="@item.FirstOrDefault().BoaderId" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>@if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("BoaderMappingDelete", new {classId = item.FirstOrDefault().ClassId, sectionId = item.FirstOrDefault().SectionId, boaderId = item.FirstOrDefault().BoaderId})" onclick = "return confirm('Are you sure you wish to delete this Boader Setup?');" class="deleteScClassFeeRate icon-remove" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BoaderMappingsList", "School", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "boader-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@

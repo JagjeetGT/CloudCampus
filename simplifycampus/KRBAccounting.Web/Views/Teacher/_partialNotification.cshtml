@@ -1,0 +1,70 @@
+﻿ @using KRBAccounting.Web.Helpers 
+ @model IEnumerable<KRBAccounting.Service.Models.StudentProfile.NotificationDashboard>
+         
+ 
+ 
+  <ul class="nav pull-right nav-indicators">
+                                <li class="dropdown nav-notifications">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <span class="badge"></span><i class="icon-warning-sign"></i>
+                                    </a>
+                                
+                                </li>
+                           
+                                <li class="dropdown nav-messages">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                       @if(Model.Count()!=0)
+                                                            {
+                                                              <span class="badge"> @Model.Count()</span>  
+                                                            }
+                                                       
+                                       
+                                        <i class="icon-envelope-alt"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-messages-header">
+                                            <a tabindex="-1" href="#">You have <strong>@Model.Count()</strong> new messages</a>
+                                        </li>
+                                        @foreach (var item in Model.Take(5))
+                                        {
+                                             <li class="nav-message-body">
+                                            <a href="@Url.Action("MessageInbox", "StudentProfile")">
+                                                <img src="/Content/social/assets/img/avatars/user-55x55.png" alt="User">
+                                                <div>
+                                                    <small class="pull-right">@item.MsgTime</small>
+                                                    <strong>@item.StudentName</strong>
+                                                   
+                                                </div>
+                                                <div>
+                                                   @item.MsgSubject
+                                                   <br/>
+                                                   <small>@Utility.TrimText(item.MsgBody, 5) <span style="float: right">@item.MsgDate.ToString("MMM") @item.MsgDate.ToString("dd")</span>  </small>
+                                                </div>
+                                            </a>
+                                        </li>
+  
+                                        }
+                                       
+                                       
+                                        
+                                      
+                                        <li class="nav-messages-footer">
+                                            <a tabindex="-1" href="@Url.Action("MessageInbox", "Teacher")">View all messages
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="divider-vertical"></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
+                                    <ul class="dropdown-menu">
+                                        <li> <a href="@Url.Action("Profile", new { name = User.Identity.Name })"><i class="icon-user"></i> My Profile</a></li>
+                                   
+                                   
+                                        <li><a href="@Url.Action("Setting")"><i class="icon-cogs"></i> Settings</a></li>
+                                        <li><a href="@Url.Action("LogOff", "Account")"><i class="icon-off"></i> Log Out</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#"><i class="icon-info-sign"></i> Help</a></li>
+                                    </ul>
+                                </li>
+                            </ul>

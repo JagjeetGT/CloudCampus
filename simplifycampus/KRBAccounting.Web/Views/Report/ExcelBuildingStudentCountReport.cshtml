@@ -1,0 +1,63 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.BuildingStudentViewModel
+
+
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<table width="100%">
+    <tr align="center" style="font-size: 12px;">
+        <td colspan="4">
+           @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+        </td>
+    </tr>
+</table>
+
+<div class="ReportList">
+   <table border="0.5" style="font-size: 15px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th width="10%">
+                  Building
+                </th>
+                <th width="10%">
+                  Room
+                </th>
+                <th width="10%">
+                    Class
+                </th>
+                <th width="10">
+                  Total Students
+                </th>
+               
+            </tr>
+        </thead>
+    <tbody>
+        @foreach (var item in Model.StatisticsStudentBuildingCounts.GroupBy(x => x.BuildingName))
+        {
+            <tr>
+                
+                <td>@item.Key</td>
+               
+                </tr>
+            foreach (var ite in Model.StatisticsStudentBuildingCounts.Where(x => x.BuildingName == item.Key))
+            {
+                <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold; border: 1px solid">
+                        <td></td>
+                         
+                        <td>
+                            @ite.RoomName
+                        </td>
+                        <td>@ite.ClassName
+                        </td>
+                        <td>@ite.Total
+                        </td>
+                    </tr>
+                    
+                }
+              
+     
+        }
+        </tbody>
+    </table>
+</div>

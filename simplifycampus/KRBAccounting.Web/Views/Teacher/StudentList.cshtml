@@ -1,0 +1,124 @@
+﻿@model KRBAccounting.Web.ViewModels.Teacher.TeacherStudentListViewModel
+@{
+    ViewBag.Title = "Friends";
+}
+<div class="row-fluid">
+    <h4 class="page-title">
+        <div class="social-box" >
+            <div class="body" align="center">
+                Student
+            </div>
+        </div>
+    </h4>
+</div>
+@foreach (var item in Model.StudentRegistrationDetails.GroupBy(x=>x.StudentRegistration.ClassId))
+{
+    <div class="block-fluid">
+        <section class="feeds social-box" id="feeds">
+    <div class="header">
+        <h4><i class="icon-th-list"></i> <span class="hidden-phone"> (Class: @item.FirstOrDefault().Studentinfo.Class.Description) </span>
+            
+            <span class="visible-phone">Feeds</span></h4>
+            <span class="icon-2x icon-share classmessage" data-classid="@item.FirstOrDefault().Studentinfo.ClassId" data-sectionId="@item.FirstOrDefault().SectionId" style="float: right; cursor: pointer" title="Message to Class @item.FirstOrDefault().Studentinfo.Class.Description"></span>
+        <div class="tools">
+        </div>
+    </div>
+   
+    <div class="body">
+        <div class="tab-content">
+            <div id="users" class="tab-pane fade in users-feeds active" >
+                @foreach (var student in Model.StudentRegistrationDetails.Where(x => x.Studentinfo.ClassId == item.Key))
+                {
+                    
+                     <div class="row-fluid" style="width: 350px; float: left">
+                         <img  src="/Content/social/assets/img/avatars/user2-55x55.png" class="feed-object">
+                         <a href="@Url.Action("StudentProfile", "Teacher", new { userId = student.UserId })">
+                             <h6 class="feed-heading">@student.Studentinfo.StuDesc</h6>
+                         </a>
+                          @*    <h6 class="feed-heading">@student.Studentinfo.StuDesc</h6>*@
+                               <span><small>@student.RollNo</small></span>
+                               <br/>
+                                <a data-id="@student.UserId" href="#" id="studentMsg"><span class="label label-info">new message</span></a>
+                          </div>
+                
+                    
+                }
+
+            
+            </div>
+            
+        </div>
+    </div>
+</section>
+    </div>
+    
+}
+<div style="width: auto" id="studentMsgDetail" class="modal hide fade" tabindex="-1"
+    role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+<script type="text/javascript" language="javascript">
+
+
+    $('a#studentMsg').live('click', function () {
+        $.blockUI();
+        var id = $(this).attr("data-id");
+        var url = '/Teacher/StudentMsg?studentId=' + id;
+
+        getRequest(url);
+
+        return false;
+    });
+    $('.classmessage').live('click', function () {
+        $.blockUI();
+        var classId = $(this).attr("data-classId");
+        var sectionId = $(this).attr("data-sectionId");
+        var url = '/Teacher/ClassMessage?classId=' + classId + '&&sectionId=' + sectionId;
+
+        getRequest(url);
+
+        return false;
+    }); 
+    // $("#studentMsgDetail").modal('toggle');
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#studentMsgDetail').modal('show');
+                $('#studentMsgDetail').html(data);
+                $.unblockUI();
+
+            },
+            error: function (err) {
+
+
+
+                alert("Error");
+            }
+        });
+    }
+
+    //    $(".btn-submit-form").live("click", function () {
+    //        //$(".student-form").submit();
+    //    });
+
+    function complete(data) {
+        //alert(data.msgCount);
+        // alert(data.content);
+        if (data.content == "true") {
+
+            $("#count_" + data.userId).text("(" + data.msgCount + ")");
+            $("#studentMsgDetail").modal('hide');
+            var chat = $.connection.chatHub;
+            chat.server.send();
+            $.unblockUI();
+
+
+            GrowlMsg('Sent message Successful');
+        }
+
+    }
+
+
+</script>

@@ -1,0 +1,209 @@
+﻿    @using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Exam Master";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Exam</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addScExam"></a></li>
+                        }
+                      
+                    </ul>
+                      <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  SearchExam"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                        </div>
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="exam-list">
+                    @Html.Action("ExamList")
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalExam" style="display: none;" title="Exam (+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+
+    $("#modalExam").dialog({
+        autoOpen: false,
+        modal: true,
+        width: '600px',
+        buttons: {
+            "Ok": function () {
+                $.blockUI({
+                    message: 'Please Wait..',
+                    css: {
+                        border: 'none',
+                        padding: '15px',
+                        backgroundColor: '#fff',
+                        '-webkit-border-radius': '10px',
+                        '-moz-border-radius': '10px',
+                        color: '#000'
+                    }
+                });
+
+
+                $("#form-id").submit();
+               
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalExam .block').html(data);
+                $(this).addClass("done");
+                $("#modalExam").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScExam').live('click', function () {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+        var url = '@Url.Action("ExamAdd", "Exam")'; 
+        getRequest(url);
+
+        return false;
+    });
+
+    function CheckRow() {
+        var element = document.querySelectorAll(".text_student");
+
+        //        alert(element.length);
+        //alert($(".text_subject"));
+        if (element.length > 0) {
+            $("#form-id").submit();
+        }
+        else {
+            alert("No information");
+        }
+    }
+
+    $('a.editExam').live('click', function () {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+       
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("ExamEdit", "Exam")?id=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+        $("#exam-list").load("/Exam/ExamList");
+        $('#modalExam .block').load("/Exam/ExamAdd");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#exam-list").load("/Exam/ExamList");
+        $('#modalExam').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+
+    $('a.deleteExam').live('click', function () {
+        var result = confirm('Are you sure you want to delete this Exam ?');
+        if(result) {
+            var buildingId = $(this).attr("data-id");
+            var url = '@Url.Action("ExamDelete", "Exam")?id=' + buildingId;
+            $.blockUI({
+                message: 'Please Wait..',
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#fff',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    color: '#000'
+                }
+            });
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Exam is already in use. Cannot delete.");
+                } else {
+                    $("#exam-list").load("/Exam/ExamList");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+
+    });
+
+    $(".SearchExam").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/ExaminationSearch/ExamSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#exam-list").html(data);
+        });
+    });
+</script>

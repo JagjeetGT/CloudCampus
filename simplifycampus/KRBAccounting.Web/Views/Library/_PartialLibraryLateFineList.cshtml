@@ -1,0 +1,78 @@
+﻿@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScLibraryLateFine>
+           
+@{var i = Convert.ToInt32(ViewBag.SnStart);
+  var userRight = (UserRight)ViewBag.UserRight;}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N
+                </th>
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    End Date
+                </th>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Amount
+                </th>
+               @* <th>
+                    Created By
+                </th>
+                <th>
+                    Created On
+                </th>*@
+                <th width="5%">
+                </th>
+                <th width="5%">
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+                <tr align="center">
+                    <td >@i
+                    </td>
+                    <td>@item.DayStart
+                    </td>
+                    <td>@item.DayEnd
+                    </td>
+                    <td>@item.Title
+                    </td>
+                    <td>@item.Amount
+                    </td>
+                    @*<td>@item.CreatedBy
+                    </td>
+                    <td>@item.CreatedOn
+                    </td>*@
+                    <td>@if (userRight.Edit)
+                        {
+                            <a href="@Url.Action("LibraryLateFineEdit", "Library", new {id = item.Id})"class="editLibraryLateFine icon-edit" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>@if (userRight.Delete)
+                        {
+                            <a href="javascript:void(0)"  class="deleteLibraryLateFine icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "LibraryLateFeeList", "Library", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Books-list" }))
+    </div>
+</div>           
+

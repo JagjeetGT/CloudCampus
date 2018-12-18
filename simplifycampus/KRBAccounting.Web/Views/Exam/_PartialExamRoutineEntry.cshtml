@@ -1,0 +1,65 @@
+﻿@model KRBAccounting.Domain.Entities.ScExamRoutine
+@using KRBAccounting.Service@{
+   var date = DateTime.UtcNow.ToString("dd/MM/yyyy");
+}
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.SubjectId, new { @class = "hdn_Subject_Id" })
+            <input type="text"  class = "modallink text_subject input-120 input"   href="@Url.Action("GetSubjectByFilter", "School")" title="Subject "  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ResultSystem, new { @class = "hdn_ResultSystem_Id" })
+            <input type="text" class = "modallink text_ResultSystem input-90 input"  href="@Url.Action("GetEnumResultSystemList", "School")"  title="Result System"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.EvaluateForType, new { @class = "hdn_EvaluateForType_Id" })
+            <input type="text" class = "modallink text_EvaluateForType input-90 input"   href="@Url.Action("GetEnumEvaluateForPassList", "School")"  title="Evaluation For Pass"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ExamType, new { @class = "hdn_ClassType_Id" })
+            <input type="text" class = "modallink text_ClassType input-90 input"   href="@Url.Action("GetEnumClassTypeList", "School")" title="Class Type"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        <td>
+            <span> @Html.HiddenFor(m => m.ExamMiti, new {  @class = "ExamMiti input-90 input" })
+                @Html.TextBoxFor(m => m.ExamDate, new {  @class = "ExamDate input-90 input" })</span>
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.StartTime, new { @class = "StartTime input-90 input" })
+            @Html.ValidationMessageFor(m => m.StartTime)
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.EndTime, new { @class = "EndTime input-90 input" })
+            @Html.ValidationMessageFor(m => m.EndTime)
+        </td>
+        <td>@Html.TextBoxFor(x => x.ExamHour, new { @class = "ExamHour input-90 input" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Remarks, new { @class = "narration input-160 input", href = "/Exam/ExamRoutineDetialAdd", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-examroutine-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-examroutine-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+
+</script>

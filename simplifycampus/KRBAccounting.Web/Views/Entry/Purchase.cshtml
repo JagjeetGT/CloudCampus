@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Purchase";
+}
+
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "SBT"))
+        {
+            <li><a href="@Url.Action("PurchaseInvoice", "Entry")">Invoice</a> <span class="divider">
+                |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PBT"))
+        {
+            <li><a href="@Url.Action("PurchaseReturn", "Entry")">Return</a> <span class="divider">
+                |</span></li>
+        }
+    </ul>
+</div>

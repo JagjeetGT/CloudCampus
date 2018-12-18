@@ -1,0 +1,157 @@
+﻿@using KRBAccounting.Service.Models
+
+@{
+    ViewBag.Title = "Classes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Class List
+                    </h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addClass"></a></li>
+                        }
+
+                    </ul>
+                    <div style="margin-top: 4px; float: right;" class="input-append ">
+                        <input type="text" style="height: 22px; margin: 4px;" class="input-150 searchText">
+                        <a style="margin: 3px -1px 0px -5px; height: 16px;" class="btn  ClassSearch"><i class="isw-zoom" style="margin: 0px; padding: 5px; height: 10px;"></i></a>
+                    </div>
+
+
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Class-list">
+                
+                    @Html.AjaxAction("classlist", "ListClasses")
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalSchClass" style="display: none;" title="Classes">
+    <div class="block">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#modalSchClass").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                CheckStudent();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalSchClass .block').html(data);
+                $(this).addClass("done");
+                $("#modalSchClass").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+
+
+    $('.addClass').live('click', function () {
+        var url = '@Url.Action("AddClass", "School")';
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+    function OnComplete() {
+        $("#modalSchClass").dialog("close");
+        $("#Class-list").load("/School/ListClasses"); $.unblockUI();
+    }
+
+    function OnCompleteEdit() {
+        $("#modalSchClass").dialog("close");
+        $("#Class-list").load("/School/ListClasses"); $.unblockUI();
+    }
+
+    $('a.editClass').live('click', function () {
+        var buildingId = $(this).attr("data-id");
+        var url = '@Url.Action("EditClass", "School")?classId=' + buildingId;
+        Begin();
+        getRequest(url);
+        return false;
+    });
+
+
+    $('a.deleteClass').live('click', function () {
+        var result = confirm("Are you sure you wish to delete this Class?");
+        if (result) {
+            var buildingId = $(this).attr("data-id");
+            var url = '@Url.Action("DeleteClass", "School")?classId=' + buildingId;
+            Begin();
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This class is already in use. Cannot delete.");
+                } else {
+                    $("#Class-list").load("/School/ListClasses");
+                }
+            });
+            $.unblockUI();
+            return false;
+        }
+
+    });
+
+    function CheckStudent() {
+        var MaxStudent = parseFloat($("#MaxStudent").val());
+        var MinStudent = parseFloat($("#MinStudent").val());
+
+        if (MinStudent > MaxStudent) {
+            alert("Max Student is less than Min student");
+            $.unblockUI();
+        } else {
+
+            $("#class-frm").submit();
+
+        }
+    }
+
+    $(".ClassSearch").live("click", function () {
+        var searchText = $(".searchText").val();
+        var url = '/AcademySearch/ClassSearch?SearchText=' + searchText;
+        $.post(url, function (data) {
+            $("#Class-list").html(data);
+        });
+    });
+</script>

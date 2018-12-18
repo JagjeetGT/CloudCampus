@@ -1,0 +1,140 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.StockTransferAddViewModel
+
+@using (Ajax.BeginForm("StockTransferAdd", "Entry", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "gt-form" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div id="MsgError">
+    </div>
+    <div style="min-width: 740px; max-width: 785px; height: 240px">
+        <fieldset style="width: 760px">
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-70">
+                        Transfer No.</label>
+                    <span class="field">
+                        @Html.TextBoxFor(x => x.STNo, new { @class = "input-90  input" })
+                        @Html.ValidationMessageFor(m => m.STNo)
+                    </span></span><span class="stack">
+                        <label class="label-60">
+                            Date</label>
+                        <span class="field">
+                          @Html.TextBoxFor(m => m.STDate)
+                        </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-85">
+                        From Godown</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.GodownId)
+                        @Html.TextBoxFor(x => x.Godown, new { @class = "input-250 modallink input", href = "/Master/GetGodownList", title = "Godown", valueid = "GodownId" })
+                    </span></span>
+            </div>
+            <div class="clearfix"></div>
+             <div class="lag">
+                <span class="stack">
+                    <label class="label-53">
+                        Currency</label>
+                    <span class="field">
+                        @*@Html.HiddenFor(m => m.StockTransfer.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })*@
+                        <input type="hidden" id="Currency_Id" name="CurrencyId"/>
+                        @Html.TextBoxFor(x => x.CurCode, new { @class = "input-90 modallink input", href = "/Entry/GetCurrency", title = "Godown", valueid = "Currency_Id" })
+         
+                    </span></span><span class="stack">
+                        <label class="label-53">
+                            Rate</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.CurRate, new { @class = "input-45 input", entermsg = "Enter Rate." })
+                            @Html.ValidationMessageFor(m => m.CurRate)
+                        </span></span>
+            </div>
+            <div class="clearfix">
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" id="table-gt-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="260px">
+                        Product
+                    </th>
+                    <th width="50px">
+                        Godown
+                    </th>
+                    <th width="50px">
+                        Unit
+                    </th>
+                    <th width="50px">
+                        Qty
+                    </th>
+                    <th width="50px">
+                        Rate
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                </tr>
+                @if (Model.StockTransferDetailAddViewModels != null)
+                {
+                    foreach (var item in Model.StockTransferDetailAddViewModels)
+                    {
+                    @Html.Partial("_PartialStockTransferDetailEntry", item)
+                    }
+                }
+                else
+                {
+                    var model = new KRBAccounting.Web.ViewModels.Entry.StockTransferDetailAddViewModel();
+                    model.UnitList = Model.UnitList;
+                    @Html.Partial("_PartialStockTransferDetailEntry", model)
+                }
+            </table>
+        </div>
+        <span class="clearfix"></span>
+        <fieldset style="width: 760px">
+            <fieldset style="width: 349px">
+                <legend>From Godown</legend>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-40">
+                            Stock Qty</label>
+                        @Html.TextBoxFor(x => x.FromGodownStockQty, new { @class = "input-160 input", disabled = "disabled" })
+                    </span>
+                </div>
+            </fieldset>
+            <fieldset style="width: 349px">
+                <legend>To Godown</legend>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-40">
+                            Stock Qty</label>
+                        @Html.TextBoxFor(x => x.ToGodownStockQty, new { @class = "input-160 input", disabled = "disabled" })
+                    </span>
+                </div>
+            </fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-40">
+                        Description</label>
+                    @Html.TextBoxFor(x => x.Description, new { @class = "input-160 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Total Qty</label>
+                    @Html.TextBoxFor(x => x.TotalQty, new { @class = "input-160 input", disabled = "disabled" })
+                </span>
+            </div>
+        </fieldset>
+        <div class="clearfix">
+        </div>
+         @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+         {
+             <div class="lag">
+                 <label class="label-90">
+                     Remarks</label>
+                 <span class="field">
+                     @Html.TextBoxFor(x => x.Remarks, new {@class = "input-370 input"})
+                 </span>
+             </div>
+         }
+    </div>
+}

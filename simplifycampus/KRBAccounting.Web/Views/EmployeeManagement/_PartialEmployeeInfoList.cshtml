@@ -1,0 +1,105 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@model IEnumerable<KRBAccounting.Domain.Entities.ScEmployeeInfo>
+           @{
+               var userRight = (UserRight) ViewBag.UserRight;
+           }
+           
+           <div class="block-fluid table-sorting">
+               <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+                   <thead>
+                       <tr>
+                           <th width="5%">S.N.</th>
+                           <th>
+                               Description
+                           </th>
+                           <th>
+                               Category
+                           </th>
+                           <th>
+                               Department
+                           </th>
+                           <th>
+                               Position
+                           </th>
+                         
+                           <th>
+                               Weekholiday
+                           </th>
+                           <th>
+                               Status
+                           </th>
+                           <th>
+                               Start Time
+                           </th>
+                           <th>
+                               End Time
+                           </th>
+                           <th width="5%"></th>
+                           <th width="5%"></th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       @{var i = 1;}
+                       @foreach (var item in Model)
+                       {
+
+                           <tr>
+                               <td align="center">@i</td>
+                             <td>  <a href="/EmployeeManagement/EmployeeDetailInformation/?employeeId=@item.Id">@item.Description</a>
+                               </td>
+                               <td>@if (item.EmployeeCategory != null)
+                                   {
+                                       @item.EmployeeCategory.Description
+                                   }
+
+                               </td>
+                               <td>@if (item.EmployeeDepartment != null)
+                                   {
+                                       @item.EmployeeDepartment.Description
+                                   }
+                               </td>
+                               <td>@if (item.EmployeePost != null)
+                                   {
+                                       @item.EmployeePost.Description
+                                   }
+                               </td>
+                               <td>@Enum.GetName(typeof(Weekholidayenum), item.Weekholiday)
+                               </td>
+                               <td>@Enum.GetName(typeof(StatusEnum), item.Status)
+                               </td>
+                               <td>@item.StartTime
+                               </td>
+                               <td>@item.EndTime
+                               </td>
+                               <td>
+                                  @if(userRight.Edit)
+                                  {
+                                       <a href="javascript:void(0)" class="editScStaffMaster icon-edit" data-id="@item.Id" title="Edit">
+                                   </a>
+                                  }
+                                  
+                               </td>
+                               <td>
+                                   @if(userRight.Delete)
+                                   {
+                                        <a href="@Url.Action("EmployeeInfoDelete", new { staffmasterId = item.Id })" onclick = "return confirm('Are you sure you wish to delete this Staff Setup?');" class="StaffMasterDelete icon-remove" data-id="@item.Id" title="Delete">
+                                   </a>
+                                   }
+                                  
+                               </td>
+                           </tr>
+                           i++;
+                       }
+                   </tbody>
+               </table>
+              @* <div class="pagination">
+                   @Html.Raw(Html.AjaxPager(Model, "EmployeeInfosList", "EmployeeManagement", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "boader-list" }))
+               </div>*@
+           </div>
+           
+<script type="text/javascript">
+    $("#tbl-list").dataTable({ "sPaginationType": "full_numbers", "bLengthChange": true, "bFilter": true, "bInfo": true, "bPaginate": true, "aoColumns": [{ "bSortable": true }, null, null, null, null, null, null, null, null, { "bSortable": false }, { "bSortable": false}] });
+</script>
+
+

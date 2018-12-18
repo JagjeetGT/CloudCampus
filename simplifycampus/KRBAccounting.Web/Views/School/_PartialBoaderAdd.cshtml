@@ -1,0 +1,65 @@
+@model KRBAccounting.Domain.Entities.ScBoader
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("BoaderAdd", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Code</label>
+            <span class="field">
+                @Html.TextBoxFor(m => m.Code, new { @class = "input-100 input", entermsg = "Enter Code" })
+                @Html.ValidationMessageFor(m => m.Code)<span class="loading Code">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+            </span></span><span class="stack">
+                <label class="label-90">
+                    Description</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.Description, new { @class = "input-100 input", entermsg = "Enter Description" })
+                    @Html.ValidationMessageFor(m => m.Description)<span class="loading Description">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+                </span></span>
+    </div>
+    <div class="clearfix">
+    </div> <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Fee Item</label>
+            <span class="field">
+                @Html.HiddenFor(x => x.FeeItemId)
+                <input type="text" class = "modallink input-305" href="@Url.Action("GetFeeItems", "School")" valueId="FeeItemId" id="feeitemledger" title="Fee Item" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.FeeItemId)
+            </span></span>
+    </div>
+   
+    <div class="clearfix">
+    </div> 
+    
+    <div class="lag">
+        @*<span class="stack">
+            <label class="label-90">
+                IsActive</label>
+            <span class="field">
+                @Html.CheckBoxFor(m => m.IsActive, new { @class = "input-100 input", entermsg = "Enter IsActive" })
+                @Html.ValidationMessageFor(m => m.IsActive)
+            </span></span>*@<span class="stack">
+                <label class="label-90">
+                    DispalyOrder</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.DispalyOrder, new { @class = "input-100 input", entermsg = "Enter DispalyOrder" })
+                    @Html.ValidationMessageFor(m => m.DispalyOrder)
+                </span></span>
+    </div> 
+    
+    <div class="clearfix">
+    </div> <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+                Memo</label>
+            <span class="field">
+                @Html.TextAreaFor(m => m.Memo, new { @class = "input-305 input", entermsg = "Enter Memo" })
+                @Html.ValidationMessageFor(m => m.Memo)
+            </span></span>
+    </div>
+}

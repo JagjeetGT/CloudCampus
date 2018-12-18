@@ -1,0 +1,77 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.CashBankSummaryReportViewModel
+@{
+    ViewBag.Title = "CashBankSummaryReport";
+}
+@{
+    decimal ReceiceGrandTotal = 0;
+    decimal PaymentGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+}
+<link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" />
+
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="print" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup"  width="100%">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Opening
+                </th>
+                <th>
+                    Receipt
+                </th>
+                <th>
+                    Payment
+                </th>
+                <th>
+                    Balance
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.SpCashBankBookSummaries)
+        {
+            
+            <tr>
+              <td>
+                 @(Model.Datetype == 1 ? @Convert.ToDateTime(@item.VDate).ToString("MM/dd/yyyy") : item.VMiti)
+                </td>
+                <td class="numbericfield">
+                    @item.Opening
+                </td>
+                <td class="numbericfield">
+                    @item.Receive
+                </td>
+                <td class="numbericfield">
+                    @item.Payment
+                </td>
+                <td class="numbericfield">
+                    @item.Balance
+                </td>
+            </tr>
+            ReceiceGrandTotal += item.Receive;
+            PaymentGrandTotal += item.Payment;
+            grandTotalBalance = item.Balance;
+        }
+        <tr>
+            <td class="numbericfield bold">
+                Grand Total
+            </td>
+            <td>
+            </td>
+            <td class="numbericfield bold">@ReceiceGrandTotal
+            </td>
+            <td class="numbericfield bold">@PaymentGrandTotal
+            </td>
+            <td class="numbericfield bold">@grandTotalBalance
+            </td>
+        </tr>
+    </table>
+</div>

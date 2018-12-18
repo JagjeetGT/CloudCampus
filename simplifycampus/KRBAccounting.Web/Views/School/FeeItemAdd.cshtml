@@ -1,0 +1,82 @@
+@model KRBAccounting.Web.ViewModels.Academy.AcademicsFeeItemViewModel   
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("FeeItemAdd", "School", new { controller = "School" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+@Html.HiddenFor(x=>x.FeeItem.Id)
+    <div class="lag">
+        <label class="label-90">
+            Description</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.FeeItem.Description, new { @class = "input-305 input", entermsg = "Enter Description" })
+            @Html.ValidationMessageFor(m => m.FeeItem.Description)<span class="loading FeeItem_Description">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+        </div></div> <div class="clearfix">
+    </div><div class="lag">
+        <label class="label-90">
+            Code</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.FeeItem.Code, new { @class = "input-90 input", entermsg = "Enter Code" })
+            @Html.ValidationMessageFor(m => m.FeeItem.Code)<span class="loading FeeItem_Code">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+        </div>
+    </div>
+
+    
+    <div class="clearfix">
+    </div>
+    
+    <div class="lag">
+        <label class="label-90">
+            Ledger</label>
+        <div class="field">
+            @Html.HiddenFor(x => x.FeeItem.GLCode)
+            <input type="text" class = "modallink input-305" href="@Url.Action("GetLedger", "Master")" createhref="@Url.Action("OnlineGeneralLedgerAdd","Master")" valueId="FeeItem_GLCode" id="feeitemledger" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" title="Account Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+            @Html.ValidationMessageFor(m => m.FeeItem.GLCode)
+        </div>
+    </div>    <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Schedule
+        </label>
+        <div class="field">
+            @Html.TextBoxFor(x => x.FeeItem.Schedule, new { @class = "input-100 input-100", entermsg = "Enter ClassType" })
+            @Html.ValidationMessageFor(m => m.FeeItem.Type)
+        </div>
+        <label class="label-90">
+            Type
+        </label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.FeeItem.Type, Model.FeeTypeList, new { @class = "input-90 input-100", entermsg = "Enter ClassType" })
+            @Html.ValidationMessageFor(m => m.FeeItem.Type)
+        </div>
+    </div> <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Education Tax
+        </label>
+        <div class="field">
+            @Html.EditorFor(x => x.FeeItem.EducationTax)
+            @Html.ValidationMessageFor(m => m.FeeItem.EducationTax)
+        </div>
+    </div>
+     <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Memo</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.FeeItem.Memo, new { @class = "input-305 input", entermsg = "Enter Remarks" })
+            @Html.ValidationMessageFor(m => m.FeeItem.Memo)
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function() {
+        $("#FeeItem_GLCode").val("");
+
+    });
+    
+</script>

@@ -1,0 +1,200 @@
+﻿@model KRBAccounting.Web.ViewModels.LedgerReport.LedgerReportFormViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("LedgerReport", "ReportLedger", new { controller = "ReportLedger" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "report", OnComplete = "$('#modalReportForm').modal('hide');" }, new { @class = "form-horizontal", id = "ledger-report-form" }))
+{
+    <div>
+        <div class="clearfix">
+        </div>
+                
+        <div class="lag">
+            <label class="label-90">
+                Report Type
+            </label>
+            <span class="field" >
+                @Html.DropDownListFor(m => m.ReportType, Model.ReportTypeList, new { @class = "input-100" })
+            </span>
+        </div>   
+        
+        <div class="lag">
+            <label class="label-90">
+                Summary</label>
+            <span class="field">
+                @Html.EditorFor(m => m.Summary)
+            </span>
+        </div>   
+        
+        <div class="lag">
+            <label class="label-90">
+                All Ledgers</label>
+            <span class="field">
+                @Html.EditorFor(m => m.AllLedger)
+            </span>
+        </div>  
+               
+        <div class="clearfix">
+        </div>
+        
+        <div class="lag">
+            <label class="label-90">
+               Opening
+            </label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.Opening, Model.OpeningList, new { @class = "input-100" })
+            </span>
+        </div>    
+        
+         <div class="lag">
+            <label class="label-90">
+                Product Details</label>
+            <span class="field">
+                @Html.EditorFor(m => m.ProductDetails)
+            </span>
+         </div>    
+         
+         <div class="lag">
+            <label class="label-90">
+                Sub Ledger</label>
+            <span class="field">
+                @Html.EditorFor(m => m.SubLedger)
+            </span>
+        </div>
+           
+        <div class="clearfix">
+        </div>
+        
+        <div class="lag">
+            <label class="label-90">
+                Start Date</label>
+            <span class="field" style="width: 100px;">
+                @Html.EditorFor(m => m.StartDate)
+                @Html.ValidationMessageFor(m => m.StartDate)
+            </span>
+        </div>
+                       
+         <div class="lag">           
+            <label class="label-90">
+                Remarks</label>
+            <span class="field">
+                @Html.CheckBoxFor(m=>m.Remarks)
+            </span>
+        </div>
+                      
+        <div class="lag">
+            <label class="label-90">
+                All Sub Ledger</label>
+            <span class="field" >
+                <input type="checkbox" id="AllSubLedger" disabled="disabled"/>
+            </span>
+        </div>
+        
+        
+        <div class="clearfix">
+        </div>
+
+        <div class="lag endDate">
+            <label class="label-90">
+                End Date</label>
+            <span class="field" style="width: 100px;">
+                @Html.EditorFor(m => m.EndDate)
+                @Html.ValidationMessageFor(m => m.EndDate)
+            </span>
+        </div>
+                
+        <div class="lag">
+            <label class="label-90">
+                Zero Balance</label>
+            <span class="field">
+                @Html.CheckBoxFor(m => m.ZeroBalance)
+        </span>
+        </div>
+
+          <div class="lag">
+            @if (@Model.SystemControl.DateType == 1)
+            {
+                <label class="label-90">
+                    Miti
+                </label>
+            }
+            else
+            {
+                <label class="label-90">
+                    Date
+                </label>
+            }
+            <span class="field">
+                @Html.CheckBoxFor(x => x.DateShow)
+            </span>
+        </div>   
+        <div class="clearfix">
+        </div>
+        
+        <div class="lag">
+            <label class="label-90">
+                Group By
+            </label>
+            <span class="field">
+                @Html.DropDownListFor(m => m.GroupBy, Model.GroupByList, new { @class = "input-100" })
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                Doc Agent</label>
+            <span class="field">
+                @Html.CheckBoxFor(m => m.DocAgent, new { disabled = "true" })
+            </span>
+        </div>
+         <div class="clearfix"></div>
+    <div class="lag">
+        <label class="label-90">
+            Branch
+        </label>
+        <span class="lag">
+             @{
+           var branchList = Model.BranchList.Count();
+           if (branchList > 1)
+           {
+                      @Html.DropDownListFor(x => x.BranchId, Model.BranchList, "All", new { @class = "input-100" })
+           }
+           else
+           {
+                    @Html.DropDownListFor(x => x.BranchId, Model.BranchList, new { @class = "input-100" })
+           }
+                
+            }
+        </span>
+    </div>
+   
+        
+    </div>
+   
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+       var dateType = @Model.SystemControl.DateType.ToString();
+        if (dateType == "1") {
+            $("#StartDate,#EndDate" ).mask("99/99/9999");
+            $("#StartDate,#EndDate" ).live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#StartDate,#EndDate").mask("9999/99/99");
+            $("#StartDate,#EndDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+    });
+ 
+</script>

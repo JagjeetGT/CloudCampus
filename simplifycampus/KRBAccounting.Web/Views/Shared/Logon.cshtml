@@ -1,0 +1,42 @@
+﻿@model KRBAccounting.Web.ViewModels.LogOnModel
+@{
+    ViewBag.Title = "Log On";
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+    
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@Html.ValidationSummary(true)
+@using (Html.BeginForm("Logon", "Account", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="control-group">
+        <label for="inputEmail">
+            User Name</label>
+        @Html.TextBoxFor(m => m.UserName)
+        @Html.ValidationMessageFor(m => m.UserName)
+    </div>
+
+    <div class="control-group">
+        <label for="inputPassword">
+            Password</label>
+        @Html.PasswordFor(m => m.Password)
+    </div>
+    if (Model.EnableBranch)
+    {
+    <div class="control-group">
+        <label for="inputPassword">
+            Branch</label>
+        @Html.DropDownListFor(m => m.BranchId, Model.BranchList)
+    </div>
+    }
+    else
+    {
+    @Html.HiddenFor(x => x.BranchId)
+    }
+    
+     
+    <div class="form-actions">
+        <button type="submit" class="btn btn-large btn-block">
+            Sign in</button>
+    </div>
+}

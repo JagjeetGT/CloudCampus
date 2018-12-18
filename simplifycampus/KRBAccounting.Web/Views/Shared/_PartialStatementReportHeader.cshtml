@@ -1,0 +1,30 @@
+﻿@model KRBAccounting.Web.ViewModels.CollectionReport.StatementReportHeader
+<div class="workplace">
+    <h4>@Model.CompanyName</h4>
+    <p>@Model.CompanyAddress</p>
+    <div class="accountingperiod">
+        <p>
+            Accounting Period
+        </p>
+        @Model.AccountingPeriod
+    </div>
+    <div class="reporttitle">
+    <h5>
+        @Model.ReportTitle
+    </h5>
+    <p>
+        @Model.ReportDate
+    </p>
+</div>
+    <div class="clearfix">
+    </div>
+    <div class="loan-subheader">
+        <div class="accholder-detail">
+            <p>
+                @Html.Raw(Model.AccHolderDetail)
+            </p>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+</div>

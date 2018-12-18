@@ -1,0 +1,45 @@
+﻿@model KRBAccounting.Web.ViewModels.Master.NarrationAddViewModel
+
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("NarrationEdit", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "MsgError" , OnSuccess = "successEdit"}, new { @class = "form-horizontal", id = "narration-form" }))
+{
+    <div id=""></div>
+    @Html.HiddenFor(x=>x.Narration.Id)
+    @Html.HiddenFor(x=>x.Narration.CreatedById)
+    @Html.HiddenFor(x=>x.Narration.CreatedDate)
+    @Html.HiddenFor(x => x.Narration.BranchId)
+      <div style="width: 500px;">
+
+              <div class="lag">
+                  <label class="label-90">
+                      Description</label>
+                  <span class="field">
+                      @Html.TextAreaFor(m => m.Narration.Name, new { @class = "input-305 input" })
+                      @Html.ValidationMessageFor(m => m.Narration.Name)
+                      <span class="loading Narration_Name">
+                    <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                  </span>
+              </div>
+              <div class="lag">
+                  <label class="label-90">
+                      Type</label>
+                  <span class="field">
+                       @Html.DropDownListFor(m => m.Narration.Type, Model.TypeList, new { @class = "select-80 input" })
+                  </span>
+              </div>
+      </div>
+}
+<script type="text/javascript">
+//    $("#Narration_Name").live("focusout", function () {
+//        var name = $(this).val();
+//        $.getJSON("/Master/IsNarrationNameAvailable?name=" + name + "&id=@Model.Narration.Id", "", function (data, status, xhr) {
+//            if (data != '') {
+//                $("#MsgError").html(data);
+//                $("#Narration_Name").focus();
+//            }
+//        });
+//    });
+//   
+</script>

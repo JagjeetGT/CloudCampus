@@ -1,0 +1,137 @@
+﻿@model KRBAccounting.Web.ViewModels.Setup.AcademicYearViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<div style="width: 680px;">
+    @using (Ajax.BeginForm("AcademicYearAdd", "Setup", new { controller = "Setup" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "fical-year-form" }))
+    {
+        <div style="width: 500px;">
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-160">
+                        Start Date @if (Model.SystemControl.DateType ==1)
+                                 {
+<text>("MM/dd/yyyy")</text>
+                                 } else
+                                 {
+                                     <text>("yyyy/MM/dd")</text>
+                                 }</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.DisplayStartDate, new { @class = "input" })
+                        @Html.ValidationMessageFor(m=>m.DisplayStartDate)
+                        @* @Html.HiddenFor(m => m.AcademyYear.StartDateNep)
+                        @Html.HiddenFor(m => m.AcademyYear.StartDate, new { displayId = "DisplayStartDate" })
+                        @Html.TextBoxFor(m => m.DisplayStartDate, new { @class = "input", entermsg = "Enter Voucher Date.", miti = Model.SystemControl.DateType, dateId = "AcademyYear_StartDate", displayId = "DisplayStartDate", mitiId = "AcademyYear_StartDateNep" })*@
+                     
+                    </span></span>
+            </div>
+            <div class="clearfix">
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-160">
+                        End Date @if (Model.SystemControl.DateType ==1)
+                                 {
+<text>("MM/dd/yyyy")</text>
+                                 } else
+                                 {
+                                     <text>("yyyy/MM/dd")</text>
+                                 }</label>
+                    <span class="field">
+                         @Html.TextBoxFor(m => m.DisplayEndDate, new { @class = "input" })
+                        @Html.ValidationMessageFor(m => m.DisplayEndDate)
+@*                        @Html.HiddenFor(m => m.AcademyYear.EndDateNep)
+                        @Html.HiddenFor(m => m.AcademyYear.EndDate, new { displayId = "DisplayEndDate" })
+                        @Html.TextBoxFor(m => m.DisplayEndDate, new { @class = "input", entermsg = "Enter Voucher Date.", miti = Model.SystemControl.DateType, dateId = "AcademyYear_EndDate", displayId = "DisplayEndDate", mitiId = "AcademyYear_EndDateNep" })
+*@                       
+                    </span></span>
+            </div>
+            <div class="clearfix">
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-160">
+                        Fiscal Year</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.AcademyYear.FiscalYearId)
+                        <input type="text" class="modallink input" href="@Url.Action("GetFiscalYear", "Setup")" valueid="AcademyYear_FiscalYearId" id="academy_fiscalyear"/>
+                    </span></span>
+            </div>
+        </div>
+        
+        
+    }
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        var dateType = @Model.SystemControl.DateType;
+        if (dateType == "1") {
+            $("#DisplayEndDate, #DisplayStartDate").mask("99/99/9999");
+            $("#DisplayEndDate,#DisplayStartDate").live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#DisplayEndDate,#DisplayStartDate").mask("9999/99/99");
+            $("#DisplayEndDate,#DisplayStartDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+//         if (dateType == "1") {
+//            $("#D").mask("99/99/9999");
+//            $("#StartDate").live("blur", function() {
+//                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+//                if (!validDate) {
+//                    $($(this).addClass("error"));
+//                } else {
+//                    $($(this).removeClass("error"));
+//                }
+//            });
+//        } else {
+//            $("#StartDate").mask("9999/99/99");
+//            $("#StartDate").live("blur", function() {
+//                var date = $(this).val();
+//                var validDate = isNepaliDate(date);
+//                if (!validDate) {
+//                    $($(this).addClass("error"));
+//                } else {
+//                    $($(this).removeClass("error"));
+//                }
+//            });
+//        }
+    });
+//    $(document).ready(function () {
+//        
+
+//        $("#DisplayStartDate").val('');
+//        $("#DisplayEndDate").val('');
+//        var dateType = '@Model.SystemControl.DateType';
+//        var startdate;
+//        var Enddate;
+//        if (dateType == 1) {
+//            startdate = $("#currStartDate").val();
+//            Enddate = $("#currEndDate").val();
+//        } else {
+//            startdate = $("#currStartDate").val();
+//            Enddate = $("#currEndDate").val();
+//            startdate = convertToNepali(startdate);
+//            Enddate = convertToNepali(Enddate);
+
+//        }
+//        //        $("#DisplayEndDate").val(Enddate);
+//        //        $("#DisplayStartDate").val(startdate);
+//        $("#AcademyYear_StartDate").nepDateTimePicker();
+//        $("#AcademyYear_EndDate").nepDateTimePicker();
+
+//    });
+</script>

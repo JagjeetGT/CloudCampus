@@ -1,0 +1,98 @@
+﻿@using KRBAccounting.Enums
+@{
+    var deletetable = String.Empty;
+    if(Model.Id!=0)
+    {
+        deletetable = "deletable";
+    }
+    
+}
+@model KRBAccounting.Domain.Entities.ProductOpening
+
+
+<tr class="university-course-fee detail-entry @deletetable">
+       
+
+    @using (Html.BeginCollectionItem("productOpening"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ProductId, new { @class = "product_opening" })
+            <input type="text" class="modallink input-160 first-col text_product input" value="@if (Model.Product != null)
+                                                                                         {
+                                                                                             @Model.Product.Name
+                                                                                         }" href="@Url.Action("GetProducts")"  valueId="ProductOpening_ProductId" id="ProductId"/>
+        </td>
+        <td>
+            @Html.DateTextBoxFor(x => x.OpeningDate, new { @class = "openingdate input-120", @readonly = true  })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.OpeningMiti, new { @class = "openingmiti input-120" ,@readonly = true })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Quantity, new { @class = "qty input-45" })
+        </td>
+        <td>
+            @Html.DropDownListFor(x => x.UnitId, Model.UnitList, new { @class = "unit input-90" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltQuantity, new { @class = "altqty input-45", @readonly = true })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.AltUnit, new { @class = "altunit input-80", @readonly = true })
+        </td>
+
+        <td>
+            @Html.DropdownListForCustom(x => x.GodownId, Model.GodownList, new { @class = "goDown input-120" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "rate input-90" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Amount, new { @class = "last-col-modified input-90 amount", @readonly = true })
+        </td>
+        <td class="PlusUnit">
+            <a  data-id="@Model.Id" class="addNewProduct icon-plus" href = "@Url.Action("PartialProductOpening")" tableid = "openingproduct-list" >
+            </a>
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#openingproduct-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#openingproduct-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+        $(".openingdate").mask("99/99/9999");
+        $(".openingmiti").mask("9999/99/99");
+    });
+
+
+    $(".openingdate").live("blur", function () {
+        var element = $(this);
+        var date = element.val();
+        var nepalidate = convertToNepaliNew(date);
+        element.closest("tr").find(".openingmiti").val(nepalidate);
+    });
+
+    $(".openingmiti").live("blur", function () {
+        var element = $(this);
+        var date = element.val();
+        var englishdate = convertToEnglishNew(date);
+        element.closest("tr").find(".openingdate").val(englishdate);
+    });
+
+
+</script>

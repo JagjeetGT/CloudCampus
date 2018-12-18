@@ -1,0 +1,65 @@
+﻿@using KRBAccounting.Service
+@model PagedList<KRBAccounting.Domain.Entities.JournalVoucher>
+<div class="block-fluid table-sorting" id="tbl-pending">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Voucher No.
+                </th>
+                <th>
+                    Currency Code
+                </th>
+                <th>
+                    Currency Rate
+                </th>
+                <th>
+                    Create By
+                </th>
+                <th>
+                    Voucher Date
+                </th>
+                <th>
+                    Create Date
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.JVNumber
+                    </td>
+                    <td>@item.CurCode
+                    </td>
+                    <td>@item.CurRate
+                    </td>
+                    <td>@item.Users.Username
+                    </td>
+                    <td>@Convert.ToDateTime(item.JVDate).ToShortDateString()
+                    </td>
+                    <td>@item.CreatedDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "JV"))
+                        {
+                            <a href="Javascript:void(0)" class="EditJournalVoucher icon-pencil" data-id="@item.Id">
+                            </a>
+                            <text>&nbsp;|</text>
+                        }
+                       @* @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "JV"))
+                        {
+                            <a href="Javascript:void(0)" class="approvedJournalVoucher icon-check" data-id="@item.Id">
+                            </a>
+                        }| *@<a href="@Url.Action("JournalVoucherPrint", new { id = item.Id })" target="_blank" class="icon-print" title="Print Preview">
+</a>|<a href="javascript:void(0);" class="JournalVoucherDelete icon-remove" data-id="@item.Id" title="Delete">
+                                    </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "JournalVoucherPendingList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

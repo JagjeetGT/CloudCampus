@@ -1,0 +1,137 @@
+@model KRBAccounting.Web.ViewModels.Library.LibraryBookIssueReturnDetialViewModel
+           <div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Book Return</h1>
+                  @*  <ul class="buttons">
+                        <li><a href="#" class="isw-plus addBookIssued"></a></li>
+                    </ul>*@
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div id="error-msg">
+                    </div>
+                    <div class="lag searchbook" style="margin: 20px 0 0 25%">
+                        <label>
+                            Search Book</label>
+                        <div class="field">
+                            @Html.TextBoxFor(x => x.BookNo, new { @placeholder = "Accession No" })
+                        </div>
+                        <input type="button" class="btn" id="searchbook" value="Search" />
+                    </div>
+                    <div class="clear">
+                    </div>
+                    <hr />
+                    <div class="clear">
+                    </div>
+                    <div class="book-issue" style="display: none">
+                        
+                        <div id="BookIssued-list" class="span5">
+                        </div>
+                        
+
+                        
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+           
+       <script type="text/javascript">
+           function writeError(control, msg) {
+
+               var err_msg = '<div class="alert-error alert"><a class="close" href="javascript:void(0);" class="close">×</a><p>' + msg + '</p></div>';
+               $('#' + control).html(err_msg);
+           }
+
+           $(".close").live("click", function () {
+               $(".alert-error").remove();
+           });
+           $("#searchbook").live("click", function () {
+               Begin();
+               var accno = $("#BookNo").val();
+               if (accno != 0 || accno != "") {
+                   var url = '@Url.Action("BookIssueReturnDetail")/?accNo=' + accno;
+                   $.ajax({
+                       url: url,
+                       context: document.body,
+                       success: function (data) {
+                           //alert(data.fineAmount);
+                           if (data.msgerr == "") {
+                               
+                               $('#BookIssued-list').html(data.partialView);
+                               if (data.fineAmount != 0) {
+                                   
+                                   $(".fineamount").css("display", "block");
+                                   $("#FineAmount").val(data.fineAmount);
+                               } else {
+                                   $(".fineamount").css("display", "none");
+                               }
+                               $(".book-issue").css("display", "block");
+                               $('#error-msg').html(data.msgerr);
+
+                           } else {
+                               writeError('error-msg', data.msgerr);
+
+                               $(".book-issue").css("display", "none");
+                           }
+
+                       },
+                       error: function (err) {
+                           writeError('error-msg', err);
+                       },
+                       complete: function () {
+                           $.unblockUI();
+                       }
+                   });
+               } else {
+                   $.unblockUI();
+
+               }
+           });
+         
+           $("#ReturnSubmit").live("click", function () {
+               Begin();
+              
+                   var form = $(this).closest("form");
+
+                   var url = form.attr("action");
+                   $.ajax({
+                       url: url,
+                       type: "POST",
+                       data: form.serialize(),
+                       success: function (data) {
+                           if (data.msgerr == "") {
+                               $('#BookIssued-list').html("");
+                               $(".book-issue").css("display", "none");
+                               writeError('error-msg', data.success);
+                              
+                        
+                           } else {
+
+                               writeError('error-msg', data.msgerr);
+                           }
+
+                       },
+                       error: function (err) {
+                           writeError('error-msg', err);
+                       },
+                       complete: function () {
+                           $.unblockUI();
+                       }
+                   });
+                
+
+           });
+</script>    
+           
+           

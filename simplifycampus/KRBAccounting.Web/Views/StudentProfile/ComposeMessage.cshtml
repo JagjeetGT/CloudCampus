@@ -1,0 +1,84 @@
+﻿@using System.Collections
+@using KRBAccounting.Web.ViewModels.StudentProfile
+@model KRBAccounting.Web.ViewModels.StudentProfile.ComposeMessageViewModel
+<script src="@Url.Content("~/Content/social/assets/js/jquery-chosen/chosen/chosen.jquery.min.js")" type="text/javascript"></script>
+<script src="/Content/social/assets/js/wysihtml5/dist/wysihtml5-0.3.0.min.js"></script>
+<script src="/Content/social/assets/js/bootstrap-wysihtml5/src/bootstrap-wysihtml5.js"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("ComposeMessage", "StudentProfile", new { controller = "StudentProfile" }, new AjaxOptions() { HttpMethod = "POST", OnSuccess = "complete" }, new { @id = "student-form" }))
+{
+    
+    @Html.HiddenFor(x => x.Messages.SenderId)
+
+    <h3>
+        Compose Message</h3>
+
+    <div class="modal-body">
+        <div class="control-group">
+            <label class="control-label " style="float: left; width: 50px">
+                To
+            </label>
+            <div class="controls">
+               
+                    <select data-placeholder="Enter Name(s)" class="chzn-select input-block-level" multiple="multiple"
+                        tabindex="6" style="width: 87%" name="ReceiverContact" id="ReceiverContact">
+                        @{
+var contactList = Model.Messages.UserType;
+                        }
+                        @foreach (var item in contactList)
+                        {
+                            <optgroup label="@item.Text">
+                                @foreach (var d in Model.UserLists.Where(x => x.Type == Convert.ToInt32(item.Value)))
+                                {
+                                    <option value="@d.Id">@d.Name</option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label " style="float: left;width: 50px">
+                Subject
+            </label>
+            <div class="controls">
+                @Html.TextBoxFor(x => x.Messages.MsgSubject, new { @style = "width:87%" })
+                @Html.ValidationMessageFor(x => x.Messages.MsgSubject)
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="controls">
+            @Html.TextAreaFor(x => x.Messages.MsgBody, new { @style = "width:97% ; height:10%" })
+            @Html.ValidationMessageFor(x => x.Messages.MsgBody)
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success btn-submit-form">
+            Send</button>
+     
+    </div>
+}
+<script type="text/javascript" language="javascript">
+        /*<![CDATA[*/
+        $(function() {
+            $('#Messages_MsgBody').wysihtml5({
+                "stylesheets": ["/templates/social/assets/js/bootstrap-wysihtml5/lib/css/wysiwyg-color.css"]
+            });
+             $("#Messages_MsgSubject").val("");
+        $("#Messages_MsgBody").val("");
+        });
+        /*]]>*/
+</script>
+<script type="text/javascript" language="javascript">
+    $(".chzn-select").chosen({
+        width: '89%'
+    });
+    $(".chzn-select-deselect").chosen({
+        allow_single_deselect: true
+    });
+
+
+</script>

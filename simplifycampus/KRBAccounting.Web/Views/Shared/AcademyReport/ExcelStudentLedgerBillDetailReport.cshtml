@@ -1,0 +1,340 @@
+﻿@using System.Globalization
+@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentLedgerReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal drTotal = 0;
+    decimal crTotal = 0;
+    decimal grandTotalBalance = 0;
+    decimal totalOpening = 0;
+}
+@{
+    var data = @Model.SpStudentInfoHeader.FirstOrDefault();
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="workplace">
+
+    <div class="row-fluid">
+        <div class="block-fluid">
+
+            <div class="head">
+                <h1>
+                    Student Ledger
+                </h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report" class="isw-refresh"></a></li>
+                    <li>
+                        <a href="@Url.Action("PdfStudentLedgerReport", "Student")" target="_blank" title="Export to Pdf" class="isw-pdf">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ExcelStudentLedgerReport", "Student")" target="_blank" title="Export to Excel" class="isw-excel">
+                        </a>
+                    </li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div class="ReportHeader" style="text-align: center">
+                @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+            </div><br />
+            <p align="left" style="font-weight: bold; float: left;font-size:8px;">
+                NAME :@data.Student &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                REGISTRATION NO. :@data.Regno &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                STUDENT CODE : @data.StdCode &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <br />
+                CLASS :@data.Class &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+
+
+                SECTION :@data.Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                ROLL NO. :@data.Rollno
+                <br />
+
+
+
+
+                ADDRESS : @data.TmpAdd, @data.TmpCity, @data.TmpDistrict, @data.TmpCountry
+
+            </p>
+            <br />
+
+            <div class="ReportList">
+                <table border="0.5">
+                    <thead>
+                        <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold;font-size:8px;">
+                            <th>
+                                Date
+                            </th>
+                            <th>
+                                Code/Voucher No.
+                            </th>
+                            <th width="45%">
+                                Description
+                            </th>
+                            <th>
+                                Debit Amount
+                            </th>
+                            <th>
+                                Credit Amount
+                            </th>
+                            <th>
+                                Balance
+                            </th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model.StudentLedgerList)
+                    {
+                        decimal studenttotaldr = 0;
+                        decimal studenttotalcr = 0;
+                        decimal studenttotalbal = 0;
+                        decimal Studentopening = 0;
+                        var sdate = Model.FromDate;
+                        var edate = Model.ToDate;
+
+                        var list = UtilityService.GetBillDetailByStudentId(sdate, edate, item.StudentId);
+                        if (list != null)
+                        {
+
+                            if (item.Opening != 0)
+                            {
+                                <tr style="font-size:8px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        Opening Balance
+                                    </td>
+                                    @if (item.Opening > 0)
+                                    {
+
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            @item.Opening Dr
+                                        </td>
+
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            @Math.Abs(item.Opening) Cr
+                                        </td>
+                                    }
+                                    <td></td>
+                                </tr>
+                            }
+
+                            foreach (var d in list)
+                            {
+
+                                var month = new DateTime(d.Year, d.Month, 1).ToString("MMM", CultureInfo.InvariantCulture);
+
+                                drTotal = 0;
+                                crTotal = 0;
+
+
+                                drTotal += d.Amount;
+                                <tr style="font-size:8px;">
+                                    <td>
+                                        @d.Date.ToShortDateString() (@d.Miti)
+
+                                    </td>
+                                    <td>
+                                        @d.BillNo
+                                    </td>
+                                    <td>
+                                        Monthly Bill: @d.YearMiti @Enum.GetName(typeof(KRBAccounting.Enums.NepaliMonth), d.MonthMiti)
+                                        (@d.Year @month)
+                                    </td>
+                                    <td align="right">
+                                        @d.Amount
+                                    </td>
+                                    <td></td>
+                                    <td>
+                                        @d.Amount Dr
+                                    </td>
+                                </tr>
+                                <tr style="font-size:8px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <table width="100%">
+                                            @foreach (var c in d.MonthlyBills.Where(x => x.FeeAmount != 0))
+                                            {
+                                                <tr>
+                                                    <td style="border: 0px none ! important; padding-left: 25px; background-color: transparent;">
+                                                        @c.FeeItem.Description
+                                                    </td>
+                                                    <td style="border: 0px none ! important; padding-left: 25px; background-color: transparent;"
+                                                        align="right">
+                                                        @c.FeeAmount
+                                                    </td>
+                                                </tr>
+                                            }
+                                            @{
+                                var educationtax = d.MonthlyBills.Sum(x => x.EducationTaxAmount);
+                                            }
+                                            @if (educationtax != 0)
+                                            {
+                                                <tr>
+                                                    <td style="border: 0px none ! important; padding-left: 25px; background-color: transparent;">
+                                                        Education Tax
+                                                    </td>
+                                                    <td style="border: 0px none ! important; padding-left: 25px; background-color: transparent;"
+                                                        align="right">
+                                                        @d.MonthlyBills.Sum(x => x.EducationTaxAmount)
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                foreach (var c in d.FeeReceipts.Where(x => x.ReceiptAmount != 0))
+                                {
+                                    crTotal += c.ReceiptAmount;
+                                    <tr style="font-size:8px;">
+                                        <td>
+                                            @c.ReceiptDate.ToShortDateString() (@c.ReceiptMiti)
+                                        </td>
+                                        <td>
+                                            @c.ReceiptNo
+                                        </td>
+                                        <td>
+                                            Fee Receipt
+                                        </td>
+                                        <td></td>
+                                        <td align="right">
+                                            @c.ReceiptAmount
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                }
+
+                                <tr style="font-size:8px;">
+                                    <td></td>
+                                    <td></td>
+                                    <td align="right">
+                                       Sub Total
+                                    </td>
+                                    <td align="right">
+                                        @drTotal
+                                    </td>
+                                    <td align="right">
+                                        @crTotal
+                                    </td>
+                                    <td>
+                                        @{
+                                var b = "";
+                                var balance = drTotal - crTotal;
+                                if (balance < 0)
+                                {
+                                    b = Math.Abs(balance) + " Cr";
+                                }
+                                else
+                                {
+                                    b = Math.Abs(balance) + " Dr";
+                                }
+
+                                if (balance == 0)
+                                {
+                                    b = "0";
+
+                                }
+
+                                        }
+                                        @b
+                                    </td>
+                                </tr>
+                                studenttotaldr += drTotal;
+                                studenttotalcr += crTotal;
+
+                                drGrandTotal += drTotal;
+                                crGrandTotal += crTotal;
+
+                            }
+                            <tr style="font-size:8px;">
+                                <td></td>
+                                <td></td>
+                                <td style="font-weight: bold" align="center">
+                                    Total
+                                </td>
+                                <td align="right">
+                                    @studenttotaldr
+                                </td>
+                                <td align="right">
+                                    @studenttotalcr
+                                </td>
+                                <td>
+                                    @{
+                            var stub = "";
+                            var stubalance = studenttotaldr - studenttotalcr + item.Opening;
+                            if (stubalance < 0)
+                            {
+                                stub = Math.Abs(stubalance) + " Cr";
+                            }
+                            else
+                            {
+                                stub = Math.Abs(stubalance) + " Dr";
+                            }
+
+                            if (stubalance == 0)
+                            {
+                                stub = "0";
+
+                            }
+
+                                    }
+                                    @stub
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                    <tr style="font-weight: bold;font-size:8px;">
+                        <td colspan="3" align="center">
+                            Grand Total
+                        </td>
+                        <td align="right">
+                            @drGrandTotal
+                        </td>
+                        <td align="right">
+                            @crGrandTotal
+                        </td>
+                        <td align="right">
+                            @{
+                                var ba = "";
+                                var bal = drGrandTotal - crGrandTotal;
+                                if (bal < 0)
+                                {
+                                    ba = Math.Abs(bal) + " Cr";
+                                }
+                                else
+                                {
+                                    ba = Math.Abs(bal) + " Dr";
+                                }
+
+                                if (bal == 0)
+                                {
+                                    ba = "0";
+
+                                }
+
+                            }
+                            @ba
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

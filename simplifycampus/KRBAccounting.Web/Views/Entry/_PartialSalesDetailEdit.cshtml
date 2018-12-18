@@ -1,0 +1,135 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models.Purchase
+@model KRBAccounting.Domain.Entities.SalesDetail
+@{
+    var trId = "tr_" + Model.Index;
+}
+<tr id="@trId" class="cashbank-detail-entry detail-entry editSalesPurchase">
+    @using (Html.BeginCollectionItem("salesDetailEntry"))
+    {
+        string display = "display:none;";
+        string billTermClass = "";
+        if (ViewBag.AllowProductWiseBillTerm == 1)
+        {
+            display = "";
+            billTermClass = "rate-bill-term";
+        }
+        @Html.HiddenFor(x => x.SalesInvoiceId)
+        @Html.HiddenFor(x => x.Id)
+        @Html.HiddenFor(x => x.Index, new { @class = "indexId" })
+        //bool showBasicAmt = Model.EntryControl != null && Model.EntryControl.BasicAmount;
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.ProductCode, new { @class = "productId value" })
+            @Html.HiddenFor(x => x.BatchId, new { @class = "batchid" })
+            @Html.HiddenFor(x => x.BatchSerialNo, new { @class = "BatchSerialNo" })
+            @Html.HiddenFor(x => x.StockQty, new { @class = "StockQty" })
+            @Html.HiddenFor(x => x.DetailGuid, new { @class = "detailGuid" })
+            @if (Model.EntryControl == null || !Model.EntryControl.AltUnit)
+            {
+                <text>@Html.HiddenFor(x => x.AltUnit, new { @class = "altunit disablealtunit" })</text>
+            }
+            @if (Model.EntryControl != null && !Model.EntryControl.Unit)
+            {
+                <text>@Html.HiddenFor(x => x.UnitId, new { @class = "unit disableunit" })</text>
+            }
+            <input type="text" class = "modallink_custom text_product input-215 input" valuetype = "product" href="@Url.Action("GetProductList", "Entry")" createhref="@Url.Action("OnlineProductAdd", "Master")" value="@UtilityService.GetProductNameById(Model.ProductCode)"  entermsg = "Press F1 for existing Account list." id="Product_Code" />
+        </td>
+            if (Model.EntryControl != null && Model.EntryControl.Godown)
+            {
+        <td>
+            @Html.HiddenFor(x => x.Godown, new { @class = "value" })
+            <input type="text" name="GodownName" class="input-190 godown modallink input" href="/Master/GetGodownList"
+                       value="@UtilityService.GetGodownName(Model.Godown)" id="godownId" />
+        </td>
+            }
+        <td>
+            @Html.TextBoxFor(x => x.Qty, new { @class = "input-80 qty numberonly", entermsg = "Enter Quantity.", enablestockaction = "true" })
+        </td>
+            ////if (Model.EntryControl != null && Model.EntryControl.Unit)
+            ////{
+        <td>
+            @Html.DropDownListFor(x => x.UnitId, Model.Unitlist, new { @class = "input-80 unit input", entermsg = "Enter Unit." })
+        </td>
+          //  }
+        <td>
+            @Html.TextBoxFor(x => x.AltQty, new { @class = "AltQty input-80 altQty input numberonly", entermsg = "Enter Altrnative Quantity." })
+            @*<input type="text" value="@Model.AltQty" entermsg="Enter Altrnative Quantity." class="input-80 altQty input" />*@
+        </td>
+           // if (Model.EntryControl != null && Model.EntryControl.AltUnit)
+           // {
+        <td>
+            @Html.TextBoxFor(x => x.AltUnit, new { @class = "input-80 altunit input", entermsg = "Enter Altrnative Unit.", @readonly = true })
+        </td>
+           // }
+@*<td>
+            @Html.TextBoxFor(x => x.AltUnit, new { @class = "input-80 altunit input", entermsg = "Enter Altrnative Unit.", @readonly = true })
+        </td>*@
+@* <td>
+            @Html.TextBoxFor(x => x.FreeQty, new { @class = "input-80 freeqty input" })
+        </td>*@
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "Rate input-80 rate input  numberonly " + billTermClass, entermsg = "Enter Rate.", href = "/Entry/GetSalesDetailEdit" })
+            @*<input type="text" value="@Model.Rate" entermsg="Enter Rate." class="input-80 rate @billTermClass input" href="/Entry/GetSalesDetailEdit"/>*@
+            <span class="product_wise_billterms">
+                @if (Model.Id != 0)
+                {
+                    var billingTerms = ((List<BillingTermDetail>)ViewBag.BillingTermList).Where(x => x.DetailId == Model.Id);
+
+                    foreach (var term in billingTerms)
+                    {
+                        term.ParentGuid = Model.DetailGuid;
+                    @Html.Action("InsertBillTermEdit", term)
+                    }
+                }
+                else
+                {
+                    <span class="product_wise_billterms"></span>
+                }
+            </span>
+        </td>
+        
+                if (Model.EntryControl != null && Model.EntryControl.BasicAmount)
+                {
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt", entermsg = "Enter Basic Amount." })
+        </td>
+                }
+                else
+                {
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt", entermsg = "Enter Basic Amount.", @readonly = "readonly" })
+        </td>
+                }
+        
+        <td style="@display">
+            @Html.TextBoxFor(x => x.TermAmt, new { @class = "input-80 termAmt input", @readonly = "readonly" })
+        </td>
+
+        <td style="@display">
+            @Html.TextBoxFor(x => x.NetAmt, new { @class = "input-100 netAmt input", @readonly = "readonly" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

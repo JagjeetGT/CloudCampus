@@ -1,0 +1,89 @@
+@using KRBAccounting.Enums
+@using KRBAccounting.Service.Helpers
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScSalaryHead>
+@{var i = Convert.ToInt32(ViewBag.SnStart);
+  var userRight = (UserRight)ViewBag.UserRight;}
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Head
+                </th>
+                <th>
+                    Operation
+                </th>
+                <th>
+                    Ledger
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="itemList">
+            @foreach (var item in Model)
+            {
+                var type = new StringEnum(typeof(SalaryHeadType)).GetStringValue(item.Head.ToString());
+                var id = "tr_" + item.Id;
+                <tr id="@id">
+                    <td align="center">@item.DisplayOrder
+                    </td>
+                    <td>@type
+                    </td>
+                    <td>@item.Operation
+                    </td>
+                    <td>
+                        @if (item.Ledger != null)
+                        {
+                            @item.Ledger.AccountName
+                        }
+                    </td>
+                    <td>
+                       @if (userRight.Edit)
+                       {
+                           <a href="javascript:void(0);" data-id="@item.Id" class="editScSalaryHead icon-edit" title="Edit">
+                           </a>
+                       }
+                    </td>
+                </tr>
+                      
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "SalaryHeadsList", "EmployeeManagement", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "SalaryHeads-list" }))
+    </div>
+</div>
+@*<script type="text/javascript" src="/Scripts/cooperative.pagination-begin-end-request-loader.js">
+</script>*@
+<script>
+    $(document).ready(function () {
+        InitItemSorting();
+    });
+    function InitItemSorting() {
+        $('.itemList').sortable({
+            connectWith: ".itemList",
+            containment: "document",
+            cursor: "move",
+            opacity: 0.8,
+            placeholder: "itemRowPlaceholder",
+            //update event fires both for item list leaving and receiving
+            update: function (event, ui) {
+                Begin();
+                $.post("/EmployeeManagement/SalaryHeadsSortOrder",
+                    { id: $(this).sortable("serialize").toString() },
+                    function (index, data) {
+                        if (data == "success") {
+                            $("#SalaryHeads-list").load("/EmployeeManagement/SalaryHeadsList"); $.unblockUI();
+                        }
+                    });
+
+
+            }
+        });
+    }</script>

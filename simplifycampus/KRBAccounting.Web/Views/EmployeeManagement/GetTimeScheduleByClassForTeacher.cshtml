@@ -1,0 +1,148 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Web.ViewModels.School
+@model KRBAccounting.Web.ViewModels.School.ScTeacherScheduleViewModel
+@{
+    var sno = 1;
+}
+@foreach (var item in Model.ClassSchedules)
+{
+    <tr class="daytime">
+        <th>
+        </th>
+        <th>
+        </th>
+        <th colspan="2">
+            @{
+    var scClassScheduleDetailsunday = item.ScheduleDetail.FirstOrDefault(x => x.Day.ToLower() == "sunday");
+            }
+            @if (scClassScheduleDetailsunday != null)
+            {
+                var sundaytime = scClassScheduleDetailsunday.StartTime + "-" + scClassScheduleDetailsunday.EndTime;
+                @sundaytime
+            }
+        </th>
+        <th colspan="2">
+            @{
+            var scClassScheduleDetailMonday = item.ScheduleDetail.FirstOrDefault(x => x.Day.ToLower() == "monday");
+            }
+            @if (scClassScheduleDetailMonday != null)
+            {
+                var mondaytime = scClassScheduleDetailMonday.StartTime + "-" + scClassScheduleDetailMonday.EndTime;
+                @mondaytime
+            }
+        </th>
+        <th colspan="2">
+            @{
+            var scClassScheduleDetailTuesday = item.ScheduleDetail.FirstOrDefault(x => x.Day.ToLower() == "tuesday");
+            }
+            @if (scClassScheduleDetailTuesday != null)
+            {
+                var tuesdaytime = scClassScheduleDetailTuesday.StartTime + "-" + scClassScheduleDetailTuesday.EndTime;
+                @tuesdaytime
+            }
+        </th>
+        <th colspan="2">
+            @{
+            var scClassScheduleDetailWednesday = item.ScheduleDetail.FirstOrDefault(x => x.Day.ToLower() == "wednesday");
+            }
+            @if (scClassScheduleDetailWednesday != null)
+            {
+                var wednesdaytime = scClassScheduleDetailWednesday.StartTime + "-" + scClassScheduleDetailWednesday.EndTime;
+                @wednesdaytime
+            }
+        </th>
+        <th colspan="2">
+            @{
+            var scClassScheduleDetailThurday = item.ScheduleDetail.FirstOrDefault(x => x.Day.ToLower() == "thursday");
+            }
+            @if (scClassScheduleDetailThurday != null)
+            {
+                var thursdaytime = scClassScheduleDetailThurday.StartTime + "-" + scClassScheduleDetailThurday.EndTime;
+                @thursdaytime
+            }
+        </th>
+        <th colspan="2">
+            @{
+            var scClassScheduleDetailFriday = item.ScheduleDetail.FirstOrDefault(x => x.Day.ToLower() == "friday");
+            }
+            @if (scClassScheduleDetailFriday != null)
+            {
+                var fridaytime = scClassScheduleDetailFriday.StartTime + "-" + scClassScheduleDetailFriday.EndTime;
+                @fridaytime
+            }
+        </th>
+    </tr>
+
+    <tr class="listsubject" id="@item.Id">
+        @using (Html.BeginCollectionItem("busRouteInfoList"))
+        {
+            <td>@sno
+            </td>
+            <td>
+                @item.Subject.Description
+            </td>
+           var energyperformance = new ScTeacherScheduleViewModel();
+           energyperformance.SubjectId = item.SubjectId;
+           energyperformance.Sno = item.Id;
+            energyperformance.ClassId = Model.ClassId;
+            energyperformance.SectionId = Model.SectionId;
+           
+           
+            @Html.Partial("_PartialteachercheduleAdd", energyperformance)
+        }
+    </tr>
+
+        sno++;
+
+}
+<script type="text/javascript">
+    var element = document.querySelectorAll(".listsubject");
+    $(document).ready(function () {
+
+        $.each(element, function (index) {
+            var dateElement = $(this).closest("tr");
+            dateElement.find(".sundayteacher").attr("id", "sundayteacher_" + index);
+            var hiddenidsunday = dateElement.find(".hdn_sundayteacher").attr("id");
+            dateElement.find(".sundayteacher").attr({
+                "valueid": hiddenidsunday
+               // "parent": dateElement.find(".subject-id").attr("id")
+            });
+
+            dateElement.find(".mondayteacher").attr("id", "mondayteacher_" + index);
+            var hiddenidmonday = dateElement.find(".hdn_mondayteacher").attr("id");
+
+            dateElement.find(".mondayteacher").attr({
+                "valueid": hiddenidmonday
+               //"parent": dateElement.find(".subject-id").attr("id")
+            });
+
+            dateElement.find(".tuesdayteacher").attr("id", "tuesdayteacher_" + index);
+            var hiddenidtuesday = dateElement.find(".hdn_tuesdayteacher").attr("id");
+            dateElement.find(".tuesdayteacher").attr({
+                "valueid": hiddenidtuesday
+               // "parent": dateElement.find(".subject-id").attr("id")
+            });
+            dateElement.find(".wednesdayteacher").attr("id", "wednesdayteacher_" + index);
+            var hiddenidwednesday = dateElement.find(".hdn_wednesdayteacher").attr("id");
+            dateElement.find(".wednesdayteacher").attr({
+                "valueid": hiddenidwednesday
+                //"parent": dateElement.find(".subject-id").attr("id")
+            });
+
+            dateElement.find(".thursdayteacher").attr("id", "thursdayteacher_" + index);
+            var hiddenidthursday = dateElement.find(".hdn_thursdayteacher").attr("id");
+            dateElement.find(".thursdayteacher").attr({
+                "valueid": hiddenidthursday
+                //"parent": dateElement.find(".subject-id").attr("id")
+            });
+
+            dateElement.find(".fridayteacher").attr("id", "fridayteacher_" + index);
+            var hiddenidfriday = dateElement.find(".hdn_fridayteacher").attr("id");
+            dateElement.find(".fridayteacher").attr({
+                "valueid": hiddenidfriday
+               // "parent": dateElement.find(".subject-id").attr("id")
+            });
+        });
+    });
+    
+</script>

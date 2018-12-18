@@ -1,0 +1,51 @@
+﻿@using KRBAccounting.Web.CustomFilters
+@model IEnumerable<KRBAccounting.Domain.Entities.Role>
+<div class="workplace">
+    <div class="head">
+        <div class="isw-grid">
+        </div>
+        <h1>
+            Role Master</h1>
+        <ul class="buttons">
+            <li><a href="#" class="isw-plus addRole"></a></li>
+        </ul>
+        <div class="clear">
+        </div>
+    </div>
+    <div id="ledger-list">
+        <div class="block-fluid table-sorting" id="tbl-list">
+            <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+                <thead>
+                    <tr>
+                        <th>
+                            Role Name
+                        </th>
+                        <th style="width: 175px">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.RoleName
+                            </td>
+                            <td>
+                                @if (CheckPermission.GivePermission("Edit", "UM"))
+                                {
+                                    <a href="Javascript:void(0)" data-id="@item.Id" class="editRole">Edit</a>
+                                  <text>  &nbsp;|
+                                    &nbsp;</text>
+                                }
+                             @if (CheckPermission.GivePermission("Create", "SRG"))
+                             {
+                                 <a href="@Url.Action("SecurityRight", new {role = item.Id})">Security Right</a>
+                             }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

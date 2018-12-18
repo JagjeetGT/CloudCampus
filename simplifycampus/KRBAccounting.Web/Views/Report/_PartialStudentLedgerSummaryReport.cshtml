@@ -1,0 +1,132 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentLedgerReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+    decimal totalOpening = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    S.no.
+                </th>
+                <th width="30%">
+                    Student Name
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section</th>
+                <th>
+                    Roll No
+                </th>
+                <th>
+                    Opening
+                </th>
+                <th>
+                    Debit Amount
+                </th>
+                <th>
+                    Credit Amount
+                </th>
+                <th>
+                    Balance
+                </th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.StudentLedgerList)
+        {
+            <tr>
+                <td>@i
+                </td>
+                <td>
+                    @item.StudentName
+                </td>
+                <td>
+                    @item.ClassName
+                </td>
+                <td>
+                    @item.SectionName
+                </td>
+                <td>@item.RollNo
+                </td>
+                <td>
+                    @if (item.Opening != 0)
+                    {
+                        if (item.Opening > 0)
+                         {<text>@item.Opening Dr</text>
+                         }
+                         else
+                         {<text>@Math.Abs(item.Opening) Cr</text>
+                         }
+                    }
+                    else
+                    {
+                        @item.Opening
+                    }
+                   
+                </td>
+                <td>
+                    @item.DebitAmount
+                </td>
+                <td>@item.CreditAmount
+                </td>
+                <td>
+                    @{
+                    var balance = item.Opening + item.DebitAmount - item.CreditAmount;
+                    }
+                    @if (balance > 0)
+                    {
+                   <text>@balance Dr</text>
+                    }
+                    else
+                    {
+                        <text>@Math.Abs(balance) Cr</text>
+                    }
+                 
+                </td>
+            </tr>
+            drGrandTotal += item.DebitAmount;
+            crGrandTotal += item.CreditAmount;
+            grandTotalBalance += balance;
+            totalOpening += item.Opening;
+            i++;
+        }
+        @if (Model.StudentLedgerList.Any())
+        {
+            <tr style="font-weight: bold">
+                <td colspan="5" align="center">
+                    Grand Total
+                </td>
+                <td>
+                    @totalOpening
+                </td>
+                <td>
+                    @drGrandTotal
+                </td>
+                <td>
+                    @crGrandTotal
+                </td>
+                <td>
+                    @grandTotalBalance
+                </td>
+            </tr>
+        }
+    </table>
+</div>

@@ -1,0 +1,234 @@
+﻿@model KRBAccounting.Web.ViewModels.Master.ProductAddViewModel
+@{
+    ViewBag.Title = "Product Master(+)";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("ProductAdd", "Master", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "sucess", UpdateTargetId = "MsgError" }, new { @class = "form-horizontal form-custom online-form", id = "product-form" }))
+{
+    <div id="MsgError">
+    </div>
+    <div style="width: 700px;">
+        <div class="lag">
+            <span class="stack">
+                <label class="label-60">
+                    Name</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.Product.Name, new { @class = "input-295 input" })
+                    @Html.ValidationMessageFor(m => m.Product.Name)
+                </span></span><span class="stack">
+                    <label class="label-110">
+                        Short Name</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.Product.ShortName, new { @class = "input-90 input" })
+                        @Html.ValidationMessageFor(m => m.Product.ShortName)
+                    </span></span>
+        </div>
+        <fieldset>
+            <legend>Group</legend>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-60">
+                        Group</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.Product.ProductGroupId)
+                        <input type="text" class = "modallink input" href="@Url.Action("GetProductGroup", "Master")"  createhref="@Url.Action("OnlineProductGroupAdd", "Master")" valueId="Product_ProductGroupId" id="productgroup"/>
+                    </span></span><span class="stack">
+                        <label class="label-60">
+                            Sub-Group</label>
+                        <span class="field">
+                            @Html.HiddenFor(m => m.Product.ProductSubGroupId)
+                            <input type="text" class = "modallink input" href="@Url.Action("GetProductSubGroup", "Master")"  createhref="@Url.Action("OnlineProductSubGroupAdd", "Master")" valueId="Product_ProductSubGroupId" id="productsubgroup" parent="Product_ProductGroupId"/>
+                        </span></span>
+            </div>
+        </fieldset>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-110">
+                    Product Type</label>
+                <span class="field">
+                    @Html.DropDownListFor(m => m.Product.ProductType, Model.Type, new { @class = "select-120 input" })
+                </span></span><span class="stack">
+                    <label class="label-60">
+                        Batch</label>
+                    <span class="field">
+                        @Html.CheckBoxFor(m => m.Product.IsBatch, new { @class = "input" })
+                    </span></span><span class="stack">
+                        <label class="label-60">
+                            Val Tech</label>
+                        <span class="field">
+                            @Html.DropDownListFor(m => m.Product.ValTech, Model.ValTechList, new { @class = "select-120 input" })
+                        </span></span>
+        </div>
+        <div class="lag">
+            <fieldset>
+                <legend>Unit</legend><span class="stack">
+                    <label class="label-40">
+                        Unit</label>
+                    <span class="field">
+                        @Html.DropDownListFor(m => m.Product.Unit, Model.UnitList, new { @class = "select-80 input" })
+                    </span></span><span class="stack">
+                        <label class="label-60">
+                            Alt. Unit</label>
+                        <span class="field">
+                            @Html.CheckBox("AddAltUnit")
+                        </span></span><span class="stack"><span>&nbsp;&nbsp;&nbsp;</span> <span class="field">
+                            @Html.DropDownListFor(m => m.Product.AltUnit, Model.UnitList, new { @class = "select-80 input" })
+                        </span></span><span class="stack">
+                            <label class="label-60">
+                                Alt. Qty</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.AltQuantity, new { @class = "input-80 input" })
+                            </span></span><span class="stack">
+                                <label class="label-60">
+                                    Qty</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.Quantity, new { @class = "input-80 input" })
+                                </span></span>
+            </fieldset>
+        </div>
+        <div class="lag">
+            <fieldset>
+                <legend>Price</legend><span class="stack">
+                    <label class="label-60">
+                        Buy Price</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.Product.BuyPrice, new { @class = "input-45 input" })
+                    </span></span><span class="stack">
+                        <label class="label-40">
+                            SP</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Product.SalesPrice, new { @class = "input-45 input" })
+                        </span></span><span class="stack">
+                            <label class="label-40">
+                                MRP</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.MRP, new { @class = "input-45 input" })
+                            </span></span><span class="stack">
+                                <label class="label-40">
+                                    TP</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.TradePrice, new { @class = "input-45 input" })
+                                </span></span><span class="stack">
+                                    <label class="label-70">
+                                        M.R. Rate</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(m => m.Product.MRRate, new { @class = "input-45 input" })
+                                    </span></span>
+            </fieldset>
+        </div>
+        <div class="lag">
+            <fieldset>
+                <legend>Reorder Info</legend><span class="stack">
+                    <label class="label-70">
+                        Max Stock</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.Product.MaxStock, new { @class = "input-45 input" })
+                    </span></span><span class="stack">
+                        <label class="label-90">
+                            Reorder Level</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Product.ReorderLevel, new { @class = "input-45 input" })
+                        </span></span><span class="stack">
+                            <label class="label-70">
+                                Min Stock</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.MinStock, new { @class = "input-45 input" })
+                            </span></span><span class="stack">
+                                <label class="label-90">
+                                    Reorder Qty</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.ReorderQuantity, new { @class = "input-45 input" })
+                                </span></span>
+            </fieldset>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label>
+                    Bonus</label>
+                <span class="field">
+                    <select id="BonusType">
+                        <option value="1">General</option>
+                        <option value="2">Percentage</option>
+                    </select>
+                </span></span>
+        </div>
+        <div class="lag">
+            <fieldset>
+                <legend>Bonus Info</legend><span class="stack">
+                    <label class="label-70">
+                        % Bonus</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.Product.BonusPercentage, new { @class = "input-45 input" })
+                    </span></span><span class="stack">
+                        <label class="label-70">
+                            Min Qty</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Product.MinQuantity, new { @class = "input-45 input" })
+                        </span></span><span class="stack">
+                            <label class="label-70">
+                                Min Bonus</label>
+                            <span class="field">
+                                @Html.TextBoxFor(m => m.Product.MinBonus, new { @class = "input-45 input" })
+                            </span></span><span class="stack">
+                                <label class="label-70">
+                                    Max Bonus</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(m => m.Product.MaxBonus, new { @class = "input-45 input" })
+                                </span></span>
+            </fieldset>
+        </div>
+        <div class="lag">
+            <fieldset>
+                <legend>Vat Info</legend><span class="stack">
+                    <label class="label-70">
+                        Vat</label>
+                    <span class="field">
+                        <select id="AddVat" class="input">
+                            <option value="1">Yes</option>
+                            <option value="2">No</option>
+                        </select>
+                    </span></span><span class="stack">
+                        @Html.LabelFor(m => m.Product.VatRate)
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Product.VatRate, new { @class = "input-45 input" })
+                        </span></span>
+            </fieldset>
+        </div>
+    </div>
+    <span class="clearfix"></span>
+    <input type="button" class="btn btn-small btn-primary onlineSave" value="Save" />
+}
+<script type="text/javascript">
+    $("#Product_Name").live("focusout", function () {
+        var name = $(this).val();
+        if (name != "") {
+            $.getJSON("/Master/IsProductItemNameAvailable?name=" + name, "", function (data, status, xhr) {
+                if (data != '') {
+                    $("#MsgError").html(data);
+                    $("#Product_Name").focus();
+                    $("#Product_Name").addClass("error");
+                } else {
+                    $("#MsgError").html('');
+                    $("#Product_Name").removeClass("error");
+                }
+            });
+        }
+    });
+    $("#Product_ShortName").live("focusout", function () {
+        var name = $(this).val();
+        if (name != "") {
+            $.getJSON("/Master/IsProductShortNameAvailable?name=" + name, "", function (data, status, xhr) {
+                if (data != '') {
+                    $("#MsgError").html(data);
+                    $("#Product_ShortName").focus();
+                    $("#Product_ShortName").addClass("error");
+                } else {
+                    $("#MsgError").html('');
+                    $("#Product_ShortName").removeClass("error");
+                }
+            });
+        }
+    });
+</script>

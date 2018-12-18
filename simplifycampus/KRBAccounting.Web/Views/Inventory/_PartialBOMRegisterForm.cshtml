@@ -1,0 +1,27 @@
+﻿@model KRBAccounting.Web.ViewModels.Inventory.BOMRegisterFormViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@Html.CustomValidationSummary("Login was unsuccessful. Please correct the errors and try again.")*@
+@using (Ajax.BeginForm("BOMRegister", "Inventory", new { controller = "Inventory" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "report", OnComplete = "$('#modalReportForm').modal('hide');" }, new { @class = "form-horizontal", id = "ledger-report-form" }))
+{
+    <div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <label class="label-90">
+                All Cost Centers</label>
+            <span class="field">
+                @Html.EditorFor(m => m.AllCostCenter)
+            </span>
+        </div>
+        <div class="lag">
+            <label class="label-120">
+                All Finished Goods</label>
+            <span class="field">
+                @Html.EditorFor(m => m.AllFinishedGoods)
+            </span>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+}

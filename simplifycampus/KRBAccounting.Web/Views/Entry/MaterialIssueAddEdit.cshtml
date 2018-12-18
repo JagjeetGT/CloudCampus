@@ -1,0 +1,173 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.MaterialIssueAddViewModel
+@using (Ajax.BeginForm("MaterialIssueAdd", "Entry", new { controller = "Master" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal form-custom", id = "mi-form" }))
+{
+    @Html.HiddenFor(x => x.Id)
+    <div id="MsgError">
+    </div>
+    <div style="min-width: 740px; max-width: 785px; height: 240px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Issue No.</label>
+                    <span class="field">
+                        @Html.TextBoxFor(x => x.Code, new { @class = "input-90  input" })
+                        @Html.ValidationMessageFor(m => m.Code)
+                    </span></span><span class="stack">
+                        <label class="label-60">
+                            Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.IssueDate)
+                        </span></span><span class="stack">
+                            <label class="label-60">
+                                Memo No</label>
+                            <span class="field">
+                                @Html.HiddenFor(x => x.BillOfMaterialId)
+                                @Html.TextBoxFor(m => m.BillOfMaterial, new { @class = "input-235 modallink_custom input", href = "/Entry/GetBillOfMaterialList", title = "Bill Of Material", valueid = "BillOfMaterialId" })
+                            </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Finished Good</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.FinishedGoodId)
+                        @Html.TextBoxFor(x => x.FinishedGood, new { @class = "input-100 modallink input first-col", href = "/Entry/GetProductList", title = "Pruducts", valueid = "FinishedGoodId" })
+                    </span></span><span class="stack">
+                        <label class="label-110">
+                            Memo Description</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Description, new { @class = " input-235 input", @readonly = "readonly", entermsg = "Enter Voucher Date." })
+                        </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Cost Center</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.CostCenterId)
+                        @Html.TextBoxFor(x => x.CostCenter, new { @class = "input-100 modallink input", @readonly = "readonly", href = "/Master/GetCostCenterList", title = "Cost Center", valueid = "CostCenterId" })
+                    </span></span><span class="stack">
+                        <label class="label-70">
+                            Conv. Factor</label>
+                        <span class="field">
+                            @Html.TextBoxFor(x => x.ConversionFactor, new { @class = "input-64 input" })
+                        </span></span><span class="stack">
+                            <label class="label-53">
+                                Quantity</label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.Qty, new { @class = "input-64 input" })
+                            </span></span><span class="stack">
+                                <label class="label-53">
+                                    Unit</label>
+                                <span class="field">
+                                    @Html.HiddenFor(x => x.UnitId)
+                                    @Html.TextBoxFor(x => x.Unit, new { @class = "input-64 modallink input", @readonly = "readonly", href = "/Master/GetUnitList", title = "Units", valueid = "UnitId" })
+                                </span></span>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" id="table-material-issue-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="260px">
+                        Raw Material
+                    </th>
+                    @if (Model.EntryControl != null && Model.EntryControl.CostCenter)
+                    {   
+                        <th width="50px">
+                            Cost Center
+                        </th>
+                    }
+                    @if (Model.EntryControl != null && Model.EntryControl.Godown)
+                    {
+                        <th width="50px">
+                            Godown
+                        </th>
+                    }
+                    <th width="50px">
+                        Unit
+                    </th>
+                    <th width="50px">
+                        Qty
+                    </th>
+                </tr>
+                <tbody id="body-material-issue-detail">
+                    @if (Model.MaterialIssueDetailAddViewModels != null)
+                    {
+                        foreach (var item in Model.MaterialIssueDetailAddViewModels)
+                        {
+                            item.EntryControl = Model.EntryControl;
+                        @Html.Partial("_PartialMIDetailEntry", item)
+                        }
+                    }
+                    else
+                    {
+                        var model = new KRBAccounting.Web.ViewModels.Entry.MaterialIssueDetailAddViewModel();
+                        model.UnitList = Model.UnitList;
+                        model.EntryControl = Model.EntryControl;
+                        @Html.Partial("_PartialMIDetailEntry", model)
+                    }
+                </tbody>
+            </table>
+        </div>
+        <span class="clearfix"></span>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-40">
+                        Short Name</label>
+                    @Html.TextBoxFor(x => x.ShortName, new { @class = "input-160 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Stock Qty</label>
+                    @Html.TextBoxFor(x => x.StockQty, new { @class = "input-160 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Total Qty</label>
+                    @Html.TextBoxFor(x => x.TotalQty, new { @class = "input-160 input", disabled = "disabled" })
+                </span>
+            </div>
+        </fieldset>
+        @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+        {
+            <div class="lag">
+                <label class="label-90">
+                    Remarks</label>
+                <span class="field">
+                    @Html.TextBoxFor(x => x.Remarks, new { @class = "input-370 input" })
+                </span>
+            </div>
+        }
+    </div>
+}
+@*<script type="text/javascript">
+
+    $(document).ready(function() {
+        var dateType = @Model.SystemControl.DateType.ToString();
+        if (dateType == "1") {
+            $("#IssueDate").mask("99/99/9999");
+            $("#IssueDate").live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#IssueDate").mask("9999/99/99");
+            $("#IssueDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+    });
+
+</script>*@

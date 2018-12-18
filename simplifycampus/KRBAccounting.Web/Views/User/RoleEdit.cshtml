@@ -1,0 +1,19 @@
+﻿@model KRBAccounting.Domain.Entities.Role
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+<div style="width: 680px;">
+    @using (Ajax.BeginForm("RoleEdit", "User", new { controller = "User" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnCompleteEdit" }, new { @class = "form-horizontal form-custom", id = "Role-form" }))
+    {
+       @Html.HiddenFor(x=>x.Id)
+        <div class="lag">
+            <span class="stack">
+                <label class="input-64">
+                    Role </label>
+                <span class="field">
+                    @Html.EditorFor(m => m.RoleName, new { @class = "input-90" })
+                    @Html.ValidationMessageFor(m => m.RoleName)
+                </span></span>
+        </div>
+       
+    }
+</div>

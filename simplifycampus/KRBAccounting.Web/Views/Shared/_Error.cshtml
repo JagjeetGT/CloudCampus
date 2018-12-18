@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "_Error";
+  
+}
+<div class="workplace">
+    <div class="alert alert-error">
+        <h4>
+            Error!</h4>
+        @ViewBag.ErrorMsg
+    </div>
+    <div class="alert alert-info">
+        @Html.Raw(ViewBag.Link)
+    </div>
+   
+</div>

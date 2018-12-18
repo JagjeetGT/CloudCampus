@@ -1,0 +1,90 @@
+﻿
+@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Payroll.PaymentSlipReportViewModel 
+@{
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/img/NoImage.jpg";
+}
+@foreach (var item in Model.PaymentSlips)
+{
+@* @Html.Partial("_PartialReceiptHeader", Model.Header)*@
+    var date = NepaliDateService.NepaliDate(DateTime.Now).Date;
+    <table style="font-size: 13px;" width="100%">
+        <tr>
+            <td rowspan="2" width="12%">
+                <img src="@Model.ReportHeader.Logo" width="40" height="30" />
+            </td>
+            <td rowspan="2" width="30%">
+                <font style="font-weight: bold">@Model.ReportHeader.CompanyName</font><br />
+                <font style="font-weight: normal; font-size: 10px">@Model.ReportHeader.CompanyAddress</font><br />
+                <font style="font-weight: normal; font-size: 10px">Ph. No. @Model.ReportHeader.Phone</font>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center">
+                <font style="font-weight: bold; font-size: 13px">Payment Slip</font>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <font style="font-weight: bold; font-size: 13px">No. :</font> <font style="font-weight: normal;
+                    font-size: 10px;">@item.SlipNo </font>
+            </td>
+            <td align="right">
+                <font style="font-weight: bold; font-size: 13px">Date :</font> <font style="font-weight: normal;
+                    font-size: 10px;">@date </font>
+            </td>
+        </tr>
+    </table>
+    
+    
+    
+    
+    
+    
+    
+    <table border="0" style="font-size: 13px;" width="100%">
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold">Received with thanks from Ms./Mr.:</font> @item.EmployeeInfo.Description
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold">Department :</font> @item.EmployeeInfo.EmployeeDepartment.Description
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold;">for the payment of Monthly Fee For: </font>@NepaliDateService.LongMonth(item.MonthMiti)
+                @item.YearMiti
+            </td>
+        </tr>
+        <tr>
+            <td width="100%">
+                <font style="font-weight: bold">In words: </font>
+                @{
+           double amount = Convert.ToDouble(item.NetAmount);
+           var word = NumberToEnglish.changeNumericToWords(amount);
+                }
+                @word
+            </td>
+        </tr>
+    </table>
+    <table style="font-size: 13px;" width="100%">
+        <tr>
+            <td>
+                <font style="font-weight: bold; font-size: 13px">Rs.</font> <font style="font-weight: normal;
+                    font-size: 12px">@item.NetAmount</font>
+            </td>
+            <td>
+                <font style="font-weight: bold; font-size: 13px">Received By:</font> <font style="font-weight: normal;
+                    font-size: 12px">
+                    @if (item.CreatedBy != null)
+                    {
+                        @item.CreatedBy.Username
+                    }
+                </font>
+            </td>
+        </tr>
+    </table>
+}

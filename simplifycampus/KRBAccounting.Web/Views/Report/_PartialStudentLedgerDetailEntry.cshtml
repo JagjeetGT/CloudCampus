@@ -1,0 +1,5 @@
+﻿@model IEnumerable<IGrouping<int,KRBAccounting.Domain.Entities.ScStudentRegistrationDetail>>
+@foreach(var item in Model)
+{
+    @Html.Partial("_PartialStudentList", item.FirstOrDefault())
+}

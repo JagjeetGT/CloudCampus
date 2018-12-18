@@ -1,0 +1,76 @@
+﻿@using System.Data
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.PurchaseRegisterViewModel
+@{
+    
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="1" style="font-size: 12px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Bill No
+                </th>
+                <th>
+                    Party Name
+                </th>
+                <th>
+                    Vat No
+                </th>
+                <th>
+                    Total Purchase
+                </th>
+                <th>
+                    Tax Free Purchase
+                </th>
+                <th>
+                    Taxable Value
+                </th>
+                <th>
+                    Vat
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.PurchaseRegisters)
+        {
+            <tr>
+                <td>
+                    @if (Model.DateType == 1)
+                    {
+                        <text>@item.InvoiceDate.ToShortDateString()</text>
+                    }
+                    else
+                    {
+                        <text>@item.InvoiceMiti</text>
+                    }
+                </td>
+                <td>@item.InvoiceNo
+                </td>
+                <td>@item.AccountName
+                </td>
+                <td>@item.VatNo
+                </td>
+                <td>@item.TotalPurchase
+                </td>
+                <td>@item.TaxFreePurchase
+                </td>
+                <td>@item.TaxableValue
+                </td>
+                <td>@item.PurchaseTax
+                </td>
+            </tr>
+                
+        }
+    </table>
+</div>

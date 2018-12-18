@@ -1,0 +1,96 @@
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.ScBus>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">S.N.</th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    VehicleNo
+                </th>
+                <th>
+                    MaxCapicity
+                </th>
+                <th>
+                    DriverName
+                </th>
+                <th>
+                    DriverLicense
+                </th>
+                <th>
+                    HelperName
+                </th>
+                <th>
+                    ContactOff
+                </th>
+                <th>
+                    ContactPhNo
+                </th>
+                <th>
+                    ContactPerson
+                </th>
+                <th>
+                    ContactPersonPhNo
+                </th>
+                <th>
+                    FeeMemo
+                </th>
+                <th width="5%"></th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Description
+                    </td>
+                    <td>@item.VehicleNo
+                    </td>
+                    <td>
+                        @item.MaxCapicity
+                    </td>
+                    <td>@item.DriverName
+                    </td>
+                    <td>@item.DriverLicense
+                    </td>
+                    <td>@item.HelperName
+                    </td>
+                    <td>@item.ContactOff
+                    </td>
+                    <td>@item.ContactPhNo
+                    </td>
+                    <td>@item.ContactPerson
+                    </td>
+                    <td>@item.ContactPersonPhNo
+                    </td>
+                    <td>@item.FeeMemo
+                    </td>
+                    <td>
+                        @if (userRight.Edit)
+                        {
+                            <a href="#" class="editScBus icon-edit" data-id="@item.Id" title="Edit"></a>
+                        }
+                    </td>
+                    <td> @if (userRight.Delete)
+                         {
+                             <a href="@Url.Action("DeleteBus", new {busId = item.Id})" class="deleteScBus icon-remove" data-id="@item.Id" title="Delete" onclick = "return confirm('Are you sure you wish to delete this bus Info?')"></a>
+                         }</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+     <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BusList", "Transportation", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Bus-list" }))
+    </div>
+</div>

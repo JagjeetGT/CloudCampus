@@ -1,0 +1,46 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.BuildingStudentViewModel
+
+     
+@using (Ajax.BeginForm("BuildingStudentList", "Report", new { controller = "Report" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "report-form" }))
+{
+   
+    <div class=" lag">
+        <span class="stack">
+            <label class="label-53">
+                Building</label>
+            <span class="field">@Html.DropDownList("buildingList", Model.BuildingList, new { @class = "input-120 input BuildingList", entermsg = "Enter MemberId" })
+            </span></span>
+    </div>
+    <div class="clearfix"></div>
+    <div class=" lag ListRoom">
+         <span class="stack">
+             <label class="label-53">
+                 Room</label>
+             <span class="field">
+                 
+                 @Html.DropDownList("roomList",Model.RoomList , new { @class = "input-120 input RoomList", entermsg = "Enter MemberId" })
+                @* @Html.DropDownList("roomList", new SelectList(
+                                        new List<Object>
+                                            {
+                                                new {value = 0, text = "Date"},
+                                                new {value = 1, text = "Product"},
+                                                new {value = 2, text = "Branch"}
+                                            },
+                                        "value",
+                                        "text",
+                                        2),new{@class="label-154"})*@
+             </span></span>
+     </div>
+ 
+
+}
+
+<script>
+    $(document).ready(function () {
+
+        $(".ListRoom").hide();
+    });
+
+    
+</script>
+

@@ -1,0 +1,326 @@
+﻿@using System.Data
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.ARAP.SalesSummaryViewModel
+@{
+    //var header = Model.Report.Rows[0];
+    var colCount = Model.Report.Columns.Count - 3;
+        
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    @if (Model.Groupby == 1)
+    {
+        <table class="table" cellspacing="0" cellpadding="0" width="100%">
+        
+            <thead>
+                <tr>
+                    @foreach (DataColumn column in Model.Report.Columns)
+                    {
+                        if (column.ColumnName != "InvoiceId" && column.ColumnName != "LedgerId" && column.ColumnName != "InvoiceMiti" && column.ColumnName != "Remarks")
+                        {
+                            <th>@column.ColumnName
+                            </th>
+                        }
+                    }
+                </tr>
+            </thead>
+        
+       
+            @foreach (DataRow row in Model.Report.Rows)
+            {
+                <tr>
+                    @foreach (DataColumn col in Model.Report.Columns)
+                    {
+                        if (col.ColumnName != "InvoiceId" && col.ColumnName != "LedgerId" && col.ColumnName != "Remarks")
+                        {
+                            if (Model.Datetype == 1 && col.ColumnName == "InvoiceDate")
+                            {
+                                var date = (DateTime)@row[col.ColumnName];
+                                <td>
+                                    @date.ToString("MM/dd/yyyy") 
+                                </td> 
+                            }
+                            if (Model.Datetype == 2 && col.ColumnName == "InvoiceMiti")
+                            {
+                                var miti = @row[col.ColumnName];
+                                <td>
+                                    @miti
+                                </td> 
+                            }
+                            if (col.ColumnName != "InvoiceDate" && col.ColumnName != "InvoiceMiti")
+                            {
+                                double Num;
+                                bool isNum = double.TryParse(row[col.ColumnName].ToString(), out Num);
+                                if (isNum)
+                                {
+                                    <td style="text-align: right">@row[col.ColumnName]
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@row[col.ColumnName]
+                                    </td>
+                                }
+
+                            }
+
+                        }
+
+                    }
+                </tr>
+                    if (Model.DisplayRemarks)
+                    {
+                        foreach (DataColumn col in Model.Report.Columns)
+                        {
+                            if (col.ColumnName == "Remarks")
+                            {
+                                if (!string.IsNullOrEmpty(row[col.ColumnName].ToString()))
+                                {
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align: right; font-size: 11px">
+                                        Remarks :
+                                    </td>
+                                    <td colspan="@colCount" style="padding-left: 40px; font-size: 11px">
+                                        @row[col.ColumnName]
+                                    </td>
+                                </tr>
+                                }
+                            }
+                        }
+                    }
+            }
+            <tr>
+                @foreach (DataColumn col in Model.Report.Columns)
+                {
+                    if (col.ColumnName != "InvoiceId" && col.ColumnName != "LedgerId" && col.ColumnName != "InvoiceMiti" && col.ColumnName != "Remarks")
+                    {
+                        if (col.ColumnName == "Customer")
+                        {
+                            <td style="text-align: right; font-weight: bold">
+                                Grand Total
+                            </td>
+                        }
+
+                        if (col.ColumnName == "InvoiceDate" || col.ColumnName == "InvoiceNo")
+                        {
+                            <td>
+                            </td>
+                        }
+                        if (col.ColumnName != "InvoiceDate" && col.ColumnName != "InvoiceMiti" && col.ColumnName != "InvoiceNo" && col.ColumnName != "Customer")
+                        {
+                            <td style="text-align: right; font-weight: bold">@Model.Report.AsEnumerable().Sum(x => x.Field<decimal>(col.ColumnName.ToString())).ToString()
+                            </td>
+                        }
+                    }
+                }
+            </tr>
+            
+        
+        
+        </table>
+    }
+    else
+    {
+        <table class="table" cellspacing="0" cellpadding="0" width="100%">
+        
+            <thead>
+                <tr>
+                    @foreach (DataColumn column in Model.Report.Columns)
+                    {
+                        if (column.ColumnName != "InvoiceId" && column.ColumnName != "LedgerId" && column.ColumnName != "InvoiceMiti" && column.ColumnName != "Remarks")
+                        {
+                            if (column.ColumnName == "Customer")
+                            {
+                                
+                              <th>Customer / Voucher No</th>  
+                            }
+                            else
+                            {
+                                <th>@column.ColumnName
+                            </th>
+  
+                            }
+
+
+                        }
+                    }
+                </tr>
+            </thead>
+        
+       
+            @foreach (DataRow row in Model.Report.Rows)
+            {
+                 <tr>
+                @{var data = true;}
+               
+                @foreach (DataColumn col in Model.Report.Columns)
+                {
+
+
+                    if (col.ColumnName != "InvoiceId" && col.ColumnName != "LedgerId" && col.ColumnName != "Remarks")
+                    {
+                        if (Model.Datetype == 1 && col.ColumnName == "InvoiceDate")
+                        {
+                            var date = (DateTime)@row[col.ColumnName];
+                            <td>
+                                @date.ToString("MM/dd/yyyy") 
+                            </td>
+                        }
+                        if (Model.Datetype == 2 && col.ColumnName == "InvoiceMiti")
+                        {
+                            var miti = @row[col.ColumnName];
+                            <td>
+                                @miti
+                            </td>
+                        }
+                        if (col.ColumnName != "InvoiceDate" && col.ColumnName != "InvoiceMiti")
+                        {
+                            foreach (DataColumn col1 in Model.Report.Columns)
+                            {
+
+                                int LedgerId;
+                                if (col1.ColumnName == "InvoiceId")
+                                {
+                                    LedgerId = (int)row[col1.ColumnName];
+                                    if (LedgerId == 0)
+                                    {
+                                        data = false;
+                                        break;
+                                    }
+
+
+                                }
+                            }
+
+                            if (!data)
+                            {
+
+
+                                if (col.ColumnName != "Customer")
+                                {
+                        <td>
+                        </td>
+                                }
+
+                                else
+                                {
+                        <td>
+                            <b>
+                                @row[col.ColumnName]
+                            </b>
+                        </td>
+  
+                                }
+
+
+
+
+                            }
+                            else
+                            {
+                                double Num;
+                                bool isNum = double.TryParse(row[col.ColumnName].ToString(), out Num);
+                                if (isNum)
+                                {
+                                <td style="text-align: right">@row[col.ColumnName]
+                                </td>
+                    
+                                }
+                                else
+                                {
+                                    if (col.ColumnName == "Customer")
+                                    {
+                                     <td>
+                                    
+                                    
+                                   &nbsp;&nbsp;&nbsp; @row[col.ColumnName]
+
+                                </td>
+                                    }
+                                    else
+                                    {
+                                     <td>
+                                    
+                                    
+                                    @row[col.ColumnName]
+
+                                </td>
+  
+                                    }
+
+                                }
+
+
+                            }
+
+
+
+                        }
+                    }
+
+                }
+
+                
+            </tr>
+                
+                if (Model.DisplayRemarks)
+                {
+                    foreach (DataColumn col in Model.Report.Columns)
+                    {
+                        if (col.ColumnName == "Remarks")
+                        {
+                            if (!string.IsNullOrEmpty(row[col.ColumnName].ToString()))
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align: right; font-size: 11px">
+                                        Remarks :
+                                    </td>
+                                    <td colspan="@colCount" style="padding-left: 40px; font-size: 11px">
+                                        @row[col.ColumnName]
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                }
+            }
+            <tr>
+                @foreach (DataColumn col in Model.Report.Columns)
+                {
+                    if (col.ColumnName != "InvoiceId" && col.ColumnName != "LedgerId" && col.ColumnName != "InvoiceMiti" && col.ColumnName != "Remarks")
+                    {
+                        if (col.ColumnName == "Customer")
+                        {
+                            <td style="text-align: right; font-weight: bold">
+                                Grand Total
+                            </td>
+                        }
+
+                        if (col.ColumnName == "InvoiceDate" || col.ColumnName == "InvoiceNo")
+                        {
+                            <td>
+                            </td>
+                        }
+                        if (col.ColumnName != "InvoiceDate" && col.ColumnName != "InvoiceMiti" && col.ColumnName != "InvoiceNo" && col.ColumnName != "Customer")
+                        {
+                            <td style="text-align: right; font-weight: bold">@Model.Report.AsEnumerable().Sum(x => x.Field<decimal>(col.ColumnName.ToString())).ToString()
+                            </td>
+                        }
+                    }
+                }
+            </tr>
+            
+        
+        
+        </table>
+    }
+</div>

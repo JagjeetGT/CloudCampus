@@ -1,0 +1,238 @@
+﻿@using KRBAccounting.Service;
+@model KRBAccounting.Web.ViewModels.LedgerReport.CashBankBookReportViewModel
+@{
+    var VNo = "";
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 7px;">
+        <thead>
+          <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Voucher No.
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Receipt
+                </th>
+                <th>
+                    Payment
+                </th>
+            </tr>
+        </thead>
+         
+        @foreach (var item in Model.DateList)
+        {
+            VNo = "";
+            var FsStartDate = Model.FStartDate.ToString("yyyy-MM-dd");
+            var asOnDate = item.ToString("yyyy-MM-dd");
+            var headers = UtilityService.GetDayBookHeaders(asOnDate, Model.FYId, "", Model.BranchId).Last();
+
+            //foreach (var header in headers)
+            //{
+
+            var opening = UtilityService.GetCashBankOpeningBalance(item.Date.ToString("yyyy-MM-dd"), Model.LedgerId, Model.FYId, Model
+                .BranchId);
+            //if (opening != null)
+            //{
+            <tr>
+                @if (opening != null)
+                {
+                    if (opening.Total == 0)
+                    {
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td class="numbericfield bold">
+                            Opening >>
+                        </td>
+                        if (opening.Total > 0)
+                        {
+                            <td class="numbericfield bold">
+                                @Math.Abs(opening.Total)
+                            </td>
+                            <td>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                            </td>
+                            <td class="numbericfield bold">@Math.Abs(opening.Total)
+                            </td>
+                        }
+                    }
+                }
+                
+            </tr>
+
+                var cashBanklist = UtilityService.GetCashBankReportList(item.Date.ToString("yyyy-MM-dd"), Model.LedgerId, Model.FYId, Model.BranchId);
+                foreach (var list in cashBanklist)
+                {
+
+                <tr>
+                    <td>
+                         @*     @if (headers.IndexOf(header) == 0)
+                        {<text>*@
+                        @(Model.Datetype == 1 ? @asOnDate : @headers.VMiti)
+                        @*</text>}*@
+                       
+                         @* @if (asOnDate != FsStartDate)
+                          {
+                                @(Model.Datetype == 1 ? @asOnDate : headers.VMiti)
+                          }*@
+                    </td>
+                     @if (VNo != @list.VoucherNo)
+                     {
+                         VNo = @list.VoucherNo;
+                        <td>@list.VoucherNo
+                        </td>
+                     }
+                     else
+                     {
+                        <td></td>
+                     }
+                    
+                   @* <td>@list.VoucherNo
+                    </td>*@
+
+                    <td>@list.AccountName
+                    </td>
+                    @if (list.Receive == 0)
+                    {
+                        <td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="numbericfield">@list.Receive
+                        </td>
+
+                    }
+                    @if (list.Payment == 0)
+                    {
+                        <td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="numbericfield">@list.Payment
+                        </td>
+
+                    }
+                    @if (list.ChequeNo!=null)
+                    {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td style="padding-left: 20px; font-size: 11px">
+                                Paid By ChqNo. : @list.ChequeNo 
+                                Dated : @(Model.Datetype == 1 ? @list.ChequeDate : @list.ChequeMiti)
+                            </td> 
+                            <td></td>
+                            <td></td>  
+                        </tr>
+                    }
+                </tr>
+                    if (Model.DisplaySubLedger)
+                    {
+                        if (list.SubLedName != null)
+                        {
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td style="padding-left: 20px;">
+                                Sub Ledger : @list.SubLedName 
+                            </td> 
+                            <td></td>
+                            <td></td>  
+                        </tr>
+                        }
+                    }
+                    if (Model.DisplayRemarks)
+                    {
+                        if (list.Narration != null)
+                        {
+                        <tr>
+                            <td ></td>
+                            <td  style="text-align: right; font-size: 11px">Narration :</td>
+                            <td colspan="3" style="padding-left: 40px; font-size: 11px">
+                                @list.Narration 
+                            </td> 
+                   
+                        </tr>
+                        }
+
+                        if (list.Remarks != null)
+                        {
+                        <tr>
+                            <td ></td>
+                            <td  style="text-align: right; font-size: 11px">Remarks :</td>
+                            <td colspan="3" style="padding-left: 40px; font-size: 11px">
+                                @list.Remarks 
+                            </td> 
+                   
+                        </tr>
+                        }
+                    }
+
+                }
+
+                if (cashBanklist.Count != 0)
+                {
+
+                    var dayclosing = UtilityService.GetCashBankOpeningBalance(item.AddDays(1).ToString("yyyy/MM/dd"), Model.LedgerId, Model.FYId, Model.BranchId);
+            <tr>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td class="numbericfield bold">
+                    Day Closing >>
+                </td>
+                @if (dayclosing.Total < 0)
+                {
+                    <td class="numbericfield bold">@Math.Abs(dayclosing.Total)
+                    </td>
+                    <td>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                    </td>
+                    <td class="numbericfield bold">@Math.Abs(dayclosing.Total)
+                    </td>
+                }
+            </tr>
+        }
+            //}
+        }
+       
+    </table>
+</div>

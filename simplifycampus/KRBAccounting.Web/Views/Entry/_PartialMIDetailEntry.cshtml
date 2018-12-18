@@ -1,0 +1,36 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.MaterialIssueDetailAddViewModel
+<tr class="debitnote-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("MaterialIssueDetailAddViewModels"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.RawMaterialId, new { @class = "value" })
+            @Html.TextBoxFor(x => x.RawMaterial, new { @class = "input-245 modallink input first-col", href = "/Entry/GetProductList", title = "Pruducts" })
+        </td>
+         if (Model.EntryControl != null && Model.EntryControl.CostCenter)
+         {
+             <td>
+                 @Html.HiddenFor(x => x.CostCenterId, new {@class = "value"})
+                 @Html.TextBoxFor(x => x.CostCenter, new {@class = "input-150 modallink input", href = "/Master/GetCostCenterList", title = "Pruducts"})
+             </td>
+         }
+        if (Model.EntryControl != null && Model.EntryControl.Godown)
+        {
+            <td>
+                @Html.HiddenFor(x => x.GodownId, new {@class = "value"})
+                @Html.TextBoxFor(x => x.Godown, new {@class = "input-150 modallink input", href = "/Master/GetGodownList", title = "Godown"})
+            </td>
+        }
+        <td>
+            @Html.DropdownListForCustom(x => x.UnitId, Model.UnitList, new { @class = "input-100" })
+        </td>
+         <td>
+            @Html.TextBoxFor(x => x.Quantity, new { @class = "input-70 input last-col-modified qty numberonly", templateid = "MIDetailAddTemplate", tableid = "table-material-issue-detail" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>

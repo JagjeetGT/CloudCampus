@@ -1,0 +1,61 @@
+﻿@using KRBAccounting.Service.Models
+@model PagedList<KRBAccounting.Domain.Entities.Currency>
+           @{
+               var userRight = (UserRight) ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+    <thead>
+        <tr>
+            <th width="5%">S.N.</th>
+            <th width="20%">
+                Code
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Unit
+            </th>
+        
+            <th width="5%"></th>
+            <th width="5%"></th>
+        </tr>
+       </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td align="center">@i</td>
+                    <td>@item.Code
+                    </td>
+                    <td>@item.Name
+                    </td>
+                    <td>@item.Unit
+                    </td>
+                    <td>
+                        @if(userRight.Edit)
+                        {
+                              <a href="javascript:void(0);" class="editCurrency icon-pencil" data-id="@item.Id" title="Edit: @item.Name"></a>
+                        }
+                      
+                    </td>
+                    <td>
+                        @if(userRight.Delete)
+                        {
+                            <a href="javascript:void(0);" class="CurrencyDelete icon-remove" data-id="@item.Id" title="Delete"></a>
+                        }
+                        
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+</table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "CurrencyList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "currency-list"}))
+    </div>
+</div>
+
+

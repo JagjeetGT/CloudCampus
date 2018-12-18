@@ -1,0 +1,27 @@
+﻿@model KRBAccounting.Domain.Entities.ScEmployeeInfo
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("employeeListEntry"))
+    {
+        
+        <td>
+            @Html.HiddenFor(x => x.Id, new { @class = "emply-" + Model.Id })
+            @Html.CheckBoxFor(x => x.Checkbox, new { @class = "employee-checkbox" })
+        </td>
+        <td>
+           
+                @Model.Description
+            
+        </td>
+        <td>
+            @if (Model.EmployeePost != null)
+            {
+                @Model.EmployeePost.Description
+            }
+
+        </td>
+       
+
+    }
+</tr>

@@ -1,0 +1,336 @@
+@model KRBAccounting.Domain.Entities.ScBook
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@{
+  
+    var datepublication = Model.YearOfPublication.ToString("dd/MM/yyyy");
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Books Add</h1>
+                    <ul class="buttons">
+                        <li><a href="@Url.Action("Books", "Library")" class="isw-left"></a></li>
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid">
+                    <div style="padding-top: 10px">
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    @using (Html.BeginForm("BookAdd", "Library", new { controller = "Library" }, FormMethod.Post, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+                    {
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Book Name</label>
+                                <div class="field">@Html.TextBoxFor(m => m.Name, new { @class = "input-315 input", entermsg = "Enter Name" })
+                                    @Html.ValidationMessageFor(m => m.Name)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Short Name</label>
+                                <div class="field">@Html.TextBoxFor(m => m.ShortName, new { @class = "input-100 input", entermsg = "Enter ShortName" })
+                                    @Html.ValidationMessageFor(m => m.ShortName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Volume No</label>
+                                <div class="field">@Html.TextBoxFor(m => m.VolumeNumber, new { @class = "input-100 input", entermsg = "Enter VolumeNumber" })
+                                    @Html.ValidationMessageFor(m => m.VolumeNumber)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Book No</label>
+                                <div class="field">@Html.TextBoxFor(m => m.BookNumber, new { @class = "input-100 input", entermsg = "Enter BookNumber" })
+                                    @Html.ValidationMessageFor(m => m.BookNumber)
+                                </div>
+                            </div>
+                            <div class="stack" >
+                                <label class="label-90">
+                                    BarCode</label>
+                                <div class="field">@Html.TextBoxFor(m => m.BarCode, new { @class = "input-100 input", entermsg = "Enter BookNumber" })
+                                    @Html.ValidationMessageFor(m => m.BarCode)
+                                </div>
+                            </div>
+                            <div class="stack" style="position: absolute; margin-left: 5%">
+                                <div class="field">
+                                    <img name="barcodeimage" id="barcodeTarget" style="float: right" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Language</label>
+                                <div class="field">
+                                    @Html.TextBoxFor(m => m.Language, new { @class = "input-100 input", entermsg = "Enter Language" })
+                                    @Html.ValidationMessageFor(m => m.Language)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    MFN No</label>
+                                <div class="field">@Html.TextBoxFor(m => m.MFNNumber, new { @class = "input-100 input", entermsg = "Enter MFNNumber" })
+                                    @Html.ValidationMessageFor(m => m.MFNNumber)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Keyword</label>
+                                <div class="field">
+                                    @Html.TextBoxFor(m => m.Keywords, new { @class = "input-100 input", entermsg = "Enter Keyboards" })
+                                    @Html.ValidationMessageFor(m => m.Keywords)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Year Of Publication</label>
+                                <div class="field">
+                                    <span>
+                                        @Html.HiddenFor(m => m.MitiOfPublication)
+                                        @Html.HiddenFor(m => m.YearOfPublication, new { displayId = "DisplayYearPublication" })
+                                        @Html.TextBoxFor(m => m.DisplayYearPublication, new { @class = "input-100 input", entermsg = "Enter Date.", miti = Model.SystemControl.DateType, dateId = "YearOfPublication", displayId = "DisplayYearPublication", mitiId = "MitiOfPublication" })
+                                        @Html.ValidationMessageFor(m => m.YearOfPublication)</span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="currDatePublication" value="@datepublication"/>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Edition</label>
+                                <div class="field">@Html.TextBoxFor(m => m.Edition, new { @class = "input-100 input", entermsg = "Enter Edition" })
+                                    @Html.ValidationMessageFor(m => m.Edition)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Imprint Place</label>
+                                <div class="field">
+                                    @Html.TextBoxFor(m => m.ImprintPlace, new { @class = "input-100 input", entermsg = "Enter ImprintPlace" })
+                                    @Html.ValidationMessageFor(m => m.ImprintPlace)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Publisher</label>
+                                <div class="field">@Html.TextBoxFor(m => m.Publisher, new { @class = "input-100 input", entermsg = "Enter Publisher" })
+                                    @Html.ValidationMessageFor(m => m.Publisher)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Corporate Body</label>
+                                <div class="field">@Html.TextBoxFor(m => m.CorporateBody, new { @class = "input-100 input", entermsg = "Enter CorporateBody" })
+                                    @Html.ValidationMessageFor(m => m.CorporateBody)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Personal Author</label>
+                                <div class="field">@Html.TextBoxFor(m => m.PersonalAuthor, new { @class = "input-100 input", entermsg = "Enter PersonalAuthor" })
+                                    @Html.ValidationMessageFor(m => m.PersonalAuthor)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Pages</label>
+                                <div class="field">@Html.TextBoxFor(m => m.Pages, new { @class = "input-100 input", entermsg = "Enter Pages" })
+                                    @Html.ValidationMessageFor(m => m.Pages)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Series</label>
+                                <div class="field">
+                                    @Html.TextBoxFor(m => m.Series, new { @class = "input-100 input", entermsg = "Enter Series" })
+                                    @Html.ValidationMessageFor(m => m.Series)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Board SubHeading</label>
+                                <div class="field">@Html.TextBoxFor(m => m.BoardSubHeading, new { @class = "input-100 input", entermsg = "Enter BoardSubHeading" })
+                                    @Html.ValidationMessageFor(m => m.BoardSubHeading)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    ISBN</label>
+                                <div class="field">
+                                    @Html.TextBoxFor(m => m.ISBN, new { @class = "input-100 input", entermsg = "Enter ISBN" })
+                                    @Html.ValidationMessageFor(m => m.ISBN)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    ISSN</label>
+                                <div class="field">@Html.TextBoxFor(m => m.ISSN, new { @class = "input-100 input", entermsg = "Enter ISSN" })
+                                    @Html.ValidationMessageFor(m => m.ISSN)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Source</label>
+                                <div class="field">@Html.TextBoxFor(m => m.Source, new { @class = "input-100 input", entermsg = "Enter Source" })
+                                    @Html.ValidationMessageFor(m => m.Source)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Library Location</label>
+                                <div class="field">@Html.TextBoxFor(m => m.LibraryLocation, new { @class = "input-100 input", entermsg = "Enter LibraryLocation" })
+                                    @Html.ValidationMessageFor(m => m.LibraryLocation)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Type Of Material</label>
+                                <div class="field">@Html.TextBoxFor(m => m.TypeOfMaterial, new { @class = "input-100 input", entermsg = "Enter TypeOfMaterial" })
+                                    @Html.ValidationMessageFor(m => m.TypeOfMaterial)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Price</label>
+                                <div class="field">@Html.TextBoxFor(m => m.Price, new { @class = "input-100 input", entermsg = "Enter Price" })
+                                    @Html.ValidationMessageFor(m => m.Price)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Rack No.</label>
+                                <div class="field">@Html.TextBoxFor(m => m.RackNo, new { @class = "input-100 input", entermsg = "Enter Price" })
+                                    @Html.ValidationMessageFor(m => m.RackNo)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Row No.</label>
+                                <div class="field">@Html.TextBoxFor(m => m.RowNo, new { @class = "input-100 input", entermsg = "Enter Price" })
+                                    @Html.ValidationMessageFor(m => m.RowNo)
+                                </div>
+                            </div>
+                            <div class="stack">
+                                <label class="label-90">
+                                    Issuable
+                                </label>
+                                <div class="field">@Html.EditorFor(m => m.IsIssuable)
+                                    @Html.ValidationMessageFor(m => m.IsIssuable)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>    
+                        <div class="lag">
+                            <div class="stack">
+                                <label class="label-90">
+                                    Notes</label>
+                                <div class="field">@Html.TextAreaFor(m => m.Notes, new { @class = "input-450 input", entermsg = "Enter Notes" })
+                                    @Html.ValidationMessageFor(m => m.Notes)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                        </div>
+                        <div>
+                            <input type="submit" class="btn" value="Submit" /></div>  
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var dateType = @Model.SystemControl.DateType;
+   
+        if(dateType=="1") {
+        
+            $( "#DisplayYearPublication").mask("99/99/9999");
+            $( "#DisplayYearPublication").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+                if(!validDate) {
+                    $($(this).addClass("error"));
+                }
+                else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+       
+        else {
+            $( "#DisplayYearPublication").mask("9999/99/99");
+            $( "#DisplayYearPublication").live("blur", function() {
+      
+                var date = $(this).val();
+     
+                var validDate=isNepaliDate(date);
+                if(!validDate) {
+                    $($(this).addClass("error"));
+                }
+                else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+
+
+//        $("#YearOfPublication").nepDateTimePicker();
+
+    });
+    function get(url) {
+        var availabletags;
+        $.getJSON(url, function (data) {
+            $.each(data, function (item) {
+                availabletags += item + ",";
+            });
+            return availabletags;
+        });
+    }
+</script>

@@ -1,0 +1,56 @@
+@model KRBAccounting.Domain.Entities.ScSalaryHead
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("SalaryHeadEdit", "Payroll", new { controller = "Payroll" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "successEdit" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x => x.Id)
+   <div id="error-msg"></div>
+    <div class="lag">
+        <div class="lag">
+            <div class="stack">
+                <label class="label-90">
+                    SalaryType</label>
+                <div class="field">
+                    @Html.DropDownListFor(m => m.Head, Model.HeadList, new { @class = "input-190", entermsg = "Enter SalaryType" })
+                    @Html.ValidationMessageFor(m => m.Head)
+                </div>
+            </div>
+        </div>
+      <div class="stack">
+            <label class="label-53">
+                Operation</label>
+            <div class="field">
+                 @Html.DropDownListFor(m => m.Operation, Model.OperationList, new { @class = "input-190", entermsg = "Enter SalaryType" })
+                    @Html.ValidationMessageFor(m => m.Operation)
+            </div>
+        </div>
+   <div class="clearfix">
+        </div>
+        <div class="lag">
+            <div class="stack">
+                <label class="label-90">
+                    Ledger</label>
+                <div class="field">
+                    @Html.HiddenFor(m => m.LedgerId)
+                    <input type="text" class="modallink input-215 input" id="glcodeid" valueid="LedgerId" value="@if (Model.Ledger != null)
+                                                                                                                 {
+                                                                                                                     @Model.Ledger.AccountName
+                                                                                                                 }
+                                                                                                                    " href="@Url.Action("GetLedger", "Master")"/>
+                    @Html.ValidationMessageFor(m => m.LedgerId)
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+       <div class="stack">
+                <label class="label-90">
+                    Display Order</label>
+                <div class="field">
+                    @Html.TextBoxFor(m => m.DisplayOrder)
+                   @Html.ValidationMessageFor(m => m.DisplayOrder)
+                </div>
+            </div>
+       
+    </div>
+}

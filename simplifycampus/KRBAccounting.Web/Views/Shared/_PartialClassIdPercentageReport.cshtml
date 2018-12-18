@@ -1,0 +1,21 @@
+﻿@using System.Net.Configuration
+@using iTextSharp.text.pdf
+@model KRBAccounting.Web.ViewModels.ClassPercentageViewModel
+<tr>
+    @using (Html.BeginCollectionItem("ClassIdPercentageList"))
+    {
+
+
+        <td style="float: right" >
+      
+             @Html.HiddenFor(x => x.ClassId) % Pass
+
+            @Model.Percentage
+        
+
+        </td>
+
+
+
+    }
+</tr>

@@ -1,0 +1,111 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Student.StudentGeneralInformationViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+
+
+            <div class="head">
+                <h1>
+                   Student Attendance
+                </h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report" class="isw-refresh"></a></li>
+                    <li>
+                        <a href="@Url.Action("PdfStudentAttendanceLog", "Student")" target="_blank" title="Export to Pdf" class="isw-pdf">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ExcelStudentAttendanceLog", "Student")" target="_blank" title="Export to Excel" class="isw-excel">
+                        </a>
+                    </li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            @foreach (var i in Model.StduentAttendacegrouping)
+            {
+                <div class="ReportList" style="border: 1px solid; height: 900px;">
+                    <div style="margin: 25px;">
+                        <div class="ReportHeader" style="text-align: center">
+                            @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                            <div class="clearfix">
+                            </div>
+                            <br/>
+                        
+                            <div>
+                              
+                                <p align="left" style="font-weight: bold; float: left">
+                                    NAME :@i.FirstOrDefault().StuDesc &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                    REGISTRATION NO. :@Model.Studentinfo.Regno &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+                                    STUDENT CODE : @Model.Studentinfo.StdCode &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                    <br/>
+                                    CLASS :@i.FirstOrDefault().ClassName &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+
+                                    
+
+                                    SECTION :@i.FirstOrDefault().SectionName  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                    ROLL NO. @Model.ScStudentRegistrationDetail.RollNo
+
+
+                                    <br/>
+                                  
+                                    
+                                    
+                                    ADDRESS : @Model.Studentinfo.TmpAdd, @Model.Studentinfo.TmpCity, @Model.Studentinfo.TmpDistrict, @Model.Studentinfo.TmpCountry
+                                   
+                                </p>
+
+                                <p align="right" style="font-weight: bold;">
+                                    TOTAL WORKING DAYS : @Model.WorkingDays
+                                </p>
+                                <div class="clearfix">
+                                </div>
+                                <p align="left" style="font-weight: bold; float: left">
+                                    
+                                </p>
+                            </div>
+                        </div>
+                        <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                            <thead>
+                                <tr>
+                                 
+                                    <th>
+                                        Present Day
+                                    </th>
+                                    <th>
+                                        Percentage
+                                    </th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in Model.StudentAttendances.Where(x => x.SectionId == i.FirstOrDefault().SectionId && x.ClassId == i.FirstOrDefault().ClassId).GroupBy(x => x.StudentID))
+                            {
+                                <tr>
+                               
+                                    <td>
+                                        @item.FirstOrDefault().PresentDays
+                                    </td>
+                                    <td>
+
+                                        @item.FirstOrDefault().PresentPercentage
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                </div>
+                <hr />
+            }
+        </div>
+    </div>
+</div>

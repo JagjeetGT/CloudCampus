@@ -1,0 +1,19 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.ScMessage
+@{
+    ViewBag.Title = "MessageDetail";
+    var currentDaty = DateTime.UtcNow;
+    var senderName = "";
+    senderName = @UtilityService.GetUserNameByUserId(Model.SenderId);
+   
+}
+
+<h4>Subject: @Model.MsgSubject </h4>
+<hr/>
+<div>
+    <h5>From: @senderName <span style="float: right">@Model.MsgDate.ToString("MMM") @Model.MsgDate.ToString("dd")</span></h5>
+    
+    <p>
+        @Html.Raw(Model.MsgBody)
+    </p>
+</div>

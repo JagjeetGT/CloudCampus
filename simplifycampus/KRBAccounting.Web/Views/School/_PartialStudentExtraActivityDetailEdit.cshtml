@@ -1,0 +1,56 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentExtraActivityDetails
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "hdn_Subject_Id first-col" })
+            <input type="text"  class = "text_subject input-120 input" value="@if (Model.Studentinfo != null)
+                                                                                        {
+                                                                                            @Model.Studentinfo.StuDesc
+                                                                                        }
+                                                                                           "   title="Student List"  />
+        </td>
+        <td>
+            <input type="text"  class = "input-70 input" readonly = "readonly" value="@if (Model.Studentinfo != null)
+                                                                                        {
+                                                                                            @Model.Studentinfo.StdCode
+                                                                                        }
+                                                                                           "   title="Student Code"  />
+      
+        </td>
+        <td>
+           @Html.TextBoxFor(x => x.RollNo, new { @class = "input-70 input", @readonly = "readonly" })
+        </td>  
+        <td>
+           @Html.HiddenFor(x => x.ActivitiesStatusId, new { @class = "hdn_status_Id" })
+           
+            @{
+                var status = "";
+                if(Model.ActivitiesStatusId !=0)
+                {
+                    status = Enum.GetName(typeof (ActivityStatus), Model.ActivitiesStatusId);
+                }
+            }
+            <input type="text"  class="modallink text_status input-100 input" href="@Url.Action("GetActivityStatus")" value="@status"   title="Student Status"  />
+        </td> 
+        <td>
+          @Html.TextBoxFor(x => x.StartDate, new { @class = "input-90 input StartDate" })
+        </td> 
+        <td>
+           @Html.TextBoxFor(x => x.StartMiti, new { @class = "input-90 input StartMiti" })
+        </td> 
+  
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "last-col-custom input-160 input", href = "", tableid = "table-class-fee-rate-detail", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+
+    }
+</tr>

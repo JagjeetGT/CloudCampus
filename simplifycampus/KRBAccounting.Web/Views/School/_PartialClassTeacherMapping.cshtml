@@ -1,0 +1,63 @@
+﻿@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Domain.Entities.ScClassTeacherMapping
+<tr class="subject-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("studentEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.TeacherId, new { @class = "hdn_Student_Id" })
+            @if (Model.TeacherId != 0)
+            {
+                <input type="text"   class = "modallink text_student input childrennn" value="@if (Model.ScEmployeeInfo != null)
+                                                                                  {
+                                                                                      @Model.ScEmployeeInfo.Description
+                                                                                  }
+                                                                                     "  href="@Url.Action("GetEmployeeInfo", "EmployeeManagement")" parent="ClassId" parentnext="SectionId" children="hdn_Student_Id" parent="ClassId" title="Employee" valueId="StudentId" id="student_id" entermsg = "Press F1 for existing Account list." />
+            }
+            else
+            {
+                <input type="text"   class = "modallink text_student input"  href="@Url.Action("GetEmployeeInfo", "EmployeeManagement")" children="hdn_Student_Id" parent="ClassId"  parentnext="SectionId" title="Employee" valueId="StudentId" id="student_id" entermsg = "Press F1 for existing Account list." />
+            }
+            
+        </td>
+        <td>
+            <a id="add-par-form" href="javascript:void(0)" data-href="@Url.Action("ClassTeacherMappingDetailAdd")" tableid="table-class-subject-detail" class="icon-plus-sign Add"></a>
+        </td>
+       @* <td>
+            @Html.TextBoxFor(x => x.StdCode, new { @class = "hdn_Studentinfo_StdCode", @readonly = true })
+            
+        </td>
+       <td>
+            @Html.TextBoxFor(x => x.Regno, new { @class = "hdn_Studentinfo_Regno", @readonly = true })
+            
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Section, new { @class = "hdn_Studentinfo_Section", @readonly = true })
+            
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "narration input", href = "/School/SubjectStudentEntry", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>*@
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-class-subject-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-class-subject-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

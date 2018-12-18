@@ -1,0 +1,33 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.ExpBrkDetailAddViewModel
+<tr class="debitnote-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("ExpBrkDetailAddViewModels"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x=>x.ExpBrkId)
+            @Html.HiddenFor(x => x.ProductId, new { @class = "value product_id" })
+            <input type="hidden" class="product_reference" />
+            @Html.TextBoxFor(x => x.ProductName, new { @class = "input-245 modallink_custom input first-col product_text", href = "/Entry/GetProductList", title = "Products", valuetype = "product" })
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.GodownId, new { @class = "value" })
+            @Html.TextBoxFor(x => x.Godown, new { @class = "input-150 modallink input", href = "/Master/GetGodownList", title = "Godown" })
+        </td>
+      
+        <td>
+            @Html.DropdownListForCustom(x => x.UnitId, Model.UnitList, new { @class = "input-100" })
+        </td>
+        <td>
+            @Html.NumericTextBoxFor(x => x.Quantity, new { @class = "input-70 input qty qty-rate numberonly" })
+        </td>
+        <td>@Html.NumericTextBoxFor(x => x.Rate, new { @class = "input-70 input rate qty-rate numberonly" })
+        </td>
+        <td>@Html.NumericTextBoxFor(x => x.Amount, new { @class = "input-70  last-col-modified input amount numberonly", templateid = "SEBDetailAddTemplate", tableid = "table-gt-detail" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row" />
+        </td>
+    }
+</tr>

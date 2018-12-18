@@ -1,0 +1,267 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentBioDataReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table cellspacing="0" cellpadding="0" align="center" style="border: 1px solid rgb(221, 221, 221);
+        border-collapse: collapse" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    Information
+                </th>
+                <th>
+                    Photo
+                </th>
+            </tr>
+        </thead>
+        <tr>
+            <td>
+                <div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Name
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.StuDesc, new { @class = "input-150 input", @readonly = "readonly" })
+                            </span></span>
+                    </div>
+                    <div class="lag" style="right: 125px; position: absolute; top: 225px;">
+                        <span class="stack"><span class="field">
+                            @if (!string.IsNullOrEmpty(Model.StudentInfo.StdPhotoFileName))
+                            {
+                    
+                                <img src="/Content/academicsimage/@Model.StudentInfo.StdPhotoFileName@Model.StudentInfo.StdPhotoExt" height="150px" width="150px"/>
+                            }
+                            else
+                            {
+                                <img src="/Content/img/NoImage.jpg" height="150px" width="150px" />
+                            }
+                        </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Date of Birth
+                            </label>
+                            <span class="field">:
+                                @if (Model.StudentInfo.DBO != null)
+                                {
+                                    @Convert.ToDateTime(Model.StudentInfo.DBO).ToShortDateString()
+                                }
+                                
+
+                                @* @{
+                                    var dob = Convert.ToDateTime(Model.StudentInfo.DBO).ToString("MM/dd/yyyy");
+                                }
+                                : @Html.Display(dob, new { @class = "input-150 input", entermsg = "Enter name" })*@
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Gender
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Sex, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Father Name
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.FName, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Mother Name
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.MName, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Marital Status
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.MaritialSt, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Nationality
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Nationality, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Contact
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Phone, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Email
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.EmailId, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Blood Group
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.BloodGrp, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Temporary Address
+                            </label>
+                            <span class="field">: @UtilityService.GetTemporaryFullAddress(Model.StudentInfo)
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Permanent Address
+                            </label>
+                            <span class="field">: @UtilityService.GetPermanentFullAddress(Model.StudentInfo)
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Religion
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Religion, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Reg No
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Regno, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Current Class
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Class.Description, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Apply Date
+                            </label>
+                            <span class="field">:
+                             @if (Model.StudentInfo.ApplyDate != null)
+                                {
+                                   @Convert.ToDateTime(Model.StudentInfo.ApplyDate).ToShortDateString()
+                                }
+                                
+
+                            
+                            
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Institute
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.Institue, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Previous Class
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.PrevClsCode, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Pass Year
+                            </label>
+                            <span class="field">: 
+                             @if (Model.StudentInfo.PassYear != null)
+                                {
+                                   @Convert.ToDateTime(Model.StudentInfo.ApplyDate).ToShortDateString()
+                                }
+                                
+                                @Html.DisplayFor(x => x.StudentInfo.PassYear, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-160">
+                                Percentage
+                            </label>
+                            <span class="field">: @Html.DisplayFor(x => x.StudentInfo.MPercent, new { @class = "input-150 input" })
+                            </span></span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

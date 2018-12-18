@@ -1,0 +1,74 @@
+﻿@model KRBAccounting.Web.ViewModels.Library.LibraryBookIssueViewModel
+           @using (Ajax.BeginForm("BookIssuedAdd", "Library", new { controller = "Library" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnComplete" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+           {
+               @Html.HiddenFor(x => x.BookReceivedDetails.Id)
+               <div class="lag">
+                   <label class="label-100">
+                       Book Title
+                   </label>
+                   <div class="field">
+                       @Html.TextBoxFor(x => x.BookReceivedDetails.BookReceived.Book.Name, new {@class = "input-190 input", @readonly = "readonly"})
+                   </div>
+               </div>
+               <div class="clearfix">
+               </div>
+               <div class="lag">
+                   <label class="label-100">
+                       Accession No
+                   </label>
+                   <div class="field">
+                       @Html.TextBoxFor(x => x.BookReceivedDetails.AccessionNo, new {@class = "input-190 input", @readonly = "readonly"})
+                   </div>
+               </div>
+               <div class="clearfix">
+               </div>
+               <div class="lag">
+                   <label class="label-100">
+                       Name
+                   </label>
+                   <div class="field">
+                       @Html.TextBoxFor(x => x.Name, new {@class = "input-190 input", @readonly = "readonly"})
+                   </div>
+               </div>
+               <div class="clearfix">
+               </div>
+               <div class="lag">
+                   @Html.HiddenFor(x => x.CardId)
+                   <label class="label-100">
+                       Card Number
+                   </label>
+                   <div class="field">
+                       @Html.TextBoxFor(x => x.CardName, new {@class = "input-190 input", @readonly = "readonly"})
+                   </div>
+               </div>
+               <div class="clearfix">
+               </div>
+               <div class="lag">
+                   <label class="label-100">
+                       Issue Date
+                   </label>
+                   <div class="field">
+                       @Html.DateTextBoxFor(x => x.BookIssued.Date, new {@class = "input-190 input"})
+                   </div>
+               </div>
+               <div class="clearfix">
+               </div>
+               <div class="lag">
+                   <label class="label-100">
+                       Due Date
+                   </label>
+                   <div class="field">
+                       @Html.DateTextBoxFor(x => x.BookIssued.BookDueDate, new { @class = "input-190 input" })
+                   </div>
+               </div>
+               <div class="clearfix"></div>
+               <div class="field">
+                   <input type="button" value="Issue" id="IssueSubmit" class="btn" style="margin-left: 25%"/>
+               </div>
+           }
+<script>
+    $(document).ready(function () {
+        $("#BookIssued_BookDueDate, #BookIssued_Date").mask("99/99/9999");
+    });
+   
+</script>

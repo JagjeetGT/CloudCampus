@@ -1,0 +1,250 @@
+﻿@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Product";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="../../Content/KendoUI/kendo.core.min.js" type="text/javascript"></script>
+<script src="../../Content/KendoUI/kendo.upload.min.js" type="text/javascript"></script>
+<link href="../../Content/KendoUI/kendo.kendo.min.css" rel="stylesheet" type="text/css" />
+@Html.Partial("_PartialProductMenu")
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Product</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addProduct"></a></li>
+                        }
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="product-list">
+                    @Html.Action("ProductList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalProduct" style="display: none;" title="Product(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        ToggleBatch();
+    });
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="#">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+
+                $('#modalProduct .block').html(data);
+                $(this).addClass("done");
+                $("#modalProduct").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addProduct').live('click', function () {
+        var url = '@Url.Action("ProductAdd", "Master")';
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editProduct').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("ProductEdit", "Master")/' + id;
+        Begin();
+        getRequest(url);
+
+        return false;
+    });
+
+    $("a.ProductDelete").live('click', function () {
+        var result = confirm('Are you sure want to delete this?');
+        if (result) {
+            var url = '@Url.Action("ProductDelete")';
+            var id = $(this).attr("data-id");
+            var element = $(this);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: { id: id },
+                success: function (data) {
+                    if (data) {
+                        element.closest("tr").remove();
+                    } else {
+                        alert("could not delete");
+                    }
+                },
+                error: function (err) {
+                    writeError('msgErrorNewLocationDetails', err);
+                }
+            });
+        }
+
+    });
+
+    function sucess(data) {
+        if (data == "True") {
+            OnComplete();
+        } else {
+            $("#error").html(data);
+            $("#error").css("display", "block");
+            $.unblockUI();
+        }
+        
+    }
+    function sucessEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        } else {
+            $("#error").html(data);
+            $("#error").css("display","block");
+            $.unblockUI();
+        }
+    }
+    function OnComplete() {
+
+        $("#modalProduct .block").load("/Master/ProductAdd");
+        $("#product-list").load("/Master/ProductList");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+        $("#modalProduct").dialog("close");
+        $("#product-list").load("/Master/ProductList");
+        $.unblockUI();
+    }
+
+    $("#modalProduct").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                
+                $("#product-form").submit();
+                checkValidationError();
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#attachments").kendoUpload({
+        upload: onUpload,
+        remove: onRemove,
+        multiple: true,
+        async: {
+            saveUrl: ('/Master/UploadProductImages'),
+            removeUrl: ('/Master/RemoveImages'),
+            autoUpload: true
+        },
+        success: function (data) {
+
+            var imageGuid = data.response.path;
+            if (imageGuid == '') {
+                alert('upload failed please try again');
+            } else {
+                var name = "hddimage" + data.response.filename;
+                var extension = data.response.ext;
+                $("#imgCurrentImage").attr('src', '/Content/ProductImage/' + image);
+                var classname = "hddimage" + data.response.filename.replace('.', '');
+                $('#room-form-id').append('<input type="hidden" class="' + classname + '" value="' + imageGuid + '" name="image" id="' + name + '" />');
+               
+            }
+        }
+    });
+
+
+    function onRemove(e) {
+        for (var i = 0; i < e.files.length; i++) {
+            var data = getGuid(e.files[i].name);
+            e.files[i].name = data;
+        }
+    }
+    function getGuid(id) {
+        var newValue = "hddimage" + id.replace('.', '');
+        var returnvalue = $("." + newValue).val();
+        return returnvalue;
+    }
+    function onUpload(e) {
+        var files = e.files;
+        // Check the extension of each file and abort the upload if it is not .jpg
+        $.each(files, function () {
+            var ext = this.extension.toUpperCase();
+            if (ext == ".JPG" || ext == ".PNG" || ext == ".JPEG") {
+
+            } else {
+                $("#kendoWindow").dialog();
+                //alert("Only .jpg, .png and .jpeg files can be uploaded");
+                e.preventDefault();
+            }
+        });
+
+    }
+    
+    $("#Product_Name").live("focusout", function () {
+        if ($(this).val()) {
+            if (!$("#Product_ShortName").val()) {
+                var name = $(this).val();
+                $.getJSON("/Master/GetShortName", { name: name, module: "IP" }, function (data) {
+                    $("#Product_ShortName").val(data.shortName.toString());
+                });
+            }
+        }
+    });
+    
+    $("#Product_IsBatch").live("click", function() {
+        ToggleBatch();
+    });
+
+    function ToggleBatch() {
+        var isBatchChecked = $("#Product_IsBatch").is(':checked');
+        if(isBatchChecked) {
+            $(".batch").show();
+        } else {
+            $(".batch").hide();
+        }
+    }
+
+    $("#Product_Unit").live("change",function () {
+        var unitId = $(this).val();
+        $(".LowestUnit").each(function () {
+            $(this).val(unitId);
+        });
+    });
+</script>

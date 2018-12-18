@@ -1,0 +1,22 @@
+﻿<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "UT"))
+        {
+            <li><a href="@Url.Action("Unit", "Master")">Unit</a> <span class="divider">|</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PG"))
+        {
+            <li><a href="@Url.Action("ProductGroup", "Master")">Product Group</a> <span class="divider">
+                |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "PSG"))
+        {
+            <li><a href="@Url.Action("ProductSubGroup", "Master")">Product SubGroup</a> <span
+                class="divider">|</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "IP"))
+        {
+            <li><a href="@Url.Action("Product", "Master")">Product</a> <span class="divider">|</span></li>
+        }
+    </ul>
+</div>

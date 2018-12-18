@@ -1,0 +1,602 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.LedgerReport.BalanceSheetViewModel
+@{
+    decimal liabilitesTotal = 0;
+    decimal assetsTotal = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+   <table border="0.5" style="font-size: 7px;">
+        @if (Model.AccountGroup == true && Model.AccountSubGroup == false && Model.Ledger==true)
+        {
+            <thead>
+               <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold">
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Ledger Total
+                    </th>
+                    <th>
+                        Group Total
+                    </th>
+                </tr>
+            </thead>
+            if (Model.ReportShow == "B" || Model.ReportShow == "L")
+            {
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        LIABILITIES
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == 0 && x.BSType == "L" && x.LedgerTotal != 0))
+                {
+                    <tr>
+                        <td style="font-weight: bold">@item.AccountName
+                        </td>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold;text-align: right">@item.LedgerTotal
+                        </td>
+                    </tr>
+                    foreach (var ledger in Model.BsAccountGroupWiseList.Where(x => x.AccountGroupId == item.AccountGroupId && x.BSType == "L" && x.LedgerTotal != 0 && x.LedgerId != 0&&x.LedgerTotal.HasValue))
+                    {
+                        liabilitesTotal += ledger.LedgerTotal.Value;
+                        <tr>
+                            <td style="padding-left: 30px">@ledger.AccountName
+                            </td>
+                            <td style="text-align: right">@ledger.LedgerTotal
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                }
+       
+                <tr>
+                    <td style="font-weight: bold; text-align: right">
+                        TOTAL FOR LIABILITIES
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @liabilitesTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+            if (Model.ReportShow == "B" || Model.ReportShow == "A")
+            {
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        ASSETS
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                foreach (var item in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == 0 && x.BSType == "A" && x.AccountCategory != "PL" && x.LedgerTotal != 0))
+                {
+                    <tr>
+                        <td style="font-weight: bold">@item.AccountName
+                        </td>
+                        <td>
+                        </td>
+                        <td style="font-weight: bold;text-align: right">@item.LedgerTotal
+                        </td>
+                    </tr>
+                    foreach (var ledger in Model.BsAccountGroupWiseList.Where(x => x.AccountGroupId == item.AccountGroupId && x.BSType == "A" && x.AccountCategory != "PL" && x.LedgerTotal != 0 && x.LedgerId != 0&&x.LedgerTotal.HasValue))
+                    {
+                        assetsTotal += ledger.LedgerTotal.Value;
+                        <tr>
+                            <td style="padding-left: 30px">@ledger.AccountName
+                            </td>
+                            <td style="text-align: right">@ledger.LedgerTotal
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+                   
+                }
+                <tr>
+                    <td style="font-weight: bold; text-align: right">
+                        TOTAL FOR ASSETS
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right; font-weight: bold">
+                        @assetsTotal
+                    </td>
+                </tr>
+            }
+         }
+        else if (Model.AccountGroup == true && Model.AccountSubGroup == true && Model.Ledger==true && Model.Subledger==false)
+        {
+            <thead>
+                <tr>
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Ledger Total
+                    </th>
+                    <th>
+                        Sub Group Total
+                    </th>
+                    <th>
+                        Group Total
+                    </th>
+                </tr>
+            </thead>
+            if (Model.ReportShow == "B" || Model.ReportShow == "L")
+            {
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        LIABILITIES
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                var AccountId = 0;
+                foreach (var item in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == 0 && x.BSType == "L" && x.LedgerTotal != 0))
+                {
+                    if (AccountId != item.AccountGroupId)
+                    {
+                        AccountId = item.AccountGroupId;
+                        var AccountName = "";
+                        foreach (var SubGrp in Model.BsAccountGroupWiseList.Where(x => x.AccountGroupId == item.AccountGroupId && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                        {
+                            if (AccountName != SubGrp.AccountName && SubGrp.AccountGroupId != 0 && SubGrp.ASGId == 0 && SubGrp.LedgerId==0 && SubGrp.AccountName != "No SubGroup")
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                </tr>
+                            }
+                            if (AccountName != SubGrp.AccountName && SubGrp.LedgerId == 0)
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold; padding-left: 30px">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   
+                                foreach (var ledger in Model.BsAccountGroupWiseList.Where(x => x.LedgerId != 0 && x.ASGId == SubGrp.ASGId && x.AccountGroupId == SubGrp.AccountGroupId && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                                {
+                                    if (AccountName != ledger.AccountName && ledger.LedgerId != 0)
+                                    {
+                                        AccountName = ledger.AccountName;
+                                        liabilitesTotal += ledger.LedgerTotal.Value;
+                                        <tr>
+                                            <td style="padding-left: 45px">@ledger.AccountName
+                                            </td>
+                                            <td style="text-align: right">@ledger.LedgerTotal
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                <tr>
+                    <td style="font-weight: bold; text-align: right">
+                        TOTAL FOR LIABILITIES
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="font-weight: bold; text-align: right">
+                        @liabilitesTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+            if (Model.ReportShow == "B" || Model.ReportShow == "A")
+            {
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        ASSETS
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                var AccountId = 0;
+                foreach (var item in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == 0 && x.BSType == "A" && x.AccountCategory != "PL" && x.LedgerTotal != 0))
+                {
+                    if (AccountId != item.AccountGroupId)
+                    {
+                        AccountId = item.AccountGroupId;
+                        var AccountName = "";
+                        foreach (var SubGrp in Model.BsAccountGroupWiseList.Where(x => x.AccountGroupId == item.AccountGroupId && item.BSType == "A" && item.AccountCategory != "PL" && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                        {
+                            if (AccountName != SubGrp.AccountName && SubGrp.AccountGroupId != 0 && SubGrp.ASGId == 0 && SubGrp.LedgerId == 0 && SubGrp.AccountName != "No SubGroup")
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                </tr>
+                            }
+
+                            if (AccountName != SubGrp.AccountName && SubGrp.LedgerId == 0)
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold; padding-left: 30px">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                foreach (var ledger in Model.BsAccountGroupWiseList.Where(x => x.LedgerId != 0 && x.ASGId == SubGrp.ASGId && x.AccountGroupId == SubGrp.AccountGroupId && SubGrp.BSType == "A"  && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                                {
+                                    if (AccountName != ledger.AccountName && ledger.LedgerId != 0)
+                                    {
+                                        AccountName = ledger.AccountName;
+                                        assetsTotal += ledger.LedgerTotal.Value;
+                                        <tr>
+                                            <td style="padding-left: 45px">@ledger.AccountName
+                                            </td>
+                                            <td style="text-align: right">@ledger.LedgerTotal
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                 <tr>
+                     <td style="font-weight: bold; text-align: right">
+                         TOTAL FOR ASSETS
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                    </td>
+                     <td style="font-weight: bold; text-align: right">
+                         @assetsTotal
+                     </td>
+                 </tr>
+             }
+        }
+        
+        else if (Model.AccountGroup == true && Model.AccountSubGroup == true && Model.Ledger==true && Model.Subledger==true)
+        {
+            <thead>
+                <tr>
+                    <th>
+                        Particular
+                    </th>
+                     <th>
+                        Sub Ledger Total
+                    </th>
+                    <th>
+                        Ledger Total
+                    </th>
+                    <th>
+                        Sub Group Total
+                    </th>
+                    <th>
+                        Group Total
+                    </th>
+                </tr>
+            </thead>
+            if (Model.ReportShow == "B" || Model.ReportShow == "L")
+            {
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        LIABILITIES
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                var AccountId = 0;
+                foreach (var item in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == 0 && x.BSType == "L" && x.LedgerTotal != 0))
+                {
+                    if (AccountId != item.AccountGroupId)
+                    {
+                        AccountId = item.AccountGroupId;
+                        var AccountName = "";
+                        foreach (var SubGrp in Model.BsAccountGroupWiseList.Where(x => x.AccountGroupId == item.AccountGroupId && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                        {
+                            if (AccountName != SubGrp.AccountName && SubGrp.AccountGroupId != 0 && SubGrp.ASGId == 0 && SubGrp.LedgerId==0 && SubGrp.AccountName != "No SubGroup")
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                </tr>
+                            }
+                            if (AccountName != SubGrp.AccountName && SubGrp.LedgerId == 0)
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold;padding-left: 30px">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                   
+                                foreach (var ledger in Model.BsAccountGroupWiseList.Where(x => x.LedgerId != 0 && x.ASGId == SubGrp.ASGId && x.AccountGroupId == SubGrp.AccountGroupId && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                                {
+                                    if (AccountName != ledger.AccountName && ledger.LedgerId != 0 && ledger.ShortName != "SubLedger")
+                                    {
+                                        AccountName = ledger.AccountName;
+                                        liabilitesTotal += ledger.LedgerTotal.Value;
+                                        <tr>
+                                            <td style="padding-left: 45px">@ledger.AccountName
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td style="text-align: right">@ledger.LedgerTotal
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+            
+                                        foreach (var Subledger in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == ledger.LedgerId && x.ASGId == ledger.ASGId && x.AccountGroupId == ledger.AccountGroupId && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                                        {
+                                            if (AccountName != Subledger.AccountName && Subledger.LedgerId != 0 && Subledger.ShortName=="SubLedger")
+                                            {
+                                                AccountName = Subledger.AccountName;
+                                                <tr>
+                                                    <td style="padding-left: 60px">@Subledger.AccountName
+                                                    </td>
+                                                    <td style="text-align: right">@Subledger.LedgerTotal
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                <tr>
+                    <td style="font-weight: bold; text-align: right">
+                        TOTAL FOR LIABILITIES
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="font-weight: bold; text-align: right">
+                        @liabilitesTotal
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+            if (Model.ReportShow == "B" || Model.ReportShow == "A")
+            {
+                <tr>
+                    <td style="font-weight: bold; text-align: center">
+                        ASSETS
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                var AccountId = 0;
+                foreach (var item in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == 0 && x.BSType == "A" && x.AccountCategory != "PL" && x.LedgerTotal != 0))
+                {
+                    if (AccountId != item.AccountGroupId)
+                    {
+                        AccountId = item.AccountGroupId;
+                        var AccountName = "";
+                        foreach (var SubGrp in Model.BsAccountGroupWiseList.Where(x => x.AccountGroupId == item.AccountGroupId && item.BSType == "A" && item.AccountCategory != "PL" && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                        {
+                            if (AccountName != SubGrp.AccountName && SubGrp.AccountGroupId != 0 && SubGrp.ASGId == 0 && SubGrp.LedgerId == 0 && SubGrp.AccountName != "No SubGroup")
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                </tr>
+                            }
+
+                            if (AccountName != SubGrp.AccountName && SubGrp.LedgerId == 0)
+                            {
+                                AccountName = SubGrp.AccountName;
+                                <tr>
+                                    <td style="font-weight: bold; padding-left: 30px">@SubGrp.AccountName
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td style="font-weight: bold;text-align: right">@SubGrp.LedgerTotal
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+
+                                foreach (var ledger in Model.BsAccountGroupWiseList.Where(x => x.LedgerId != 0 && x.ASGId == SubGrp.ASGId && x.AccountGroupId == SubGrp.AccountGroupId && SubGrp.BSType == "A" && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                                {
+                                    if (AccountName != ledger.AccountName && ledger.LedgerId != 0 && ledger.ShortName != "SubLedger")
+                                    {
+                                        AccountName = ledger.AccountName;
+                                        <tr>
+                                            <td style="padding-left: 45px">@ledger.AccountName
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td style="text-align: right">@ledger.LedgerTotal
+                                            </td>
+                                            <td>
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>
+                                                
+                                        foreach (var Subledger in Model.BsAccountGroupWiseList.Where(x => x.LedgerId == ledger.LedgerId && x.ASGId == ledger.ASGId && x.AccountGroupId == ledger.AccountGroupId && x.LedgerTotal != 0 && x.LedgerTotal.HasValue))
+                                        {
+                                            if (AccountName != Subledger.AccountName && Subledger.LedgerId != 0 && Subledger.ShortName == "SubLedger")
+                                            {
+                                                AccountName = Subledger.AccountName;
+                                                assetsTotal += Subledger.LedgerTotal.Value;
+                                                <tr>
+                                                    <td style="padding-left: 60px">@Subledger.AccountName
+                                                    </td>
+                                                    <td style="text-align: right">@Subledger.LedgerTotal
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                 <tr>
+                     <td style="font-weight: bold; text-align: right">
+                         TOTAL FOR ASSETS
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                     </td>
+                     <td>
+                    </td>
+                     <td style="font-weight: bold; text-align: right">
+                         @assetsTotal
+                     </td>
+                 </tr>
+             }
+        }
+    </table>
+</div>

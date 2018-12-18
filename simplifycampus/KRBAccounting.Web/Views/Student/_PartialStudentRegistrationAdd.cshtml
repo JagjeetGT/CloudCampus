@@ -1,0 +1,63 @@
+@model KRBAccounting.Domain.Entities.ScStudentRegistration
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("StudentRegistrationAdd", "Student", new { controller = "Student" }, new AjaxOptions { HttpMethod = "Post", OnBegin = "Begin", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(m=>m.AcademicYearId)
+    <div class="lag">
+        <div class="stack">
+            <label class="label-70">
+                Class</label>
+            <div class="field">@Html.HiddenFor(x => x.ClassId, new { @required = "required" })
+                <input type="text" class = "modallink   input-190"  href="@Url.Action("GetStudentRegistrationByClassId", "School")" parent="Id"  valueId="ClassId" id="feeitemledger" title="Class Name" entermsg = "Press F1 for choosing existing cash/bank list." />
+                @Html.ValidationMessageFor(m => m.ClassId)</div>
+        </div>
+       <input type="text" id="Code" readonly="readonly" class="input-100"/>
+        <div class="clearfix">
+        </div>
+        <div class="lag detailEntryTable" style="height: 400px;">
+            <table class="table-bordered" id="table-class-fee-rate-detail" style="width: 825px">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th>
+                        Student
+                    </th>
+                    <th>
+                        Code
+                    </th>
+                    <th>
+                        Section
+                    </th>
+                  @*  <th>Roll No</th>*@
+                    <th>
+                        Status
+                    </th>
+                   <th>
+                        Type
+                    </th>
+                    <th>
+                        Shift
+                    </th>
+                     <th>
+                        Boarder
+                    </th>
+                    <th>
+                        Narration
+                    </th>
+                    <th></th>
+                </tr>
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="stack">
+            <label class="label-70">
+                Remarks</label>
+            <div class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+                @Html.ValidationMessageFor(m => m.Remarks)
+            </div>
+        </div>
+    </div>
+}

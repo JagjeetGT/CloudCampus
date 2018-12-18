@@ -1,0 +1,345 @@
+﻿@using KRBAccounting.Service.Models
+@model KRBAccounting.Web.ViewModels.Entry.BillOfMaterialViewModel
+@{
+    ViewBag.Title = "Bill Of Material";
+    var userRight = (UserRight) ViewBag.UserRight;
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@Html.Partial("_PartialInventoryIssueBredcrumb")
+<div id="debitnote-list">
+    <div class="workplace">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Bill Of Material</h1>
+                    <ul class="buttons">
+                        @if (userRight.Create)
+                        {
+                            <li><a href="#" class="isw-plus addBOM"></a></li>
+                        }
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="block-fluid table-sorting" id="tbl-pending">
+                    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list" id="table-bom">
+                        <thead>
+                            <tr>
+                                <th>
+                                    BOM No
+                                </th>
+                                <th>
+                                    Unit
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>
+                                    Conv. Factor
+                                </th>
+                                <th>
+                                    Remarks
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.BillOfMaterials)
+                            {
+                                var trId = "id-" + item.Id;
+                                <tr id="@trId">
+                                    <td>@item.Code
+                                    </td>
+                                    <td>@item.Unit.Code
+                                    </td>
+                                    <td>@item.Qty
+                                    </td>
+                                    <td>@item.ConversionFactor
+                                    </td>
+                                    <td>@item.Description
+                                    </td>
+                                    <td>
+                                        @if(userRight.Edit)
+                                        {
+                                              <a href="javascript:void(0)" class="BOMEdit icon-pencil" data-id="@item.Id" title="Edit: @item.Code"></a>
+                                        } |
+                                       @if(userRight.Delete)
+                                       {
+                                            <a href="javascript:void(0)" class="BOMRemove icon-remove" data-id="@item.Id" title="Delete: @item.Code">
+                                              </a>
+                                       }
+                                       
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        @Html.Raw(Html.AjaxPager(Model.BillOfMaterials, "BillOfMaterialList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dr">
+            <span></span>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalBoM" style="display: none;" title="Bill Of Material(+)">
+    <div class="block">
+    </div>
+</div>
+<div class="dialog" id="modalBoMEdit" style="display: none;" title="Bill Of Material Edit">
+    <div class="block">
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/jQuery.tmpl.min.js")" type="text/javascript"></script>
+<script type="text/x-jquery-tmpl" id="BOMAddTemplate">
+    @Html.CollectionItemJQueryTemplate("BillOfMaterialAddEdit", Model.BillOfMaterialAddViewModel)
+</script>
+<script type="text/x-jquery-tmpl" id="BOMDetailAddTemplate">
+     @{
+         var model = new KRBAccounting.Web.ViewModels.Entry.BillOfMaterialDetailAddViewModel();
+         model.UnitList = Model.BillOfMaterialAddViewModel.UnitList;
+         model.EntryControl = Model.EntryControl;
+      }
+    @Html.CollectionItemJQueryTemplate("_PartialBillOfMaterialDetailEntry", model)
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        convertToNepali("2012/08/02");
+    });
+
+    $('a.addBOM').live('click', function () {
+        var guid = _generateGuid();
+        $('#modalBoM .block').html($("#BOMAddTemplate").tmpl({ index: guid }));
+        $.validator.unobtrusive.parse(".ui-dialog #bom-form");
+        $("#modalBoM").dialog('open');
+        return false;
+    });
+
+    $("#modalBoM").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $(".ui-dialog #bom-form");
+                // var isValid = form.valid();
+                var isValid = true;
+                if (isValid) {
+                    var length = $(".detail-entry").length;
+                    $(".detail-entry").each(function (index) {
+                        if (index == 0 || index != length - 1) {
+                            if ($(this).find(".product_text").val() == 0 || $(this).find(".product_text").val == "") {
+                                isValid = false;
+                                $(this).find(".product_text").addClass("error").focus();
+                            }
+                            if ($(this).find(".costCenter").val() == 0 || $(this).find(".costCenter").val == "") {
+                                if (isValid) {
+                                    $(this).find(".costCenter").addClass("error").focus();
+                                } else {
+                                    $(this).find(".costCenter").addClass("error");
+                                }
+                            }
+                            if ($(this).find(".godown").val() == 0 || $(this).find(".godown").val == "") {
+                                if (isValid) {
+                                    $(this).find(".godown").addClass("error").focus();
+                                } else {
+                                    $(this).find(".godown").addClass("error");
+                                }
+
+                            }
+                            if ($(this).find(".unit").val() == 0 || $(this).find(".unit").val == "") {
+                                if (isValid) {
+                                    $(this).find(".unit").addClass("error").focus();
+                                } else {
+                                    $(this).find(".unit").addClass("error");
+                                }
+                                // isValid = false;
+                            }
+
+
+                            if ($(this).find(".qty").val() == 0 || $(this).find(".qty").val == "") {
+                                if (isValid) {
+                                    $(this).find(".qty").addClass("error").focus();
+                                } else {
+                                    $(this).find(".qty").addClass("error");
+                                }
+                                isValid = false;
+                            }
+
+                        }
+
+                    });
+                    if (isValid) {
+                        $.ajax({
+                            type: "POST",
+                            url: form.attr('action'),
+                            data: form.serialize(),
+                            beforeSend: function () {
+                                $.blockUI();
+                            },
+
+                            success: function (data) {
+                                if (data.success) {
+                                    var guid = _generateGuid();
+                                    $('#modalBoM .block').html($("#BOMAddTemplate").tmpl({ index: guid }));
+                                    $.validator.unobtrusive.parse("#bom-form");
+                                    $("#table-bom tbody").append(data.newrow);
+                                } else {
+                                    $("#MsgError").html(data.msg).show();
+                                }
+                            },
+                            complete: function () {
+                                $.unblockUI();
+                            }
+                        });
+                    }
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("a.BOMRemove").live("click", function () {
+        var result = confirm("Are you sure?");
+        if (result) {
+            BeginRequest();
+            var currentElement = $(this);
+            var id = $(this).attr("data-id");
+            var link = '@Url.Action("BillOfMaterialDelete", "Entry")';
+            $.ajax({
+                url: link,
+                type: "POST",
+                data: { id: id },
+                error: function () {
+                    alert("An error occurred.");
+                    $.unblockUI();
+                },
+                success: function (data) {
+                    if (data) {
+                        currentElement.closest('tr').remove();
+                        $.unblockUI();
+                        GrowlMsg('Delete Successful');
+                    }
+                    else {
+                        alert("could not be deleted");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#modalBoMEdit").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                var form = $(".ui-dialog #bom-form");
+                var isValid = true;// form.valid();
+                if (isValid) {
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("BillOfMaterialEdit", "Entry")',
+                        data: form.serialize(),
+                        beforeSend: function () {
+                            $.blockUI();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                                var element = "#id-" + data.id;
+                                $(element).replaceWith(data.updatedRow);
+                                $('#modalBoMEdit .block').html("");
+                                $('#modalBoMEdit').dialog('close');
+                            }
+                            else {
+                                $("#MsgError").html(data.msg).show();
+                            }
+                        },
+                        complete: function () {
+                            $.unblockUI();
+                            GrowlMsg('Edit Successful');
+                        }
+                    });
+                }
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $('a.BOMEdit').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("BillOfMaterialEdit", "Entry")';
+        BeginRequest();
+        $.ajax({
+            url: url,
+            data: { id: id },
+            context: document.body,
+            success: function (data) {
+                $('#modalBoMEdit .block').html(data);
+                $('#modalBoMEdit').dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                $.unblockUI();
+                alert("Error");
+            }
+        });
+        return false;
+    });
+
+    $(".qty").live("keyup", function () {
+        var totalQty = parseFloat(0);
+        $(this).removeClass("error");
+        $(this).closest("tr").find(".qty").removeClass("error");
+        $(".qty").each(function (index, element) {
+            if (element.value) {
+                totalQty += parseFloat(element.value);
+            }
+        });
+        $("#TotalQty").val(totalQty);
+    });
+
+
+
+
+
+    $(".product_text").live("focus", function () {
+        var shortName = $(this).closest("td").find(".product_reference").val();
+        $("#ShortName").val(shortName);
+        var productId = $(this).closest("tr").find(".product_id").val();
+        if (productId != "0" && productId != "") {
+            $.getJSON("/Entry/ProductStockQuantity?id=" + productId, null, function (data) {
+                $("#StockQty").val(data);
+            });
+        }
+    });
+
+    $(".product_text").live("focusout", function () {
+        $("#ShortName").val("");
+    });
+
+    $(".del-row").live('click', function (e) {
+        $(this).closest("tr").remove();
+
+    });
+
+
+    function PicklistCustomFunction(element, type) {
+        if (type == "raw_material") {
+            var reference = picklistelement.attr("reference");
+            $("#ShortName").val(reference);
+            var changeId = picklistelement.attr("data-changeid");
+            $("#" + changeId).closest("td").find(".product_reference").val(reference);
+        }
+    }
+</script>

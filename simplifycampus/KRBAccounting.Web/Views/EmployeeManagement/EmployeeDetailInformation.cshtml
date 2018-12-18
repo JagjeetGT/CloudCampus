@@ -1,0 +1,250 @@
+﻿@using KRBAccounting.Enums
+@model KRBAccounting.Domain.Entities.ScEmployeeInfo
+<div class="workplace">
+    <div class="head">
+        <h1>
+            Employee Detail Inforamtion</h1>
+        <ul class="buttons">
+            @* <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report" class="isw-refresh"></a></li>*@
+            <li><a id="print" title="Print" class="isw-print" style="float: right"></a></li>
+            @*<li><a href="@Url.Action("ExcelBusListReport", "Report")" target="_blank" title="Export to Excel" class="isw-excel" style="float:right">
+        </a></li>*@
+            <li><a href="@Url.Action("PdfStaffDetailInfo", "EmployeeManagement")" target="_blank" title="Export to Pdf" class="isw-pdf" style="float:right" >
+            </a></li>
+        </ul>
+        <div class="clear">
+        </div>
+    </div>
+    <div class="block-fluid table-sorting" id="report">
+        <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" style="border-top: 0px;
+            border-bottom: 0px" id="tbl-list" align="center">
+            <tr>
+                <h3 align="center">
+                    Employee Detail Information</h3>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Code :</label>
+                        @Model.Code</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Name :</label>
+                        @Model.Description
+                    </div>
+                </td>
+                <td rowspan="4" style="border: 0px">
+                    @*<img src="../../Content/img/kohinoor.png" width="50px" />*@
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Gender :</label>
+                        @Model.Gender</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Marital Status :</label>@Model.MaritalStatus</div>
+                </td>
+                <td style="border: 0px">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            DOB :</label>
+                        @Model.MitiOfBirth B.S/
+                        @Convert.ToDateTime(Model.DateOfBirth).ToShortDateString() A.D
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Father's Name :</label>@Model.FatherName
+                    </div>
+                </td>
+                <td style="border: 0px">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Religion :
+                        </label>@Model.Religion
+                    </div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Mobile :
+                        </label>@Model.Mobile
+                    </div>
+                </td>
+                <td style="border: 0px">
+                </td>
+            </tr>
+        </table>
+        <table cellpadding="0" cellspacing="0" style="border-top: 0px; border-bottom: 0px"
+            width="100%" class="listpopup" id="tbl-list" align="center">
+            <tr>
+                <td colspan="2" style="border: 0px">
+                    <h4 align="center">
+                        Other Information</h4>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border: 0px">
+                    <h5>
+                        Permanent Address</h5>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Country :
+                        </label>@Model.Country</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Address :</label>
+                        @Model.Address</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Phone :</label>
+                        @Model.Phone</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Email :
+                        </label>@Model.Email</div>
+                </td>
+            </tr>
+        </table>
+        <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list"
+            style="border-top: 0px; border-bottom: 0px" align="center">
+            <tr colspan="2">
+                <h5>
+                    Temporary Address</h5>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Country:
+                        </label>@Model.Country1</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Address :
+                        </label>@Model.Address1</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Phone :</label>
+                        @Model.Phone1</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Email :</label>
+                        @Model.Email1</div>
+                </td>
+            </tr>
+        </table>
+        <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list"
+            style="border-top: 0px; border-bottom: 0px" align="center">
+            <tr>
+                <td colspan="2" style="border: 0px">
+                    <h5>
+                        Education/Qualification Information</h5>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Education :</label>@Model.Education</div>
+                </td>
+            </tr>
+        </table>
+        <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list"
+            style="border-top: 0px; border-bottom: 0px" align="center">
+            <tr>
+                <td colspan="2" style="border: 0px">
+                    <h5>
+                        Official Information</h5>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Date of Join :</label>@Convert.ToDateTime(Model.DateOfJoin).ToShortDateString()</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Category :
+                        </label>@Model.EmployeeCategory.Description</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Department :</label>@Model.EmployeeDepartment.Description</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Post :</label>@Model.EmployeePost.Description</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Start Time :</label>
+                       @Model.StartTime @*@Convert.ToDateTime(Model.StartTime).ToShortTimeString()*@</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            End Time :</label>@Model.EndTime@*@Convert.ToDateTime(Model.EndTime).ToShortTimeString()*@</div>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Weekend Holiday :</label>@Enum.GetName(typeof(Weekholidayenum), Model.Weekholiday)</div>
+                </td>
+                <td style="border: 0px">
+                    <div class="lag">
+                        <label class="label-120">
+                            Status :</label>
+                        @Enum.GetName(typeof(StatusEnum), Model.Status)</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

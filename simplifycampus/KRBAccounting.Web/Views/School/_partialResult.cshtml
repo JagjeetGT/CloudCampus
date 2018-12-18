@@ -1,0 +1,50 @@
+﻿@model IEnumerable<KRBAccounting.Web.ViewModels.ResultGenerationViewModel>
+@if (Model.Any())
+{
+    <div class="lag">
+        <label class="label-100">
+            Promoted Class</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.FirstOrDefault().PromoteClassId, Model.FirstOrDefault().CLassList)
+        </div>
+        <label class="label-100">
+            Academy Year</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.FirstOrDefault().AYId, Model.FirstOrDefault().AcademyList)
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <table class="listpopup">
+        <tr>
+            <th>
+                <input type="checkbox" class="checkall" />
+            </th>
+            <th>
+                Student
+            </th>
+            <th>
+                Total Mark
+            </th>
+            <th>
+                Obt Mark
+            </th>
+            <th>
+                Percentage
+            </th>
+            <th>
+                Division
+            </th>
+            <th>
+                Result
+            </th>
+            <th>
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            @Html.Partial("_partialReGeneration", item)
+        }
+    </table>
+    <a href="Javascript:void(0);" class="submit btn ">Save </a>
+}

@@ -1,0 +1,76 @@
+﻿@model KRBAccounting.Domain.Entities.CashBankDetail
+@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@{
+    var classname = string.Empty;
+    if (Model.Amount != 0)
+    {
+        classname = "deletable";
+    }
+
+    EntryControlPL entryControl = (EntryControlPL)ViewBag.EntryControl;
+    var trId = "tr_" + Model.Index;
+}
+<tr  id="@trId"  class="cashbank-detail-entry detail-entry @classname">
+    @using (Html.BeginCollectionItem("cashBankDetailEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.LedgerId, new { @class = "hdn_ledger_Id" })
+            <input type="text" class = "modallink text_ledger input-245 input" href="@Url.Action("GetNoCashBankLedger", "Master")"  value="@UtilityService.GetLedgerNameById(Model.LedgerId)" title="General Ledger"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        if (entryControl != null && entryControl.SubLedger)
+        {
+        <td>
+            @Html.HiddenFor(x => x.SlCode, new { @class = "hdn_subledger_Id" })
+            <input type="text" class = "modallink text_subledger input-80 input" value="@UtilityService.GetSubLedgerNameById(Model.SlCode)" href="@Url.Action("GetSubLedger", "Master")" id="subledger_name"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        }
+        @Html.HiddenFor(x => x.Amount, new { @class = "hdn_Amount" })
+        @Html.HiddenFor(x => x.AmountType, new { @class = "hdn_AmountType" })
+        if (Model.AmountType == Convert.ToInt32(AmountTypeEnum.Payment))
+        {
+        <td class="receiptAmt">
+            <input type="text" value="" entermsg="Enter Receipt Amount." class="input-80 receipt-amt numberonly input" />
+        </td>
+        <td class="paymentAmt">
+            <input type="text"  value="@Model.Amount" entermsg="Enter Payment Amount." class="input-80 payment-amt numberonly input"/>
+        </td>
+        }
+        else
+        {
+        <td class="receiptAmt">
+            <input type="text"  value="@Model.Amount" entermsg="Enter Receipt Amount." class="input-80 receipt-amt numberonly input" />
+        </td>
+        <td class="paymentAmt">
+            <input type="text" value="" entermsg="Enter Payment Amount." class="input-80 payment-amt numberonly input" />
+        </td>
+        }
+
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "modalNarrationlink input-245", href = "/Entry/GetCashBankDetailEdit", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

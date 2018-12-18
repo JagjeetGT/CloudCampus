@@ -1,0 +1,399 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Student Wise Marks Setup";
+    var absentid = (int)ExamAttendanceStatus.Absent;
+    var suspendid = (int)ExamAttendanceStatus.Suspend;
+
+    var WithHeldid = (int)ExamAttendanceStatus.WithHeld;
+    var userRight = (UserRight)ViewBag.UserRight;
+
+}
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Student Wise Marks Setup
+                    </h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                             <li><a href="Javascript:void(0)" class="isw-plus addScExam"></a></li>
+                        }
+                       
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="exam-list">
+                    @Html.Action("StudentWiseMarksList")
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="dialog" id="modalExam" style="display: none;" title="Student Wise Marks (+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $("tr._detail").live("click", function () {
+        var classid = $(this).attr("data-classid");
+        var examId = $(this).attr("data-examid");
+        $("#Detail-list").load("/Exam/ExamMarkSetupDetail?classId=" + classid + "&&examId=" + examId);
+    });
+   
+    $("#modalExam").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                CheckRow();
+               
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    function CheckRow() {
+        var element = document.querySelectorAll(".text_student");
+
+        //        alert(element.length);
+        //alert($(".text_subject"));
+        if (element.length > 0) {
+            $("#form-id").submit();
+        }
+        else {
+            alert("No information");
+        }
+    }
+
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalExam .block').html(data);
+                $(this).addClass("done");
+                $("#modalExam").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addScExam').live('click', function () {
+        Begin();
+        var url = '@Url.Action("StudentWiseMarksAdd", "Exam")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editExam').live('click', function () {
+        Begin();
+        var classId = $(this).attr("data-classId");
+        var examId = $(this).attr("data-examId");
+        var studentId = $(this).attr("data-studentId");
+        var url = '@Url.Action("StudentWiseMarksEdit", "Exam")?classId=' + classId + "&examId=" + examId + "&studentId=" + studentId;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+        $("#exam-list").load("/Exam/StudentWiseMarksList");
+        $('#modalExam .block').load("/Exam/StudentWiseMarksAdd");
+        $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#exam-list").load("/Exam/StudentWiseMarksList");
+        $('#modalExam').dialog("close");
+        $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+
+    $("#student-id").live("blur", function (e) {
+        var examId = $("#ExamId").val();
+        var classId = $("#ClassId").val();
+        var studentId = $("#StudentId").val();
+
+
+        if (studentId != 0 && studentId != '' && examId != 0 && examId != '' && classId != 0 && classId != '') {
+            url = '@Url.Action("GetStudentWiseMarkss")?classId=' + classId + '&studentId=' + studentId + '&examId=' + examId;
+            $.ajax({
+                url: url,
+                type: "GET",
+
+                error: function () {
+                    alert("An error occurred.");
+                },
+                success: function (data) {
+                    if (data == "ExistData") {
+                        e.preventDefault();
+                        $.unblockUI();
+                        alert("Student is Already Exists");
+                        return false;
+
+                    }
+                    else {
+                        $("#table-examroutine-detail tr.detail-entry").remove();
+                        $("#table-examroutine-detail").append(data);
+                        $("#table-examroutine-detail").append();
+                        AutoGEN();
+
+                        $('.text_student').first().focus();
+                    }
+
+                }
+            });
+        }
+    });
+
+    function AutoGEN() {
+        var ledgerElement = document.querySelectorAll(".hdn_StudentId");
+        $.each(ledgerElement, function (index) {
+            var element = $(this).closest("tr");
+            element.attr("id", "tr_" + index);
+
+            var Subject_valueid = element.find(".hdn_StudentId").attr("id");
+
+            element.find(".text_student").attr({
+                "valueId": Subject_valueid,
+                "id": "subject_" + index
+            });
+
+            var Theory_Status = element.find(".Theory-Status").attr("id");
+
+            element.find(".text_TheoryStatus").attr({
+                "valueId": Theory_Status,
+                "id": "text_TheoryStatus_" + index
+            });
+
+            var Practical_Status = element.find(".Practical-Status").attr("id");
+
+            element.find(".text_PracticalStatus").attr({
+                "valueId": Practical_Status,
+                "id": "text_PracticalStatus_" + index
+            });
+        });
+    }
+    $(".TheoryObtainedMarks , .PracticalObtainedMarks").live("blur", function () {
+        var elementt = $(this).closest("tr");
+        var themark = elementt.find(".TheoryObtainedMarks").val();
+        var pracmark = elementt.find(".PracticalObtainedMarks").val();
+        var total = parseFloat(themark) + parseFloat(pracmark);
+        elementt.find(".TotalMark").val(total);
+//        var passmark = elementt.find(".TheoryPassMark").val();
+//        if (parseFloat(themark) < parseFloat(passmark)) {
+//            elementt.find(".TheoryObtainedMarks").addClass("Fail");
+//        } else {
+//            elementt.find(".TheoryObtainedMarks").removeClass("Fail");
+//        }
+
+
+        CheckResult();
+        Calc();
+
+    });
+
+    function CheckResult() {
+        var thobt =  document.querySelectorAll('.TheoryObtainedMarks');
+   $.each(thobt, function() {
+         var elet =  $(this).closest("tr");
+        var themark = elet.find(".TheoryObtainedMarks").val();
+            var passmark = elet.find(".TheoryPassMark").val();
+             if (parseFloat(themark) < parseFloat(passmark)) {
+            elet.find(".TheoryObtainedMarks").addClass("Fail");
+        } else {
+            elet.find(".TheoryObtainedMarks").removeClass("Fail");
+        }
+        });
+        var parobt =  document.querySelectorAll('.PracticalObtainedMarks');
+   $.each(thobt, function() {
+         var elet =  $(this).closest("tr");
+        var themark = elet.find(".PracticalObtainedMarks").val();
+            var passmark = elet.find(".PracticalPassMark").val();
+             if (parseFloat(themark) < parseFloat(passmark)) {
+            elet.find(".PracticalObtainedMarks").addClass("Fail");
+        } else {
+            elet.find(".PracticalObtainedMarks").removeClass("Fail");
+        }
+        });
+
+    }
+    $(".TheoryObtainedMarks").live('keyup', function (e) {
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        var elementt = $(this).closest("tr");
+        var themark = elementt.find(".TheoryObtainedMarks").val();
+        var theoryFullmark = elementt.find(".TheoryFullMark").val();
+
+        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+            if (parseFloat(theoryFullmark) < parseFloat(themark)) {
+                elementt.find(".TheoryObtainedMarks").val(theoryFullmark);
+                return false;
+            } else {
+                return true;
+            }
+            
+        } else
+            if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+                return true;
+            } else {
+                return false;
+            }
+
+        });
+            $(".PracticalObtainedMarks").live('keyup', function (e) {
+        var ev = e || event;
+        var keycode = ev.keyCode;
+        var elementt = $(this).closest("tr");
+        var themark = elementt.find(".PracticalObtainedMarks").val();
+        var theoryFullmark = elementt.find(".PracticalFullMark").val();
+
+        if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+            if (parseFloat(theoryFullmark) < parseFloat(themark)) {
+                elementt.find(".PracticalObtainedMarks").val(theoryFullmark);
+                return false;
+            } else {
+                return true;
+            }
+            
+        } else
+            if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+                return true;
+            } else {
+                return false;
+            }
+
+        });
+        $(".text_TheoryStatus, .text_PracticalStatus").live('blur', function () {
+            var elementt = $(this).closest("tr");
+            var statusvalue = elementt.find('.Theory-Status').val();
+            var practicalstatusValue = elementt.find('.Practical-Status').val();
+            if(statusvalue==@absentid || statusvalue==@suspendid || statusvalue==@WithHeldid) {
+               elementt.find(".text_TheoryStatus").addClass("Fail");
+                elementt.find(".TheoryObtainedMarks").val(0);
+            } else {
+                elementt.find(".text_TheoryStatus").removeClass("Fail");
+            }
+            if(practicalstatusValue==@absentid || practicalstatusValue==@suspendid|| statusvalue==@WithHeldid) {
+                elementt.find(".text_PracticalStatus").addClass("Fail");
+                elementt.find(".PracticalObtainedMarks").val(0);
+            } else {
+                elementt.find(".text_PracticalStatus").removeClass("Fail");
+            }
+             $(".TheoryObtainedMarks").blur();
+    $(".PracticalObtainedMarks").blur();
+            Calc();
+        });
+
+
+    function Calc() {
+        var fullmark = CalcFullMark();
+        var obtmark = CalcObtMark();
+
+        $("#TotalFullMarks").val(fullmark);
+        $("#TotalObtainedMarks").val(obtmark);
+
+        var failClass = document.querySelectorAll('.Fail');
+        if (failClass.length > 0) {
+            $("#Result").val("Fail");
+        } else {
+            $("#Result").val("Pass");
+        }
+
+        var percent = parseFloat(obtmark) / parseFloat(fullmark) * 100;
+        var percentage = Math.round(percent * 100) / 100;
+        $("#Percentage").val(percentage);
+
+        var result = $("#Result").val();
+       if (result =="Pass") {
+       
+           
+     
+  GetDivision(percentage);
+       }
+    }
+    
+    function GetDivision(percentage) {
+        var url = '@Url.Action("GetDivisionRank", "School")?percent=' + percentage+'&&classId=' + $("#ClassId").val()+'&&examId='+$("#ExamId").val() ;
+        $.getJSON(url, function (data) {
+           
+            if (data.divisionDescription != null) {
+                $("#DivisionDescription").val(data.divisionDescription);
+                $("#DivisionId").val(data.id);
+            } else {
+                $("#msg").html(data);
+            }
+
+        });
+    }
+
+
+    function CalcFullMark() {
+
+        var ledgerElement = document.querySelectorAll(".TheoryFullMark");
+        var theoryfullmark = parseFloat(0);
+        var Practicalfullmark = parseFloat(0);
+        var totalfullmark = parseFloat(0);
+        $.each(ledgerElement, function () {
+            var element = $(this).closest('tr');
+            theoryfullmark += parseFloat(element.find(".TheoryFullMark").attr("value"));
+            Practicalfullmark += parseFloat(element.find(".PracticalFullMark").attr("value"));
+        });
+        totalfullmark = theoryfullmark + Practicalfullmark;
+
+        return totalfullmark;
+    }
+
+    function CalcObtMark() {
+        var ledgerElement = document.querySelectorAll(".TheoryObtainedMarks");
+        var theoryfullmark = parseFloat(0);
+        var Practicalfullmark = parseFloat(0);
+        var totalfullmark = parseFloat(0);
+        $.each(ledgerElement, function () {
+            var element = $(this).closest('tr');
+            theoryfullmark += parseFloat(element.find(".TheoryObtainedMarks").attr("value"));
+            Practicalfullmark += parseFloat(element.find(".PracticalObtainedMarks").attr("value"));
+        });
+        totalfullmark = theoryfullmark + Practicalfullmark;
+
+        return totalfullmark;
+    }
+
+
+   
+</script>

@@ -1,0 +1,89 @@
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<KRBAccounting.Domain.Entities.PyEmployeeSalaryMaster>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th>
+                    Employee
+                </th>
+                <th>
+                    Basic Salary
+                </th>
+                <th>
+                    Allowance
+                </th>
+                <th>
+                    Status
+                </th>
+               @* <th>
+                    CreatedBy
+                </th>
+                <th>
+                    CreatedOn
+                </th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var i = 1;
+                <tr>
+                    <td>
+                        @if (item.EmployeeInfo != null)
+                        {
+                            @item.EmployeeInfo.Description
+                        }
+                    </td>
+                    <td>
+                        @item.BasicSalary
+                    </td>
+                    <td>
+                        @foreach (var c in item.AllowanceSalaryAllowanceMappings)
+                        {
+                            //if (c.AllowanceMaster != null)
+                            //{
+                                if (i == 1)
+                                {
+
+                            @c.AllowanceMaster.Name
+
+                                }
+                                else
+                                {
+                                    
+                            <text>, @c.AllowanceMaster.Name </text>
+                                   
+                                }
+                            
+                            i++;
+                        }
+                    </td>
+                    <td>@item.Status
+                    </td>
+                   @* <td>@item.User.FullName
+                    </td>
+                    <td>@item.CreatedOn
+                    </td>*@
+                    <td>
+                        @if (CheckPermission.GivePermission("Edit", "PyESM"))
+                        {
+                            <a href="javascript:void(0)" class="editScRoom icon-pencil" data-id="@item.Id" title="Edit">
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @if (CheckPermission.GivePermission("Delete", "PyESM"))
+                        {
+                            <a href="javascript:void(0)" class="deleteClass icon-remove" data-id="@item.Id" title="Delete">
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "EmployeeSalaryMastersList", "Payroll", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "Rooms-list" }))
+    </div>
+</div>

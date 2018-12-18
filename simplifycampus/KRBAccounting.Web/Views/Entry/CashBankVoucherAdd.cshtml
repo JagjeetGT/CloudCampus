@@ -1,0 +1,280 @@
+﻿@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Entry.CashBankVoucherAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@{
+    var Receipt =
+      Convert.ToInt32(KRBAccounting.Enums.AmountTypeEnum.Receipt);
+    var Payment =
+    Convert.ToInt32(KRBAccounting.Enums.AmountTypeEnum.Payment); 
+}
+@*@using (Ajax.BeginForm("CashBankVoucherAdd", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success", UpdateTargetId = "MsgError",OnBegin = "Begin"}, new { @class = "form-horizontal form-custom", id = "cash-bank-voucher-form" }))*@
+@using (Html.BeginForm("CashBankVoucherAdd", "Entry", FormMethod.Post, new { @class = "form-horizontal form-custom", id = "cash-bank-voucher-form" }))
+{@Html.HiddenFor(x => x.CashBankMaster.Id)
+    <div id="MsgError">
+    </div>
+@*<div style="width: 700px;">*@
+    <div id="toPrint" style="min-width: 690px; max-width: 833px; height: 400px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Voucher No.</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.CashBankMaster.DocId)
+                        @Html.TextBoxFor(x => x.CashBankMaster.VoucherNo, new { @class = "modaldoclink input-90 input", IsDetail = "True", module = "CB", valueId = "CashBankMaster_DocId", entermsg = "Press F1 for choosing existing cash/bank list." })
+                        @Html.ValidationMessageFor(m => m.CashBankMaster.VoucherNo)<span class="loading CashBankMaster_VoucherNo">
+                                                                                       <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                    </span></span><span class="stack" style="padding: 0 0 0 250px">
+                                      <label class="label-90">
+                                          Date</label>
+                                      <span class="field">
+                                          @Html.TextBoxFor(m => m.VoucherDate)
+                                          @Html.ValidationMessageFor(m => m.VoucherDate)
+                                      </span></span>
+            </div>
+                 @*   <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Date</label>
+                        <span class="field">
+                            @Html.DateTextBoxFor(m => m.CashBankMaster.VoucherDate)
+                            @Html.ValidationMessageFor(m => m.CashBankMaster.VoucherDate)
+                        </span></span><span class="stack" style="padding: 0 0 0 250px">
+                        <label class="label-90">
+                            Miti</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.CashBankMaster.VoucherMiti)
+                            @Html.ValidationMessageFor(m => m.CashBankMaster.VoucherMiti)
+                        </span></span>
+            </div>*@
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Cash/Bank</label>
+                    <span class="field">
+                        @Html.HiddenFor(x => x.CashBankMaster.LedgerId)
+                        <input type="text" class = "modallink_custom input" href="@Url.Action("GetCashBankLedger", "Master")" valueId="CashBankMaster_LedgerId" id="cashbankledger" createhref="@Url.Action("OnlineCashBankLedgerAdd", "Master")" title="Cashbook Account" entermsg = "Press F1 for choosing existing cash/bank list." />
+                        @Html.ValidationMessageFor(m => m.CashBankMaster.LedgerId)
+                    </span></span><span class="stack" style="padding: 0 0 0 208px">
+                        <label class="label-100">
+                            Current Balance :
+                        </label>
+                        <span class="field">
+                            @Html.TextBoxFor(x => x.CurrentBalance, new { @class = "input-120 input", disabled = "disabled" })
+                        </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Cheque No.</label>
+                    <span class="field">
+                        @Html.TextBoxFor(m => m.CashBankMaster.ChequeNo, new { @class = "input-100 input", entermsg = "Enter Cheque No." })
+                        @Html.ValidationMessageFor(m => m.CashBankMaster.ChequeNo)
+                    </span></span><span class="stack" style="padding: 0 0 0 240px">
+                        <label class="label-90">
+                            Cheque Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.ChequeDate, new { @class = "input-80 input", entermsg = "Enter Cheque Date." })
+                            @Html.ValidationMessageFor(m => m.ChequeDate)
+                        </span></span>
+            </div>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Currency</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.CashBankMaster.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                        <input type="text" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" valueId="CashBankMaster_CurrencyId" id="CurrencyId" entermsg = "Press F1 for choosing existing cash/bank list." />
+                    </span></span><span class="stack">
+                        <label class="label-37">
+                            Rate</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.CashBankMaster.Rate, new { @class = "input-45 input", entermsg = "Enter Rate." })
+                             @Html.ValidationMessageFor(m => m.CashBankMaster.Rate)
+                        </span></span>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" id="table-cash-bank-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="220px">
+                        General Ledger
+                    </th>
+                    @if (Model.EntryControl != null && Model.EntryControl.SubLedger)
+                    {
+                        <th width="80px">
+                            Sub Ledger
+                        </th>
+                    }
+                    <th width="90px" class="receiptAmt">
+                        Rec Amount
+                    </th>
+                    <th width="90px" class="paymentAmt">
+                        Pay Amount
+                    </th>
+                    <th width="220px">
+                        Narration
+                    </th>
+                </tr>
+                @{
+                    var viewModel = new KRBAccounting.Web.ViewModels.Entry.CashBankDetailEntryViewModel();
+                    viewModel.EntryControl = Model.EntryControl;
+                    
+                }
+                @Html.Partial("_PartialCashBankDetailEntry", viewModel)
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-53">
+                    Gl Code</label>
+                @Html.TextBoxFor(x => x.GlCode, new { @class = "input-100 input", disabled = "disabled" })
+            </span><span class="stack">
+                <label class="label-53">
+                    Curr Bal</label>
+                @Html.TextBoxFor(x => x.GlDetailCurrBal, new { @class = "input-100 input", disabled = "disabled" })
+            </span>
+        </div>
+        <div class="clearfix">
+        </div>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-25">
+                        Total</label>
+                </span><span class="stack">
+                    <label class="label-53">
+                        Rec Amt</label>
+                    @Html.TextBoxFor(x => x.RecAmt, new { @class = "input-64 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-53">
+                        Pay Amt</label>
+                    @Html.TextBoxFor(x => x.PayAmt, new { @class = "input-64 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-53">
+                        Net Amt</label>
+                    @Html.TextBoxFor(x => x.NetAmt, new { @class = "input-64 input", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-85">
+                        Net Amt in Rs</label>
+                    @Html.TextBoxFor(x => x.NetAmtRs, new { @class = "input-64 input", disabled = "disabled" })
+                </span>
+            </div>
+        </fieldset>
+        <div class="clearfix">
+        </div>
+         @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+         {
+             <div class="lag">
+                 <label class="label-90">
+                     Remarks</label>
+                 <span class="field">
+                     @Html.TextBoxFor(m => m.CashBankMaster.Remarks, new {@class = "input-245 input", module = 1})
+                 </span>
+             </div>
+         }
+    </div>
+@* if (Model.SystemControl.UDF == "1")
+                    {
+                        if (Model.UdfEntries.LongCount() != 0)
+                        {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry" style="display: none">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+                        }
+                    }*@
+}
+<script type="text/javascript">
+    var recAmt = parseFloat(0);
+    var payAmt = parseFloat(0);
+    var netAmt = parseFloat(0);
+    receipt = @Receipt;
+    payment = @Payment;
+    $(document).ready(function () {
+        $("#cashbankvoucherno").focus();
+      var dateType = @Model.SystemControl.DateType.ToString();
+     if(dateType=="1") {
+            $("#VoucherDate").mask("99/99/9999");
+            $("#VoucherDate").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#VoucherDate").mask("9999/99/99");
+            $("#VoucherDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+        if(dateType=="1") {
+            $("#ChequeDate").mask("99/99/9999");
+            $("#ChequeDate").live("blur", function() {
+                if($(this).val()!="__/__/____"&& $(this).val()!=" ") 
+                {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                    }
+            });
+            }
+    else {
+            $("#ChequeDate").mask("9999/99/99");
+            $("#ChequeDate").live("blur", function() {
+                if($(this).val()!="____/__/__"&& $(this).val()!=" ")
+                    {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+                    }
+            });
+        }
+    
+       $.getJSON("/Entry/GetCashBank", null, function (data) {
+            if(data!=null) {
+                $("#cashbankledger").val(data.Description);
+                $("#CashBankMaster_LedgerId").val(data.Id);
+                $("#CashBankMaster_LedgerId").getCurrentBal();
+            }
+           
+        });
+        $(".text_ledger").attr("id", "product_0");
+        $(".text_ledger").attr("valueId", $(".hdn_ledger_Id").attr("id"));
+        $(".text_ledger").closest("tr").attr("id","tr_0");
+
+        $(".text_subledger").attr("id", "sub_0");
+        $(".text_subledger").attr("valueId", $(".hdn_subledger_Id").attr("id")); 
+        
+
+
+        
+     
+        $(".text_ledger").getDetailCurrentBalance();
+    });
+</script>

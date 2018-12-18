@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "_PartialDocumentNumberingError";
+}
+<div class="dialog" id="modalSalaryScale" style="display: none;" title="Fee Receipt">
+    <div class="block">
+        <div class="lag">
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#modalSalaryScale .block').html("Document Numbering for this module is not set yet. Please set it and try again.");
+        $("#modalSalaryScale").dialog('open');
+    });
+
+    $("#modalSalaryScale").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+</script>

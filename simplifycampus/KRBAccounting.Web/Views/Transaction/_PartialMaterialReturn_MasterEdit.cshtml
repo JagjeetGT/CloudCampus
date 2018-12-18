@@ -1,0 +1,162 @@
+@model KRBAccounting.Domain.Entities.ScMaterialReturnMaster
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("MaterialReturn_MasterEdit", "Transaction", new { controller = "Transaction" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCompleteEdit" }, new { @class = "form-horizontal from-custom online-form", id = "materialIssueform-id" }))
+{ @Html.HiddenFor(m => m.Id)
+    @Html.HiddenFor(m => m.CreatedBy)
+    @Html.HiddenFor(m => m.CreatedOn)
+    @Html.HiddenFor(m => m.ModifiedBy)
+    @Html.HiddenFor(m => m.ModifiedOn)
+    <div class="lag">
+        <span class="stack">
+            <label class="label-100">
+                Voucher No</label>
+            <span class="field">@Html.TextBoxFor(m => m.VoucherNo, new { @class = "input-200", entermsg = "Enter VoucherNo", @readonly = true })
+                @Html.ValidationMessageFor(m => m.VoucherNo) </span></span><span class="stack">
+                    <label class="label-160">
+                        Voucher Date (MM/dd/yyyy)</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.VoucherMiti)
+                        @Html.DateTextBoxFor(m => m.VoucherDate, new { @class = "input-100", @readonly = true })
+                        @Html.ValidationMessageFor(m => m.VoucherDate)
+                    </span></span>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div class="lag activity_detail">
+        <fieldset style="text-align: center;">
+            <span style="font-size: 17px; font-weight: bold;">General Information </span>
+            <div class="clearfix">
+            </div>
+            <table class="table-bordered" id="bus-route-list" width="100%">
+                <tr class="nodrop nodrag">
+                    <th>
+                    </th>
+                    <th>
+                        Particulars
+                    </th>
+                    <th>
+                        Employee
+                    </th>
+                    <th>
+                        Qty
+                    </th>
+                    <th>
+                        Rate
+                    </th>
+                    <th>
+                        Basic Amount
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+                @foreach (var item in Model.MaterialReturnDetailses)
+                {
+                    @Html.Partial("AddMaterialreturnDetail", item)
+                }
+                @{
+                var documentmodel = new KRBAccounting.Domain.Entities.ScMaterialReturnDetails();
+                }
+                @Html.Partial("AddMaterialReturnDetail", documentmodel)
+            </table>
+        </fieldset>
+        <div class="clearfix">
+        </div>
+        <div class="lag" style="margin-top: 15px;">
+            <span class="stack">
+                <label class="label-45">
+                    Remarks</label>
+                <span class="field">@Html.TextBoxFor(m => m.Remarks, new { @class = "input-305", entermsg = "Enter Remarks" })
+                    @Html.ValidationMessageFor(m => m.Remarks) </span></span><span class="stack">
+                        <label class="label-70">
+                            Net Amount</label>
+                        <span class="field">@Html.TextBoxFor(m => m.NetAmount, new { @class = "input-90", @readonly = true, entermsg = "Enter NetAmount" })
+                            @Html.ValidationMessageFor(m => m.NetAmount) </span></span>
+        </div>
+    </div>
+
+
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#VoucherDate").mask('99/99/9999');
+
+        var e = document.querySelectorAll(".hdn_product");
+        $.each(e, function (index) {
+            var element = $(this).closest('tr');
+            element.attr("id", "tr_" + index);
+            var document = element.find(".hdn_product").attr('id');
+            var documentStaff = element.find(".hdn_staff").attr('id');
+            element.addClass("deletable");
+
+            element.find(".product").attr({
+                "valueId": document,
+                "id": "product_" + index
+            });
+
+
+            element.find(".staff").attr({
+                "valueId": documentStaff,
+                "id": "staff_" + index
+            });
+
+        });
+        getTotalAmt();
+    });
+
+    //    $("#VoucherDate").live('blur', function () {
+    //        var date = $(this).val();
+    //        var nepDate = convertToNepaliNew(date);
+    //        $("#VoucherMiti").val(nepDate);
+    //    });
+
+    //    function NewRowDetailList(element, index) {
+    //        $(".product:last").attr("id", "product_" + index);
+    //        $(".product:last").closest("tr").attr("id", "tr_" + index);
+    //        $(".product").attr("valueId", $(".hdn_product:last").attr("id"));
+
+    //        $(".staff:last").attr("id", "staff_" + index);
+    //        $(".staff:last").closest("tr").attr("id", "tr_" + index);
+    //        $(".staff").attr("valueId", $(".hdn_staff:last").attr("id"));
+    //    }
+
+    //    $(".del-row").live("click", function () {
+    //        $(this).closest("tr").remove();
+    //    });
+
+    //    $(".Rate").live('blur', function () {
+    //        var element = $(this);
+    //        var quantity = element.closest("tr").find(".Quantity").val();
+    //        var rate = element.closest("tr").find(".Rate").val();
+    //        var amount = parseFloat(quantity * rate);
+    //        element.closest("tr").find(".LocalAmount").val(amount);
+    //        getTotalAmt();
+    //    });
+
+    //    $(".Quantity").live('blur', function () {
+    //        var element = $(this);
+    //        var quantity = element.closest("tr").find(".Quantity").val();
+    //        var rate = element.closest("tr").find(".Rate").val();
+    //        var amount = parseFloat(quantity * rate);
+    //        element.closest("tr").find(".LocalAmount").val(amount);
+    //        getTotalAmt();
+    //    });
+
+
+    //    function getTotalAmt() {
+
+    //        var totalAmt = parseFloat(0);
+
+    //        var amtlist = document.querySelectorAll(".LocalAmount");
+
+    //        $(amtlist).each(function () {
+    //            if (this.value != "") {
+
+    //                totalAmt += parseFloat(this.value);
+    //            }
+    //        });
+
+    //        $("#NetAmount").val(totalAmt);
+    //    }
+    
+</script>

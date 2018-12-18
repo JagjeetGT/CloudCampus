@@ -1,0 +1,20 @@
+﻿
+<div class="breadLine">
+    <ul class="breadcrumb">
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "BOM"))
+        {
+            <li><a href="@Url.Action("BillOfMaterial", "Entry")">Bill Of Material</a> <span class="divider">
+                                                                                          |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "MI"))
+        {
+            <li><a href="@Url.Action("MaterialIssue", "Entry")">Material Issue</a> <span class="divider">
+                                                                                       |</span></li>
+        }
+        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Navigate", "MR"))
+        {
+            <li><a href="@Url.Action("MaterialReturn", "Entry")">Material Return</a> <span class="divider">
+                                                                                         |</span></li>
+        }
+    </ul>
+</div>

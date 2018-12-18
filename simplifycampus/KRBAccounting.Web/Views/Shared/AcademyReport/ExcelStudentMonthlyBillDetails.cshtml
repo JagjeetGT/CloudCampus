@@ -1,0 +1,186 @@
+﻿@using System.Globalization
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentMonthlyBillReportViewModel
+@{
+    decimal drGrandTotal = 0;
+    decimal crGrandTotal = 0;
+    decimal grandTotalBalance = 0;
+    decimal totalOpening = 0;
+}
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table style="font-size: 15px;">
+        <thead>
+            <tr bgcolor="#E6EEEE" align="center" style="font-weight: bold; border: 1px solid black">
+                <th>
+                    Date
+                </th>
+                <th>
+                    Voucher No.
+                </th>
+                <th>
+                    Month
+                </th>
+                <th>
+                    ClassName
+                </th>
+                <th>
+                    Std.Code
+                </th>
+                <th width="30%">
+                    Student Name
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Narration
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.BillStudents)
+        {
+            var month = new DateTime(item.Year, item.Month, 1).ToString("MMM", CultureInfo.InvariantCulture);
+            var data = UtilityService.GetStudentRegistrationDetail(item.StudentId);
+                 <tr style="border: 1px solid black">
+                <td>@item.YearMiti @Enum.GetName(typeof(KRBAccounting.Enums.NepaliMonth), item.MonthMiti)
+                (@item.Year @month)
+                </td>
+                <td>
+                    @item.BillNo
+                </td>
+                <td>
+                   @item.YearMiti @Enum.GetName(typeof(KRBAccounting.Enums.NepaliMonth), item.MonthMiti)
+                (@item.Year @month)
+                </td>
+                <td>
+                    @if (data.StudentRegistration.Class != null)
+                    {
+                        @data.StudentRegistration.Class.Description
+                    }
+                </td>
+                <td>
+                    @if (item.ScStudentinfo != null)
+                    {
+                        @item.ScStudentinfo.StdCode
+                    }
+                </td>
+                <td>
+                    @if (item.ScStudentinfo != null)
+                    {
+                        @item.ScStudentinfo.StuDesc
+                    }
+                    Roll: @data.RollNo
+                    @if (data.Section != null)
+                    {
+                        <text>Sec: </text> @data.Section.Description
+                    }
+                </td>
+                @* <td>@data.RollNo
+                </td>*@
+                <td>
+                 
+                </td>
+                <td>
+                    @item.Remarks
+                </td>
+            </tr>
+      
+                    foreach (var c in item.MonthlyBills.Where(x => x.FeeAmount != 0))
+                    {
+                        var studentfee = UtilityService.GetStudentFeeTerm(item.StudentId, c.FeeItemId, c.ScMonthlyBillStudent.AcademicYearId);
+            <tr style="border: 1px solid black">
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                @{
+                        var scStudentFeeTerm = studentfee.FirstOrDefault();
+                }
+                <td>
+                    @if (scStudentFeeTerm != null)
+                    {
+                        @scStudentFeeTerm.StudentFeeRateDetail.FeeItem.Description
+                    }
+                    else
+                    {
+                        <text> @c.FeeItem.Description</text>
+                    }
+                </td>
+                <td>
+                    @if (scStudentFeeTerm != null)
+                    {
+                        @scStudentFeeTerm.StudentFeeRateDetail.FeeRate
+                    }
+                    else
+                    {
+                        <text> @c.FeeAmount</text>
+                    }
+                </td>
+                <td>
+                </td>
+            </tr>
+                    foreach (var i in studentfee)
+                    {
+            <tr style="border: 1px solid black">
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    <p style="float: left; width: 135px; padding-left: 65px; margin: 0px;">@i.FeeTerm.Description</p>
+                    <span>@i.LocalRate %</span>
+                </td>
+                <td>
+                    @i.LocalAmount
+                </td>
+                <td>
+                </td>
+            </tr>
+                    }
+                    }
+            <tr style="border: 1px solid black">
+                <td colspan="6" align="center">
+                    Student Total
+                </td>
+                <td>
+                    @item.Amount
+                </td>
+                <td>
+                </td>
+            </tr>
+                    grandTotalBalance += item.Amount;
+        }
+        @if (grandTotalBalance != 0)
+        {
+          <tr style="border: 1px solid black">
+                <td colspan="6" align="center">
+                    Grand Total
+                </td>
+                <td>
+                    @grandTotalBalance
+                </td>
+            </tr>
+        }
+    </table>
+</div>

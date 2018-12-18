@@ -1,0 +1,178 @@
+@model KRBAccounting.Web.ViewModels.Academy.AcademicsExamAddViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@*@{
+   
+    var Startdate = Model.StartDate.ToString("dd/MM/yyyy");
+    var Enddate = Model.EndDate.ToString("dd/MM/yyyy");
+}*@
+
+@{
+
+
+    var placeholder = "MM/DD/YYYY";
+    var miti = "";
+    if (Model.SystemControl.DateType == 2)
+    {
+        miti = "(Miti)";
+         placeholder = "yyyy/mm/dd";
+     }
+}
+@using (Ajax.BeginForm("ExamAdd", "Exam", new { controller = "Exam" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.ScExam.Id)
+    <div class="lag">
+        <label class="label-90">
+            Description</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ScExam.Description, new { @class = "input-215 input", entermsg = "Enter Description" })
+            @Html.ValidationMessageFor(m => m.ScExam.Description)<span class="loading ScExam_Description">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+        </div>
+         <label class="label-90">
+            Code</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ScExam.Code, new { @class = "input-120 input", entermsg = "Enter Description" })
+            @Html.ValidationMessageFor(m => m.ScExam.Code)<span class="loading ScExam_Code">
+                        <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif"/></span>
+        </div>
+    </div>
+
+    
+    <div class="clearfix">
+    </div>
+    
+    <div class="lag">
+        <span class="stack">
+            <label class="label-90">
+               Start Date 
+                @miti
+                
+                
+            </label>
+            <span class="field">@*  @Html.HiddenFor(x => x.DBOMiti)
+                                        @Html.HiddenFor(x => x.DBO, new { displayId = "DBODisplay" })
+                                       @Html.TextBoxFor(x => x.DBODisplay, new { @class = "input-190 input", miti = Model.SystemControl.DateType, dateId = "DBO", displayId = "DBODisplay", mitiId = "DBOMiti" })*@
+                @Html.TextBoxFor(x => x.DisplayStartDate, new { @class = "input-187", @placeholder = placeholder })
+                @Html.ValidationMessageFor(x => x.DisplayStartDate)
+            </span></span>
+            <span class="stack">
+            <label class="label-90">
+               End Date 
+            @miti
+                
+                
+                </label>
+            <span class="field">@*  @Html.HiddenFor(x => x.DBOMiti)
+                                        @Html.HiddenFor(x => x.DBO, new { displayId = "DBODisplay" })
+                                       @Html.TextBoxFor(x => x.DBODisplay, new { @class = "input-190 input", miti = Model.SystemControl.DateType, dateId = "DBO", displayId = "DBODisplay", mitiId = "DBOMiti" })*@
+                @Html.TextBoxFor(x => x.DisplayEndDate, new { @class = "input-187", @placeholder = placeholder })
+                @Html.ValidationMessageFor(x => x.DisplayEndDate)
+            </span></span>
+           @* <label class="label-90">
+                Start Date</label>
+            <div class="field"><span>
+                @Html.HiddenFor(m => m.ScExam.StartMiti)
+                @Html.HiddenFor(m => m.StartDate, new { displayId = "DisplayStartDate" })
+                @Html.TextBoxFor(m => m.DisplayStartDate, new { @class = "input-170 input", entermsg = "Enter Voucher Date.", miti = Model.SystemControl.DateType, dateId = "StartDate", displayId = "DisplayStartDate", mitiId = "ScExam_StartMiti" })
+                @Html.ValidationMessageFor(m => m.StartDate)
+                <input type="hidden" id="currStartDate" value="@Startdate"/></span>
+            </div>
+                <label class="label-60">
+                    End Date</label>
+                <div class="field"><span>
+                    @Html.HiddenFor(m => m.ScExam.EndMiti)
+                    @Html.HiddenFor(m => m.EndDate, new { displayId = "DisplayEndDate" })
+                    @Html.TextBoxFor(m => m.DisplayEndDate, new { @class = "input-170 input", entermsg = "Enter Voucher Date.", miti = Model.SystemControl.DateType, dateId = "EndDate", displayId = "DisplayEndDate", mitiId = "ScExam_EndMiti" })
+                    @Html.ValidationMessageFor(m => m.EndDate)
+                    <input type="hidden" id="currEndDate" value="@Enddate"/></span>
+                </div>*@
+    </div>  <div class="clearfix">
+    </div>
+    <div class="lag">
+        <label class="label-90">
+            Schedule</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ScExam.Schedule, new { @class = "input-170 input", entermsg = "Enter Schedule" })
+            @*@Html.ValidationMessageFor(m => m.ScExam.Schedule)*@
+        </div>
+        <label class="label-40">
+            Exam Type</label>
+        <div class="field">
+            @Html.DropDownListFor(x => x.ScExam.Type, Model.ExamType, new { @class = "input-170 input", entermsg = "Enter Exam Type" })
+            @Html.ValidationMessageFor(m => m.ScExam.Type)
+        </div>
+           <label class="label-90">
+           Is Final</label>
+        <div class="field">
+            @Html.EditorFor(x=>x.ScExam.IsFinal)
+            @Html.ValidationMessageFor(m => m.ScExam.IsFinal)
+        </div>
+    </div> 
+       
+
+    <div class="clearfix">
+    </div>
+
+
+    <div class="lag">
+        <label class="label-90">
+            Memo</label>
+        <div class="field">
+            @Html.TextBoxFor(m => m.ScExam.Memo, new { @class = "input-450 input", entermsg = "Enter Remarks" })
+            @Html.ValidationMessageFor(m => m.ScExam.Memo)
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+//    $(document).ready(function() {
+
+//  
+//    var dateType = @Model.SystemControl.DateType;
+//    var nepDate;
+//    if(dateType==1) {
+//        startdate = $("#currStartDate").val();
+//        nepDate = convertToNepali(startdate);
+//    } else {
+//        startdate = $("#currStartDate").val();
+//        startdate = convertToNepali(startdate);
+//        nepDate = startdate;
+//    }
+//    $("#ScExam_StartMiti").val(nepDate);
+//    $("#DisplayStartDate").val(startdate);
+//        $("#ScExam_EndMiti").val(nepDate);
+//    $("#DisplayEndDate").val(startdate);
+//    $("#StartDate").nepDateTimePicker();
+//        $("#EndDate").nepDateTimePicker();
+//  });
+    $(document).ready(function() {
+        var dateType = @Model.SystemControl.DateType;
+        if (dateType == "1") {
+            $("#DisplayStartDate,#DisplayEndDate").mask("99/99/9999");
+            $("#DisplayStartDate,#DisplayEndDate").live("blur", function() {
+                var validDate = isDate($(this).val(), "/", 1, 0, 2);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        } else {
+            $("#DisplayStartDate,#DisplayEndDate").mask("9999/99/99");
+            $("#DisplayStartDate,#DisplayEndDate").live("blur", function() {
+                var date = $(this).val();
+                var validDate = isNepaliDate(date);
+                if (!validDate) {
+                    $($(this).addClass("error"));
+                } else {
+                    $($(this).removeClass("error"));
+                }
+            });
+        }
+    });
+
+
+
+     
+</script>

@@ -1,0 +1,21 @@
+﻿@model KRBAccounting.Domain.Entities.ScStudentinfo
+@{
+    ViewBag.Title = "AddStudent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--Breadcurmb goes here-->
+@Html.Partial("_PartialAddStudent", Model)
+<script type="text/javascript">
+    $('#StuDesc').live('click', function () {
+        var val = $(this).val;
+        if (val.length > 0) {
+            $.ajax({
+                url: 'School/GenerateStudentCode',
+                data:{studentName:val},
+                success:function (data) {
+                        
+                }
+            });
+    }
+});
+</script>

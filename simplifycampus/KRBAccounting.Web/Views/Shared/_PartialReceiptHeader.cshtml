@@ -1,0 +1,36 @@
+﻿@model KRBAccounting.Web.ViewModels.Report.ReceiptHeader
+@{
+    var url = string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~")) + "/Content/img/NoImage.jpg";
+}
+<table>
+    <tr>
+        <td rowspan="2" width="12%">
+            <img src="@Model.CompanyLogo" width="40" height="30" />
+        </td>
+        <td rowspan="2" width="30%">
+            <font style="font-weight: bold">@Model.CompanyName</font>
+        </td>
+        <td width="58%">
+            <font style="font-weight: normal; font-size: 10px">@Model.CompanyAddress</font>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <font style="font-weight: normal; font-size: 10px">Ph. No. @Model.Phone</font>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center">
+            <font style="font-weight: bold; font-size: 13px">Receipt</font>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <font style="font-weight: bold; font-size: 13px">No. :</font> <font style="font-weight: normal;font-size:10px;">@Model.ReceiptNo  </font >                                                                                                                                                                                       font-size: 8px">@Model.ReceiptNo</font>
+        </td>
+        <td align="right">
+            <font style="font-weight: bold; font-size: 13px">Date :</font> <font style="font-weight: normal;font-size:10px;">@Model.ReceiptDate  </font >             
+                                                                                                                                                                                                                                                                           font-size: 8px">@Model.ReceiptDate</font>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,475 @@
+﻿@model KRBAccounting.Web.ViewModels.Setup.SystemControlViewModel
+@{
+    ViewBag.Title = "SystemControl";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using KRBAccounting.Service
+<div class="workplace">
+    <div class="head">
+        <h1>
+            System Control</h1>
+        <div class="clearfix">
+        </div>
+    </div>
+    @using (Html.BeginForm("SystemControl", "Setup"))
+    {
+        @Html.HiddenFor(x => x.SystemControl.Id)
+        <div id="tabs" style="width: 100%">
+            <ul>
+                <li><a href="#tabs-1">Option</a></li>
+                <li><a href="#tabs-2">Profit & Loss / CashBook</a></li>
+                <li><a href="#tabs-3">Sales</a></li>
+                <li><a href="#tabs-4">Purchase</a></li>
+                <li><a href="#tabs-5">Inventory</a></li>
+            </ul>
+            <div id="tabs-1">
+                <fieldset>
+                    <div class="lag input-370">
+                        <fieldset class="input-315 margin-5">
+                            <legend>Date Format</legend>
+                            <div class="lag date-format">
+                                @Html.RadioButtonForSelectList(m => m.SystemControl.DateType, Model.DateFormat)
+                            </div>
+                        </fieldset>
+                        <fieldset class="input-315 margin-5">
+                            <legend>Audit Trial</legend>
+                            <div class="lag date-format">
+                                @Html.RadioButtonForSelectList(m => m.SystemControl.AuditTrial, Model.AuditTrial)
+                            </div>
+                        </fieldset>
+                        <fieldset class="input-315 margin-5">
+                            <legend>UDF</legend>
+                            <div class="lag date-format">
+                                @Html.RadioButtonForSelectList(m => m.SystemControl.UDF, Model.UDF)
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="lag input-370 margin-5">
+                        <span class="stack">
+                            <label class="label-160">
+                                Auto Popup</label>
+                            <span class="field">
+                                @Html.EditorFor(x => x.SystemControl.IsAutoPopup)
+                            </span></span><span class="stack">
+                                <label class="label-160">
+                                    Currrent Date</label>
+                                <span class="field">
+                                    @Html.EditorFor(x => x.SystemControl.IsCurrDate)
+                                </span></span><span class="stack">
+                                    <label class="label-160">
+                                        Confirm Saving</label>
+                                    <span class="field">
+                                        @Html.EditorFor(x => x.SystemControl.IsConfirmSaving)
+                                    </span></span><span class="stack">
+                                        <label class="label-160">
+                                            Confirm Cancel</label>
+                                        <span class="field">
+                                            @Html.EditorFor(x => x.SystemControl.IsConfirmCancel)
+                                        </span></span><span class="stack">
+                                            <label class="label-160">
+                                                Enable Branch</label>
+                                            <span class="field">
+                                                @Html.EditorFor(x => x.SystemControl.EnableBranch)
+                                            </span></span><span class="stack">
+                                                <label class="label-160">
+                                                    Print Data Only</label>
+                                                <span class="field">
+                                                    @Html.EditorFor(x => x.SystemControl.PrintDataOnly)
+                                                </span></span>
+                    </div>
+                </fieldset>
+                <div class="clearfix">
+                </div>
+                <fieldset class="margin-5">
+                    <legend>Default Currency</legend>
+                    <div class="lag">
+                        <span class="stack">
+                            <label class="label-100">
+                                Currency Code</label>
+                            <span class="field">
+                                @Html.TextBoxFor(x => x.SystemControl.CurrCode, new { @class = "input-64" })
+                            </span></span><span class="stack">
+                                <label class="label-60">
+                                    Description</label>
+                                <span class="field">
+                                    @Html.TextBoxFor(x => x.SystemControl.CurrDesc, new { @class = "input-190" })
+                                </span></span><span class="stack">
+                                    <label class="label-25">
+                                        Unit</label>
+                                    <span class="field">
+                                        @Html.TextBoxFor(x => x.SystemControl.CurrUnit, new { @class = "input-64" })
+                                    </span></span>
+                    </div>
+                </fieldset>
+                <div class="clearfix">
+                </div>
+                <div class="lag">
+                    <span class="stack">
+                        <label class="label-100">
+                            Page Size</label>
+                        <span class="field">
+                            @Html.TextBoxFor(x => x.SystemControl.PageSize, new { @class = "input-64 input" })
+                        </span></span><span class="stack">
+                            <label class="label-100">
+                                Student Fee A/C</label>
+                            <span class="field">
+                                @Html.HiddenFor(x => x.SystemControl.StudentFeeAc)
+                                <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.StudentFeeAc)" value="@UtilityService.GetLedgerNameById(Model.SystemControl.ClosingStockPl)" class = "modallink input-120 input" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")"  valueId="SystemControl_StudentFeeAc" id="student-fee-id" />
+                            </span></span><span class="stack">
+                                <label class="label-100">
+                                    Education Tax A/C</label>
+                                <span class="field">
+                                    @Html.HiddenFor(x => x.SystemControl.EducationTaxAc)
+                                    <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.EducationTaxAc)" class = "modallink input-120 input" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")"  valueId="SystemControl_EducationTaxAc" id="Education-Tax-id" />
+                                </span></span><span class="stack">
+                                    <label class="label-100">
+                                        No Of fee Receipt Print
+                                    </label>
+                                    <span class="field">
+                                        @Html.DropDownListFor(x => x.SystemControl.NoOfFeeReceiptPrint, Model.NoOfFeeReceiptPrintList)
+                                    </span></span><span class="stack">
+                                        <label class="label-100">
+                                            No Of Bill Print
+                                        </label>
+                                        <span class="field">
+                                            @Html.DropDownListFor(x => x.SystemControl.NoOfBillPrint, Model.NoOfBillPrintList)
+                                        </span></span><span class="stack">
+                                            <label class="label-100">
+                                                Library Late Fine
+                                            </label>
+                                            <span class="field">
+                                                @Html.HiddenFor(x => x.SystemControl.LibraryLateFine)
+                                                <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.LibraryLateFine)" class = "modallink input-120 input" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")"  valueId="SystemControl_LibraryLateFine" id="Library-Late-Fine-id" />
+                                            </span></span>
+                </div>
+            </div>
+            <div id="tabs-2">
+                <fieldset>
+                    <span class="lag">
+                        <label class="label-110">
+                            Profit & Loss</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.ProfitLossAc)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.ProfitLossAc)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")"  valueId="SystemControl_ProfitLossAc" id="ProfitLossAc" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <label class="label-110">
+                            Cash Book</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.CashBook)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.CashBook)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_CashBook" id="CashBook" />
+                        </span></span><span class="clearfix"></span><span class="lag">
+                            <input type="button" class="entry-control btn btn-large" value="Entry Control" module="PL" />
+                        </span>
+                </fieldset>
+            </div>
+            <div id="tabs-3">
+                <fieldset>
+                    <span class="lag">
+                        <label class="label-110">
+                            Sales A/C</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.SalesAc)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.SalesAc)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_SalesAc" id="SalesAc" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <label class="label-110">
+                            Sales Return A/C</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.SalesReturnAc)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.SalesReturnAc)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_SalesReturnAc" id="SalesReturnAc" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <label class="label-110">
+                            VAT</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.Vat)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.Vat)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_Vat" id="Vat" />
+                        </span></span><span class="clearfix"></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <input type="button" class="entry-control btn btn-large" value="Entry Control" module="SB" />
+                    </span>
+                </fieldset>
+            </div>
+            <div id="tabs-4">
+                <fieldset>
+                    <span class="lag">
+                        <label class="label-120">
+                            Purchase A/C</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.PurchaseAc)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.PurchaseAc)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_PurchaseAc" id="PurchaseAc" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <label class="label-120">
+                            Purchase Return A/C</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.PurchaseReturnAc)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.PurchaseReturnAc)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_PurchaseReturnAc" id="PurchaseReturnAc" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <input type="button" class="entry-control btn btn-large" value="Entry Control" module="PB" />
+                    </span>
+                </fieldset>
+            </div>
+            <div id="tabs-5">
+                <fieldset>
+                    <span class="lag">
+                        <label class="label-120">
+                            Opening Stock P/L</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.OpeningStockPl)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.OpeningStockPl)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_OpeningStockPl" id="OpeningStockPl" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <label class="label-120">
+                            Closing Stock P/L</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.ClosingStockPl)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.ClosingStockPl)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_ClosingStockPl" id="ClosingStockPl" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <label class="label-120">
+                            Closinging Stock</label>
+                        <span class="field">
+                            @Html.HiddenFor(x => x.SystemControl.ClosingingStock)
+                            <input type="text" value="@UtilityService.GetLedgerNameById(Model.SystemControl.ClosingingStock)" class = "modallink input-370" href="@Url.Action("GetLedger", "Setup")" createhref="@Url.Action("OnlineGeneralLedgerAdd", "Master")" valueId="SystemControl_ClosingingStock" id="ClosingingStock" />
+                        </span></span>
+                    <div class="clearfix">
+                    </div>
+                    <div class="lag">
+                        <label class="label-90">
+                            Expired Product</label>
+                        <span class="field">
+                            @Html.DropDownListFor(x => x.SystemControl.ExpiredProduct, Model.ExpiredProductList, new { @class = "input-64 input", entermsg = "Enter ExpiredList" })
+                        </span>
+                        <label class="label-90">
+                            Negative Stock</label>
+                        <span class="field">@Html.DropDownListFor(x => x.SystemControl.NegativeStock, Model.NegativeStockList, new { @class = "input-64 input", entermsg = "Enter ExpiredList" })</span>
+                    </div>
+                    <div class="clearfix">
+                    </div>
+                    <span class="lag">
+                        <input type="button" class="entry-control btn btn-large" value="entry-control" module="I" />
+                    </span>
+                </fieldset>
+            </div>
+        </div>
+        
+        <div class="clearfix">
+        </div>
+        <div class="form-actions">
+            <input type="submit" value="Save" class="btn btn-info" />
+        </div>
+    }
+</div>
+<div class="clearfix">
+</div>
+<div class="dialog" id="modalEntryControl">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tabs").tabs();
+        $(".date-format .RadioButton").addClass("input-120").css("float", "left");
+        $("#DateType_D").attr("checked", "checked");
+        var tab_cookie_id = parseInt($.cookie("the_tab_cookie")) || 0;
+        $("#tabs").tabs({
+            selected: tab_cookie_id,
+            show: function (e, ui) { var tab_id = ui.index; $.cookie("the_tab_cookie", tab_id, { expires: 30 }); }
+        });
+        //        var ProfitLossAc = $("#SystemControl_ProfitLossAc").val();
+
+        //        if (ProfitLossAc != 0) {
+
+        //            GetAccountName(ProfitLossAc, "ProfitLossAc");
+        //        }
+        //        var CashBook = $("#SystemControl_CashBook").val();
+        //        if (CashBook != 0) {
+
+        //            GetAccountName(CashBook, "CashBook");
+        //        }
+        //        var SalesAc = $("#SystemControl_SalesAc").val();
+        //        if (SalesAc != 0) {
+
+        //            GetAccountName(SalesAc, "SalesAc");
+        //        }
+
+        //        var SalesReturnAc = $("#SystemControl_SalesReturnAc").val();
+        //        if (SalesReturnAc != 0) {
+
+        //            GetAccountName(SalesReturnAc, "SalesReturnAc");
+        //        }
+        //        var Vat = $("#SystemControl_Vat").val();
+        //        if (Vat != 0) {
+
+        //            GetAccountName(Vat, "Vat");
+        //        }
+        //        var PurchaseAc = $("#SystemControl_PurchaseAc").val();
+        //        if (PurchaseAc != 0) {
+
+        //            GetAccountName(PurchaseAc, "PurchaseAc");
+        //        }
+        //        var PurchaseReturnAc = $("#SystemControl_PurchaseReturnAc").val();
+        //        if (PurchaseReturnAc != 0) {
+
+        //            GetAccountName(PurchaseReturnAc, "PurchaseReturnAc");
+        //        }
+        //        var OpeningStockPl = $("#SystemControl_OpeningStockPl").val();
+        //        if (OpeningStockPl != 0) {
+
+        //            GetAccountName(OpeningStockPl, "OpeningStockPl");
+        //        }
+        //        var ClosingStockPl = $("#SystemControl_ClosingStockPl").val();
+        //        if (ClosingStockPl != 0) {
+
+        //            GetAccountName(ClosingStockPl, "ClosingStockPl");
+        //        }
+        //        var ClosingingStock = $("#SystemControl_ClosingingStock").val();
+        //        if (ClosingingStock != 0) {
+
+        //            GetAccountName(ClosingingStock, "ClosingingStock");
+        //        }
+        //        var StudentFeeAc = $("#SystemControl_StudentFeeAc").val();
+        //        if (StudentFeeAc != 0) {
+
+        //            GetAccountName(StudentFeeAc, "student-fee-id");
+        //        }
+        //        var EducationTaxAc = $("#SystemControl_EducationTaxAc").val();
+        //        if (EducationTaxAc != 0) {
+
+        //            GetAccountName(EducationTaxAc, "Education-Tax-id");
+        //        }
+    });
+
+
+    //    function GetAccountName(ledgerId, attrId) {
+
+    //        $.ajax({
+    //            url: '@Url.Action("GetLedgerById", "Setup")/' + ledgerId,
+    //            dataType: "json",
+    //            type: "GET",
+    //            error: function () {
+    //                alert("An error occurred.");
+    //            },
+    //            success: function (data) {
+
+    //                if (data.length > 0) {
+
+    //                    $("#" + attrId).val(data);
+    //                }
+    //            }
+    //        });
+    //    }
+    function GetSalesBillingTerm(id, attrId) {
+
+        $.ajax({
+            url: '@Url.Action("GetSalesBillingTermById", "Setup")/' + id,
+
+            dataType: "json",
+            type: "GET",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+
+                if (data.length > 0) {
+
+                    $("#" + attrId).val(data);
+                }
+            }
+        });
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('.block').html(data);
+                $(this).addClass("done");
+                $("#modalEntryControl").dialog('open');
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+    $("#modalEntryControl").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                saveEntryControl();
+                $(this).dialog("close");
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    $('.entry-control').live('click', function () {
+        var module = $(this).attr("module");
+        var url = "";
+        if (module == "PL") {
+            url = '@Url.Action("EntryControlPL", "Setup")';
+        }
+        else if (module == "SB") {
+            url = '@Url.Action("EntryControlSales", "Setup")';
+        }
+        else if (module == "PB") {
+            url = '@Url.Action("EntryControlPurchase", "Setup")';
+        }
+        else if (module == "I") {
+            url = '@Url.Action("EntryControlInventory", "Setup")';
+        }
+
+
+        getRequest(url);
+        return false;
+    });
+
+    //    $('#saveEntryControl').live("click", function () {
+    //        var form = $("#entry-control");
+    //        $.ajax({
+    //            type: "POST",
+    //            url: form.attr('action'),
+    //            data: form.serialize(),
+    //            success: function (data) {
+    //                $("#modalEntryControl").modal('hide');
+    //            }
+    //        });
+    //    });
+
+    function saveEntryControl() {
+        var form = $("#entry-control");
+        $.ajax({
+            type: "POST",
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function (data) {
+                $("#modalEntryControl").dialog('close');
+            }
+        });
+    };
+  
+    
+</script>

@@ -1,0 +1,347 @@
+﻿@model KRBAccounting.Web.ViewModels.ARAP.PartyLedgerFormViewModel
+@{
+    ViewBag.Title = "Ledger";
+}
+<div class="workplace">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="head">
+                <h1>
+                    Party Ledger</h1>
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" id="generate_report" title="Generate New Report"
+                           class="isw-refresh"></a></li>
+                    <li><a href="@Url.Action("PdfPartyLegderReport", "ARAP")" target="_blank" title="Export to Pdf" class="isw-pdf" >
+                        </a></li>
+                    <li><a href="@Url.Action("ExcelPartyLegderReport", "ARAP")" target="_blank" title="Export to Excel" class="isw-excel">
+                        </a></li>
+                    <li><a id="print" title="Print" class="isw-print"></a></li>
+                </ul>
+                <div class="clear">
+                </div>
+            </div>
+            <div id="report" class="block-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dialog" id="modalReportForm">
+    <div class="block">@Html.Partial("_PartyLedgerFormReport", Model)</div>
+</div>
+<div id="modalbox-subledger" style="display: none" class="dialog">
+    <div class="msg-body block" style="padding: 0; height: 325px">
+    </div>
+    <div class="msg-footer">
+        <input type="text" class="search-box" name="search-box" placeholder="Search" />
+        <div class="selectedRows">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#modalReportForm").dialog('open');
+        $("#generate_report").live("click", function () {
+            $("#modalReportForm").dialog('open');
+        });  });
+        $("#modalReportForm").dialog({
+            autoOpen: true,
+            modal: true,
+            width: 'auto',
+            title: 'Generate Ledger Report',
+            buttons: {
+                "OK": function () {
+                    var isCheckedAllLedger = $('#AllLedger').attr('checked') ? true : false;
+                    var subLedger = $('#SubLedger').attr('checked') ? true : false;
+                    var allSubLedger = $('#AllSubLedger').attr('checked') ? true : false;
+                    var includeRemarks = $('#Remarks').attr('checked') ? true : false;
+                    var includeSummary = $('#Summary').attr('checked') ? true : false;
+                    var DocAgent = $('#DocAgent').attr('checked') ? true : false;
+                    var includeProductDetails = $('#ProductDetails').attr('checked') ? true : false;
+                    var includeTermDetails = $('#TermDetails').attr('checked') ? true : false;
+                    var category = $('input:radio[name=Category]:checked').val();
+                    var groupBy = $('#GroupBy').val();
+                    var startDate = $("#StartDate").val();
+                    var endDate = $("#EndDate").val();
+                    var reportLink = "";
+                    var branchId = $(".ui-dialog #BranchId").val();
+
+                    if (isCheckedAllLedger) {
+                        if (subLedger) {
+                            if (allSubLedger) {
+                                reportLink = "/ARAP/PartyLedger/?ledgers=&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&subLedgers=&&includeSubLedger=" + subLedger + " &&includeRemarks=" + includeRemarks + "&&includeSummary=" + includeSummary + "&&Category=" + category + "&&includeProductDetails=" + includeProductDetails + "&&includeTermDetails=" + includeTermDetails + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&BranchId=" + branchId;
+                                $.ajax({
+                                    type: "POST",
+                                    url: reportLink,
+                                    success: function (data) {
+                                        $("#report").html(data);
+                                        $('#modalReportForm').dialog("close");
+                                    }
+                                });
+                            }
+                            else {
+                                reportLink = "/ARAP/PartyLedger/?includeRemarks=" + includeRemarks + "&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&includeSummary=" + includeSummary + "&&Category=" + category + "&&includeProductDetails=" + includeProductDetails + "&&includeTermDetails=" + includeTermDetails + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&BranchId=" + branchId + "&&ledgers";
+                                //                                DisplayReportPartyLedgerandSubledger(reportLink);
+                                ShowSubLedgerPickList(reportLink);
+                            }
+                        } else {
+                            reportLink = "/ARAP/PartyLedger/?ledgers=&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&subLedgers=&&includeSubLedger=" + subLedger + "&&includeRemarks=" + includeRemarks + "&&includeSummary=" + includeSummary + "&&Category=" + category + "&&includeProductDetails=" + includeProductDetails + "&&includeTermDetails=" + includeTermDetails + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&BranchId=" + branchId;
+                            $.ajax({
+                                type: "POST",
+                                url: reportLink,
+                                success: function (data) {
+                                    $("#report").html(data);
+                                    $('#modalReportForm').dialog('close');
+                                }
+                            });
+                        }
+                        //                        $.ajax({
+                        //                            type: "POST",
+                        //                            url: "/ARAP/PartyLedger/?ledgers=&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&Category=" + category,
+                        //                            success: function (data) {
+                        //                                $("#report").html(data);
+                        //                                $('#modalReportForm').modal('hide');
+                        //                            }
+                        //                        });
+                    } else {///////////////////////////  else isCheckedAllLedger  /////////////////////////////////////
+                        if (modalshow == true) {
+                            modalshow = false;
+                            selectedRows.deleteall();
+                            var link = "";
+                            link = "/ARAP/GetLedgerCategory";
+                            $.ajax({
+                                url: link,
+                                dataType: "json",
+                                data: { category: category },
+                                type: "GET",
+                                error: function () {
+                                    alert("An error occurred.");
+                                },
+                                success: function (data) {
+                                    var tableData = CreateTableViewList(data, "listpopup", true);
+                                    $('#modalbox-report .msg-body').html(tableData);
+                                    //                                    $.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                                    //                                    //alert($(".jquery-msg-content").html());
+                                    //                                    $(".jquery-msg-content .msg-footer #display-report").attr('onclick', 'DisplayReportPartyLedger();');
+                                    //                                    $('#modalbox-report .msg-body').html("");
+                                    $("#modalbox-report").dialog({
+                                        modal: true,
+                                        width: 'auto',
+                                        buttons: {
+                                            "Ok": function () {
+                                                modalshow = true;
+                                                if (subLedger) {
+                                                    if (allSubLedger) {
+                                                        reportLink = "/ARAP/PartyLedger/?subLedgers=&&includeSubLedger=true&&includeRemarks=" + includeRemarks + "&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&includeSummary=" + includeSummary + "&&Category=" + category + "&&includeProductDetails=" + includeProductDetails + "&&includeTermDetails=" + includeTermDetails + "&&groupBy=" + groupBy + "&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&docAgent=" + DocAgent + "&&BranchId=" + branchId + "&&ledgers";
+                                                        DisplayReportPartyLedger(reportLink);
+                                                    } else {
+                                                        reportLink = "/ARAP/PartyLedger/?includeRemarks=" + includeRemarks + "&&includeSummary=" + includeSummary + "&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&Category=" + category + "&&includeProductDetails=" + includeProductDetails + "&&includeTermDetails=" + includeTermDetails + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&BranchId=" + branchId + "&&ledgers";
+                                                        DisplayReportPartyLedgerandSubledger(reportLink);
+                                                    }
+                                                } else {
+                                                    reportLink = "/ARAP/PartyLedger/?includeRemarks=" + includeRemarks + "&&includeSummary=" + includeSummary + "&&StartDate=" + startDate + "&&EndDate=" + endDate + "&&Category=" + category + "&&includeProductDetails=" + includeProductDetails + "&&includeTermDetails=" + includeTermDetails + "&&groupBy=" + groupBy + "&&docAgent=" + DocAgent + "&&BranchId=" + branchId + "&&ledgers";
+                                                    DisplayReportPartyLedger(reportLink);
+                                                }
+
+                                                $(this).dialog("close");
+                                            },
+                                            Cancel: function () {
+                                                modalshow = true;
+                                                $(this).dialog("close");
+                                            }
+                                        }
+                                    });
+                                    $('#modalbox-report .msg-footer .selectedRows').html("");
+                                    $('.selectable-table').tableSelect({
+                                        onClick: function (row) {
+                                            //alert(row);
+                                        },
+                                        onDoubleClick: function (rows) {
+                                            $.each(rows, function (i, row) {
+                                                var name = $(row).children('td').eq(0).attr("ledger-id");
+                                                if ($(row).hasClass('disabled')) {
+                                                    $(row).removeClass('disabled');
+                                                    selectedRows.remove(name);
+                                                } else {
+                                                    $(row).addClass('disabled');
+                                                    selectedRows.add(name);
+                                                }
+                                            });
+                                            updateListLedger();
+                                        },
+                                        onChange: function (row) {
+                                            //alert(row);
+                                        }
+                                    });
+                                }
+                            });
+                            return true;
+
+                        } else {
+                            return false;
+                        }
+                    }
+                    $(this).dialog('close');
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+    function updateListLedger() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="ledgers" value="' + this + '" />');
+        });
+    };
+    function updateListSubLedger() {
+        $('.selectedRows').html('');
+        $.each(selectedRows.list, function () {
+            $('.ui-dialog .selectedRows').append('<input type="hidden" name="subledgers" value="' + this + '" />');
+        });
+    };
+
+    var selectedRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.deleteall = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+    var selectedsubledgerRows = function () {
+        var instance = this;
+        if (!this.list) {
+            this.list = [];
+        }
+        this.add = function (row) {
+            list.push(row);
+        };
+        this.remove = function (row) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] == row) {
+                    this.list.splice(i, 1);
+                }
+            }
+        };
+        this.deleteall = function () {
+            this.list = [];
+        };
+        return (instance);
+    } ();
+
+    function ShowSubLedgerPickList(url) {
+        modalshow = false;
+        selectedsubledgerRows.deleteall();
+        $.ajax({
+            url: "/Master/GetSubLedger",
+            dataType: "json",
+            type: "GET",
+            error: function () {
+                alert("An error occurred.");
+            },
+            success: function (data) {
+                var tableData = CreateTableViewList(data, "listpopup", true);
+                $('#modalbox-subledger .msg-body').html(tableData);
+                $("#modalbox-subledger").dialog({
+                    modal: true,
+                    closeOnEscape: false,
+                    width: 'auto',
+                    buttons: {
+                        "Ok": function () {
+                            modalshow = true;
+                            DisplayReportPartySubLedger(url);
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            modalshow = true;
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+                //$.msg({ content: $("#modalbox-report").html(), clickUnblock: false, autoUnblock: false });
+                //$('#modalbox-report .msg-body').html("");
+
+                $('#modalbox-subledger .msg-footer .selectedRows').html("");
+                $('.selectable-table').tableSelect({
+                    onClick: function (row) {
+                        //alert(row);
+                    },
+                    onDoubleClick: function (rows) {
+                        $.each(rows, function (i, row) {
+                            var name = $(row).children('td').eq(0).attr("ledger-id");
+                            if ($(row).hasClass('disabled')) {
+                                $(row).removeClass('disabled');
+                                selectedsubledgerRows.remove(name);
+                            } else {
+                                $(row).addClass('disabled');
+                                selectedsubledgerRows.add(name);
+                            }
+                        });
+                        updateListSubLedger();
+                    },
+                    onChange: function (row) {
+                        //alert(row);
+                    }
+                });
+            }
+        });
+        return true;
+    }
+
+    $("#SubLedger").live("click", function () {
+        if ($(this).is(":checked")) {
+            $("#AllSubLedger").removeAttr("disabled");
+        } else {
+            $("#AllSubLedger").attr("disabled", "disabled");
+            $("#AllSubLedger").removeAttr("checked");
+        }
+    });
+
+
+    $('#GroupBy').change(function () {
+        var groupBy = $('#GroupBy').val();
+
+        if (groupBy == 2) {
+            $("#DocAgent").removeAttr("disabled");
+        } else {
+            $("#DocAgent").attr("disabled", "disabled");
+            $("#DocAgent").removeAttr("checked");
+        }
+    });
+
+
+    $("#Summary").live("click", function () {
+        if ($(this).is(":checked")) {
+            $("#ProductDetails").attr("disabled", "disabled");
+            $("#ProductDetails").removeAttr("checked");
+
+            $("#TermDetails").attr("disabled", "disabled");
+            $("#TermDetails").removeAttr("checked");
+        }
+        else {
+            $("#ProductDetails").removeAttr("disabled");
+            $("#TermDetails").removeAttr("disabled");
+        }
+        if ($(this).is(":checked")) {
+            $("#Remarks").attr("disabled", "disabled");
+            $("#Remarks").removeAttr("checked");
+        } else {
+            $("#Remarks").removeAttr("disabled");
+        }
+    });
+</script>

@@ -1,0 +1,21 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.MaterialIssueSingleViewModel
+@{
+    var trId = "id-" + Model.Id;
+}
+<tr id="@trId">
+    <td>@Model.Code
+    </td>
+    <td>@Model.Unit
+    </td>
+    <td>@Model.Qty
+    </td>
+    <td>@Model.ConversionFactor
+    </td>
+    <td>@Model.Description
+    </td>
+    <td>
+        <a href="javascript:void(0)" class="MIEdit icon-pencil" data-id="@Model.Id" title="Edit: @Model.Code">
+        </a>| <a href="javascript:void(0)" class="MIRemove icon-remove" data-id="@Model.Id" title="Delete: @Model.Code">
+        </a>
+    </td>
+</tr>

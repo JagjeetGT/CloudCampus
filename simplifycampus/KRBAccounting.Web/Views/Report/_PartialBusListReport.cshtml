@@ -1,0 +1,81 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportBusListReportViewModel
+
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    S.no.
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Vehicle Number
+                </th>
+                <th>
+                    Max Capacity
+                </th>
+                <th>
+                   Driver Name
+                </th>
+                <th>
+                  Driver License
+                </th>
+                <th>
+                    Helper Name
+                </th>
+                <th>
+                    Contact Office
+                </th>
+                <th>Contact Phone</th>
+                <th>
+                    Contact Person
+                </th>
+                <th>Contact Person Phone No</th>
+                <th> Fee Memo</th>
+            </tr>
+        </thead>
+        @{
+            var i = 1;
+        }
+        @foreach (var item in Model.BusList)
+        {
+            <tr>
+                <td>@i
+                </td>
+                <td>
+                    @item.Description
+                </td>
+                <td>
+                    @item.VehicleNo
+                </td>
+                <td>@item.MaxCapicity
+                </td>
+                <td>@item.DriverName
+                </td>
+                <td>
+                  @item.DriverLicense
+                </td>
+                <td>@item.HelperName
+                </td>
+                <td>@item.ContactOff
+                <td>@item.ContactPhNo</td>
+                </td>
+                <td>@item.ContactPerson</td><td>@item.ContactPersonPhNo</td><td>@item.FeeMemo</td>
+
+            </tr>
+            i++;
+        }
+    </table>
+</div>

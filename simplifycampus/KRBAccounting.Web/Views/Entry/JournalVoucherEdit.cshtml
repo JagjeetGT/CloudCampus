@@ -1,0 +1,435 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Entry.JournalVoucherAddViewModel
+@*<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>*@
+@{
+    var Debit =
+      Convert.ToInt32(KRBAccounting.Enums.JVAmountTypeEnum.D);
+    var Credit =
+    Convert.ToInt32(KRBAccounting.Enums.JVAmountTypeEnum.C);
+    EntryControlPL entryControl = (EntryControlPL)ViewBag.EntryControl;
+}
+@using (Ajax.BeginForm("JournalVoucherEdit", "Entry", new { controller = "Entry" }, new AjaxOptions { HttpMethod = "Post", OnComplete = "OnCompleteEdit" }, new { @class = "form-horizontal form-custom", id = "journal-voucher-form" }))
+{
+    @Html.HiddenFor(x => x.JournalVoucher.Id)
+    @Html.HiddenFor(x => x.JournalVoucher.CreatedDate)
+    @Html.HiddenFor(x => x.JournalVoucher.CreatedById)
+    @Html.HiddenFor(x => x.JournalVoucher.DocId)
+    @Html.HiddenFor(x => x.JournalVoucher.JVNumber)
+    @Html.HiddenFor(x => x.JournalVoucher.BranchId)
+    @Html.HiddenFor(x => x.JournalVoucher.IsApproved)
+    @Html.HiddenFor(x => x.JournalVoucher.ApprovedBy)
+    @Html.HiddenFor(x => x.JournalVoucher.ApprovedDate)
+    <div style="min-width: 700px; max-width: 833px; height: 400px">
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Voucher No.</label>
+                    <span class="field">
+                        <input type="text" value="@Model.JournalVoucher.JVNumber" class="input-90" disabled="disabled"/>
+                        @Html.ValidationMessageFor(m => m.JournalVoucher.JVNumber)<span class="loading JournalVoucher_JVNumber">
+                            <img title="w_loader_gr.gif" src="/Content/themes/img/loaders/w_loader_gr.gif" /></span>
+                    </span></span><span class="stack" style="padding: 0 0 0 250px">
+                        <label class="label-90">
+                            Date</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.Date)
+                            @Html.ValidationMessageFor(m => m.Date)
+                        </span></span>
+            </div>
+            @* <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Currency</label>
+                    <span class="field">
+                       
+                         @Html.HiddenFor(m => m.JournalVoucher.CurCode, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                            <input type="text" value="@UtilityService.GetCurrencyById(Convert.ToInt32(Model.JournalVoucher.CurCode))" class = "modallink input-100" href="@Url.Action("GetCurrency", "Entry")" valueId="JournalVoucher_CurCode" id="CurCode" entermsg = "Press F1 for choosing existing cash/bank list." />
+                    </span></span><span class="stack" style="padding: 0 0 0 250px">
+                        <label class="label-90">
+                            Rate</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.JournalVoucher.CurRate, new { @class = "input-80", entermsg = "Enter Currency Rate." })
+                            @Html.ValidationMessageFor(m => m.JournalVoucher.CurRate)
+                        </span></span>
+            </div>*@
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-90">
+                        Currency</label>
+                    <span class="field">
+                        @Html.HiddenFor(m => m.JournalVoucher.CurrencyId, new { @class = "input-90 input", entermsg = "Enter Voucher No." })
+                        <input type="text" class = "modallink input-90 input" href="@Url.Action("GetCurrency", "Entry")" 
+                             id="CurrencyId" value="@Model.JournalVoucher.CurCode" entermsg = "Press F1 for choosing existing cash/bank list." />
+                    </span></span><span class="stack">
+                        <label class="label-37">
+                            Rate</label>
+                        <span class="field">
+                            @Html.TextBoxFor(m => m.JournalVoucher.CurRate, new { @class = "input-45 input", entermsg = "Enter Rate." })
+                            @Html.ValidationMessageFor(m => m.JournalVoucher.CurRate)
+                        </span></span>
+            </div>
+        </fieldset>
+        <div class="lag detailEntryTable">
+            <table class="table-bordered" style="width: 720px" id="table-cash-bank-detail">
+                <tr class="nodrop nodrag">
+                    <th width="20px">
+                    </th>
+                    <th width="270px">
+                        General Ledger
+                    </th>
+                    @if (entryControl != null && entryControl.SubLedger)
+                    {
+                        <th width="80px">
+                            Sub Ledger
+                        </th>
+                    }
+                    <th width="80px">
+                        Dr Amount
+                    </th>
+                    <th width="80px">
+                        Cr Amount
+                    </th>
+                    <th width="270px">
+                        Narration
+                    </th>
+                </tr>
+                @{
+                    var index = 0;
+                }
+                @foreach (var detail in Model.JournalVoucher.JournalVoucherDetails)
+                {
+                    detail.Index = index;
+                    @Html.Partial("_PartialJournalVoucherDetailEdit", detail)
+               index++;
+                }
+                @{
+                var journalVoucherDetail = new KRBAccounting.Domain.Entities.JournalVoucherDetail();
+                journalVoucherDetail.Index = index;
+                }
+                @Html.Partial("_PartialJournalVoucherDetailEdit", journalVoucherDetail)
+            </table>
+        </div>
+        <div class="lag">
+            <span class="stack">
+                <label class="label-53">
+                    Gl Code</label>
+                @Html.TextBoxFor(x => x.GlCode, new { @class = "input-100", disabled = "disabled" })
+            </span><span class="stack">
+                <label class="label-53">
+                    Curr Bal</label>
+                @Html.TextBoxFor(x => x.GlDetailCurrBal, new { @class = "input-100", disabled = "disabled" })
+            </span>
+        </div>
+        <fieldset>
+            <div class="lag">
+                <span class="stack">
+                    <label class="label-25">
+                        Total</label>
+                </span><span class="stack">
+                    <label class="label-40">
+                        Dr Amt</label>
+                    @Html.TextBoxFor(x => x.DrAmt, new { @class = "input-64", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-40">
+                        Cr Amt</label>
+                    @Html.TextBoxFor(x => x.CrAmt, new { @class = "input-64", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-85">
+                        Dr Cr Diff Amt</label>
+                    @Html.TextBoxFor(x => x.DrCrDiffAmt, new { @class = "input-64", disabled = "disabled" })
+                </span><span class="stack">
+                    <label class="label-110">
+                        Dr Cr Diff Amt in Rs</label>
+                    @Html.TextBoxFor(x => x.DrCrDiffAmtRs, new { @class = "input-64", disabled = "disabled" })
+                </span>
+            </div>
+        </fieldset>
+        @if (Model.EntryControl != null && Model.EntryControl.Remarks)
+        {
+            <div class="lag">
+                <label class="label-90">
+                    Remarks</label>
+                <span class="field">
+                    @Html.TextBoxFor(m => m.JournalVoucher.Remarks, new { @class = "input-245" })
+                </span>
+            </div>
+        }
+        <span class="clearfix"></span><span class="form-error alert alert-error" style="display: none">
+        </span>
+    </div>
+@* if (Model.SystemControl.UDF == "1")
+                {
+                    if (Model.UdfEntries.LongCount() != 0)
+                    {
+    <a href="javascript:void(0);" class="btn UDFCustomFiled">UDF</a>
+    <div class="UDFEntry">
+        @Html.Partial("_PartialUdfField", Model.UdfEntries)
+    </div>
+                    }
+                }*@
+}
+<script type="text/javascript">
+    var drAmt = parseFloat(0);
+    var crAmt =  parseFloat(0);
+    var netAmt = parseFloat(0);
+    $(document).ready(function() {
+
+        var Debit = document.querySelectorAll(".dr-amt");
+        var Credit = document.querySelectorAll(".cr-amt");
+        $.each(Debit, function(i, item) {
+            if (item.value == 0) {
+                $(this).val('');
+            }
+        });
+        $.each(Credit, function(i, item) {
+            if (item.value == 0) {
+                $(this).val('');
+            }
+        });
+
+
+        var dateType = @Model.SystemControl.DateType;
+      
+       if(dateType=="1") {
+            $("#Date").mask("99/99/9999");
+            $("#Date").live("blur", function() {
+                var validDate = isDate($(this).val(),"/",1,0,2);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+            }
+    else {
+            $("#Date").mask("9999/99/99");
+            $("#Date").live("blur", function() {
+                var date = $(this).val();
+                var validDate=isNepaliDate(date);
+               if(!validDate) {
+                   $($(this).addClass("error"));
+               }
+                else {
+                   $($(this).removeClass("error"));
+               }
+            });
+        }
+
+        var ledgerElement = document.querySelectorAll(".text_ledger");
+        $.each(ledgerElement, function(index) {
+
+            var valueid = $(".hdn_ledger_Id").get(index);
+
+            $(this).attr("id", "detail" + index);
+            $(this).attr("valueId", valueid.id);
+        });
+        
+                var subledgerElement = document.querySelectorAll(".text_subledger");
+        var i = 0;
+        $.each(subledgerElement, function(index) {
+            var closestTr = $(this).closest('tr');
+            var valueid = closestTr.find(".hdn_subledger_Id").attr('id');
+
+            $(this).attr("id", "subLedger_" + i);
+            $(this).attr("valueId", valueid);
+            i++;
+        });
+        
+    });
+
+//        $(".narration").live('keydown', function (e) {
+//            var element = $(this);
+//            var ev = e || event;
+//            var keycode = ev.keyCode;
+//            //e.preventDefault();
+//            if (keycode == 13) {
+//                var closestTr = element.closest("tr");
+//                if (closestTr.find(".hdn_ledger_Id").val() != "" && (closestTr.find(".dr-amt").val() != "" || closestTr.find(".cr-amt").val() != "")) {
+//                    var link = $(this).attr("href");
+//                  
+//                    $.ajax({
+//                        url: link,
+//                        type: "GET",
+//                        error: function () {
+//                            alert("An error occurred.");
+//                        },
+//                        success: function (data) {
+//                            if (closestTr.is(":last-child")) {
+//                                $('#table-cash-bank-detail tr:last').after(data);
+//                                var index = $(".narration").index(element) + 1;
+//                                
+//                                $(".text_ledger:last").attr("id", "detail_" + index);
+//                                $(".text_ledger").attr("valueId", $(".hdn_ledger_Id:last").attr("id"));
+//                                $(".cr-amt:last").val("");
+//                                $(".dr-amt:last").val("");
+//                            }
+
+//                            //Fill Rec Amt at the bottom
+//                            var drAmt = CalculateDrAmt();
+//                            $("#DrAmt").val(drAmt);
+
+//                            //Fill Pay Amt at the bottom
+//                            var crAmt = CalculateCrAmt();
+//                            $("#CrAmt").val(crAmt);
+
+//                            var netAmt = parseFloat(drAmt) - parseFloat(crAmt);
+
+//                            var netAmtFinal = "";
+//                            if (netAmt < 0) {
+//                                netAmtFinal = Math.abs(netAmt) + " Cr";
+//                            } else if (netAmt > 0) {
+//                                netAmtFinal = netAmt + " Dr";
+//                            }
+
+//                            $("#DrCrDiffAmt").val(netAmtFinal);
+//                            $("#DrCrDiffAmtRs").val(netAmtFinal);
+
+//                            if (netAmt == 0) {
+//                                $(".form-error").css("display", "none");
+//                            }
+//                            //                            else {
+//                            //                                $("#saveJournalVoucher").attr("disabled", "disabled");
+//                            //                            }
+
+//                            closestTr.next().find('.text_ledger').focus();
+
+//                            $('input[type="text"]').focus(function () {
+//                                var closestTr = $(this).closest("tr");
+//                                if ($(this).attr("entermsg")) {
+//                                    $(".enter-msg").html($(this).attr("entermsg"));
+//                                } else {
+//                                    $(".enter-msg").html("");
+//                                }
+//                            });
+//                        }
+//                    });
+//                }
+//                closestTr.find(".text_ledger").addClass("error");
+//                closestTr.find(".text_ledger").focus();
+//                return false;
+//            }
+//            return true;
+//        });
+
+//        $('input[type="text"]').focus(function () {
+//            if ($(this).attr("entermsg")) {
+//                $(".enter-msg").html($(this).attr("entermsg"));
+//            } else {
+//                $(".enter-msg").html("");
+//            }
+
+//        });
+//        $(".dr-amt").live('keydown', function (e) {
+//            var ev = e || event;
+//            var keycode = ev.keyCode;
+//            if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+//                var closestTr = $(this).closest("tr");
+//                closestTr.find(".cr-amt").val("");
+//            }
+//            else if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+//                return true;
+//            }
+//            else {
+//                return false;
+//            }
+
+//        });
+//        $(".cr-amt").live('keydown', function (e) {
+//            var ev = e || event;
+//            var keycode = ev.keyCode;
+//            if ((keycode >= 48 && keycode <= 57) || (keycode >= 96 && keycode <= 105) || keycode == 190) {
+//                var closestTr = $(this).closest("tr");
+//                closestTr.find(".dr-amt").val("");
+//            } else if (keycode == 9 || keycode == 8 || keycode == 37 || keycode == 38 || keycode == 39 || keycode == 40) {
+//                return true;
+//            }
+//            else {
+//                return false;
+//            }
+//        });
+//        $(".text_ledger").live("blur", function () {
+//            if ($(this).val() == "") {
+//                $(this).addClass("error");
+//                $(this).focus();
+//            } else {
+//                $(this).removeClass("error");
+//                if ($(this).closest("tr").find(".cr-amt").val() == "" && $(this).closest("tr").find(".dr-amt").val() == "") {
+
+//                    var receiptAmtElements = document.querySelectorAll(".dr-amt");
+//                    if (receiptAmtElements.length > 1) {
+//                        var drAmt = CalculateDrAmt();
+
+//                        var crAmt = CalculateCrAmt();
+//                        var absDiff = Math.abs(drAmt - crAmt);
+//                        if(absDiff == 0) {
+//                            $(this).closest("tr").find(".cr-amt").val("");
+//                            $(this).closest("tr").find(".dr-amt").val("");
+//                        } else {
+
+
+//                            if (drAmt > crAmt) {
+//                                $(this).closest("tr").find(".cr-amt").val(absDiff);
+//                            } else {
+//                                $(this).closest("tr").find(".dr-amt").val(absDiff);
+//                            }
+//                        }
+//                    }
+
+//                }
+//            }
+//        });
+//        $(".text_ledger").getDetailCurrentBalance();
+//        
+//        getDrAmount();  
+//        getCrAmount();
+//        getNetAmount();
+//    });
+//    $(".cr-amt").live("focusout", function () {
+//        if ($(this).val() != '') {
+//            $(this).closest("tr").find(".hdn_Amount").val($(this).val());
+//            $(this).closest("tr").find(".hdn_JVAmountType").val(@Credit);
+//        }
+//    });
+//    $(".dr-amt").live("focusout", function () {
+//        if ($(this).val() != '') {
+//            $(this).closest("tr").find(".hdn_Amount").val($(this).val());
+//            $(this).closest("tr").find(".hdn_JVAmountType").val(@Debit);
+//        }
+//    });
+//    $(".UDFCustomFiled").live("click", function () {
+//        $(".UDFEntry").toggle('hide');
+//       
+//    });
+//    $(".del-row").live("click", function() {
+//        $(this).closest("tr").remove();
+//        getDrAmount();  
+//        getCrAmount();
+//        getNetAmount();
+//    });
+//     
+//    function getDrAmount() {
+//        drAmt = CalculateDrAmt();
+//        $("#DrAmt").val(drAmt);
+//    }
+//    
+//    function getCrAmount() {
+//        crAmt = CalculateCrAmt();
+//        $("#CrAmt").val(crAmt);
+//    }
+//    function getNetAmount() {
+//        netAmt = parseFloat(drAmt) - parseFloat(crAmt);
+//        var netAmtFinal = "";
+//        if (netAmt < 0) {
+//            netAmtFinal = Math.abs(netAmt) + " Cr";
+//        } else if (netAmt > 0) {
+//            netAmtFinal = netAmt + " Dr";
+//        }
+
+//        $("#DrCrDiffAmt").val(netAmtFinal);
+//        $("#DrCrDiffAmtRs").val(netAmtFinal);
+//    }
+</script>

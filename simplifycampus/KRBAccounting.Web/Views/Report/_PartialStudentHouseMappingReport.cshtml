@@ -1,0 +1,104 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportStudentHouseReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+<div class="ReportHeader" style="text-align: center">
+    @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+</div>
+<div class="ReportList">
+    <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    House Code
+                </th>
+                <th>
+                    House Name / Class
+                </th>
+                <th>
+                    Student Code
+                </th>
+                <th>
+                    Student Description
+                </th>
+                <th>
+                    Roll No
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    End Date
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model.HouseMappingsGrouping)
+        {
+            var i = 1;
+            <tr align="center">
+                <td>
+                </td>
+                <td>
+                    @item.FirstOrDefault().HouseCode
+                </td>
+                <td>
+                  <b>@item.FirstOrDefault().HouseName</b>  
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+
+            foreach (var data in item)
+            {
+            <tr align="center">
+                <td>@i
+                </td>
+                <td>
+                    @data.HouseCode
+                </td>
+                <td>
+                    @data.ClassName
+                </td>
+                <td>
+                    @data.StudentCode
+                </td>
+                <td>
+                    @data.StudentName
+                </td>
+                <td>
+                    @data.RollNo
+                </td>
+                <td>
+                    @data.Section
+                </td>
+                <td>@data.StartDate.ToString("mm/dd/yyyy")
+                </td>
+                <td>@data.EndDate.ToString("mm/dd/yyyy")
+                </td>
+            </tr>
+                i++;
+            }
+
+        }
+    </table>
+</div>

@@ -1,0 +1,57 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.SalesInvoice>
+       <div class="block-fluid table-sorting" id="tbl-pending">
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th width="20%">
+                    Invoice No.
+                </th>
+                <th>
+                    Invoice Date
+                </th>
+                <th>
+                    Customer
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Created By
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.InvoiceNo
+                    </td>
+                    <td>@item.InvoiceDate.ToShortDateString()
+                    </td>
+                    <td>@item.Ledger.AccountName
+                    </td>
+                    <td>@item.SalesDetails.Sum(x => x.NetAmt)
+                    </td>
+                    <td>@item.User.Username
+                    </td>
+                    <td>
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "SB"))
+                        {
+                            <a href="javascript:void(0);" class="editSalesInvoice icon-edit" data-id="@item.Id">
+                                        </a><text>&nbsp;|</text>
+                        }
+                       @* @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "SB"))
+                        {
+                            <a href="javascript:void(0);" class="approvedSalesInvoice" data-id="@item.Id"> | Approve</a>
+                        }*@
+                        <a href="javascript:void(0);" class="SalesInvoiceDelete icon-remove" data-id="@item.Id" title="Delete"></a>
+                        | <a class= "icon-print" href = "@Url.Action("SalesInvoicePrint", "Entry", new { invoiceId = item.Id })" title = "Print Bill" target="_blank"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "SalesInvoicePendingList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

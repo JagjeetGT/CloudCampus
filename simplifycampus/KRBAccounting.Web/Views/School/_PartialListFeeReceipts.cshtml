@@ -1,0 +1,8 @@
+@model IEnumerable<KRBAccounting.Domain.Entities.{pEntities}>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <thead>
+            <tr><th>Id</th><th>ReceiptNo</th><th>ReceiptDate</th><th>ReceiptMiti</th><th>ReceiptTimi</th><th>GLCode</th><th>ClassId</th><th>StudentId</th><th>BillNo</th><th>FeeAmount</th><th>Remarks</th><th>PaidUpTo</th><th>FineAmount</th><th>DiscountAmount</th><th>ReceiptAmount</th><th>MonthlyBillStudentId</th></tr></thead><tbody>@foreach (var item in Model){<tr><td>@item.Id</td><td>@item.ReceiptNo</td><td>@item.ReceiptDate</td><td>@item.ReceiptMiti</td><td>@item.ReceiptTimi</td><td>@item.GLCode</td><td>@item.ClassId</td><td>@item.StudentId</td><td>@item.BillNo</td><td>@item.FeeAmount</td><td>@item.Remarks</td><td>@item.PaidUpTo</td><td>@item.FineAmount</td><td>@item.DiscountAmount</td><td>@item.ReceiptAmount</td><td>@item.MonthlyBillStudentId</td><td><a href="#" class="editScFeeReceipt icon-pencil" data-id="@item.Id" title="Edit"></a></td><td><a href="#" class="deleteScFeeReceipt icon-remove" data-id="@item.Id" title="Delete"></a></td></tr>}
+        </tbody>
+    </table>
+</div>

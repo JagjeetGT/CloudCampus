@@ -1,0 +1,117 @@
+﻿@model  KRBAccounting.Service.Models.Purchase.PurchaseDetailEntryViewModel
+@{
+    var trId = "";
+    if (Model.Index != 0)
+    {
+        trId = "tr_" + Model.Index;
+    }
+}
+<tr class="cashbank-detail-entry detail-entry purchaseInvoiceAddtr" id="@trId">
+    @using (Html.BeginCollectionItem("purchaseDetailEntry"))
+    {
+        string display = "display:none;";
+        string billTermClass = "";
+        if (Model.AllowProductWiseBillTerm)
+        {
+            display = "";
+            billTermClass = "rate-bill-term";
+        }
+       
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.DetailGuid, new { @class = "detailGuid" })
+            @Html.HiddenFor(x => x.ProductId, new { @class = "productId value" })
+            @Html.HiddenFor(x => x.Index, new { @class = "indexId" })
+            @Html.TextBoxFor(x => x.ProductName, new { @class = "modallink_custom text_product input-225 input", href = "/Entry/GetProductList", valuetype = "purchase" })
+            @if (Model.EntryControl == null || !Model.EntryControl.AltUnit)
+            {
+                <text>@Html.HiddenFor(x => x.AltUnit, new { @class = "altunit disablealtunit" })</text>
+            }
+            @if (Model.EntryControl == null || !Model.EntryControl.Unit)
+            {
+                <text>@Html.HiddenFor(x => x.Unit, new { @class = "unit disableunit" })</text>
+            }
+@*@if (Model.EntryControl == null || !Model.EntryControl.BasicAmount)
+            {
+                @Html.HiddenFor(x => x.BasicAmt, new { @class = "basicAmt" })
+            }*@
+            <span class="product_batch"></span>@*<input type="text" class = "modallink text_product input-225 input" href="@Url.Action("GetProductList", "Entry")" createhref="@Url.Action("OnlineProductAdd", "Master")"  entermsg = "Press F1 for existing Account list." value=""/>*@
+        </td>
+            if (Model.EntryControl != null && Model.EntryControl.Godown)
+            {
+                if (!Model.DisableGodown)
+                {
+        <td>
+            @Html.HiddenFor(x => x.GodownId, new { @class = "value godownId" })
+            @Html.TextBoxFor(x => x.Godown, new { @class = "input-190 modallink input godown", href = "/Master/GetGodownList" })
+        </td>
+                }
+            }
+        <td>
+            @Html.TextBoxFor(x => x.Qty, new { @class = "input-100 qty numberonly input", entermsg = "Enter  Quantity." })
+        </td>
+
+@* <td>
+             @Html.TextBoxFor(x => x.CostCenter, new { @class = "input-100 modallink", href = "/Master/GetCostCenterList", title = "Cost Center"})
+        </td>*@
+            if (Model.EntryControl != null && Model.EntryControl.Unit)
+            {
+        <td>
+            @Html.DropDownListFor(x => x.Unit, Model.UnitList, new { @class = "input-100 unit input", entermsg = "Enter Unit." })
+        </td>
+            }
+        <td>
+            @Html.TextBoxFor(x => x.AltQty, new { @class = "input-100 altqty altQty input numberonly", entermsg = "Enter Altrnative Quantity.", @readonly = true })
+        </td>
+            if (Model.EntryControl != null && Model.EntryControl.AltUnit)
+            {
+        <td>
+            @Html.TextBoxFor(x => x.AltUnit, new { @class = "input-100 altunit input", entermsg = "Enter Altrnative Unit.", @readonly = true })
+        </td>
+            }
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "input-100 rate input numberonly " + billTermClass, href = "/Entry/GetPurchaseDetailEntry?disableGodown=" + Model.DisableGodown, entermsg = "Enter Rate." })
+            <span class="product_wise_billterms">@*<span class="single-list"></span>*@ </span>
+        </td>
+            if (Model.EntryControl != null && Model.EntryControl.BasicAmount)
+            {
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt", entermsg = "Enter Basic Amount." })
+        </td>
+            }
+            else
+            {
+        <td>
+            @Html.TextBoxFor(x => x.BasicAmt, new { @class = "input-100 basicAmt", entermsg = "Enter Basic Amount.", @readonly = "readonly" })
+        </td>
+            }
+        <td style="@display">
+            @Html.TextBoxFor(x => x.TermAmt, new { @class = "input-100 termAmt", @readonly = "readonly" })
+        </td>
+
+        <td style="@display">
+            @Html.TextBoxFor(x => x.NetAmt, new { @class = "input-100 netAmt", @readonly = "readonly" })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row" />
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    });
+</script>

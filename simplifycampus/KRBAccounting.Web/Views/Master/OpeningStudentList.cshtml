@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Opening Student";
+}
+@using KRBAccounting.Enums
+@model PagedList<KRBAccounting.Domain.Entities.OpeningStudent>
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table" id="tbl-list">
+        <tr>
+            <th width="5%">
+                S.N.
+            </th>
+            <th>
+                Student Name
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Amount Type
+            </th>
+            <th>
+                Created By
+            </th>
+            <th>
+                Created Date
+            </th>
+        </tr>
+        @{var i = Convert.ToInt32(ViewBag.SnStart);}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td align="center">@i
+                </td>
+                <td>@item.Studentinfo.StuDesc
+                </td>
+                <td>@item.Amount
+                </td>
+                <td>@Enum.GetName(typeof(JVAmountTypeEnum), item.AmountType)
+                </td>
+                <td>@item.User.Username
+                </td>
+                <td>@item.CreatedDate
+                </td>
+            </tr>
+            i++;
+        }
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "OpeningStudentList", "Master", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "OpeningLegder-list" }))
+    </div>
+</div>

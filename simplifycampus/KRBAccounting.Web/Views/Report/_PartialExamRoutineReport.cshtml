@@ -1,0 +1,84 @@
+﻿@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Helpers
+@model KRBAccounting.Web.ViewModels.Report.ReportExamRoutineReportViewModel
+<link rel="stylesheet" type="text/css" media="print" href="/Content/Style.css" />
+<link rel="stylesheet" type="text/css" media="print" href="/Content/bootstrap/css/bootstrap.css" />
+<div class="clearfix">
+</div>
+@foreach (var i in Model.ExamRoutineGrouping)
+{
+    <div class="ReportList" style="border: 1px solid; min-height: 900px;">
+        <div style="margin: 25px;">
+             <div class="ReportHeader" style="text-align: center">
+                       @Html.Partial("_PartialReportHeader", Model.ReportHeader)
+                       <div class="clearfix">
+                       </div>
+                       <div>
+                           <p style="font-weight: bold; text-decoration: underline">
+                               ROUTINE FOR THE @i.FirstOrDefault().ScExam.Description.ToUpper() @Model.AcademicYear</p>
+                           <p align="left" style="font-weight: bold;">
+                               Class : @i.FirstOrDefault().Class.Description</p>
+                       </div>
+                   </div>
+      
+            <table class="listpopup" cellspacing="0" cellpadding="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Day
+                        </th>
+                        <th>
+                            Subject Name
+                        </th>
+                        <th>
+                            Start Time
+                        </th>
+                        <th>
+                            End Time
+                        </th>
+                        <th>
+                            Hour
+                        </th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.ExamRoutines.Where(x => x.ExamId == i.FirstOrDefault().ExamId && x.ClassId == i.FirstOrDefault().ClassId))
+                {
+                    DateTime date = new DateTime();
+                    if (item.ExamDate != null)
+                    {
+                        date = Convert.ToDateTime(item.ExamDate);
+                    }
+                    <tr>
+                        <td>
+                            @item.ExamMiti
+                        </td>
+                        <td>
+                            @date.DayOfWeek
+                        </td>
+                        <td>
+                            @item.Subject.Description
+                        </td>
+                        <td>@item.StartTime
+                        </td>
+                        <td>@item.EndTime
+                        </td>
+                        <td>
+                            @item.ExamHour
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="clearfix">
+        </div>
+        @Html.Raw(Model.ExamRoutineFooter)
+    </div>
+   
+    <div class="clearfix">
+    </div>
+    <hr />
+}

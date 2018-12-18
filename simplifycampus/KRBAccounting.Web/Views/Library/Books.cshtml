@@ -1,0 +1,195 @@
+﻿@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+@{
+    ViewBag.Title = "Books";
+    var userRight = (UserRight)ViewBag.UserRight;
+}
+<script src="@Url.Content("/Scripts/RawPrint.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/html2canvas.js")" type="text/javascript"></script>
+<script src="@Url.Content("/Content/jzebra/js/jquery.plugin.html2canvas.js")" type="text/javascript"></script>
+<applet name="jzebra" code="jzebra.PrintApplet.class" archive="@Url.Content("/Content/jzebra/lib/jzebra.jar")" width="1px" height="1px" id="jzebra"  style="visibility: hidden" >
+    <param name="printer" value="zebra" />
+</applet>
+<div class="workplace">
+    <div id="ledger-list">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="head">
+                    <div class="isw-grid">
+                    </div>
+                    <h1>
+                        Books</h1>
+                    <ul class="buttons">
+                        @if(userRight.Create)
+                        {
+                              <li><a href="@Url.Action("BookAdd", "Library")" class="isw-plus addBook1"></a></li>
+                        }
+                      
+                    </ul>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div id="Books-list">
+                    @Html.Action("BooksList")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="dialog" id="modalBook" style="display: none;" title="Books(+)">
+    <div class="block">
+    </div>
+</div>
+<script type="text/javascript">
+    function Begin() {
+        $.blockUI({
+            message: 'Please Wait..',
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#fff',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                color: '#000'
+            }
+        });
+    }
+    $("#modalBook").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 'auto',
+        buttons: {
+            "Ok": function () {
+                Begin();
+                $("#form-id").submit();
+
+            },
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    function writeError(control, msg) {
+        var err_msg = '<div class="alert-message error"><a class="close" href="javascript:void(0);">×</a><p>' + msg + '</p></div>';
+        $('#' + control).html(err_msg);
+    }
+    function getRequest(url) {
+        $.ajax({
+            url: url,
+            context: document.body,
+            success: function (data) {
+                $('#modalBook .block').html(data);
+                $(this).addClass("done");
+                $("#modalBook").dialog('open');
+                $.unblockUI();
+            },
+            error: function (err) {
+                writeError('msgErrorNewLocationDetails', err);
+            }
+        });
+    }
+
+    $('a.addBook').live('click', function () {
+        var url = '@Url.Action("BookAdd", "Library")';
+        getRequest(url);
+
+        return false;
+    });
+    $('a.editBook').live('click', function () {
+        var id = $(this).attr("data-id");
+        var url = '@Url.Action("BookEdit", "Library")?BookId=' + id;
+        getRequest(url);
+        return false;
+    });
+    function OnComplete() {
+
+        $('#modalBook .block').load("/Library/BookAdd");
+        $("#boader-list").load("/Library/BookList"); $.unblockUI();
+    }
+    function OnCompleteEdit() {
+
+
+        $("#boader-list").load("/Library/BookList");
+        $('#modalBook').dialog("close"); $.unblockUI();
+    }
+
+    function success(data) {
+        if (data == "True") {
+            OnComplete();
+        }
+        else {
+            alert(data);
+        }
+    }
+    function successEdit(data) {
+        if (data == "True") {
+            OnCompleteEdit();
+        }
+        else {
+            alert(data);
+        }
+    }
+</script>*@
+<script type="text/javascript">
+    $("#BarCode").live("blur", function () {
+
+        var url = '@Url.Action("BarcodePrint","Master")/?code=' + $(this).val();
+        $.get(url, function (data) {
+
+
+            $("#barcodeTarget").attr("src", data);
+
+        });
+
+
+    });
+    function PrintBarCode(barcode) {
+        //        var result = confirm('Are you sure want to Print Barcode ?');
+        var result = prompt("Please enter Number Of Copy:", "1");
+      
+        if (!isNaN(parseFloat(result))) {
+
+
+            var url = '@Url.Action("BarcodePrint","Master")/?code=' + barcode;
+            $.get(url, function (data) {
+
+                PrintObjectElement = data;
+                printImage(result);
+
+            });
+
+
+        } 
+    }
+   
+    $('a.deleteBook').live('click', function () {
+        var result = confirm('Are you sure you wish to delete this Book?');
+        if (result) {
+            var id = $(this).attr("data-id");
+            var url = '@Url.Action("BookDelete", "Library")?id=' + id;
+            $.blockUI({
+                message: 'Please Wait..',
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#fff',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    color: '#000'
+                }
+            });
+            $.getJSON(url, function (data) {
+                $.unblockUI();
+                if (!data) {
+                    alert("This Book is already used by another class So cannot be deleted.");
+                } else {
+                    $("#boader-list").load("/Library/BookList");
+                    $.unblockUI();
+                }
+            });
+            return false;
+
+        }
+
+    });
+</script>

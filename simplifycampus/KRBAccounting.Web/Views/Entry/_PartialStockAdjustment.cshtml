@@ -1,0 +1,45 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.StockAdjustmentViewModel
+@{
+    ViewBag.Title = "Stock Adjustment";
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+<div class="block-fluid table-sorting" id="tbl-pending">
+    <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list" id="table-sa">
+        <thead>
+            <tr>
+                <th>
+                    Adjustment No
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Remarks
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.StockAdjustment)
+            {
+                var trId = "id-" + item.Id;
+                <tr id="@trId">
+                    <td>@item.AdjustmentNo
+                    </td>
+                    <td>@item.AdjustmentDate.ToShortDateString()
+                    </td>
+                    <td>@item.Remarks
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="SAEdit icon-pencil" data-id="@item.Id" title="Edit: @item.AdjustmentNo">
+                        </a>| <a href="javascript:void(0)" class="SARemove icon-remove" data-id="@item.Id" title="Delete: @item.AdjustmentNo">
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model.StockAdjustment, "StockAdjustmentList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

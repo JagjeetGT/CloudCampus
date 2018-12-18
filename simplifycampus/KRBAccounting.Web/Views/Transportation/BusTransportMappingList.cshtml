@@ -1,0 +1,92 @@
+@using KRBAccounting.Service
+@using KRBAccounting.Service.Models
+@using KRBAccounting.Web.CustomFilters
+@model PagedList<IGrouping<int, KRBAccounting.Domain.Entities.ScTransportMapping>>
+           @{
+               var userRight = (UserRight)ViewBag.UserRight;
+           }
+<div class="block-fluid table-sorting">
+    <table cellpadding="0" cellspacing="0" width="100%" class="listpopup" id="tbl-list">
+        <thead>
+            <tr>
+                <th width="5%">
+                    S.N.
+                </th>
+                <th>
+                    Class
+                </th>
+                <th>
+                    Section
+                </th>
+                <th>
+                    BusRouteCode
+                </th>
+                <th>
+                    Remarks
+                </th>
+                <th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            @{var i = Convert.ToInt32(ViewBag.SnStart);}
+            @foreach (var item in Model)
+            {
+
+                var routeid = Convert.ToInt32(item.FirstOrDefault().BusRouteCode);
+                <tr>
+                    <td align="center">@i
+                    </td>
+                    <td>
+                        @{
+                var schClass = item.FirstOrDefault().SchClass;
+                        }
+                        @if (schClass != null)
+                        {
+                            @schClass.Description
+                        }
+                    </td>
+                    <td>
+                        @{
+                        var scSection = item.FirstOrDefault().ScSection;
+                        }
+                        @if (scSection != null)
+                        {
+                            @scSection.Description
+                        }
+                    </td>
+                    <td class="_detail ttLT" title="Class: @item.FirstOrDefault().SchClass.Description" align="center" data-classid="@item.FirstOrDefault().ClassId" style="cursor: pointer">
+                        @UtilityService.GetRouteNameById(routeid)
+                    </td>
+                    <td>@item.FirstOrDefault().Remarks
+                    </td>
+                    <td>
+                        <a href="@Url.Action("PdfBusTransportMapping", "Transportation", new { classId = item.FirstOrDefault().ClassId })" target="_blank" title="Export to Pdf" class="isw-pdf ttLT" >
+                        </a>
+                    
+                        <a href="@Url.Action("ExcelBusTransportMapping", "Transportation", new { classId = item.FirstOrDefault().ClassId })" target="_blank" title="Export to Excel" class="isw-excel ttLT">
+                        </a>
+                  
+                        <a id="print" title="Print" class="isb-print ttLT"></a>
+                    
+                        @if (userRight.Edit)
+                        {
+                            <a href="javascript:void(0)" class="editScTransportMapping icon-edit ttLT" data-classid="@item.FirstOrDefault().ClassId" data-sectionid ="@item.FirstOrDefault().SectionId" data-busRouteCode="@item.FirstOrDefault().BusRouteCode"  title="Edit">
+                            </a>
+                        }
+                    
+                        @if (userRight.Delete)
+                        {
+                            <a href="@Url.Action("BusTransportMappingDelete", new { classId = item.FirstOrDefault().ClassId, sectionid = item.FirstOrDefault().SectionId, routeid = item.FirstOrDefault().BusRouteCode })" class="deleteScTransportMapping icon-remove ttLT" data-id="@item.FirstOrDefault().Id " title="Delete" onclick = "return confirm('Are you sure you wish to delete this bus route?')">
+                            </a>
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "BusTransportMappingList", "Transportation", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "BusTransportMapping-list" }))
+    </div>
+</div>

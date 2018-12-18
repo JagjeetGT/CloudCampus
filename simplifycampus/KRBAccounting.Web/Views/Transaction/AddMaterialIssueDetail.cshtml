@@ -1,0 +1,74 @@
+﻿@model KRBAccounting.Domain.Entities.ScMaterialIssueDetails
+@{
+    var c = "";
+               if(Model.ProductId !=0)
+               {
+                   c = "detail-entry";
+               }
+           }
+<tr class="university-course-fees @c">
+    @using (Html.BeginCollectionItem("MaterialIssueList"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(m => m.ProductId, new { @class = "input hdn_product first-col" })
+            @if (Model.Product == null)
+            {
+                <input type="text" class = "modallink input product first-col" href="@Url.Action("GetProducts", "Master")" isrequired="true"/>
+            }
+            else
+            {
+                 <input type="text" class = "modallink input product first-col" value="@Model.Product.Name" href="@Url.Action("GetProducts", "Master")" isrequired="true"/>
+            }
+            
+            @Html.ValidationMessageFor(m => m.ProductId)
+        </td>
+        <td>
+            @Html.HiddenFor(m => m.StaffId, new { @class = "input hdn_staff first-col" })
+            @if (Model.Staff == null)
+            {
+                <input type="text" class = "modallink input staff" href="@Url.Action("GetEmployeeInfo", "EmployeeManagement")" isrequired="true"/>
+            }
+            else
+            {
+                <input type="text" class = "modallink input staff" value="@Model.Staff.Description" href="@Url.Action("GetEmployeeInfo", "EmployeeManagement")" isrequired="true"/>
+            }
+            
+            @Html.ValidationMessageFor(m => m.StaffId)
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Quantity, new { @class = "input-120 Quantity input last-col-custom",href = "/transaction/AddMaterialIssueDetail", tableid = "bus-route-list" })
+        </td>
+        <td>
+            @Html.TextBoxFor(x => x.Rate, new { @class = "input-120 Rate",@readonly=true })
+        </td>
+          <td>
+            @Html.TextBoxFor(x => x.LocalAmount, new { @class = "input-120 LocalAmount ",@readonly=true })
+        </td>
+
+          <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bus-route-list').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#bus-route-list tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+
+    })
+
+
+
+</script>

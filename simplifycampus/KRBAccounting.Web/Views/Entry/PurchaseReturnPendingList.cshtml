@@ -1,0 +1,50 @@
+﻿@model PagedList<KRBAccounting.Domain.Entities.PurchaseReturnMaster>
+       <div class="block-fluid table-sorting" id="tbl-pending">
+                <table cellpadding="0" cellspacing="0" width="100%" class="table tbl-list">
+        <thead>
+            <tr>
+                <th width="20%">
+                    Invoice No.
+                </th>
+                <th>
+                    Vendor
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Amount
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.InvoiceNo
+                    </td>
+                    <td>@KRBAccounting.Service.UtilityService.GetLedgerNameById(item.GlCode)
+                    </td>
+                    <td>@item.InvoiceDate.ToShortDateString()
+                    </td>
+                    <td>@item.PurchaseReturnDetails.Sum(x => x.NetAmt)
+                    </td>
+                    <td>
+                        @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Edit", "PR"))
+                        {
+                            <a href="javascript:void(0);" data-id="@item.Id" class="editPurchaseReturn icon-pencil"></a>
+                        }
+                     @*   @if (KRBAccounting.Web.CustomFilters.CheckPermission.GivePermission("Approve", "PR"))
+                        {
+                            <a href="javascript:void(0);" data-id="@item.Id" class="approvedPurchaseReturn icon-ok"></a>
+                        } |*@<a class= "PurchaseReturnDelete icon-remove" href = "javascript:void(0);" title = "Delete" data-id="@item.Id">
+                                     </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @Html.Raw(Html.AjaxPager(Model, "PurchaseReturnPendingList", "Entry", new PagerOptions() { PageIndexParameterName = "pageNo", ShowGoButton = false }, new AjaxOptions() { UpdateTargetId = "tbl-pending" }))
+    </div>
+</div>

@@ -1,0 +1,42 @@
+﻿@model KRBAccounting.Domain.Entities.ScLibrarySetting
+@{
+    ViewBag.Title = "Library Setting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="workplace">
+    <div class="ledgerList">
+        <div class="block-fluid">
+            <div class="head">
+                <div class="isw-grid" style="padding: 11px;" >
+                </div>
+                <h1>
+                    Library Setting
+                </h1>
+                <div class="clear">
+                </div>
+            </div>
+            @using (Html.BeginForm("LibrarySetting", "Library"))
+            {
+                @Html.HiddenFor(x => x.Id)
+       
+                <div class="lag" style="padding: 22px;">
+                    <label>
+                        Book Due Days</label>
+                    <div class="field">
+                        @Html.TextBoxFor(x => x.BookDueDate, new { @class = "input input-100" })
+                    </div>
+                    <label>
+                        Total Card Issue</label>
+                    <div class="field">
+                        @Html.TextBoxFor(x => x.TotalCardIssue, new { @class = "input input-100" })
+                    </div>
+                </div>
+          
+                <div class="form-actions" style="padding-top: -1" align="justify">
+                    <input type="submit" value="Save" class="btn btn-info" />
+                </div>
+        
+            }</div>
+             <div class="clearfix"></div>
+    </div>
+</div>

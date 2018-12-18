@@ -1,0 +1,69 @@
+﻿@model KRBAccounting.Web.ViewModels.Transaction.MonthlyBillGenerationDetailViewModel
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+<tr class="subject-detail-entry detail-entry deletable">
+    @using (Html.BeginCollectionItem("subjectEntry"))
+    {
+        @Html.HiddenFor(x=>x.MonthlyStudentBillId)
+       
+        <td class="dragHandle">
+              @Model.sno
+        </td>
+        <td>
+            <div class="monthlist" style="display: none">
+            
+        </div>
+            @Html.HiddenFor(x => x.StudentId, new { @class = "student-id-"+Model.StudentId })
+            @Html.CheckBoxFor(x => x.Checkbox, new { @class = "student-checkbox" })
+        
+        </td>
+         <td>
+            
+            @Model.StudentName
+        </td>
+        <td>
+            
+            @Model.Code
+        </td>
+        <td>
+           @Model.Section
+        </td>  
+        <td>
+          @Model.RollNo
+        </td> 
+      @Html.HiddenFor(x => x.Amount, new { @class = "student-Amount" })
+      @Html.HiddenFor(x => x.EducationTax, new { @class = "student-EducationTax" })
+        <td class="amount-display">
+              
+            @Model.Amount
+        </td> 
+        <td class="tax-display">
+            @Model.EducationTax
+        </td>
+        <td>
+            @Model.Status
+            
+        </td>
+        if(Model.MonthlyStudentBillId != 0)
+        {
+            var className = "";
+            className = "link_bcPopupSearchs" + Model.StudentId;
+             <td >
+                 
+            
+                <ul class="buttons">
+                    <li><a href="javascript:void(0)" class="@className student_FeeTermDetails" data-id="@Model.StudentId"><span title="Fee Terms" class="icon-list">
+                    </span></a>
+                    @Html.Action("GetStudentMonthlyFeeTermDetails", "Transaction", new {studentMonthlyBillId=Model.MonthlyStudentBillId})
+                    </li>
+                </ul>
+         
+                
+             </td>
+         }
+        @*<td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>*@
+
+    }
+</tr>

@@ -1,0 +1,87 @@
+@model KRBAccounting.Web.ViewModels.Payroll.PayrollTaxDeductionPatternViewModel
+<script src="@Url.Content("~/Scripts/jquery.validate.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"></script>
+@using (Ajax.BeginForm("TaxDeductionPatternEdit", "Payroll", new { controller = "Payroll" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "success" }, new { @class = "form-horizontal from-custom online-form", id = "form-id" }))
+{
+    @Html.HiddenFor(x=>x.PyTaxDeductionPattern.Id)
+     @Html.HiddenFor(x => x.PyTaxDeductionPattern.CreatedBy)
+          @Html.HiddenFor(x => x.PyTaxDeductionPattern.CreatedOn)
+                    @Html.HiddenFor(x => x.PyTaxDeductionPattern.FiscalYearId)
+                     @Html.HiddenFor(x => x.PyTaxDeductionPattern.BranchId)
+                      @Html.HiddenFor(x => x.OldtaxdeductionId)
+    <div id="error-msg">
+    </div>
+    <div class="lag">
+        <div class="lag">
+            <div class="stack">
+                <div class="stack">
+                    <label class="label-90">
+                        Name</label>
+                    <div class="field">
+                        @Html.TextBoxFor(m => m.PyTaxDeductionPattern.Name, new { @class = "input-100 input", entermsg = "Enter Year" })
+                        @Html.ValidationMessageFor(m => m.PyTaxDeductionPattern.Name)
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix">
+            </div>
+            <div class="lag">
+                <label class="label-90">
+                    Start Amount</label>
+                <div class="field">
+                    @Html.TextBoxFor(m => m.PyTaxDeductionPattern.StartAmount, new { @class = "input-100 input", entermsg = "Enter Amount" })
+                    @Html.ValidationMessageFor(m => m.PyTaxDeductionPattern.StartAmount)
+                </div>
+                <label class="label-90">
+                    End Amount</label>
+                <div class="field">
+                    @Html.TextBoxFor(m => m.PyTaxDeductionPattern.EndAmount, new { @class = "input-100 input", entermsg = "Enter Amount" })
+                    @Html.ValidationMessageFor(m => m.PyTaxDeductionPattern.EndAmount)
+                </div>
+            </div>
+            <div class="clearfix">
+                <div class="lag">
+                </div>
+                <label class="label-90">
+                    Percentage</label>
+                <div class="field">
+                    @Html.TextBoxFor(m => m.PyTaxDeductionPattern.Percentage, new { @class = "input-100 input", entermsg = "Enter Amount" })
+                    @Html.ValidationMessageFor(m => m.PyTaxDeductionPattern.Percentage)
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+        <div class="lag">
+            <div class="stack">
+                <label class="label-120">
+                    Is Annual</label>
+                <div class="field">
+                    @Html.EditorFor(m => m.PyTaxDeductionPattern.IsAnnual, new { @class = "input-190 input", entermsg = "Enter Status" })
+                    @Html.ValidationMessageFor(m => m.PyTaxDeductionPattern.IsAnnual)
+                </div>
+            </div>
+            <div class="stack">
+                <label class="label-120">
+                    Status</label>
+                <div class="field">
+                    @Html.EditorFor(m => m.PyTaxDeductionPattern.Status, new { @class = "input-190 input", entermsg = "Enter Status" })
+                    @Html.ValidationMessageFor(m => m.PyTaxDeductionPattern.Status)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="lag checkboxs" style="width: auto">
+        <div class="stack" style="width: 100% ! important;">
+            <label class="label">
+                Employee
+            </label>
+            <div class="field">
+                @Html.CheckBoxList("EmployeeId", Model.CheckBoxListInfos)
+                @*@Html.ValidationMessageFor(m => m.AllowanceId)*@
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+}

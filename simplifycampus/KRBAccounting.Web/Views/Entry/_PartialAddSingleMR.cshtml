@@ -1,0 +1,17 @@
+﻿@model KRBAccounting.Web.ViewModels.Entry.MaterialReturnSingleViewModel
+@{
+    var trId = "id-" + Model.Id;
+}
+<tr id="@trId">
+    <td>@Model.Code
+    </td>
+    <td>@Model.Description
+    </td>
+    <td>@Model.CostCenter
+    </td>
+    <td>
+        <a href="javascript:void(0)" class="MREdit icon-pencil" data-id="@Model.Id" title="Edit: @Model.Code">
+        </a>| <a href="javascript:void(0)" class="MRRemove icon-remove" data-id="@Model.Id" title="Delete: @Model.Code">
+        </a>
+    </td>
+</tr>

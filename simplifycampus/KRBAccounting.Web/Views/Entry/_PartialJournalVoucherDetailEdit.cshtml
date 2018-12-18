@@ -1,0 +1,68 @@
+﻿@using KRBAccounting.Domain.Entities
+@using KRBAccounting.Enums
+@using KRBAccounting.Service
+@model KRBAccounting.Domain.Entities.JournalVoucherDetail
+@{
+    EntryControlPL entryControl = (EntryControlPL)ViewBag.EntryControl;
+    var trId = "tr_" + Model.Index;
+}
+<tr  id="@trId" class="cashbank-detail-entry detail-entry">
+    @using (Html.BeginCollectionItem("journalVoucherDetailEntry"))
+    {
+        <td class="dragHandle">
+            &nbsp;&nbsp;&nbsp;
+        </td>
+        <td>
+            @Html.HiddenFor(x => x.GlCode, new { @class = "hdn_ledger_Id" })
+            <input type="text" class = "modallink text_ledger input-253 input" href="@Url.Action("GetLedger", "Master")" value="@UtilityService.GetLedgerNameById(Model.GlCode)" title="General Ledger" entermsg = "Press F1 for existing Account list." />
+        </td>
+        if (entryControl!=null&&entryControl.SubLedger)
+        {
+        <td>
+            @Html.HiddenFor(x => x.SlCode, new { @class = "hdn_subledger_Id" })
+            <input type="text" class = "modallink text_subledger input-80 input" value="@UtilityService.GetSubLedgerNameById(Model.SlCode)" href="@Url.Action("GetSubLedger", "Master")"  entermsg = "Press F1 for existing Account list." />
+        </td>
+        }
+        @Html.HiddenFor(x => x.Amount, new { @class = "hdn_Amount" })
+        @Html.HiddenFor(x => x.JVAmountType, new { @class = "hdn_JVAmountType" })
+        if (Model.JVAmountType == Convert.ToInt32(JVAmountTypeEnum.D))
+        {<td>
+            <input type="text"  value="@Model.Amount" entermsg="Enter Debit Amount." class="input-80 dr-amt input numberonly"/>
+        </td>
+        <td>
+            <input type="text" value="" entermsg="Enter Credit Amount." class="input-80 cr-amt input numberonly" />
+        </td>
+        }
+        else
+        {
+        <td>
+            <input type="text" value="" entermsg="Enter Debit Amount." class="input-80 dr-amt input numberonly" />
+        </td>
+        <td>
+            <input type="text"  value="@Model.Amount" entermsg="Enter Credit Amount." class="input-80 cr-amt input numberonly" />
+        </td>
+        }
+        <td>
+            @Html.TextBoxFor(x => x.Narration, new { @class = "narration input-253 input", href = "/Entry/GetJournalVoucherDetailEdit", entermsg = "Enter Narration or press F1 for existing Narration List." })
+        </td>
+        <td>
+            <img src="../../Content/img/delete.png" width="15px" class="del-row">
+        </td>
+        
+    }
+</tr>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table-cash-bank-detail').tableDnD({
+            onDrop: function (table, row) {
+            },
+            dragHandle: ".dragHandle"
+        });
+
+        $("#table-cash-bank-detail tr").hover(function () {
+            $(this.cells[0]).addClass('showDragHandle');
+        }, function () {
+            $(this.cells[0]).removeClass('showDragHandle');
+        });
+    })
+</script>

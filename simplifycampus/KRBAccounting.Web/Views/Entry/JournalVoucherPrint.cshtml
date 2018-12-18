@@ -1,0 +1,165 @@
+﻿@using KRBAccounting.Service
+@model KRBAccounting.Web.ViewModels.Entry.JournalVoucherPrintViewModel
+@{
+    ViewBag.Title = "Journal Voucher Print";
+}
+<div class="print">
+    <div>
+        <a href="Javascript:void(0)" id="print">
+            <img src="../../Content/img/print.png" style="opacity: 0.8" />
+        </a>
+        <hr />
+        <a href="@Url.Action("PdfJournalVoucher", new { id = Model.JournalVoucher.Id })" target="_blank" >
+            <img src="../../Content/img/pdf.png" style="opacity: 0.8" />
+        </a>
+        <hr />
+        <a href="@Url.Action("ExcelJournalVoucher", new { id = Model.JournalVoucher.Id })" target="_blank" >
+            <img src="../../Content/img/excel.png" style="opacity: 0.8" />
+        </a>
+    </div>
+</div>
+<div id="report">
+    <link href="/Content/themes/css/stylesheets.css" rel="stylesheet" type="text/css" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="print" />
+    <link href="/Content/print.css" rel="stylesheet" type="text/css" media="screen" />
+    <div class="ReportHeader">
+        <table width="100%">
+            <tr align="center" style="font-size: 12px;">
+                <td>
+                    <b style="font-size: 16px">@Model.ReportHeader.CompanyName</b><br />
+                    @Model.ReportHeader.CompanyAddress<br />
+                    Tel.: @Model.ReportHeader.Phone
+                    <br />
+                    <b style="font-size: 14px">@Model.ReportHeader.ReportTitle</b>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <p style="float: left">
+                Voucher No.: @Model.JournalVoucher.JVNumber
+            </p>
+            <p style="float: right;">
+                <span>Date :</span>@Model.JournalVoucher.JVDate.ToString("MM/dd/yyyy") Date(BS)
+                :@Model.JournalVoucher.JVMiti
+            </p>
+        </div>
+        <div style="clear: both">
+        </div>
+        <table width="100%" class="listpopup">
+            <tr>
+                <th width="1%">
+                    SNo
+                </th>
+                <th width="50%">
+                    General Ledger
+                </th>
+                <th>
+                    Sub Ledger
+                </th>
+                <th style="width: 15%" class="number">
+                    Dr Amt
+                </th>
+                <th style="width: 15%" class="number">
+                    Cr Amt
+                </th>
+            </tr>
+            @{
+                var i = 1;
+            }
+            @foreach (var item in Model.JournalVoucher.JournalVoucherDetails)
+            {
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td style="text-align: left">
+                        @if (item.Ledger != null)
+                        {
+                            @item.Ledger.AccountName
+                        }
+                        @if (!string.IsNullOrEmpty(item.Narration))
+                        {
+                            <p style="margin-left: 10px">
+                                Nrr.: @item.Narration</p>
+                        }
+                    </td>
+                    <td>
+                        @if (item.SlCode != null)
+                        {
+                            @UtilityService.GetSubLedgerNameById(item.SlCode)
+                        }
+                    </td>
+                    <td class="number">
+                        @if (item.JVAmountType == 1)
+                        {
+                            @item.Amount
+                        }
+                    </td>
+                    <td class="number">
+                        @if (item.JVAmountType == 2)
+                        {
+                            @item.Amount
+                        }
+                    </td>
+                </tr>
+                        i++;
+            }
+            <tr>
+                <th colspan="3" class="number">
+                    TOTAL AMOUNT
+                </th>
+                <th class="number">
+                    @{
+                        var amount = Model.JournalVoucher.JournalVoucherDetails.Where(x => x.JVAmountType == 1).Sum(x => x.Amount);
+                    }
+                    @amount
+                </th>
+                <th class="number">
+                    @amount
+                </th>
+            </tr>
+        </table>
+        <div style="float: left">
+            <b>
+            In Words: @NumberToEnglish.changeCurrencyToWords(amount.ToString())</b>
+        </div>
+        <div style="clear: both">
+        </div>
+        <p style="float: left;">
+            Remarks : @Model.JournalVoucher.Remarks</p>
+        <br />
+        <br />
+        <div style="width: 100%; text-align: center;">
+            <table width="100%">
+                <tr>
+                    <td style="float: left;">
+                        <div>
+                            @if (Model.JournalVoucher.Users != null)
+                            {
+                                @Model.JournalVoucher.Users.Username
+                               
+                            }
+                            <br />
+                            <span style="border-top: 1px solid;">Prepared By </span>
+                            <br />
+                            <span>@Model.JournalVoucher.CreatedDate</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <br />
+                            <span style="border-top: 1px solid;">Checked By </span>
+                        </div>
+                    </td>
+                    
+                    <td style="text-align: right">
+                        <div>
+                            <br />
+                            <span style="border-top: 1px solid;">Authorized By </span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
